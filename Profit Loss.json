@@ -1,0 +1,727 @@
+[
+  { Particulars: 'Revenue from Operations' },
+  {
+    Y3: 619932547.0298055,
+    Y4: 681925801.7327862,
+    Y5: 736548058.4515824,
+    Y6: 784791956.280161,
+    Particulars: 'Income From Operation\r\n\r\n',
+    Provisional_Valuation: 221221361,
+    Y2: 551394242.2925
+  },
+  {
+    Y3: 700035.2208,
+    Y4: 714035.9252160001,
+    Y5: 728316.6437203201,
+    Y6: 742882.9765947264,
+    Particulars: 'other operating income',
+    Provisional_Valuation: 672852,
+    Y2: 686309.04
+  },
+  {
+    Y3: 620632582.2506056,
+    Y4: 682639837.6580021,
+    Y5: 737276375.0953027,
+    Y6: 785534839.2567557,
+    Particulars: 'Revenue from Operations',
+    Provisional_Valuation: 221894213,
+    Y2: 552080551.3325
+  },
+  { Particulars: 'EXPENSES' },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Cost of Material Consumed',
+    Provisional_Valuation: '                                             -  '
+  },
+  {
+    Y3: 353361551.80698913,
+    Y4: 381878448.9703603,
+    Y5: 412466912.7328862,
+    Y6: 431635575.95408857,
+    Particulars: 'Purchase of Stock in Trade',
+    Provisional_Valuation: 194837987,
+    Y2: 358406257.490125
+  },
+  {
+    Y3: 12398650.940596111,
+    Y4: 13638516.034655724,
+    Y5: 14730961.16903165,
+    Y6: 15695839.125603221,
+    Particulars: 'Change in Inventory',
+    Provisional_Valuation: -67835141,
+    Y2: 11027884.84585
+  },
+  {
+    Y3: 168402188.32895207,
+    Y4: 180418558.81362468,
+    Y5: 191820930.83368453,
+    Y6: 202736531.0340771,
+    Particulars: 'Selling, General & Administrative Expenses',
+    Provisional_Valuation: 66491224.37,
+    Y2: 155856161.413331
+  },
+  { Particulars: '(A)' },
+  { Particulars: '(B)' },
+  { Particulars: '( C )' },
+  { Particulars: '(D)' },
+  { Particulars: '(E )' },
+  { Particulars: '(F)' },
+  {
+    Y3: 168402188.32895207,
+    Y4: 180418558.81362468,
+    Y5: 191820930.83368453,
+    Y6: 202736531.0340771,
+    Particulars: 'Total (A+B+C+D+E+F)',
+    Provisional_Valuation: 66491224.37,
+    Y2: 155856161.413331
+  },
+  {
+    Y3: 86470191.17406827,
+    Y4: 106704313.83936143,
+    Y5: 118257570.35970035,
+    Y6: 135466893.14298683,
+    Particulars: 'Earnings before exceptional items, extraordinary items, interest, tax, depreciation and amortisation (EBITDA) ',
+    Provisional_Valuation: 28400142
+  },
+  {
+    Y3: 24353574.7,
+    Y4: 26153574.700000003,
+    Y5: 27903574.700000003,
+    Y6: 29513574.700000003,
+    Particulars: 'Less: Depreciation & Amortization',
+    Provisional_Valuation: 16620772,
+    Y2: 21953574.7
+  },
+  {
+    Y3: 62116616.47406827,
+    Y4: 80550739.13936143,
+    Y5: 90353995.65970035,
+    Y6: 105953318.44298683,
+    Particulars: 'EBIT',
+    Provisional_Valuation: 11779371
+  },
+  {
+    Y3: 23171362.692883004,
+    Y4: 23171362.692883004,
+    Y5: 23171362.692883004,
+    Y6: 23171362.692883004,
+    Particulars: 'Less: Finance Costs',
+    Provisional_Valuation: 5463128,
+    Y2: 23171362.692883004
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Add: Other Income',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 38945253.78118527,
+    Y4: 57379376.44647843,
+    Y5: 67182632.96681735,
+    Y6: 82781955.75010383,
+    Particulars: 'Profit / (Loss) before exceptional and extraordinary items and tax ',
+    Provisional_Valuation: 6316243
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Exceptional Items',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 38945253.78118527,
+    Y4: 57379376.44647843,
+    Y5: 67182632.96681735,
+    Y6: 82781955.75010383,
+    Particulars: 'Profit / (Loss) before extraordinary items and tax  ',
+    Provisional_Valuation: 6316243
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Extraordinary items',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 38945253.78118527,
+    Y4: 57379376.44647843,
+    Y5: 67182632.96681735,
+    Y6: 82781955.75010383,
+    Particulars: 'Profit / (Loss) before tax ',
+    Provisional_Valuation: 6316243
+  },
+  {
+    Y3: 11683576.13435558,
+    Y4: 17213812.93394353,
+    Y5: 20154789.890045203,
+    Y6: 24834586.72503115,
+    Particulars: 'Tax expense:',
+    Provisional_Valuation: 1894873,
+    Y2: 0
+  },
+  {
+    Y3: 11683576.13435558,
+    Y4: 17213812.93394353,
+    Y5: 20154789.890045203,
+    Y6: 24834586.72503115,
+    Particulars: '(a) Current tax expense for current year',
+    Provisional_Valuation: 1894873,
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: '(b) (Less): MAT credit (where applicable)',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: '(c) Current tax expense relating to prior years',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: '(d) Net current tax expense ',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: '(e) Deferred tax',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 27261677.646829687,
+    Y4: 40165563.5125349,
+    Y5: 47027843.076772146,
+    Y6: 57947369.02507268,
+    Particulars: 'Profit / (Loss) from continuing operations ',
+    Provisional_Valuation: 4421370
+  },
+  { Particulars: 'DISCONTINUING OPERATIONS' },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Profit / (Loss) from discontinuing operations (before tax)',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Gain / (Loss) on disposal of assets / settlement of liabilities attributable to the discontinuing operations',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Add / (Less): Tax expense of discontinuing operations',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: '(a) on ordinary activities attributable to the discontinuing operations',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: '(b) on gain / (loss) on disposal of assets / settlement of liabilities',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Particulars: 'Profit / (Loss) from discontinuing operations net of tax',
+    Provisional_Valuation: '                                             -  ',
+    Y2: 0
+  },
+  {
+    Y3: 27261677.646829687,
+    Y4: 40165563.5125349,
+    Y5: 47027843.076772146,
+    Y6: 57947369.02507268,
+    Particulars: 'Profit / (Loss) for the year',
+    Provisional_Valuation: 4421370
+  },
+  { Particulars: 'Minority Interest ' },
+  { Particulars: 'Share in profit of Associates' },
+  { Particulars: 'Net Profit after minority interests' },
+  { Particulars: 'Earning per Share(EPS)' }
+]
+Balance Sheet
+[
+  { Particulars: 'EQUITY AND LIABILITIES' },
+  {
+    Particulars: "Shareholders' Funds",
+    Provisional_Valuation: 109800758,
+    Y2: 89501063.80368942,
+    Y3: 114742908.0535436,
+    Y4: 152142032.79757679,
+    Y5: 196001881.57082087,
+    Y6: 250147669.6013369
+  },
+  {
+    Particulars: 'Equity Share Capital',
+    Provisional_Valuation: 33800000,
+    Y2: 33800000,
+    Y3: 33800000,
+    Y4: 33800000,
+    Y5: 33800000,
+    Y6: 33800000
+  },
+  {
+    Particulars: 'Preference Share Capital',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Other Equity',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Share Premium',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Reserves and Surplus',
+    Provisional_Valuation: 76000758,
+    Y2: 55701063.80368942,
+    Y3: 80942908.0535436,
+    Y4: 118342032.79757679,
+    Y5: 162201881.57082087,
+    Y6: 216347669.6013369
+  },
+  {
+    Particulars: 'Revaluation Reserve',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Capital Reserve',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Capital Redemption Reserve',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  { Particulars: 'Debenture Redemption Reserve' },
+  {
+    Particulars: 'Share Based Payment reserve',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  { Particulars: 'Defined benefit obligation reserve' },
+  {
+    Particulars: 'Other Comprehensive lncome',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Y6: 0
+  },
+  {
+    Particulars: 'Non-Controlling Interests',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Y6: 0
+  },
+  { Particulars: 'Share Warrants' },
+  {
+    Particulars: 'Share Application Money Pending Allotment',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Y6: 0
+  },
+  { Provisional_Valuation: 0, Y2: 0, Y3: 0, Y4: 0, Y5: 0, Y6: 0 },
+  {
+    Particulars: 'Non Current Liabilities',
+    Provisional_Valuation: 147115025.78,
+    Y2: 147115025.78,
+    Y3: 147115025.78,
+    Y4: 147115025.78,
+    Y5: 147115025.78,
+    Y6: 147115025.78
+  },
+  {
+    Particulars: 'Deferred Tax Liability',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Y6: 0
+  },
+  { Provisional_Valuation: 0, Y2: 0, Y3: 0, Y4: 0, Y5: 0, Y6: 0 },
+  {
+    Particulars: 'Long Term Borrowings',
+    Provisional_Valuation: 147115025.78,
+    Y2: 147115025.78,
+    Y3: 147115025.78,
+    Y4: 147115025.78,
+    Y5: 147115025.78,
+    Y6: 147115025.78
+  },
+  { Particulars: "Liability component of CCD's" },
+  {
+    Particulars: 'Long-Term Provisions',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0,
+    Y6: 0
+  },
+  {
+    Particulars: 'Purchase consideration payable',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Deferred Govt Grant',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Current Liabilities',
+    Provisional_Valuation: 479630701.77,
+    Y2: 496181136.73043644,
+    Y3: 479212899.71280444,
+    Y4: 483571091.72725344,
+    Y5: 482405965.8646728,
+    Y6: 474009946.91888213
+  },
+  {
+    Particulars: 'Trade Payables',
+    Provisional_Valuation: 131314212,
+    Y2: 117832194.32322536,
+    Y3: 96811384.05670935,
+    Y4: 104624232.59461924,
+    Y5: 113004633.62544827,
+    Y6: 118256322.17920235
+  },
+  {
+    Particulars: 'Employee Payables',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Short Term Borrowings',
+    Provisional_Valuation: 17180255.31,
+    Y2: 17180255.31,
+    Y3: 17180255.31,
+    Y4: 17180255.31,
+    Y5: 17180255.31,
+    Y6: 17180255.31
+  },
+  {
+    Particulars: 'LC Payables',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Other Current Liabilities',
+    Provisional_Valuation: 311380626.46,
+    Y2: 341413079.0972111,
+    Y3: 345465652.3460951,
+    Y4: 342010995.82263416,
+    Y5: 332465468.9292245,
+    Y6: 318817761.4296798
+  },
+  {
+    Particulars: 'Short Term Provisions',
+    Provisional_Valuation: 19755608,
+    Y2: 19755608,
+    Y3: 19755608,
+    Y4: 19755608,
+    Y5: 19755608,
+    Y6: 19755608
+  },
+  { Particulars: 'Inter-Co' },
+  {
+    Particulars: 'TOTAL',
+    Provisional_Valuation: 736546485.55,
+    Y2: 732797226.3141258,
+    Y3: 741070833.546348,
+    Y4: 782828150.3048302,
+    Y5: 825522873.2154937,
+    Y6: 871272642.300219
+  },
+  { Particulars: 'ASSETS' },
+  {
+    Particulars: 'Non-Current Assets',
+    Provisional_Valuation: 466389195,
+    Y2: 493325978.3,
+    Y3: 534925978.3,
+    Y4: 566125978.3,
+    Y5: 596875978.3,
+    Y6: 625465978.3
+  },
+  {
+    Particulars: 'Fixed Assets(Gross)',
+    Provisional_Valuation: 342570791,
+    Y2: 369507574.3,
+    Y3: 411107574.3,
+    Y4: 442307574.3,
+    Y5: 473057574.3,
+    Y6: 501647574.3
+  },
+  { Particulars: 'Net Fixed Assets' },
+  {
+    Particulars: '---Tangible Assets',
+    Provisional_Valuation: 342570791,
+    Y2: 369507574.3,
+    Y3: 411107574.3,
+    Y4: 442307574.3,
+    Y5: 473057574.3,
+    Y6: 501647574.3
+  },
+  {
+    Particulars: '---Intangible Assets',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: '---Capital Work in Progress',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: '---Pre Operative Expenses',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: '---Capital Advances',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: '---Capital Liabilities',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Goodwill ',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Non-current Investment',
+    Provisional_Valuation: 29770092,
+    Y2: 29770092,
+    Y3: 29770092,
+    Y4: 29770092,
+    Y5: 29770092,
+    Y6: 29770092
+  },
+  {
+    Particulars: 'Inter-Co-Inv',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Other Non Current Assets',
+    Provisional_Valuation: 92251687,
+    Y2: 92251687,
+    Y3: 92251687,
+    Y4: 92251687,
+    Y5: 92251687,
+    Y6: 92251687
+  },
+  {
+    Particulars: 'Deferred Tax Assets',
+    Provisional_Valuation: 1796625,
+    Y2: 1796625,
+    Y3: 1796625,
+    Y4: 1796625,
+    Y5: 1796625,
+    Y6: 1796625
+  },
+  {
+    Particulars: 'Current Assets, Loans & Advances',
+    Provisional_Valuation: 270157290,
+    Y2: 239471248.01192844,
+    Y3: 206144855.24818042,
+    Y4: 216702172.0042978,
+    Y5: 228646894.91944247,
+    Y6: 245806663.99556866
+  },
+  {
+    Particulars: 'Cash and Cash Equivalents',
+    Provisional_Valuation: 6053565,
+    Y2: 39554753.4188989,
+    Y3: 13673104.439333305,
+    Y4: 18044237.159302596,
+    Y5: 13013248.629300699,
+    Y6: 12494552.641662903
+  },
+  {
+    Particulars: 'Bank Balances',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Trade Receivables',
+    Provisional_Valuation: 42700049,
+    Y2: 45320074.73970206,
+    Y3: 25476680.014923513,
+    Y4: 28024348.01641587,
+    Y5: 30269098.292530786,
+    Y6: 32251724.23069155
+  },
+  {
+    Particulars: 'Unbilled Revenues',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Inventories',
+    Provisional_Valuation: 115000000,
+    Y2: 48192743.8533275,
+    Y3: 60591394.79392361,
+    Y4: 74229910.82857934,
+    Y5: 88960871.99761099,
+    Y6: 104656711.12321422
+  },
+  {
+    Particulars: 'Advances',
+    Provisional_Valuation: 87608143,
+    Y2: 87608143,
+    Y3: 87608143,
+    Y4: 77608143,
+    Y5: 77608143,
+    Y6: 77608143
+  },
+  {
+    Particulars: 'Short Term Investments',
+    Provisional_Valuation: 0,
+    Y2: 0,
+    Y3: 0,
+    Y4: 0,
+    Y5: 0
+  },
+  {
+    Particulars: 'Other Current Assets',
+    Provisional_Valuation: 18795533,
+    Y2: 18795533,
+    Y3: 18795533,
+    Y4: 18795533,
+    Y5: 18795533,
+    Y6: 18795533
+  },
+  {
+    Particulars: 'TOTAL',
+    Provisional_Valuation: 736546485,
+    Y2: 732797226.3119285,
+    Y3: 741070833.5481805,
+    Y4: 782828150.3042977,
+    Y5: 825522873.2194424,
+    Y6: 871272642.2955686
+  },
+  { Provisional_Valuation: -0.5499999523162842 },
+  {
+    Particulars: 'Any cash equivalent like bank FDs pledged against borrowings cannot be treated as free cash'
+  }
+]
