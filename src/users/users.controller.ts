@@ -15,6 +15,8 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
+import { User } from './schema/user.schema';
+import * as bcrypt from 'bcrypt';
 
 @Controller('users')
 export class UsersController {
@@ -24,9 +26,17 @@ export class UsersController {
     async createUser(
       @Body('username') username: string,
       @Body('password') password: string,
-    ) {
-      return this.userService.createUser(username, password);
+    ) : Promise<User> {
+        const saltOrRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltOrRounds);
+        const result = await this.userService.createUser(
+            username,
+            hashedPassword,
+        );
+        return result;
     }
+    //   return this.userService.createUser(email, password);
+    
   
     @UseGuards(AuthGuard('jwt'))
     @Get()

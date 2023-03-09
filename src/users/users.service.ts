@@ -8,24 +8,23 @@ import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectModel('User') private readonly userModel: Model<User>,
-        private readonly httpService: HttpService,
+        @InjectModel('user') private readonly userModel: Model<UserDocument>,
+        // private readonly httpService: HttpService,
       ) {}
     
-      async createUser(email: string, password: string): Promise<User> {
+      async createUser(username: string, password: string): Promise<User> {
         return this.userModel.create({
-          email,
-          password,
+            username,
+            password,
         });
-      }
+    }
       async getUsers(): Promise<User[]> {
         return this.userModel.find().exec();
       }
     
-      async getUser({ email, password }): Promise<User | undefined> {
+      async getUser(query: object): Promise<User | undefined> {
         return this.userModel.findOne({
-          email,
-          password,
+          query
         });
       }
     

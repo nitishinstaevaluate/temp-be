@@ -13,7 +13,7 @@ import { AuthenticationService } from './authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { config } from 'process';
 import { Response} from 'express';
-import { authconfig } from '../middleware/auth0';
+// import { authconfig } from '../middleware/auth0';
 // const { auth } = require('express-openid-connect');
 // import { Client, Account, ID } from "appwrite";
 
@@ -25,7 +25,7 @@ import { authconfig } from '../middleware/auth0';
 @Controller('authentication')
 export class AuthenticationController {
 
-  constructor(private readonly authenticationService: AuthenticationService) { }
+  constructor(private authenticationService: AuthenticationService) { }
 
   @Get('/public')
   getPublic(): string {
@@ -72,17 +72,24 @@ export class AuthenticationController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Post('/post')
-  // async create(@Body('item') item: Item): Promise<void> {
-  async postProtected(): Promise<void> {
-    this.authenticationService.create();
-  }
+  // @UseGuards(AuthGuard('jwt'))
+  // @Post('/post')
+  // // async create(@Body('item') item: Item): Promise<void> {
+  // async postProtected(): Promise<void> {
+  //   this.authenticationService.create();
+  // }
+
+  // @UseGuards(AuthGuard('local'))
+  // @Post('/login')
+  // async login(@Request() req) {
+  //   console.log(req.user);
+  //   return this.authenticationService.loginWithCredentials(req.user);
+  // }
 
   @UseGuards(AuthGuard('local'))
-  @Post('login')
-  async login(@Request() req) {
-    return this.authenticationService.loginWithCredentials(req.user);
-  }
+    @Post('/login')
+    async login(@Request() req) {
+        return this.authenticationService.login(req.user);
+    }
 
 }

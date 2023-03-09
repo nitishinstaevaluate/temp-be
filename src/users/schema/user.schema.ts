@@ -21,26 +21,26 @@
 //         this.password = await bcrypt.hash(this.password, 10);  
 //     }
 // }
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+// import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+// import { HydratedDocument } from 'mongoose';
 
-export type UserDocument = HydratedDocument<User>;
+// export type UserDocument = HydratedDocument<User>;
 
-@Schema()
-export class User {
-    @Prop({ required: true })
-    email: string
+// @Schema()
+// export class User {
+//     @Prop({ required: true })
+//     email: string
   
-//     @Prop()
-//   username: { type: String, required: false }
+// //     @Prop()
+// //   username: { type: String, required: false }
 
-  @Prop({ required: true })
-  password: string
+//   @Prop({ required: true })
+//   password: string
 
 
-}
+// }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+// export const UserSchema = SchemaFactory.createForClass(User);
 
 // import * as mongoose from 'mongoose';
 
@@ -51,5 +51,22 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 // export interface User {
 //   email : string;
-//   password : string
+//   password : string;
+//   _id: string;
 // }
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+
+export type UserDocument = User & Document;
+
+@Schema()
+export class User {
+  @Prop()
+  username: string;
+
+  @Prop()
+  password: string;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
