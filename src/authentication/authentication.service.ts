@@ -34,7 +34,7 @@ export class AuthenticationService {
     }
 
     getPublic(): string {
-        console.log(process.env.DBCONN);
+        // console.log(process.env.DBCONN);
         return 'This is a public resource. Welcome visitor!';
       }
       
@@ -43,7 +43,7 @@ export class AuthenticationService {
       }
 
       create(): string {
-        return 'This is another protected resource. Welcome member';
+        return 'This is another protected resource. Welcome member. Use this sample to validate tokens';
       }
 
       async validateUserCredentials(
