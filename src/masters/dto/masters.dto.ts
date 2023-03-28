@@ -19,5 +19,8 @@ export class CreateIndustryDto {
   export class CreateCOEMethodDto {
     method:string;
   }
+  export class CreateRiskFreeRateDto {
+    rate:string;
+  }
 
   

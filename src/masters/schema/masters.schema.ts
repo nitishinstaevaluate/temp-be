@@ -116,3 +116,22 @@ export class COEMethod {
 }
 export type COEMethodDocument = COEMethod & Document;
 export const COEMethodSchema = SchemaFactory.createForClass(COEMethod);
+
+//Risk Free Rate Schema
+@Schema()
+export class RiskFreeRate {
+
+  @Prop({ required:true })
+    rate:string;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type RiskFreeRateDocument = RiskFreeRate & Document;
+export const RiskFreeRateSchema = SchemaFactory.createForClass(RiskFreeRate);

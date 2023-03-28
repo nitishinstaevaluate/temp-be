@@ -2,12 +2,12 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 
 import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTaxRateDto,CreateDiscountRateDto,
-  CreateTerminalGrowthRateDto,CreateCOEMethodDto } from './dto/masters.dto';
+  CreateTerminalGrowthRateDto,CreateCOEMethodDto,CreateRiskFreeRateDto } from './dto/masters.dto';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
-   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService } from './masters.service';
+   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,RiskFreeRatesService } from './masters.service';
 
-import { Industry,ValuationMethod,TaxRate,DiscountRate,TerminalGrowthRate,COEMethod } from './schema/masters.schema';
+import { Industry,ValuationMethod,TaxRate,DiscountRate,TerminalGrowthRate,COEMethod,RiskFreeRate } from './schema/masters.schema';
 
 //Industries Controller
 @Controller('industries')
@@ -103,5 +103,21 @@ export class COEMethodsController {
   @Get()
   async findAll(): Promise<COEMethod[]> {
     return this.coeMethodService.getCOEMethods();
+  }
+}
+
+//RiskFreeRates Controller
+@Controller('riskFreeRates')
+export class RiskFreeRatesController {
+  constructor(private riskFreeRateService: RiskFreeRatesService) {}
+
+  @Post()
+  async create(@Body() riskFreeRateDto: CreateRiskFreeRateDto) {
+    return this.riskFreeRateService.createRiskFreeRate(riskFreeRateDto);
+  }
+
+  @Get()
+  async findAll(): Promise<RiskFreeRate[]> {
+    return this.riskFreeRateService.getRiskFreeRates();
   }
 }

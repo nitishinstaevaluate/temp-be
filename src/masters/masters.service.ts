@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import {Industry, IndustryDocument, ValuationMethod, 
   ValuationMethodDocument,TaxRate,TaxRateDocument,
 DiscountRate,DiscountRateDocument,TerminalGrowthRate,
-TerminalGrowthRateDocument,COEMethod,COEMethodDocument } from './schema/masters.schema';
+TerminalGrowthRateDocument,COEMethod,COEMethodDocument,RiskFreeRate,RiskFreeRateDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -86,7 +86,7 @@ export class TerminalGrowthRatesService {
 @Injectable()
 export class COEMethodsService {
     constructor(
-        @InjectModel('coeMethods') private readonly coeMethodModel: Model<COEMethodDocument>,
+        @InjectModel('coeMethod') private readonly coeMethodModel: Model<COEMethodDocument>,
       ) {}
     
       async createCOEMethod(coeMethod:object): Promise<COEMethod> {
@@ -94,5 +94,20 @@ export class COEMethodsService {
     }
       async getCOEMethods(): Promise<COEMethod[]> {
         return this.coeMethodModel.find().exec();
+      }
+}
+
+//RiskFreeRates Service
+@Injectable()
+export class RiskFreeRatesService {
+    constructor(
+        @InjectModel('riskFreeRate') private readonly riskFreeRateModel: Model<RiskFreeRateDocument>,
+      ) {}
+    
+      async createRiskFreeRate(riskFreeRate:object): Promise<RiskFreeRate> {
+        return this.riskFreeRateModel.create(riskFreeRate);
+    }
+      async getRiskFreeRates(): Promise<RiskFreeRate[]> {
+        return this.riskFreeRateModel.find().exec();
       }
 }
