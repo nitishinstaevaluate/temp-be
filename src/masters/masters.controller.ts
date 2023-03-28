@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
 
 import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTaxRateDto,CreateDiscountRateDto,
@@ -27,6 +27,15 @@ export class IndustriesController {
   async findAll(): Promise<Industry[]> {
     return this.industriesService.getIndustries();
   }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() industry:Industry): Promise<Industry> {
+    return this.industriesService.updateIndustry(id,industry);
+  }
+  
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+      return this.industriesService.deleteIndustry(id);
+  }
 }
 
 //ValuationMethods Controller
@@ -42,6 +51,15 @@ export class ValuationMethodsController {
   @Get()
   async findAll(): Promise<ValuationMethod[]> {
     return this.methodService.getValuationMethods();
+  }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() method:ValuationMethod): Promise<ValuationMethod> {
+    return this.methodService.updateValuationMethod(id,method);
+  }
+  
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+      return this.methodService.deleteValuationMethod(id);
   }
 }
 
@@ -59,6 +77,15 @@ export class TaxRatesController {
   async findAll(): Promise<TaxRate[]> {
     return this.taxRateService.getTaxRates();
   }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() taxRate:TaxRate): Promise<TaxRate> {
+    return this.taxRateService.updateTaxRate(id,taxRate);
+  }
+  
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+      return this.taxRateService.deleteTaxRate(id);
+  }
 }
 
 //DiscountRates Controller
@@ -75,6 +102,15 @@ export class DiscountRatesController {
   async findAll(): Promise<DiscountRate[]> {
     return this.discountRateService.getDiscountRates();
   }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() discountRate:DiscountRate): Promise<DiscountRate> {
+    return this.discountRateService.updateDiscountRate(id,discountRate);
+  }
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
+      return this.discountRateService.deleteDiscountRate(id);
+    }
 }
 
 //TerminalGrowthRates Controller
@@ -91,6 +127,15 @@ export class TerminalGrowthRatesController {
   async findAll(): Promise<TerminalGrowthRate[]> {
     return this.growthRateService.getGrowthRates();
   }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() growthRate:TerminalGrowthRate): Promise<TerminalGrowthRate> {
+    return this.growthRateService.updateGrowthRate(id,growthRate);
+  }
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
+      return this.growthRateService.deleteGrowthRate(id);
+    }
 }
 
 
@@ -108,6 +153,15 @@ export class COEMethodsController {
   async findAll(): Promise<COEMethod[]> {
     return this.coeMethodService.getCOEMethods();
   }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() coeMethod:COEMethod): Promise<COEMethod> {
+    return this.coeMethodService.updateCOEMethod(id,coeMethod);
+  }
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
+      return this.coeMethodService.deleteCOEMethod(id);
+    }
 }
 
 //RiskFreeRates Controller
@@ -124,6 +178,15 @@ export class RiskFreeRatesController {
   async findAll(): Promise<RiskFreeRate[]> {
     return this.riskFreeRateService.getRiskFreeRates();
   }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() riskFreeRate:RiskFreeRate): Promise<RiskFreeRate> {
+    return this.riskFreeRateService.updateRiskFreeRate(id,riskFreeRate);
+  }
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
+      return this.riskFreeRateService.deleteRiskFreeRate(id);
+    }
 }
 
 //ExpMarketReturns Controller
@@ -139,5 +202,15 @@ export class ExpMarketReturnsController {
   @Get()
   async findAll(): Promise<ExpMarketReturn[]> {
     return this.expMarketReturnService.getExpMarketReturns();
+  }
+
+  @Put(':id')
+async update(@Param('id') id: string, @Body() expMarketReturn:ExpMarketReturn): Promise<ExpMarketReturn> {
+  return this.expMarketReturnService.updateExpMarketReturn(id,expMarketReturn);
+}
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.expMarketReturnService.deleteExpReturn(id);
   }
 }

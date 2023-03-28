@@ -21,6 +21,13 @@ export class IndustriesService {
       async getIndustries(): Promise<Industry[]> {
         return this.industryModel.find().exec();
       }
+      async updateIndustry(id: string, industry:Industry): Promise<Industry> {
+        return this.industryModel.findByIdAndUpdate(id,industry, { new: true }).exec();
+      }
+    
+      async deleteIndustry(id: string): Promise<any> {
+        return this.industryModel.findByIdAndRemove(id).exec();
+      }
 }
 
 //ValuationMethods Service
@@ -36,6 +43,13 @@ export class ValuationMethodsService {
       async getValuationMethods(): Promise<ValuationMethod[]> {
         return this.methodModel.find().exec();
       }
+      async updateValuationMethod(id: string,method:ValuationMethod): Promise<ValuationMethod> {
+        return this.methodModel.findByIdAndUpdate(id,method, { new: true }).exec();
+      }
+    
+      async deleteValuationMethod(id: string): Promise<any> {
+        return this.methodModel.findByIdAndRemove(id).exec();
+      }
 }
 
 //TaxRates Service
@@ -50,6 +64,13 @@ export class TaxRatesService {
     }
       async getTaxRates(): Promise<TaxRate[]> {
         return this.taxRateModel.find().exec();
+      }
+      async updateTaxRate(id: string, taxRate: TaxRate): Promise<TaxRate> {
+        return this.taxRateModel.findByIdAndUpdate(id,taxRate, { new: true }).exec();
+      }
+    
+      async deleteTaxRate(id: string): Promise<any> {
+        return this.taxRateModel.findByIdAndRemove(id).exec();
       }
 }
 
@@ -67,6 +88,13 @@ export class DiscountRatesService {
       async getDiscountRates(): Promise<DiscountRate[]> {
         return this.discountRateModel.find().exec();
       }
+      async updateDiscountRate(id: string,discountRate: DiscountRate): Promise<DiscountRate> {
+        return this.discountRateModel.findByIdAndUpdate(id,discountRate, { new: true }).exec();
+      }
+    
+      async deleteDiscountRate(id: string): Promise<any> {
+        return this.discountRateModel.findByIdAndRemove(id).exec();
+      }
 }
 
 //TerminalGrowthRates Service
@@ -81,6 +109,13 @@ export class TerminalGrowthRatesService {
     }
       async getGrowthRates(): Promise<TerminalGrowthRate[]> {
         return this.growthRateModel.find().exec();
+      }
+      async updateGrowthRate(id: string, growthRate: TerminalGrowthRate): Promise<TerminalGrowthRate> {
+        return this.growthRateModel.findByIdAndUpdate(id, growthRate, { new: true }).exec();
+      }
+    
+      async deleteGrowthRate(id: string): Promise<any> {
+        return this.growthRateModel.findByIdAndRemove(id).exec();
       }
 }
 
@@ -97,6 +132,13 @@ export class COEMethodsService {
       async getCOEMethods(): Promise<COEMethod[]> {
         return this.coeMethodModel.find().exec();
       }
+      async updateCOEMethod(id: string, coeMethod: COEMethod): Promise<COEMethod> {
+        return this.coeMethodModel.findByIdAndUpdate(id,coeMethod, { new: true }).exec();
+      }
+    
+      async deleteCOEMethod(id: string): Promise<any> {
+        return this.coeMethodModel.findByIdAndRemove(id).exec();
+      }
 }
 
 //RiskFreeRates Service
@@ -112,6 +154,13 @@ export class RiskFreeRatesService {
       async getRiskFreeRates(): Promise<RiskFreeRate[]> {
         return this.riskFreeRateModel.find().exec();
       }
+      async updateRiskFreeRate(id: string, riskFreeRate: RiskFreeRate): Promise<RiskFreeRate> {
+        return this.riskFreeRateModel.findByIdAndUpdate(id, riskFreeRate, { new: true }).exec();
+      }
+    
+      async deleteRiskFreeRate(id: string): Promise<any> {
+        return this.riskFreeRateModel.findByIdAndRemove(id).exec();
+      }
 }
 
 //ExpMarketReturns Service
@@ -126,5 +175,12 @@ export class ExpMarketReturnsService {
     }
       async getExpMarketReturns(): Promise<ExpMarketReturn[]> {
         return this.expMarketReturnModel.find().exec();
+      }
+      async updateExpMarketReturn(id: string, expMarketReturn: ExpMarketReturn): Promise<ExpMarketReturn> {
+        return this.expMarketReturnModel.findByIdAndUpdate(id, expMarketReturn, { new: true }).exec();
+      }
+    
+      async deleteExpReturn(id: string): Promise<any> {
+        return this.expMarketReturnModel.findByIdAndRemove(id).exec();
       }
 }
