@@ -13,3 +13,6 @@ export class CreateIndustryDto {
     name: string;
     rate:string;
   }
+  export class CreateTerminalGrowthRateDto {
+    rate:number;
+  }

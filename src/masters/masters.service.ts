@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {Industry, IndustryDocument, ValuationMethod, 
   ValuationMethodDocument,TaxRate,TaxRateDocument,
-DiscountRate,DiscountRateDocument } from './schema/masters.schema';
+DiscountRate,DiscountRateDocument,TerminalGrowthRate,TerminalGrowthRateDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -63,5 +63,20 @@ export class DiscountRatesService {
     }
       async getDiscountRates(): Promise<DiscountRate[]> {
         return this.discountRateModel.find().exec();
+      }
+}
+
+//TerminalGrowthRates Service
+@Injectable()
+export class TerminalGrowthRatesService {
+    constructor(
+        @InjectModel('terminalGrowthRate') private readonly growthRateModel: Model<TerminalGrowthRateDocument>,
+      ) {}
+    
+      async createGrowthRate(growthRate:object): Promise<TerminalGrowthRate> {
+        return this.growthRateModel.create(growthRate);
+    }
+      async getGrowthRates(): Promise<TerminalGrowthRate[]> {
+        return this.growthRateModel.find().exec();
       }
 }

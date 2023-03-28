@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateIndustryDto,CreateValuationMethodDto,CreateTaxRateDto,CreateDiscountRateDto } from './dto/masters.dto';
-import { IndustriesService,ValuationMethodsService,TaxRatesService, DiscountRatesService } from './masters.service';
-import { Industry,ValuationMethod,TaxRate,DiscountRate } from './schema/masters.schema';
+import { CreateIndustryDto,CreateValuationMethodDto,CreateTaxRateDto,CreateDiscountRateDto,CreateTerminalGrowthRateDto } from './dto/masters.dto';
+import { IndustriesService,ValuationMethodsService,TaxRatesService, DiscountRatesService,TerminalGrowthRatesService } from './masters.service';
+import { Industry,ValuationMethod,TaxRate,DiscountRate,TerminalGrowthRate } from './schema/masters.schema';
 
 //Industries Controller
 @Controller('industries')
@@ -64,5 +64,21 @@ export class DiscountRatesController {
   @Get()
   async findAll(): Promise<DiscountRate[]> {
     return this.discountRateService.getDiscountRates();
+  }
+}
+
+//TerminalGrowthRates Controller
+@Controller('terminalGrowthRates')
+export class TerminalGrowthRatesController {
+  constructor(private growthRateService: TerminalGrowthRatesService) {}
+
+  @Post()
+  async create(@Body() growthRateDto: CreateTerminalGrowthRateDto) {
+    return this.growthRateService.createGrowthRate(growthRateDto);
+  }
+
+  @Get()
+  async findAll(): Promise<TerminalGrowthRate[]> {
+    return this.growthRateService.getGrowthRates();
   }
 }

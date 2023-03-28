@@ -7,6 +7,9 @@ export class Industry {
     @Prop({ required: true })
   industry: string;
 
+  @Prop({ default:true })
+  isActive: boolean;
+
   @Prop({ default: () => new Date() })
   modifiedAt: Date;
   
@@ -43,6 +46,9 @@ export class TaxRate {
   @Prop({ required:true })
     rate:number;
 
+  @Prop({ default:true })
+    isActive: boolean;
+
   @Prop({ default: () => new Date() })
   modifiedAt: Date;
   
@@ -61,7 +67,10 @@ export class DiscountRate {
   @Prop({ required:true })
     rate:number;
 
-  @Prop({ default: () => new Date() })
+    @Prop({ default:true })
+    isActive: boolean;
+
+    @Prop({ default: () => new Date() })
   modifiedAt: Date;
   
   @Prop({ default: () => new Date() })
@@ -69,3 +78,22 @@ export class DiscountRate {
 }
 export type DiscountRateDocument = DiscountRate & Document;
 export const DiscountRateSchema = SchemaFactory.createForClass(DiscountRate);
+
+//Terminal Growth Rate Schema
+@Schema()
+export class TerminalGrowthRate {
+
+  @Prop({ required:true })
+    rate:number;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type TerminalGrowthRateDocument = TerminalGrowthRate & Document;
+export const TerminalGrowthRateSchema = SchemaFactory.createForClass(TerminalGrowthRate);
