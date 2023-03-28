@@ -5,3 +5,7 @@ export class CreateIndustryDto {
   export class CreateValuationMethodDto {
     method: string;
   }
+  export class CreateTaxRateDto {
+    name: string;
+    rate:string;
+  }

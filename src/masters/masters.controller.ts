@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateIndustryDto,CreateValuationMethodDto } from './dto/dropDowns.dto';
-import { IndustriesService } from './Industry.service';
-import { ValuationMethodsService } from './valuationMethods.service';
-import { Industry,ValuationMethod } from './schema/dropDowns.schema';
+import { CreateIndustryDto,CreateValuationMethodDto,CreateTaxRateDto } from './dto/masters.dto';
+import { IndustriesService,ValuationMethodsService,TaxRatesService } from './masters.service';
+import { Industry,ValuationMethod,TaxRate } from './schema/masters.schema';
 
+//Industries Controller
 @Controller('industries')
 export class IndustriesController {
   constructor(private industriesService: IndustriesService) {}
@@ -19,6 +19,7 @@ export class IndustriesController {
   }
 }
 
+//ValuationMethods Controller
 @Controller('valuationMethods')
 export class ValuationMethodsController {
   constructor(private methodService: ValuationMethodsService) {}
@@ -31,5 +32,21 @@ export class ValuationMethodsController {
   @Get()
   async findAll(): Promise<ValuationMethod[]> {
     return this.methodService.getValuationMethods();
+  }
+}
+
+//TaxRates Controller
+@Controller('taxRates')
+export class TaxRatesController {
+  constructor(private taxRateService: TaxRatesService) {}
+
+  @Post()
+  async create(@Body() taxRateDto: CreateTaxRateDto) {
+    return this.taxRateService.createTaxRate(taxRateDto);
+  }
+
+  @Get()
+  async findAll(): Promise<TaxRate[]> {
+    return this.taxRateService.getTaxRates();
   }
 }

@@ -33,3 +33,21 @@ export class ValuationMethod {
 }
 export type ValuationMethodDocument = ValuationMethod & Document;
 export const ValuationMethodSchema = SchemaFactory.createForClass(ValuationMethod);
+
+//Tax Rate Schema
+@Schema()
+export class TaxRate {
+ @Prop({ required: true })
+    name: string;
+
+  @Prop({ required:true })
+    rate:number;
+
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type TaxRateDocument = TaxRate & Document;
+export const TaxRateSchema = SchemaFactory.createForClass(TaxRate);
