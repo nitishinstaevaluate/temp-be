@@ -135,3 +135,22 @@ export class RiskFreeRate {
 }
 export type RiskFreeRateDocument = RiskFreeRate & Document;
 export const RiskFreeRateSchema = SchemaFactory.createForClass(RiskFreeRate);
+
+//Expected Market Return Schema
+@Schema()
+export class ExpMarketReturn {
+
+  @Prop({ required:true })
+    marketReturn:string;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type ExpMarketReturnDocument = ExpMarketReturn & Document;
+export const ExpMarketReturnSchema = SchemaFactory.createForClass(ExpMarketReturn);

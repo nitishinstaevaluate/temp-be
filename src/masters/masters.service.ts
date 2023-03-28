@@ -4,7 +4,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import {Industry, IndustryDocument, ValuationMethod, 
   ValuationMethodDocument,TaxRate,TaxRateDocument,
 DiscountRate,DiscountRateDocument,TerminalGrowthRate,
-TerminalGrowthRateDocument,COEMethod,COEMethodDocument,RiskFreeRate,RiskFreeRateDocument } from './schema/masters.schema';
+TerminalGrowthRateDocument,COEMethod,COEMethodDocument,
+RiskFreeRate,RiskFreeRateDocument,ExpMarketReturn,
+ExpMarketReturnDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -109,5 +111,20 @@ export class RiskFreeRatesService {
     }
       async getRiskFreeRates(): Promise<RiskFreeRate[]> {
         return this.riskFreeRateModel.find().exec();
+      }
+}
+
+//ExpMarketReturns Service
+@Injectable()
+export class ExpMarketReturnsService {
+    constructor(
+        @InjectModel('expMarketReturn') private readonly expMarketReturnModel: Model<ExpMarketReturnDocument>,
+      ) {}
+    
+      async createExpMarketReturn(expMarketReturn:object): Promise<ExpMarketReturn> {
+        return this.expMarketReturnModel.create(expMarketReturn);
+    }
+      async getExpMarketReturns(): Promise<ExpMarketReturn[]> {
+        return this.expMarketReturnModel.find().exec();
       }
 }

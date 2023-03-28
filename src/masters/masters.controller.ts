@@ -2,12 +2,16 @@ import { Controller, Get, Post, Body } from '@nestjs/common';
 
 import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTaxRateDto,CreateDiscountRateDto,
-  CreateTerminalGrowthRateDto,CreateCOEMethodDto,CreateRiskFreeRateDto } from './dto/masters.dto';
+  CreateTerminalGrowthRateDto,CreateCOEMethodDto,
+  CreateRiskFreeRateDto,CreateExpMarketReturnDto } from './dto/masters.dto';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
-   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,RiskFreeRatesService } from './masters.service';
+   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
+   RiskFreeRatesService,ExpMarketReturnsService } from './masters.service';
 
-import { Industry,ValuationMethod,TaxRate,DiscountRate,TerminalGrowthRate,COEMethod,RiskFreeRate } from './schema/masters.schema';
+import { Industry,ValuationMethod,TaxRate,DiscountRate,
+  TerminalGrowthRate,COEMethod,
+  RiskFreeRate,ExpMarketReturn } from './schema/masters.schema';
 
 //Industries Controller
 @Controller('industries')
@@ -119,5 +123,21 @@ export class RiskFreeRatesController {
   @Get()
   async findAll(): Promise<RiskFreeRate[]> {
     return this.riskFreeRateService.getRiskFreeRates();
+  }
+}
+
+//ExpMarketReturns Controller
+@Controller('expMarketReturns')
+export class ExpMarketReturnsController {
+  constructor(private expMarketReturnService: ExpMarketReturnsService) {}
+
+  @Post()
+  async create(@Body() expMarketReturnDto: CreateExpMarketReturnDto) {
+    return this.expMarketReturnService.createExpMarketReturn(expMarketReturnDto);
+  }
+
+  @Get()
+  async findAll(): Promise<ExpMarketReturn[]> {
+    return this.expMarketReturnService.getExpMarketReturns();
   }
 }

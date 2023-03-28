@@ -2,13 +2,16 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IndustriesController,ValuationMethodsController,
   TaxRatesController,DiscountRatesController,
-  TerminalGrowthRatesController,COEMethodsController,RiskFreeRatesController } from './masters.controller';
+  TerminalGrowthRatesController,COEMethodsController,
+  RiskFreeRatesController,ExpMarketReturnsController } from './masters.controller';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
-  DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,RiskFreeRatesService } from './masters.service';
+  DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
+  RiskFreeRatesService,ExpMarketReturnsService } from './masters.service';
 
 import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
-  DiscountRateSchema,TerminalGrowthRateSchema,COEMethodSchema,RiskFreeRateSchema } from './schema/masters.schema';
+  DiscountRateSchema,TerminalGrowthRateSchema,COEMethodSchema,
+  RiskFreeRateSchema,ExpMarketReturnSchema } from './schema/masters.schema';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -18,13 +21,15 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
       { name: 'discountRate',schema: DiscountRateSchema },
       { name: 'terminalGrowthRate',schema: TerminalGrowthRateSchema },
       { name: 'coeMethod',schema: COEMethodSchema },
-      { name: 'riskFreeRate',schema: RiskFreeRateSchema }
+      { name: 'riskFreeRate',schema: RiskFreeRateSchema },
+      { name: 'expMarketReturn',schema: ExpMarketReturnSchema }
     ])],
   controllers: [IndustriesController,ValuationMethodsController,
     TaxRatesController,DiscountRatesController,TerminalGrowthRatesController,
-    COEMethodsController,RiskFreeRatesController],
+    COEMethodsController,RiskFreeRatesController,ExpMarketReturnsController],
 
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
-    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,RiskFreeRatesService],
+    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
+    RiskFreeRatesService,ExpMarketReturnsService],
 })
 export class MastersModule {}

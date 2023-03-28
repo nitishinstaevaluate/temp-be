@@ -22,5 +22,8 @@ export class CreateIndustryDto {
   export class CreateRiskFreeRateDto {
     rate:string;
   }
+  export class CreateExpMarketReturnDto {
+    marketReturn:string;
+  }
 
   
