@@ -8,7 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { IndustriesModule } from './dropDowns/industry.module';
+import { IndustriesModule } from './masters/industry.module';
 import { ValuationController } from './valuationProcess/valuationProcess.controller';
 import { ExportController } from './exportResults/exportResults.controller';
 require('dotenv').config();
