@@ -51,3 +51,21 @@ export class TaxRate {
 }
 export type TaxRateDocument = TaxRate & Document;
 export const TaxRateSchema = SchemaFactory.createForClass(TaxRate);
+
+//Discount Rate Schema
+@Schema()
+export class DiscountRate {
+ @Prop({ required: true })
+    name: string;
+
+  @Prop({ required:true })
+    rate:number;
+
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type DiscountRateDocument = DiscountRate & Document;
+export const DiscountRateSchema = SchemaFactory.createForClass(DiscountRate);

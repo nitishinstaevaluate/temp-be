@@ -9,3 +9,7 @@ export class CreateIndustryDto {
     name: string;
     rate:string;
   }
+  export class CreateDiscountRateDto {
+    name: string;
+    rate:string;
+  }

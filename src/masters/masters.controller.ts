@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateIndustryDto,CreateValuationMethodDto,CreateTaxRateDto } from './dto/masters.dto';
-import { IndustriesService,ValuationMethodsService,TaxRatesService } from './masters.service';
-import { Industry,ValuationMethod,TaxRate } from './schema/masters.schema';
+import { CreateIndustryDto,CreateValuationMethodDto,CreateTaxRateDto,CreateDiscountRateDto } from './dto/masters.dto';
+import { IndustriesService,ValuationMethodsService,TaxRatesService, DiscountRatesService } from './masters.service';
+import { Industry,ValuationMethod,TaxRate,DiscountRate } from './schema/masters.schema';
 
 //Industries Controller
 @Controller('industries')
@@ -48,5 +48,21 @@ export class TaxRatesController {
   @Get()
   async findAll(): Promise<TaxRate[]> {
     return this.taxRateService.getTaxRates();
+  }
+}
+
+//DiscountRates Controller
+@Controller('discountRates')
+export class DiscountRatesController {
+  constructor(private discountRateService: DiscountRatesService) {}
+
+  @Post()
+  async create(@Body() discountRateDto: CreateDiscountRateDto) {
+    return this.discountRateService.createDiscountRate(discountRateDto);
+  }
+
+  @Get()
+  async findAll(): Promise<DiscountRate[]> {
+    return this.discountRateService.getDiscountRates();
   }
 }

@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import {Industry, IndustryDocument, ValuationMethod, ValuationMethodDocument,TaxRate,TaxRateDocument } from './schema/masters.schema';
+import {Industry, IndustryDocument, ValuationMethod, 
+  ValuationMethodDocument,TaxRate,TaxRateDocument,
+DiscountRate,DiscountRateDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -45,5 +47,21 @@ export class TaxRatesService {
     }
       async getTaxRates(): Promise<TaxRate[]> {
         return this.taxRateModel.find().exec();
+      }
+}
+
+
+//DiscountRates Service
+@Injectable()
+export class DiscountRatesService {
+    constructor(
+        @InjectModel('discountRate') private readonly discountRateModel: Model<DiscountRateDocument>,
+      ) {}
+    
+      async createDiscountRate(discountRate:object): Promise<DiscountRate> {
+        return this.discountRateModel.create(discountRate);
+    }
+      async getDiscountRates(): Promise<DiscountRate[]> {
+        return this.discountRateModel.find().exec();
       }
 }
