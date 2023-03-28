@@ -3,7 +3,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {Industry, IndustryDocument, ValuationMethod, 
   ValuationMethodDocument,TaxRate,TaxRateDocument,
-DiscountRate,DiscountRateDocument,TerminalGrowthRate,TerminalGrowthRateDocument } from './schema/masters.schema';
+DiscountRate,DiscountRateDocument,TerminalGrowthRate,
+TerminalGrowthRateDocument,COEMethod,COEMethodDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -78,5 +79,20 @@ export class TerminalGrowthRatesService {
     }
       async getGrowthRates(): Promise<TerminalGrowthRate[]> {
         return this.growthRateModel.find().exec();
+      }
+}
+
+//COEMethods Service
+@Injectable()
+export class COEMethodsService {
+    constructor(
+        @InjectModel('coeMethods') private readonly coeMethodModel: Model<COEMethodDocument>,
+      ) {}
+    
+      async createCOEMethod(coeMethod:object): Promise<COEMethod> {
+        return this.coeMethodModel.create(coeMethod);
+    }
+      async getCOEMethods(): Promise<COEMethod[]> {
+        return this.coeMethodModel.find().exec();
       }
 }

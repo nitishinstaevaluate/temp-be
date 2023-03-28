@@ -97,3 +97,22 @@ export class TerminalGrowthRate {
 }
 export type TerminalGrowthRateDocument = TerminalGrowthRate & Document;
 export const TerminalGrowthRateSchema = SchemaFactory.createForClass(TerminalGrowthRate);
+
+//Cost of Equity Method Schema
+@Schema()
+export class COEMethod {
+
+  @Prop({ required:true })
+    method:string;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type COEMethodDocument = COEMethod & Document;
+export const COEMethodSchema = SchemaFactory.createForClass(COEMethod);

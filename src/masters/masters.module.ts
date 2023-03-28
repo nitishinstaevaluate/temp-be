@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IndustriesController,ValuationMethodsController,
-  TaxRatesController,DiscountRatesController,TerminalGrowthRatesController } from './masters.controller';
+  TaxRatesController,DiscountRatesController,
+  TerminalGrowthRatesController,COEMethodsController } from './masters.controller';
+
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
-  DiscountRatesService,TerminalGrowthRatesService } from './masters.service';
-import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,DiscountRateSchema,TerminalGrowthRateSchema } from './schema/masters.schema';
+  DiscountRatesService,TerminalGrowthRatesService,COEMethodsService } from './masters.service';
+
+import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
+  DiscountRateSchema,TerminalGrowthRateSchema,COEMethodSchema } from './schema/masters.schema';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -12,11 +16,13 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,DiscountRateSchema,T
       { name: 'valuationMethod',schema: ValuationMethodSchema },
       { name: 'taxRate',schema: TaxRateSchema },
       { name: 'discountRate',schema: DiscountRateSchema },
-      { name: 'terminalGrowthRate',schema: TerminalGrowthRateSchema }
+      { name: 'terminalGrowthRate',schema: TerminalGrowthRateSchema },
+      { name: 'coeMethods',schema: COEMethodSchema }
     ])],
   controllers: [IndustriesController,ValuationMethodsController
-    ,TaxRatesController,DiscountRatesController,TerminalGrowthRatesController],
+    ,TaxRatesController,DiscountRatesController,TerminalGrowthRatesController,COEMethodsController],
+
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
-    DiscountRatesService,TerminalGrowthRatesService],
+    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService],
 })
 export class MastersModule {}

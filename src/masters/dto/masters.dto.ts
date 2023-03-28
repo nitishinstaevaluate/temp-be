@@ -16,3 +16,8 @@ export class CreateIndustryDto {
   export class CreateTerminalGrowthRateDto {
     rate:number;
   }
+  export class CreateCOEMethodDto {
+    method:string;
+  }
+
+  

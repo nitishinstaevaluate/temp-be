@@ -1,7 +1,13 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { CreateIndustryDto,CreateValuationMethodDto,CreateTaxRateDto,CreateDiscountRateDto,CreateTerminalGrowthRateDto } from './dto/masters.dto';
-import { IndustriesService,ValuationMethodsService,TaxRatesService, DiscountRatesService,TerminalGrowthRatesService } from './masters.service';
-import { Industry,ValuationMethod,TaxRate,DiscountRate,TerminalGrowthRate } from './schema/masters.schema';
+
+import { CreateIndustryDto,CreateValuationMethodDto,
+  CreateTaxRateDto,CreateDiscountRateDto,
+  CreateTerminalGrowthRateDto,CreateCOEMethodDto } from './dto/masters.dto';
+
+import { IndustriesService,ValuationMethodsService,TaxRatesService,
+   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService } from './masters.service';
+
+import { Industry,ValuationMethod,TaxRate,DiscountRate,TerminalGrowthRate,COEMethod } from './schema/masters.schema';
 
 //Industries Controller
 @Controller('industries')
@@ -80,5 +86,22 @@ export class TerminalGrowthRatesController {
   @Get()
   async findAll(): Promise<TerminalGrowthRate[]> {
     return this.growthRateService.getGrowthRates();
+  }
+}
+
+
+//COEMethods Controller
+@Controller('coeMethods')
+export class COEMethodsController {
+  constructor(private coeMethodService: COEMethodsService) {}
+
+  @Post()
+  async create(@Body() coeMethodDto: CreateCOEMethodDto) {
+    return this.coeMethodService.createCOEMethod(coeMethodDto);
+  }
+
+  @Get()
+  async findAll(): Promise<COEMethod[]> {
+    return this.coeMethodService.getCOEMethods();
   }
 }
