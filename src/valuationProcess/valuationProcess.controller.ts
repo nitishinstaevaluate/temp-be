@@ -20,18 +20,18 @@ const sheet2 = XLSX.utils.sheet_to_json(worksheet2);
 
 //get all input values which we needs in calculation from sheet1 and sheet2.
  console.log('Inputs',inputs);
-const {model,company}=inputs;
+const {model,company,userId}=inputs;
 
 // Performe calculation by specific method
 if(model==="FCFE"){
-  const valuationResult= FCFEMethod(inputs);
+  const valuationResult= await FCFEMethod(inputs);
 
   // Store the result in Database
   const data={
   "company":company,
   "model":model,
   "valuationData":valuationResult,
-  "userId":"dfsdfs"
+  "userId":userId
   };
   this.valuationsService.createValuation(data);
   
