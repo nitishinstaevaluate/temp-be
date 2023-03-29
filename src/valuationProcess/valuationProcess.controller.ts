@@ -1,11 +1,15 @@
-import { Controller,Post } from '@nestjs/common';
+import { Controller,Post,Request } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import {FCFEMethod } from './calculationMethods';
+import { ValuationsService } from './valuationProcess.service';
 
 @Controller('valuationProcess')
 export class ValuationController {
+
+  constructor(private valuationsService: ValuationsService) {}
+
   @Post()
-  processExcelFile(): any {
+  processExcelFile(@Request() req): any {
     
 const workbook = XLSX.readFile('./uploads/FCFE_Template.xlsx');
 const worksheet1 = workbook.Sheets['P&L'];
@@ -18,11 +22,18 @@ const sheet2 = XLSX.utils.sheet_to_json(worksheet2);
 const inputValues={"value1":23,"value2":34};
 
 // Performe calculation by specific method
-const result= FCFEMethod(inputValues);
+const valuationResult= FCFEMethod(inputValues);
 
 // Store the result in Database
-   
+const data={
+"company":"ABC",
+"modelId":"dfdsf",
+"valuationData":valuationResult,
+"userId":"dfsdfs"
+};
+this.valuationsService.createValuation(data);
+
 // Send Output Response.
-   return result;
+   return  valuationResult;
   }
 }
