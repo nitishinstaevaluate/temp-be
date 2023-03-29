@@ -13,6 +13,51 @@ import { Industry,ValuationMethod,TaxRate,DiscountRate,
   TerminalGrowthRate,COEMethod,
   RiskFreeRate,ExpMarketReturn } from './schema/masters.schema';
 
+  //Masters Controller for FrontEnd DropDowns Integration.
+@Controller('masters')
+export class MastersController {
+  constructor(
+    private industriesService: IndustriesService,
+    private methodService: ValuationMethodsService,
+    private taxRateService: TaxRatesService,
+    private discountRateService: DiscountRatesService,
+    private growthRateService: TerminalGrowthRatesService,
+    private coeMethodService: COEMethodsService,
+    private riskFreeRateService: RiskFreeRatesService,
+    private expMarketReturnService: ExpMarketReturnsService
+    ) {}
+ 
+  @Get(':fieldName')
+  async findAll(@Param('fieldName') fieldName: string): Promise<any[]> {
+
+    if(fieldName.toLowerCase()==="industries")
+    return this.industriesService.getIndustries();
+
+    else if(fieldName.toLowerCase()==="valuationmethods")
+    return this.methodService.getValuationMethods();
+
+    else if(fieldName.toLowerCase()==="taxrates")
+    return this.taxRateService.getTaxRates();
+
+    else if(fieldName.toLowerCase()==="discountrates")
+    return this.discountRateService.getDiscountRates();
+
+    else if(fieldName.toLowerCase()==="growthrates")
+    return this.growthRateService.getGrowthRates();
+
+    else if(fieldName.toLowerCase()==="coemethods")
+    return this.coeMethodService.getCOEMethods();
+
+    else if(fieldName.toLowerCase()==="riskfreerates")
+    return this.riskFreeRateService.getRiskFreeRates();
+
+    else if(fieldName.toLowerCase()==="expmarketreturns")
+    return this.expMarketReturnService.getExpMarketReturns();
+    else 
+    return [];
+  }
+}
+
 //Industries Controller
 @Controller('industries')
 export class IndustriesController {

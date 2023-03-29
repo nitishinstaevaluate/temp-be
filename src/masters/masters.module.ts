@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IndustriesController,ValuationMethodsController,
   TaxRatesController,DiscountRatesController,
   TerminalGrowthRatesController,COEMethodsController,
-  RiskFreeRatesController,ExpMarketReturnsController } from './masters.controller';
+  RiskFreeRatesController,ExpMarketReturnsController, MastersController } from './masters.controller';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
@@ -26,7 +26,7 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
     ])],
   controllers: [IndustriesController,ValuationMethodsController,
     TaxRatesController,DiscountRatesController,TerminalGrowthRatesController,
-    COEMethodsController,RiskFreeRatesController,ExpMarketReturnsController],
+    COEMethodsController,RiskFreeRatesController,ExpMarketReturnsController,MastersController],
 
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
     DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
