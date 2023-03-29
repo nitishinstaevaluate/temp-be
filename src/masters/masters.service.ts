@@ -43,6 +43,9 @@ export class ValuationMethodsService {
       async getValuationMethods(): Promise<ValuationMethod[]> {
         return this.methodModel.find().exec();
       }
+      async getValuationMethodById(id: string): Promise<ValuationMethod> {
+        return this.methodModel.findById(id);
+      }
       async updateValuationMethod(id: string,method:ValuationMethod): Promise<ValuationMethod> {
         return this.methodModel.findByIdAndUpdate(id,method, { new: true }).exec();
       }

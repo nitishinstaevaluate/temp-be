@@ -31,5 +31,6 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
     DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
     RiskFreeRatesService,ExpMarketReturnsService],
+    exports:[ValuationMethodsService]
 })
 export class MastersModule {}

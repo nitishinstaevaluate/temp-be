@@ -7,12 +7,12 @@ import { Valuation,ValuationDocument } from './schema/valuation.schema';
 @Injectable()
 export class ValuationsService {
     constructor(
-        @InjectModel('valuation') private readonly valuationModel: Model<ValuationDocument>,
-      ) {}
+        @InjectModel('valuation') private readonly valuationModel: Model<ValuationDocument>) {}
     
       async createValuation(valuation:object): Promise<Valuation> {
         return this.valuationModel.create(valuation);
     }
+
       async getValuations(): Promise<Valuation[]> {
         return this.valuationModel.find().exec();
       }

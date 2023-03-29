@@ -17,7 +17,7 @@ export class Valuation {
     company:string;
 
     @Prop({required:true })
-    modelId: string;
+    model: string;
 
     @Prop({required:true })
     valuationData:ValuationData;
