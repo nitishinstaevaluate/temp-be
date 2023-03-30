@@ -9,8 +9,9 @@ export class ValuationsService {
     constructor(
         @InjectModel('valuation') private readonly valuationModel: Model<ValuationDocument>) {}
     
-      async createValuation(valuation:object): Promise<Valuation> {
-        return this.valuationModel.create(valuation);
+      async createValuation(valuation:object): Promise<string> {
+        const createdFoo = await this.valuationModel.create(valuation);
+        return createdFoo._id;
     }
 
       async getValuations(): Promise<Valuation[]> {

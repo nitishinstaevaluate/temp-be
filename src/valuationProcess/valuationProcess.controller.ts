@@ -12,7 +12,6 @@ export class ValuationController {
  async processExcelFile (@Body() inputs): Promise<any> {
     
   //get all input values which we needs in calculation from sheet1 and sheet2.
- console.log('Inputs',inputs);
  const {model,company,userId,excelSheetId}=inputs;
 
 const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
@@ -33,10 +32,10 @@ if(model==="FCFE"){
   "valuationData":valuationResult,
   "userId":userId
   };
-  this.valuationsService.createValuation(data);
+ const reportId= await this.valuationsService.createValuation(data);
   
-  // Send Output Response.
-     return  valuationResult;
+  // Send Valuation Report Id in  Response.
+     return  {"reportId":reportId};
 }else{
   return "Invalid Model: Input a valid model name.";
 }

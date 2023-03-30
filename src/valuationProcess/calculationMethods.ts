@@ -24,7 +24,7 @@ export function FCFEMethod(inputs:object) {
     "noOfShares":898789,
     "valuePerShare":4534.34
       };
-  return {"message":"Calculated valuation using FCFE",result:result};
+  return result;
 }
 
 export function OtherMethod() {

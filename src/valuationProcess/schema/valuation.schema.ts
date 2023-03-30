@@ -2,13 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 //ValuationData (output Result) Schema
-class ValuationData {
-  @Prop()
-  message: string;
+class ValuationData {}
 
-  @Prop()
-  result:string;
-}
 //Valuations Table Schema
 @Schema()
 export class Valuation {
