@@ -9,15 +9,16 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { MastersModule } from './masters/masters.module';
-import { ExportController } from './exportResults/exportResults.controller';
+import { ExportResultsModule } from './exportResults/exportResults.module';
 import { ValuationProcessModule } from './valuationProcess/valuationProcess.module';
 require('dotenv').config();
 
 @Module({
-  imports: [ImportModule, UsersModule,MastersModule,ValuationProcessModule,
+  imports: [ImportModule, UsersModule,MastersModule,
+    ValuationProcessModule,ExportResultsModule,
     AuthenticationModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),],
-  controllers: [AppController,ExportController], //ImportController
+  controllers: [AppController], //ImportController
   providers: [AppService, ], //ImportService
 })
 export class AppModule {}

@@ -8,5 +8,6 @@ import { ValuationSchema } from './schema/valuation.schema';
     imports: [MongooseModule.forFeature([{ name: 'valuation',schema: ValuationSchema }])],
     controllers: [ValuationController], //ImportController
     providers: [ValuationsService], //ImportService
+    exports:[ValuationsService]
   })
   export class ValuationProcessModule {}

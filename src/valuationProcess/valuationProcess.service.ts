@@ -14,6 +14,9 @@ export class ValuationsService {
         return createdFoo._id;
     }
 
+    async getValuationById(id:string): Promise<Valuation> {
+      return this.valuationModel.findById(id);
+    }
       async getValuations(): Promise<Valuation[]> {
         return this.valuationModel.find().exec();
       }

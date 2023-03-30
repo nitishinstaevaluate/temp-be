@@ -1,6 +1,6 @@
 import { Body, Controller,Post} from '@nestjs/common';
 import * as XLSX from 'xlsx';
-import {FCFEMethod } from './calculationMethods';
+import {FCFEMethod } from './calculation.method';
 import { ValuationsService } from './valuationProcess.service';
 
 @Controller('valuationProcess')
