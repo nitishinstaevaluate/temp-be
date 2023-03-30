@@ -1,32 +1,21 @@
-export function FCFEMethod(inputs:object) {
-  console.log('Input Values',inputs);
-  //Perform calculations here.
 
-  const result={
-    "particulars":2023,
-    "pat":324323,
-    "depAndAmortisation":797987,
-    "onCashItems":324234,
-    "nca":88797,
-    "defferedTaxAssets":87979,
-    "netCashFlow":7779,
-    "fixedAssets":877879, 
-    "fcff":87898797,
-    "discountingPeriod":7667,
-    "discountingFactor":9887,
-    "presentFCFF":7898,
-    "sumOfCashFlows":9789798,
-    "debtOnDate":87979,
-    "ccEquivalents":787987,
-    "surplusAssets":89890,
-    "otherAdj":78979,
-    "equityValue": 667676,
-    "noOfShares":898789,
-    "valuePerShare":4534.34
-      };
-  return result;
-}
+export function OtherNonCashItemsMethod(worksheet1:any,sheet1_PLObj:any){
+    //formula:  =+(-'P&L'!B29+'P&L'!B31+'P&L'!B33)
 
-export function OtherMethod() {
-  return "This is Other Method which we will add in Future.";
+    const otherIncomeCell = worksheet1[`${"B"+sheet1_PLObj.otherIncomeRow}`];
+    let otherIncome=null;
+    if(otherIncomeCell.t==='n')
+      otherIncome=otherIncomeCell.v;
+
+    const exceptionalItemsCell = worksheet1[`${"B"+sheet1_PLObj.exceptionalItemsRow}`];
+    let exceptionalItems=null;
+    if(exceptionalItemsCell.t==='n')
+     exceptionalItems=exceptionalItemsCell.v;
+
+    const extraordinaryItemsCell = worksheet1[`${"B"+sheet1_PLObj.extraordinaryItemsRow}`];
+    let extraordinaryItems=null;
+    if(extraordinaryItemsCell.t==='n')
+    extraordinaryItems=extraordinaryItemsCell.v;
+
+return otherIncome+exceptionalItems+extraordinaryItems;
 }

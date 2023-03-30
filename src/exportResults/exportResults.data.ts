@@ -2,7 +2,7 @@ export const headingObj={
     particulars: 'Particulars',
     pat: 'PAT',
     depAndAmortisation: 'Depn and Amortisation',
-    onCashItems: 'Oher Non Cash items',
+    onCashItems: 'Other Non Cash items',
     nca: 'Change in NCA',
     defferedTaxAssets: 'Add/Less: Deferred Tax Assets(Net)',
     netCashFlow: 'Net Cash Flow',
