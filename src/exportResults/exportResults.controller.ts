@@ -10,10 +10,19 @@ export class ExportResultsController {
   @Get((':reportId'))
   async generatePdf(@Param('reportId') reportId: string,@Res() res: Response) {
     const valuation=await this.valuationsService.getValuationById(reportId);
-    const valuationData = [];
+    const valuationData =[];
+    const Pats=[];
+    Pats.push(headingObj['pat']);
+  // (valuation.valuationData as any[]).map((valuation)=>{
+  //     Object.entries(valuation).forEach(([key, value]) => {
+  //       if(key==="pat")
+  //       Pats.push(value)
+  //     });
+  //   })
     Object.entries(valuation.valuationData[0]).forEach(([key, value]) => {
-      valuationData.push([headingObj[key], value,value,value,value,value,value ]);
+      valuationData.push([headingObj[key], value ]);
     });
+    // valuationData.push(Pats);
     if(valuation){
       generatePdf(valuationData,res);
     }

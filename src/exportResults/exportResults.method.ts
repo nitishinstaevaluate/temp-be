@@ -13,7 +13,7 @@ export function generatePdf(valuationData,res) {
         {
           table: {
             headerRows: 1,
-            widths: ['auto','*','*','*','*','*','*'],
+            widths: ['auto','*'],
             body: valuationData||[]
           }
         }

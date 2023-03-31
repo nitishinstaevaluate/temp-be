@@ -28,9 +28,22 @@ export class MastersController {
     ) {}
  
   @Get(':fieldName')
-  async findAll(@Param('fieldName') fieldName: string): Promise<any[]> {
+  async findByFieldName(@Param('fieldName') fieldName: string): Promise<any> {
+     if(fieldName.toLowerCase()==="all")
+      {
+       const dropDowns={};
+       dropDowns["industries"]= await this.industriesService.getIndustries();
+       dropDowns["valuationmethods"]= await this.methodService.getValuationMethods();
+       dropDowns["taxrates"]= await this.taxRateService.getTaxRates();
+       dropDowns["discountrates"]= await this.discountRateService.getDiscountRates();
+       dropDowns["growthrates"]= await this.growthRateService.getGrowthRates();
+       dropDowns["coemethods"]= await this.coeMethodService.getCOEMethods();
+       dropDowns["riskfreerates"]= await this.riskFreeRateService.getRiskFreeRates();
+       dropDowns["expmarketreturns"]= await this.expMarketReturnService.getExpMarketReturns();
 
-    if(fieldName.toLowerCase()==="industries")
+       return dropDowns;
+     }
+    else if(fieldName.toLowerCase()==="industries")
     return this.industriesService.getIndustries();
 
     else if(fieldName.toLowerCase()==="valuationmethods")
@@ -56,6 +69,8 @@ export class MastersController {
     else 
     return [];
   }
+
+ 
 }
 
 //Industries Controller
