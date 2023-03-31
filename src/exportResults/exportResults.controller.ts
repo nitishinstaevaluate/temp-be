@@ -11,8 +11,8 @@ export class ExportResultsController {
   async generatePdf(@Param('reportId') reportId: string,@Res() res: Response) {
     const valuation=await this.valuationsService.getValuationById(reportId);
     const valuationData = [];
-    Object.entries(valuation.valuationData).forEach(([key, value]) => {
-      valuationData.push([headingObj[key], value ]);
+    Object.entries(valuation.valuationData[0]).forEach(([key, value]) => {
+      valuationData.push([headingObj[key], value,value,value,value,value,value ]);
     });
     if(valuation){
       generatePdf(valuationData,res);

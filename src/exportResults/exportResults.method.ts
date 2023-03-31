@@ -4,6 +4,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export function generatePdf(valuationData,res) {
     const docDefinition = {
+      tableLayout: 'auto',
+      pageOrientation: 'landscape',
       content: [
         { text: 'Valuation', style: 'header' },
         { text: 'Valuation of a firm based on Profit loss and balance sheet statements.', style: 'subheader' },
@@ -11,7 +13,7 @@ export function generatePdf(valuationData,res) {
         {
           table: {
             headerRows: 1,
-            widths: ['auto', '*'],
+            widths: ['auto','*','*','*','*','*','*'],
             body: valuationData||[]
           }
         }

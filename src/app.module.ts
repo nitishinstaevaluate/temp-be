@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ImportController } from './import/import.controller';
@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { MastersModule } from './masters/masters.module';
 import { ExportResultsModule } from './exportResults/exportResults.module';
 import { ValuationProcessModule } from './valuationProcess/valuationProcess.module';
+import { CorsMiddleware } from './middleware/CorsMiddleware';
 require('dotenv').config();
 
 @Module({
@@ -21,4 +22,10 @@ require('dotenv').config();
   controllers: [AppController], //ImportController
   providers: [AppService, ], //ImportService
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(CorsMiddleware)
+      .forRoutes('*');
+  }
+}
