@@ -1,21 +1,22 @@
 
-export function OtherNonCashItemsMethod(worksheet1:any,sheet1_PLObj:any){
+export function OtherNonCashItemsMethod(i:number,worksheet1:any,sheet1_PLObj:any){
     //formula:  =+(-'P&L'!B29+'P&L'!B31+'P&L'!B33)
+    const columnsList=['B','C','D','E','F','G','H','I','J'];
+    const otherIncomeCell = worksheet1[`${columnsList[i]+sheet1_PLObj.otherIncomeRow}`];
 
-    const otherIncomeCell = worksheet1[`${"B"+sheet1_PLObj.otherIncomeRow}`];
     let otherIncome=null;
-    if(otherIncomeCell.t==='n')
+    if(otherIncomeCell&&otherIncomeCell.t==='n')
       otherIncome=otherIncomeCell.v;
 
-    const exceptionalItemsCell = worksheet1[`${"B"+sheet1_PLObj.exceptionalItemsRow}`];
+    const exceptionalItemsCell = worksheet1[`${columnsList[i]+sheet1_PLObj.exceptionalItemsRow}`];
     let exceptionalItems=null;
-    if(exceptionalItemsCell.t==='n')
+    if(exceptionalItemsCell&&exceptionalItemsCell.t==='n')
      exceptionalItems=exceptionalItemsCell.v;
 
-    const extraordinaryItemsCell = worksheet1[`${"B"+sheet1_PLObj.extraordinaryItemsRow}`];
+    const extraordinaryItemsCell = worksheet1[`${columnsList[i]+sheet1_PLObj.extraordinaryItemsRow}`];
     let extraordinaryItems=null;
-    if(extraordinaryItemsCell.t==='n')
+    if(extraordinaryItemsCell&&extraordinaryItemsCell.t==='n')
     extraordinaryItems=extraordinaryItemsCell.v;
 
-return otherIncome+exceptionalItems+extraordinaryItems;
+return (otherIncome+exceptionalItems+extraordinaryItems).toFixed(2);
 }

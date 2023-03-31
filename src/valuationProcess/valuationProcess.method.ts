@@ -3,7 +3,7 @@ import { sheet1_PLObj } from './excelSheetConfig';
 import { OtherNonCashItemsMethod } from './calculation.method';
 
 export async function FCFEMethod(inputs:any,worksheet1:any) {
-  const firstYearCell = worksheet1["B1"];
+const firstYearCell = worksheet1["B1"];
 const firstYear=firstYearCell.v.split(",")[1];
 const years=[];
 years.push(firstYear.trim().split('-')[1]);
@@ -13,21 +13,24 @@ for(let i=0;i<8;i++){
   if(yearCell)
     years.push(yearCell.v.split('-')[1]);
 }
-console.log('Testing',years)
 const {projectionYear}=inputs;
-//Get PAT value
-const B42Cell = worksheet1[`${"B"+sheet1_PLObj.patRow}`];
-const pat=B42Cell.v;
+const finalResult=[];
+const columnsList=['B','C','D','E','F','G','H','I','J'];
+years.map((year,i)=>{
+  //Get PAT value
+const B42Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.patRow}`];
+let pat=null;
+if(B42Cell)
+ pat=B42Cell.v.toFixed(2);
 
 //Get Depn and Amortisation value
-const B26Cell = worksheet1[`${"B"+sheet1_PLObj.depAndAmortisationRow}`];
-const depAndAmortisation=B26Cell.v;
+const B26Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.depAndAmortisationRow}`];
+let depAndAmortisation=null;
+if(B26Cell)
+depAndAmortisation=B26Cell.v.toFixed(2);
 
 //Get Oher Non Cash items Value
-const otherNonCashItems=OtherNonCashItemsMethod(worksheet1,sheet1_PLObj);
-const finalResult=[];
-
-years.map((year)=>{
+const otherNonCashItems=OtherNonCashItemsMethod(i,worksheet1,sheet1_PLObj);
   const result={
     "particulars":projectionYear,
     "pat":pat,
@@ -50,7 +53,6 @@ years.map((year)=>{
     "noOfShares":898789,
     "valuePerShare":4534.34
       };
-  console.log(year)
   result.particulars=year;
 finalResult.push(result);
 })
