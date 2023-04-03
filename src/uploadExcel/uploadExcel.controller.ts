@@ -18,10 +18,10 @@ export class UploadController {
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() file) {
-    // Handle the uploaded file here
-    console.log(file)
-    return {};
+    return {excelSheetId:file.filename};
   }
+
+  //For deleting the uploaded excel files based on uploaded Date.
 
   @Get('dates')
   getUploadDates() {

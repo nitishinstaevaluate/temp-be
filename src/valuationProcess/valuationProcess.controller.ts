@@ -32,8 +32,8 @@ if(model==="FCFE"){
  const reportId= await this.valuationsService.createValuation(data);
   
   // Send Valuation Report Id in  Response.
-    //  return  {"reportId":reportId};
-    return valuationResult;
+     return  {"reportId":reportId};
+    // return valuationResult;
 }else{
   return "Invalid Model: Input a valid model name.";
 }
