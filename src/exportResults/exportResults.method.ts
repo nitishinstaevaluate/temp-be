@@ -38,15 +38,11 @@ export function generatePdf(valuationInputData:any,res:any) {
     };
 
     const pdfDoc = pdfMake.createPdf(docDefinition);
-    // pdfDoc.getBuffer((buffer) => {
-    //   res.setHeader('Content-Type', 'application/pdf');
-    //   res.setHeader('Content-Disposition', 'attachment; filename=MyPdfDocument.pdf');
-    //   res.setHeader('Content-Length', buffer.length);
-    //   res.send(buffer);
-    // });
-    pdfDoc.getBuffer(buffer => {
-      res.type('application/pdf');
-      res.end(buffer, 'binary');
+    pdfDoc.getBuffer((buffer) => {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`);
+      res.setHeader('Content-Length', buffer.length);
+      res.end(buffer);
     });
   }
 

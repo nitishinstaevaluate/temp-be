@@ -17,7 +17,7 @@ const {projectionYear}=inputs;
 const finalResult=[];
 const columnsList=['B','C','D','E','F','G','H','I','J'];
 years.map((year,i)=>{
-  //Get PAT value
+//Get PAT value
 const B42Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.patRow}`];
 let pat=null;
 if(B42Cell)
