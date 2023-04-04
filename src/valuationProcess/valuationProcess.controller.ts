@@ -15,12 +15,11 @@ export class ValuationController {
 const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
 const worksheet1 = workbook.Sheets['P&L'];
 
-// const worksheet2 = workbook.Sheets['BS'];
-// const sheet2 = XLSX.utils.sheet_to_json(worksheet2);
+const worksheet2 = workbook.Sheets['BS'];
 
 // Performe calculation by specific method
 if(model==="FCFE"){
-  const valuationResult= await FCFEMethod(inputs,worksheet1);
+  const valuationResult= await FCFEMethod(inputs,worksheet1,worksheet2);
 
   // Store the result in Database
   const data={

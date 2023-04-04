@@ -1,11 +1,12 @@
 
 import { sheet1_PLObj } from './excelSheetConfig';
-import { OtherNonCashItemsMethod } from './calculation.method';
+import { OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets } from './calculation.method';
 
-export async function FCFEMethod(inputs:any,worksheet1:any) {
+export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
 const firstYearCell = worksheet1["B1"];
 const firstYear=firstYearCell.v.split(",")[1];
 const years=[];
+
 years.push(firstYear.trim().split('-')[1]);
 const columns=['C','D','E','F','G','H','I','J'];
 for(let i=0;i<8;i++){
@@ -16,13 +17,15 @@ for(let i=0;i<8;i++){
 const {projectionYear}=inputs;
 const finalResult=[];
 const columnsList=['B','C','D','E','F','G','H','I','J'];
-years.map((year,i)=>{
+let changeInNCA=null;
+years.map(async (year,i)=>{
 //Get PAT value
 const B42Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.patRow}`];
+if(!B42Cell)
+return;
 let pat=null;
-if(B42Cell)
+if(B42Cell && B42Cell.t==='n')
  pat=B42Cell.v.toFixed(2);
-
 //Get Depn and Amortisation value
 const B26Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.depAndAmortisationRow}`];
 let depAndAmortisation=null;
@@ -30,15 +33,22 @@ if(B26Cell)
 depAndAmortisation=B26Cell.v.toFixed(2);
 
 //Get Oher Non Cash items Value
-const otherNonCashItems=OtherNonCashItemsMethod(i,worksheet1,sheet1_PLObj);
+const otherNonCashItems=OtherNonCashItemsMethod(i,worksheet1);
+const changeInNCAValue=  await ChangeInNCA(i,worksheet2);
+changeInNCA=changeInNCA-changeInNCAValue;
+const deferredTaxAssets=  await DeferredTaxAssets(i,worksheet2);
+
+// Net Cash Flow
+const netCashFlow=parseInt(pat)||0+parseInt(depAndAmortisation)||0+parseInt(otherNonCashItems)||0+parseInt(changeInNCA)||0+deferredTaxAssets||0;
+
   const result={
     "particulars":projectionYear,
     "pat":pat,
     "depAndAmortisation":depAndAmortisation,
     "onCashItems":otherNonCashItems,
-    "nca":88797,
-    "defferedTaxAssets":87979,
-    "netCashFlow":7779,
+    "nca":changeInNCA.toFixed(2),
+    "defferedTaxAssets":deferredTaxAssets,
+    "netCashFlow":netCashFlow,
     "fixedAssets":877879, 
     "fcff":87898797,
     "discountingPeriod":7667,

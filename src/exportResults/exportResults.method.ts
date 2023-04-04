@@ -38,12 +38,17 @@ export function generatePdf(valuationInputData:any,res:any) {
     };
 
     const pdfDoc = pdfMake.createPdf(docDefinition);
+    // pdfDoc.getBuffer((buffer) => {
+    //   res.setHeader('Content-Type', 'application/pdf');
+    //   res.setHeader('Content-Disposition', `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`);
+    //   res.setHeader('Content-Length', buffer.length);
+    //   res.end(buffer);
+    // });
     pdfDoc.getBuffer((buffer) => {
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`);
-      res.setHeader('Content-Length', buffer.length);
+      res.type('application/pdf');
       res.end(buffer);
     });
+    
   }
 
 
@@ -79,6 +84,8 @@ export function getOrganizedData(valuationInputData:any[]){
   //Organized Data Process
   valuationInputData.map((valuation)=>{
     Object.entries(valuation).forEach(([key, value]) => {
+      if(value===null)
+      value="";
       if(key==="particulars")
       particulars.push(value)
       else if(key==="pat")
@@ -121,5 +128,5 @@ export function getOrganizedData(valuationInputData:any[]){
       valuePerShare.push(value)
     });
   })
-  return [particulars,pat,depAndAmortisation,onCashItems,nca,defferedTaxAssets,fixedAssets,fcff,discountingPeriod,discountingFactor,presentFCFF,sumOfCashFlows,debtOnDate,ccEquivalents,surplusAssets,otherAdj,equityValue,noOfShares,valuePerShare];
+  return [particulars,pat,depAndAmortisation,onCashItems,nca,defferedTaxAssets,netCashFlow,fixedAssets,fcff,discountingPeriod,discountingFactor,presentFCFF,sumOfCashFlows,debtOnDate,ccEquivalents,surplusAssets,otherAdj,equityValue,noOfShares,valuePerShare];
 }
