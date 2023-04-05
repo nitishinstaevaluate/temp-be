@@ -11,13 +11,24 @@ export async function getCellValue(worksheet:any,address:string){
 
   return value;
 }
+export async function GetPAT(i:number,worksheet1:any){
+  //formula: =+'P&L'!B42
+  const pat= await getCellValue(worksheet1,`${columnsList[i]+sheet1_PLObj.patRow}`);
+  return pat;
+}
+
+export async function DepAndAmortisation(i:number,worksheet1:any){
+  //formula: =+'P&L'!B26
+  const depAndAmortisation= await getCellValue(worksheet1,`${columnsList[i]+sheet1_PLObj.depAndAmortisationRow}`);
+  return depAndAmortisation;
+}
 export async function OtherNonCashItemsMethod(i:number,worksheet1:any){
     //formula:  =+(-'P&L'!B29+'P&L'!B31+'P&L'!B33)
     const otherIncome= await getCellValue(worksheet1,`${columnsList[i]+sheet1_PLObj.otherIncomeRow}`);
     const exceptionalItems= await getCellValue(worksheet1,`${columnsList[i]+sheet1_PLObj.exceptionalItemsRow}`);
     const extraordinaryItems=await getCellValue(worksheet1,`${columnsList[i]+sheet1_PLObj.extraordinaryItemsRow}`);
 
-return (otherIncome+exceptionalItems+extraordinaryItems).toFixed(2);
+return otherIncome+exceptionalItems+extraordinaryItems;
 }
 
 export async function ChangeInNCA(i:number,worksheet2:any){
@@ -40,6 +51,7 @@ export async function ChangeInNCA(i:number,worksheet2:any){
 
 const sum1=tradeReceivables+unbilledRevenues+inventories+advances+otherCurrentAssets;
 const sum2=tradePayables+employeePayables+shortTermBorrowings+lcPayablesRow+otherCurrentLiabilities+shortTermProvisions+interCo;
+console.log('Testing'+i,sum1+" - "+sum2+" = "+(sum1-sum2));
 return sum1-sum2;
 }
 
