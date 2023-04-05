@@ -20,7 +20,9 @@ const finalResult=[];
 const columnsList=['B','C','D','E','F','G','H','I','J'];
 let changeInNCA=null;
 let deferredTaxAssets=null;
+console.log('Testing',projectionYear,years)
 years.map(async (year,i)=>{
+  console.log('Testing2: ',year)
 //Get PAT value
 const B42Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.patRow}`];
 if(!B42Cell)
@@ -58,7 +60,7 @@ const otherAdj=100000;
 const equityValue=sumOfCashFlows-debtAsOnDate+cashEquivalents+surplusAssets+otherAdj;
 const valuePerShare=equityValue/outstandingShares;
   const result={
-    "particulars":projectionYear,
+    "particulars":year,
     "pat":pat,
     "depAndAmortisation":depAndAmortisation,
     "onCashItems":otherNonCashItems,
@@ -79,7 +81,6 @@ const valuePerShare=equityValue/outstandingShares;
     "noOfShares":outstandingShares,
     "valuePerShare":valuePerShare.toFixed(2)
       };
-  result.particulars=year;
 finalResult.push(result);
 })
   
