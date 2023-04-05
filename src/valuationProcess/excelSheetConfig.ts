@@ -8,7 +8,9 @@ export const sheet1_PLObj={
 }
 
 export const sheet2_BSObj={
+    sumOfCashFlows:"15",
     deferredTaxLiabilityRow:"25",
+    debtAsOnDateRow:"27",
     tradePayablesRow:"34",
     employeePayablesRow:"35",
     shortTermBorrowingsRow:"36",
@@ -16,6 +18,7 @@ export const sheet2_BSObj={
     otherCurrentLiabilitiesRow:"38",
     shortTermProvisionsRow:"39",
     interCoRow:"40",
+    fixedAssetsRow:"46",
     deferredTaxAssetsRow:"59",
     tradeReceivablesRow:"64",
     unbilledRevenuesRow:"65",

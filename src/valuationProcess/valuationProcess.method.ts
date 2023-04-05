@@ -1,6 +1,6 @@
 
 import { sheet1_PLObj } from './excelSheetConfig';
-import { OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets } from './calculation.method';
+import { OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,ChangeInFixedAssets,GetDebtAsOnDate } from './calculation.method';
 
 export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
 const firstYearCell = worksheet1["B1"];
@@ -18,6 +18,7 @@ const {projectionYear}=inputs;
 const finalResult=[];
 const columnsList=['B','C','D','E','F','G','H','I','J'];
 let changeInNCA=null;
+let deferredTaxAssets=null;
 years.map(async (year,i)=>{
 //Get PAT value
 const B42Cell = worksheet1[`${columnsList[i]+sheet1_PLObj.patRow}`];
@@ -33,14 +34,21 @@ if(B26Cell)
 depAndAmortisation=B26Cell.v.toFixed(2);
 
 //Get Oher Non Cash items Value
-const otherNonCashItems=OtherNonCashItemsMethod(i,worksheet1);
+const otherNonCashItems= await OtherNonCashItemsMethod(i,worksheet1);
 const changeInNCAValue=  await ChangeInNCA(i,worksheet2);
 changeInNCA=changeInNCA-changeInNCAValue;
-const deferredTaxAssets=  await DeferredTaxAssets(i,worksheet2);
-
+const deferredTaxAssetsValue=  await DeferredTaxAssets(i,worksheet2);
+deferredTaxAssets=deferredTaxAssets-deferredTaxAssetsValue;
 // Net Cash Flow
-const netCashFlow=parseInt(pat)||0+parseInt(depAndAmortisation)||0+parseInt(otherNonCashItems)||0+parseInt(changeInNCA)||0+deferredTaxAssets||0;
+const netCashFlow=parseInt(pat)||0+parseInt(depAndAmortisation)||0+parseInt(otherNonCashItems)||0+parseInt(changeInNCA)||0+parseInt(deferredTaxAssets)||0;
+const changeInFixedAssets=  await ChangeInFixedAssets(i,worksheet2);
+const fcff=netCashFlow+changeInFixedAssets;
 
+//Industry Calculation we needs to create new service for it.
+const discountingFactor=2;
+
+const presentFCFF=discountingFactor*fcff;
+const debtAsOnDate=  await GetDebtAsOnDate(i,worksheet2);
   const result={
     "particulars":projectionYear,
     "pat":pat,
@@ -49,13 +57,13 @@ const netCashFlow=parseInt(pat)||0+parseInt(depAndAmortisation)||0+parseInt(othe
     "nca":changeInNCA.toFixed(2),
     "defferedTaxAssets":deferredTaxAssets,
     "netCashFlow":netCashFlow,
-    "fixedAssets":877879, 
-    "fcff":87898797,
-    "discountingPeriod":7667,
-    "discountingFactor":9887,
-    "presentFCFF":7898,
+    "fixedAssets":changeInFixedAssets, 
+    "fcff":fcff,
+    "discountingPeriod":1,
+    "discountingFactor":discountingFactor,
+    "presentFCFF":presentFCFF,
     "sumOfCashFlows":9789798,
-    "debtOnDate":87979,
+    "debtOnDate":debtAsOnDate,
     "ccEquivalents":787987,
     "surplusAssets":89890,
     "otherAdj":78979,
