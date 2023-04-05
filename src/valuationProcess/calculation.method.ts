@@ -51,7 +51,7 @@ export async function ChangeInNCA(i:number,worksheet2:any){
 
 const sum1=tradeReceivables+unbilledRevenues+inventories+advances+otherCurrentAssets;
 const sum2=tradePayables+employeePayables+shortTermBorrowings+lcPayablesRow+otherCurrentLiabilities+shortTermProvisions+interCo;
-console.log('Testing'+i,sum1+" - "+sum2+" = "+(sum1-sum2));
+
 return sum1-sum2;
 }
 

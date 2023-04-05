@@ -19,8 +19,8 @@ for(let i=0;i<8;i++){
 }
 const {projectionYear,outstandingShares}=inputs;
 const finalResult=[];
-
 years.map(async (year,i)=>{
+  if(parseInt(year)>=projectionYear){
   let changeInNCA=null;
   let deferredTaxAssets=null;
   //Get PAT value
@@ -36,7 +36,7 @@ if(depAndAmortisation!==null)
 const otherNonCashItems= await OtherNonCashItemsMethod(i,worksheet1);
 const changeInNCAValue=  await ChangeInNCA(i,worksheet2);
 changeInNCA=changeInNCA-changeInNCAValue;
-console.log('Testing Result:'+i,changeInNCA.toFixed(2))
+
 const deferredTaxAssetsValue=  await DeferredTaxAssets(i,worksheet2);
 deferredTaxAssets=deferredTaxAssets-deferredTaxAssetsValue;
 // Net Cash Flow
@@ -79,6 +79,7 @@ const valuePerShare=equityValue/outstandingShares;
     "valuePerShare":valuePerShare.toFixed(2)
       };
 finalResult.push(result);
+    }
 })
   
   return finalResult;

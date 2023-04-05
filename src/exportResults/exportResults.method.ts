@@ -15,7 +15,6 @@ export function generatePdf(valuationInputData:any,res:any) {
         {
           table: {
             headerRows: 1,
-            widths: ['auto','*','*','*','*','*','*'],
             body: valuationData||[]
           }
         }
