@@ -1,6 +1,7 @@
 import { sheet1_PLObj,sheet2_BSObj } from './excelSheetConfig';
 const columnsList=['B','C','D','E','F','G','H','I','J'];
 
+//worksheet1 is P&L sheet and worksheet2 is BS sheet.
 //Common Method for geting Cell Value
 export async function getCellValue(worksheet:any,address:string){
   const Cell = worksheet[address];
@@ -60,8 +61,11 @@ export async function GetDebtAsOnDate(i:number,worksheet2:any){
   return debtAsOnDate;
 }
 
-export async function SumOfCashFlows(i:number,worksheet2:any){
-  const debtAsOnDate= await getCellValue(worksheet2,`${columnsList[i]+sheet2_BSObj.debtAsOnDateRow}`);
-  return debtAsOnDate;
+export async function CashEquivalents(i:number,worksheet2:any){
+  //formula: =+BS!B62+BS!B63
+  const cashEquivalents=await getCellValue(worksheet2,`${columnsList[i]+sheet2_BSObj.cashEquivalentsRow}`);
+  const bankBalances=await getCellValue(worksheet2,`${columnsList[i]+sheet2_BSObj.bankBalancesRow}`);
+  
+return cashEquivalents+bankBalances;
 }
 

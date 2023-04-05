@@ -8,7 +8,6 @@ export const sheet1_PLObj={
 }
 
 export const sheet2_BSObj={
-    sumOfCashFlows:"15",
     deferredTaxLiabilityRow:"25",
     debtAsOnDateRow:"27",
     tradePayablesRow:"34",
@@ -20,6 +19,8 @@ export const sheet2_BSObj={
     interCoRow:"40",
     fixedAssetsRow:"46",
     deferredTaxAssetsRow:"59",
+    cashEquivalentsRow:"62",
+    bankBalancesRow:"63",
     tradeReceivablesRow:"64",
     unbilledRevenuesRow:"65",
     inventoriesRow:"66",

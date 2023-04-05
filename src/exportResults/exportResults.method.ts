@@ -56,7 +56,7 @@ export function getOrganizedData(valuationInputData:any[]){
   const particulars=[],pat=[],depAndAmortisation=[],onCashItems=[],
   nca=[],defferedTaxAssets=[],netCashFlow=[],fixedAssets=[],fcff=[],
   discountingPeriod=[],discountingFactor=[],presentFCFF=[],sumOfCashFlows=[],
-  debtOnDate=[],ccEquivalents=[],surplusAssets=[],otherAdj=[],equityValue=[],
+  debtOnDate=[],cashEquivalents=[],surplusAssets=[],otherAdj=[],equityValue=[],
   noOfShares=[],valuePerShare=[];
 
   //Set Headers
@@ -74,7 +74,7 @@ export function getOrganizedData(valuationInputData:any[]){
   presentFCFF.push(headingObj['presentFCFF']);
   sumOfCashFlows.push(headingObj['sumOfCashFlows']);
   debtOnDate.push(headingObj['debtOnDate']);
-  ccEquivalents.push(headingObj['ccEquivalents']);
+  cashEquivalents.push(headingObj['cashEquivalents']);
   surplusAssets.push(headingObj['surplusAssets']);
   otherAdj.push(headingObj['otherAdj']);
   equityValue.push(headingObj['equityValue']);
@@ -114,8 +114,8 @@ export function getOrganizedData(valuationInputData:any[]){
       sumOfCashFlows.push(value)
       else if(key==="debtOnDate")
       debtOnDate.push(value)
-      else if(key==="ccEquivalents")
-      ccEquivalents.push(value)
+      else if(key==="cashEquivalents")
+      cashEquivalents.push(value)
       else if(key==="surplusAssets")
       surplusAssets.push(value)
       else if(key==="otherAdj")
@@ -128,5 +128,5 @@ export function getOrganizedData(valuationInputData:any[]){
       valuePerShare.push(value)
     });
   })
-  return [particulars,pat,depAndAmortisation,onCashItems,nca,defferedTaxAssets,netCashFlow,fixedAssets,fcff,discountingPeriod,discountingFactor,presentFCFF,sumOfCashFlows,debtOnDate,ccEquivalents,surplusAssets,otherAdj,equityValue,noOfShares,valuePerShare];
+  return [particulars,pat,depAndAmortisation,onCashItems,nca,defferedTaxAssets,netCashFlow,fixedAssets,fcff,discountingPeriod,discountingFactor,presentFCFF,sumOfCashFlows,debtOnDate,cashEquivalents,surplusAssets,otherAdj,equityValue,noOfShares,valuePerShare];
 }

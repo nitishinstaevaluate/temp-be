@@ -13,7 +13,7 @@ export const headingObj={
     presentFCFF: 'Present Value of FCFF',
     sumOfCashFlows: 'Sum of Cash Flows',
     debtOnDate: 'Less: Debt as on Date',
-    ccEquivalents: 'Add: Cash & Cash Equivalents',
+    cashEquivalents: 'Add: Cash & Cash Equivalents',
     surplusAssets: 'Add: Surplus Assets/Investments',
     otherAdj: 'Add/Less: Other Adjustments(if any)',
     equityValue: 'Equity Value',

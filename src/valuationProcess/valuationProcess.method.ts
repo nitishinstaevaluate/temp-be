@@ -1,6 +1,7 @@
 
 import { sheet1_PLObj } from './excelSheetConfig';
-import { OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,ChangeInFixedAssets,GetDebtAsOnDate } from './calculation.method';
+import { OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,
+  ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents} from './calculation.method';
 
 export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
 const firstYearCell = worksheet1["B1"];
@@ -48,7 +49,9 @@ const fcff=netCashFlow+changeInFixedAssets;
 const discountingFactor=2;
 
 const presentFCFF=discountingFactor*fcff;
+const sumOfCashFlows= presentFCFF ;
 const debtAsOnDate=  await GetDebtAsOnDate(i,worksheet2);
+const cashEquivalents=  await CashEquivalents(i,worksheet2);
   const result={
     "particulars":projectionYear,
     "pat":pat,
@@ -62,9 +65,9 @@ const debtAsOnDate=  await GetDebtAsOnDate(i,worksheet2);
     "discountingPeriod":1,
     "discountingFactor":discountingFactor,
     "presentFCFF":presentFCFF,
-    "sumOfCashFlows":9789798,
+    "sumOfCashFlows":sumOfCashFlows,
     "debtOnDate":debtAsOnDate,
-    "ccEquivalents":787987,
+    "cashEquivalents":cashEquivalents.toFixed(2),
     "surplusAssets":89890,
     "otherAdj":78979,
     "equityValue": 667676,
