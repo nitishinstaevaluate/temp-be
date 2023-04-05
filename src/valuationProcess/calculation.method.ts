@@ -69,3 +69,11 @@ export async function CashEquivalents(i:number,worksheet2:any){
 return cashEquivalents+bankBalances;
 }
 
+export async function SurplusAssets(i:number,worksheet2:any){
+  //formula: =+BS!B56+BS!B68
+  const nonCurrentInvestment=await getCellValue(worksheet2,`${columnsList[i]+sheet2_BSObj.nonCurrentInvestmentRow}`);
+  const shortTermInvestments=await getCellValue(worksheet2,`${columnsList[i]+sheet2_BSObj.shortTermInvestmentsRow}`);
+  
+return nonCurrentInvestment+shortTermInvestments;
+}
+

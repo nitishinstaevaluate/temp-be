@@ -1,7 +1,7 @@
 
 import { sheet1_PLObj } from './excelSheetConfig';
 import { OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,
-  ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents} from './calculation.method';
+  ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents,SurplusAssets} from './calculation.method';
 
 export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
 const firstYearCell = worksheet1["B1"];
@@ -15,7 +15,7 @@ for(let i=0;i<8;i++){
   if(yearCell)
     years.push(yearCell.v.split('-')[1]);
 }
-const {projectionYear}=inputs;
+const {projectionYear,outstandingShares}=inputs;
 const finalResult=[];
 const columnsList=['B','C','D','E','F','G','H','I','J'];
 let changeInNCA=null;
@@ -52,6 +52,11 @@ const presentFCFF=discountingFactor*fcff;
 const sumOfCashFlows= presentFCFF ;
 const debtAsOnDate=  await GetDebtAsOnDate(i,worksheet2);
 const cashEquivalents=  await CashEquivalents(i,worksheet2);
+const surplusAssets=  await SurplusAssets(i,worksheet2);
+const otherAdj=100000;
+//formula: =+B16-B17+B18+B19+B20
+const equityValue=sumOfCashFlows-debtAsOnDate+cashEquivalents+surplusAssets+otherAdj;
+const valuePerShare=equityValue/outstandingShares;
   const result={
     "particulars":projectionYear,
     "pat":pat,
@@ -68,11 +73,11 @@ const cashEquivalents=  await CashEquivalents(i,worksheet2);
     "sumOfCashFlows":sumOfCashFlows,
     "debtOnDate":debtAsOnDate,
     "cashEquivalents":cashEquivalents.toFixed(2),
-    "surplusAssets":89890,
-    "otherAdj":78979,
-    "equityValue": 667676,
-    "noOfShares":898789,
-    "valuePerShare":4534.34
+    "surplusAssets":surplusAssets,
+    "otherAdj":otherAdj,
+    "equityValue": equityValue.toFixed(2),
+    "noOfShares":outstandingShares,
+    "valuePerShare":valuePerShare.toFixed(2)
       };
   result.particulars=year;
 finalResult.push(result);

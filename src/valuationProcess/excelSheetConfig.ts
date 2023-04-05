@@ -18,6 +18,7 @@ export const sheet2_BSObj={
     shortTermProvisionsRow:"39",
     interCoRow:"40",
     fixedAssetsRow:"46",
+    nonCurrentInvestmentRow:"56",
     deferredTaxAssetsRow:"59",
     cashEquivalentsRow:"62",
     bankBalancesRow:"63",
@@ -25,6 +26,7 @@ export const sheet2_BSObj={
     unbilledRevenuesRow:"65",
     inventoriesRow:"66",
     advancesRow:"67",
+    shortTermInvestmentsRow:"68",
     otherCurrentAssetsRow:"69"    
 
 }
