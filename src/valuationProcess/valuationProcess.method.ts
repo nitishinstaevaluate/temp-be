@@ -1,13 +1,13 @@
-
-import { sheet1_PLObj } from './excelSheetConfig';
 import { GetPAT,DepAndAmortisation,OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,
   ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents,SurplusAssets} from './calculation.method';
 
 export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
 const firstYearCell = worksheet1["B1"];
 const firstYear=firstYearCell.v.split(",")[1];
-const years=[];
+if(firstYear===undefined)
+return {result:null,msg:"Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1."};
 
+const years=[];
 years.push(firstYear.trim().split('-')[1]);
 const columns=['C','D','E','F','G','H','I','J'];
 for(let i=0;i<8;i++){
@@ -82,7 +82,7 @@ finalResult.push(result);
     }
 })
   
-  return finalResult;
+  return {result:finalResult,msg:"Successfully Executed"};
 }
 
 export function OtherMethod() {

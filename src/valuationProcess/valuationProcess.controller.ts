@@ -19,8 +19,11 @@ const worksheet2 = workbook.Sheets['BS'];
 
 // Performe calculation by specific method
 if(model==="FCFE"){
-  const valuationResult= await FCFEMethod(inputs,worksheet1,worksheet2);
-
+  const valuationResponse= await FCFEMethod(inputs,worksheet1,worksheet2);
+  if(valuationResponse.result===null)
+  return valuationResponse.msg;
+  
+  const valuationResult=valuationResponse.result;
   // Store the result in Database
   const data={
   "company":company,
