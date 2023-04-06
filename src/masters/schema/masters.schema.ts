@@ -121,8 +121,11 @@ export const COEMethodSchema = SchemaFactory.createForClass(COEMethod);
 @Schema()
 export class RiskFreeRate {
 
-  @Prop({ required:true })
-    rate:string;
+   @Prop({ required:true })
+    label:string;
+
+    @Prop({ required:true })
+    rate:number;
 
     @Prop({ default:true })
     isActive: boolean;
@@ -142,6 +145,9 @@ export class ExpMarketReturn {
 
   @Prop({ required:true })
     marketReturn:string;
+
+    @Prop({ required:true })
+    rate:number;
 
     @Prop({ default:true })
     isActive: boolean;

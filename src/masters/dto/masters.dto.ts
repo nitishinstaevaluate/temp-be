@@ -20,10 +20,12 @@ export class CreateIndustryDto {
     method:string;
   }
   export class CreateRiskFreeRateDto {
-    rate:string;
+    label:string;
+    rate:number;
   }
   export class CreateExpMarketReturnDto {
     marketReturn:string;
+    rate:number;
   }
 
   

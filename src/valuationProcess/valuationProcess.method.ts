@@ -1,6 +1,6 @@
 import { GetPAT,DepAndAmortisation,OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,
   ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents,SurplusAssets} from './calculation.method';
-
+  import { IndustryService } from '../industry/industry.service';
 export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
 const firstYearCell = worksheet1["B1"];
 const firstYear=firstYearCell.v.split(",")[1];
@@ -45,7 +45,8 @@ const changeInFixedAssets=  await ChangeInFixedAssets(i,worksheet2);
 const fcff=netCashFlow+changeInFixedAssets;
 
 //Industry Calculation we needs to create new service for it.
-const discountingFactor=2;
+const industryService = new IndustryService();
+const discountingFactor=await industryService.getDiscountingFactor();;
 
 const presentFCFF=discountingFactor*fcff;
 const sumOfCashFlows= presentFCFF ;
