@@ -6,7 +6,7 @@ import {Industry, IndustryDocument, ValuationMethod,
 DiscountRate,DiscountRateDocument,TerminalGrowthRate,
 TerminalGrowthRateDocument,COEMethod,COEMethodDocument,
 RiskFreeRate,RiskFreeRateDocument,ExpMarketReturn,
-ExpMarketReturnDocument,Beta,BetaDocument } from './schema/masters.schema';
+ExpMarketReturnDocument,Beta,BetaDocument,RiskPremium,RiskPremiumDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -207,5 +207,28 @@ export class BetaService {
     
       async deleteBeta(id: string): Promise<any> {
         return this.betaModel.findByIdAndRemove(id).exec();
+      }
+}
+
+
+//Risk Premium Service
+@Injectable()
+export class RiskPremiumService {
+    constructor(
+        @InjectModel('riskPremium') private readonly riskPremiumModel: Model<RiskPremiumDocument>,
+      ) {}
+    
+      async createRiskPremium(riskPremium:object): Promise<RiskPremium> {
+        return this.riskPremiumModel.create(riskPremium);
+    }
+      async getRiskPremiums(): Promise<RiskPremium[]> {
+        return this.riskPremiumModel.find().exec();
+      }
+      async updateRiskPremium(id: string, riskPremium: RiskPremium): Promise<RiskPremium> {
+        return this.riskPremiumModel.findByIdAndUpdate(id, riskPremium, { new: true }).exec();
+      }
+    
+      async deleteRiskPremium(id: string): Promise<any> {
+        return this.riskPremiumModel.findByIdAndRemove(id).exec();
       }
 }

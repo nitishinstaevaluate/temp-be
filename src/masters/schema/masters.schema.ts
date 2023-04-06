@@ -182,3 +182,22 @@ export class Beta {
 }
 export type BetaDocument = Beta & Document;
 export const BetaSchema = SchemaFactory.createForClass(Beta);
+
+//Risk Premium Schema
+@Schema()
+export class RiskPremium {
+
+    @Prop({ required:true })
+    riskPremium:number;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type RiskPremiumDocument = RiskPremium & Document;
+export const RiskPremiumSchema = SchemaFactory.createForClass(RiskPremium);

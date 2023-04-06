@@ -31,5 +31,8 @@ export class CreateIndustryDto {
     beta:string;
     rate:number;
   }
+  export class CreateRiskPremiumDto {
+    riskPremium:number;
+  }
 
   

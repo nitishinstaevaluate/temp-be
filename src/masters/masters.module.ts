@@ -4,15 +4,15 @@ import { IndustriesController,ValuationMethodsController,
   TaxRatesController,DiscountRatesController,
   TerminalGrowthRatesController,COEMethodsController,
   RiskFreeRatesController,ExpMarketReturnsController, 
-  MastersController,BetasController } from './masters.controller';
+  MastersController,BetasController,RiskPremiumsController } from './masters.controller';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
-  RiskFreeRatesService,ExpMarketReturnsService,BetaService } from './masters.service';
+  RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService } from './masters.service';
 
 import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
   DiscountRateSchema,TerminalGrowthRateSchema,COEMethodSchema,
-  RiskFreeRateSchema,ExpMarketReturnSchema,BetaSchema } from './schema/masters.schema';
+  RiskFreeRateSchema,ExpMarketReturnSchema,BetaSchema,RiskPremiumSchema } from './schema/masters.schema';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -25,15 +25,16 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
       { name: 'riskFreeRate',schema: RiskFreeRateSchema },
       { name: 'expMarketReturn',schema: ExpMarketReturnSchema },
       { name: 'beta',schema: BetaSchema },
+      { name: 'riskPremium',schema: RiskPremiumSchema },
     ])],
   controllers: [IndustriesController,ValuationMethodsController,
     TaxRatesController,DiscountRatesController,TerminalGrowthRatesController,
     COEMethodsController,RiskFreeRatesController,ExpMarketReturnsController,
-    MastersController,BetasController],
+    MastersController,BetasController,RiskPremiumsController],
 
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
     DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
-    RiskFreeRatesService,ExpMarketReturnsService,BetaService],
+    RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService],
     exports:[ValuationMethodsService]
 })
 export class MastersModule {}
