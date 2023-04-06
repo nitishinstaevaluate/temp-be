@@ -27,5 +27,9 @@ export class CreateIndustryDto {
     marketReturn:string;
     rate:number;
   }
+  export class CreateBetaDto {
+    beta:string;
+    rate:number;
+  }
 
   

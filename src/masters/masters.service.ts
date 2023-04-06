@@ -6,7 +6,7 @@ import {Industry, IndustryDocument, ValuationMethod,
 DiscountRate,DiscountRateDocument,TerminalGrowthRate,
 TerminalGrowthRateDocument,COEMethod,COEMethodDocument,
 RiskFreeRate,RiskFreeRateDocument,ExpMarketReturn,
-ExpMarketReturnDocument } from './schema/masters.schema';
+ExpMarketReturnDocument,Beta,BetaDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -185,5 +185,27 @@ export class ExpMarketReturnsService {
     
       async deleteExpReturn(id: string): Promise<any> {
         return this.expMarketReturnModel.findByIdAndRemove(id).exec();
+      }
+}
+
+//Beta Service
+@Injectable()
+export class BetaService {
+    constructor(
+        @InjectModel('beta') private readonly betaModel: Model<BetaDocument>,
+      ) {}
+    
+      async createBeta(beta:object): Promise<Beta> {
+        return this.betaModel.create(beta);
+    }
+      async getBetas(): Promise<Beta[]> {
+        return this.betaModel.find().exec();
+      }
+      async updateBeta(id: string, beta: Beta): Promise<Beta> {
+        return this.betaModel.findByIdAndUpdate(id, beta, { new: true }).exec();
+      }
+    
+      async deleteBeta(id: string): Promise<any> {
+        return this.betaModel.findByIdAndRemove(id).exec();
       }
 }

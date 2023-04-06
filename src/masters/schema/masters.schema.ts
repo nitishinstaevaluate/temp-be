@@ -160,3 +160,25 @@ export class ExpMarketReturn {
 }
 export type ExpMarketReturnDocument = ExpMarketReturn & Document;
 export const ExpMarketReturnSchema = SchemaFactory.createForClass(ExpMarketReturn);
+
+//Beta Schema
+@Schema()
+export class Beta {
+
+  @Prop({ required:true })
+    beta:string;
+
+    @Prop({ required:true })
+    rate:number;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type BetaDocument = Beta & Document;
+export const BetaSchema = SchemaFactory.createForClass(Beta);

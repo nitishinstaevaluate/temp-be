@@ -3,15 +3,15 @@ import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common'
 import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTaxRateDto,CreateDiscountRateDto,
   CreateTerminalGrowthRateDto,CreateCOEMethodDto,
-  CreateRiskFreeRateDto,CreateExpMarketReturnDto } from './dto/masters.dto';
+  CreateRiskFreeRateDto,CreateExpMarketReturnDto,CreateBetaDto } from './dto/masters.dto';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
-   RiskFreeRatesService,ExpMarketReturnsService } from './masters.service';
+   RiskFreeRatesService,ExpMarketReturnsService,BetaService } from './masters.service';
 
 import { Industry,ValuationMethod,TaxRate,DiscountRate,
   TerminalGrowthRate,COEMethod,
-  RiskFreeRate,ExpMarketReturn } from './schema/masters.schema';
+  RiskFreeRate,ExpMarketReturn,Beta } from './schema/masters.schema';
 
   //Masters Controller for FrontEnd DropDowns Integration.
 @Controller('masters')
@@ -272,5 +272,31 @@ async update(@Param('id') id: string, @Body() expMarketReturn:ExpMarketReturn): 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
     return this.expMarketReturnService.deleteExpReturn(id);
+  }
+}
+
+//Betas Controller
+@Controller('betas')
+export class BetasController {
+  constructor(private betaService: BetaService) {}
+
+  @Post()
+  async create(@Body() betaDto: CreateBetaDto) {
+    return this.betaService.createBeta(betaDto);
+  }
+
+  @Get()
+  async findAll(): Promise<Beta[]> {
+    return this.betaService.getBetas();
+  }
+
+  @Put(':id')
+async update(@Param('id') id: string, @Body() beta:Beta): Promise<Beta> {
+  return this.betaService.updateBeta(id,beta);
+}
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.betaService.deleteBeta(id);
   }
 }
