@@ -4,15 +4,16 @@ import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTaxRateDto,CreateDiscountRateDto,
   CreateTerminalGrowthRateDto,CreateCOEMethodDto,
   CreateRiskFreeRateDto,CreateExpMarketReturnDto,
-  CreateBetaDto,CreateRiskPremiumDto } from './dto/masters.dto';
+  CreateBetaDto,CreateRiskPremiumDto,CreateCOPShareCapitalDto } from './dto/masters.dto';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
-   RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService } from './masters.service';
+   RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,
+   COPShareCapitalService } from './masters.service';
 
 import { Industry,ValuationMethod,TaxRate,DiscountRate,
   TerminalGrowthRate,COEMethod,
-  RiskFreeRate,ExpMarketReturn,Beta,RiskPremium } from './schema/masters.schema';
+  RiskFreeRate,ExpMarketReturn,Beta,RiskPremium,COPShareCapital } from './schema/masters.schema';
 
   //Masters Controller for FrontEnd DropDowns Integration.
 @Controller('masters')
@@ -325,5 +326,31 @@ async update(@Param('id') id: string, @Body() riskPremium:RiskPremium): Promise<
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
     return this.riskPremimumService.deleteRiskPremium(id);
+  }
+}
+
+//Cost of Preference Share Capital Controller
+@Controller('copShareCapitals')
+export class COPShareCapitalController {
+  constructor(private copShareCapitalService: COPShareCapitalService) {}
+
+  @Post()
+  async create(@Body() copShareCapitalDto: CreateCOPShareCapitalDto) {
+    return this.copShareCapitalService.createCOPShareCapital(copShareCapitalDto);
+  }
+
+  @Get()
+  async findAll(): Promise<COPShareCapital[]> {
+    return this.copShareCapitalService.getCOPShareCapitals();
+  }
+
+  @Put(':id')
+async update(@Param('id') id: string, @Body() copShareCapital:COPShareCapital): Promise<COPShareCapital> {
+  return this.copShareCapitalService.updateCOPShareCapital(id,copShareCapital);
+}
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.copShareCapitalService.deleteCOPShareCapital(id);
   }
 }

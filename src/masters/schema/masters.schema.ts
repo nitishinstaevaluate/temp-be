@@ -201,3 +201,25 @@ export class RiskPremium {
 }
 export type RiskPremiumDocument = RiskPremium & Document;
 export const RiskPremiumSchema = SchemaFactory.createForClass(RiskPremium);
+
+//Cost of Preference Share Capital Schema
+@Schema()
+export class COPShareCapital {
+
+  @Prop({ required:true })
+    label:string;
+
+    @Prop({ required:true })
+    cost:number;
+
+    @Prop({ default:true })
+    isActive: boolean;
+    
+    @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type COPShareCapitalDocument = COPShareCapital & Document;
+export const COPShareCapitalSchema = SchemaFactory.createForClass(COPShareCapital);

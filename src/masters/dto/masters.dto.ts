@@ -34,5 +34,8 @@ export class CreateIndustryDto {
   export class CreateRiskPremiumDto {
     riskPremium:number;
   }
-
+  export class CreateCOPShareCapitalDto {
+    label:string;
+    cost:number;
+  }
   

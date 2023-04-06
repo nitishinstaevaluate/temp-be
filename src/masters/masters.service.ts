@@ -6,7 +6,8 @@ import {Industry, IndustryDocument, ValuationMethod,
 DiscountRate,DiscountRateDocument,TerminalGrowthRate,
 TerminalGrowthRateDocument,COEMethod,COEMethodDocument,
 RiskFreeRate,RiskFreeRateDocument,ExpMarketReturn,
-ExpMarketReturnDocument,Beta,BetaDocument,RiskPremium,RiskPremiumDocument } from './schema/masters.schema';
+ExpMarketReturnDocument,Beta,BetaDocument,RiskPremium,
+RiskPremiumDocument,COPShareCapital,COPShareCapitalDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -230,5 +231,27 @@ export class RiskPremiumService {
     
       async deleteRiskPremium(id: string): Promise<any> {
         return this.riskPremiumModel.findByIdAndRemove(id).exec();
+      }
+}
+
+//Cost of Preference Share Capital Service
+@Injectable()
+export class COPShareCapitalService {
+    constructor(
+        @InjectModel('copShareCapital') private readonly copShareCapitalModel: Model<COPShareCapitalDocument>,
+      ) {}
+    
+      async createCOPShareCapital(copShareCapital:object): Promise<COPShareCapital> {
+        return this.copShareCapitalModel.create(copShareCapital);
+    }
+      async getCOPShareCapitals(): Promise<COPShareCapital[]> {
+        return this.copShareCapitalModel.find().exec();
+      }
+      async updateCOPShareCapital(id: string, copShareCapital: COPShareCapital): Promise<COPShareCapital> {
+        return this.copShareCapitalModel.findByIdAndUpdate(id, copShareCapital, { new: true }).exec();
+      }
+    
+      async deleteCOPShareCapital(id: string): Promise<any> {
+        return this.copShareCapitalModel.findByIdAndRemove(id).exec();
       }
 }
