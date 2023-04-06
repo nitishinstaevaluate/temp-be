@@ -19,6 +19,9 @@ for(let i=0;i<8;i++){
 }
 const {projectionYear,outstandingShares}=inputs;
 const finalResult=[];
+//Industry Calculation we needs to create new service for it.
+const industryService = new IndustryService();
+const discountingFactor=await industryService.getDiscountingFactor(inputs);;
 years.map(async (year,i)=>{
   if(parseInt(year)>=projectionYear){
   let changeInNCA=null;
@@ -43,10 +46,6 @@ deferredTaxAssets=deferredTaxAssets-deferredTaxAssetsValue;
 const netCashFlow=parseInt(pat)||0+parseInt(depAndAmortisation)||0+parseInt(otherNonCashItems)||0+parseInt(changeInNCA)||0+parseInt(deferredTaxAssets)||0;
 const changeInFixedAssets=  await ChangeInFixedAssets(i,worksheet2);
 const fcff=netCashFlow+changeInFixedAssets;
-
-//Industry Calculation we needs to create new service for it.
-const industryService = new IndustryService();
-const discountingFactor=await industryService.getDiscountingFactor();;
 
 const presentFCFF=discountingFactor*fcff;
 const sumOfCashFlows= presentFCFF ;
