@@ -10,12 +10,13 @@ import { ExportResultsModule } from './exportResults/exportResults.module';
 import { ValuationProcessModule } from './valuationProcess/valuationProcess.module';
 import { CorsMiddleware } from './middleware/CorsMiddleware';
 import { UploadController } from './uploadExcel/uploadExcel.controller';
+import { IndustryModule } from './industry/industry.module';
 require('dotenv').config();
 
 @Module({
   imports: [UsersModule,MastersModule,
     ValuationProcessModule,ExportResultsModule,
-    AuthenticationModule,MongooseModule.forRoot(process.env.DBCONN),
+    AuthenticationModule,IndustryModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),],
   controllers: [AppController,UploadController], //ImportController
   providers: [AppService, ], //ImportService

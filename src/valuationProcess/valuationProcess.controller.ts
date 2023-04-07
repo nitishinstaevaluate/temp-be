@@ -1,12 +1,14 @@
 import { Body, Controller,Post} from '@nestjs/common';
 import * as XLSX from 'xlsx';
-import {FCFEMethod } from './valuationProcess.method';
 import { ValuationsService } from './valuationProcess.service';
+import {ValuationMethodsService} from './valuation.methods.service' 
 
 @Controller('valuationProcess')
 export class ValuationController {
 
-  constructor(private valuationsService: ValuationsService) {}
+  constructor(
+    private valuationsService: ValuationsService,
+    private valuationMethodsService: ValuationMethodsService) {}
 
   @Post()
  async processExcelFile (@Body() inputs): Promise<any> {
@@ -19,7 +21,7 @@ const worksheet2 = workbook.Sheets['BS'];
 
 // Performe calculation by specific method
 if(model==="FCFE"){
-  const valuationResponse= await FCFEMethod(inputs,worksheet1,worksheet2);
+  const valuationResponse= await this.valuationMethodsService.FCFEMethod(inputs,worksheet1,worksheet2);
   if(valuationResponse.result===null)
   return valuationResponse.msg;
   

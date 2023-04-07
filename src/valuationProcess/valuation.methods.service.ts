@@ -1,8 +1,15 @@
+import { Injectable } from '@nestjs/common';
+import { IndustryService } from 'src/industry/industry.service';
 import { GetPAT,DepAndAmortisation,OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,
-  ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents,SurplusAssets} from './calculation.method';
-  import { IndustryService } from '../industry/industry.service';
-export async function FCFEMethod(inputs:any,worksheet1:any,worksheet2:any) {
-const firstYearCell = worksheet1["B1"];
+    ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents,SurplusAssets} from './calculation.method';
+
+//Valuation Methods Service
+@Injectable()
+export class ValuationMethodsService {
+  constructor(private readonly industryService: IndustryService) {}
+
+  async FCFEMethod(inputs:any,worksheet1:any,worksheet2:any): Promise<any> {
+    const firstYearCell = worksheet1["B1"];
 const firstYear=firstYearCell.v.split(",")[1];
 if(firstYear===undefined)
 return {result:null,msg:"Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1."};
@@ -20,8 +27,7 @@ for(let i=0;i<8;i++){
 const {projectionYear,outstandingShares}=inputs;
 const finalResult=[];
 //Industry Calculation we needs to create new service for it.
-const industryService = new IndustryService();
-const discountingFactor=await industryService.getDiscountingFactor(inputs);;
+const discountingFactor=await this.industryService.getDiscountingFactor(inputs);
 years.map(async (year,i)=>{
   if(parseInt(year)>=projectionYear){
   let changeInNCA=null;
@@ -83,8 +89,9 @@ finalResult.push(result);
 })
   
   return {result:finalResult,msg:"Successfully Executed"};
-}
+  } 
 
-export function OtherMethod() {
-  return "This is Other Method which we will add in Future.";
+  async OtherMethod(): Promise<string> {
+    return "This is Other Method which we will add in Future.";
+  }
 }
