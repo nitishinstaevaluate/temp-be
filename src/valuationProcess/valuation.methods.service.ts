@@ -9,7 +9,8 @@ export class ValuationMethodsService {
   constructor(private readonly industryService: IndustryService) {}
 
   async FCFEMethod(inputs:any,worksheet1:any,worksheet2:any): Promise<any> {
-    const firstYearCell = worksheet1["B1"];
+    
+const firstYearCell = worksheet1["B1"];
 const firstYear=firstYearCell.v.split(",")[1];
 if(firstYear===undefined)
 return {result:null,msg:"Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1."};

@@ -211,6 +211,9 @@ export class BetaService {
       async getBetas(): Promise<Beta[]> {
         return this.betaModel.find().exec();
       }
+      async getBetaById(id:string): Promise<Beta> {
+        return this.betaModel.findById(id);
+      }
       async updateBeta(id: string, beta: Beta): Promise<Beta> {
         return this.betaModel.findByIdAndUpdate(id, beta, { new: true }).exec();
       }
@@ -233,6 +236,9 @@ export class RiskPremiumService {
     }
       async getRiskPremiums(): Promise<RiskPremium[]> {
         return this.riskPremiumModel.find().exec();
+      }
+      async getRiskPremiumById(id:string): Promise<RiskPremium> {
+        return this.riskPremiumModel.findById(id);
       }
       async updateRiskPremium(id: string, riskPremium: RiskPremium): Promise<RiskPremium> {
         return this.riskPremiumModel.findByIdAndUpdate(id, riskPremium, { new: true }).exec();
