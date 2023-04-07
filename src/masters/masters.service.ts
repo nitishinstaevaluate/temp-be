@@ -136,6 +136,9 @@ export class COEMethodsService {
       async getCOEMethods(): Promise<COEMethod[]> {
         return this.coeMethodModel.find().exec();
       }
+      async getCOEMethodById(id:string): Promise<COEMethod> {
+        return this.coeMethodModel.findById(id);
+      }
       async updateCOEMethod(id: string, coeMethod: COEMethod): Promise<COEMethod> {
         return this.coeMethodModel.findByIdAndUpdate(id,coeMethod, { new: true }).exec();
       }
@@ -158,6 +161,9 @@ export class RiskFreeRatesService {
       async getRiskFreeRates(): Promise<RiskFreeRate[]> {
         return this.riskFreeRateModel.find().exec();
       }
+      async getRiskFreeRateById(id:string): Promise<RiskFreeRate> {
+        return this.riskFreeRateModel.findById(id);
+      }
       async updateRiskFreeRate(id: string, riskFreeRate: RiskFreeRate): Promise<RiskFreeRate> {
         return this.riskFreeRateModel.findByIdAndUpdate(id, riskFreeRate, { new: true }).exec();
       }
@@ -179,6 +185,9 @@ export class ExpMarketReturnsService {
     }
       async getExpMarketReturns(): Promise<ExpMarketReturn[]> {
         return this.expMarketReturnModel.find().exec();
+      }
+      async getExpMarketReturnById(id:string): Promise<ExpMarketReturn> {
+        return this.expMarketReturnModel.findById(id);
       }
       async updateExpMarketReturn(id: string, expMarketReturn: ExpMarketReturn): Promise<ExpMarketReturn> {
         return this.expMarketReturnModel.findByIdAndUpdate(id, expMarketReturn, { new: true }).exec();

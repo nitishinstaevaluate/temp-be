@@ -1,22 +1,25 @@
-import { Injectable, Inject } from '@nestjs/common';
-import {COEMethodsService} from '../masters/masters.service';
+import { Injectable} from '@nestjs/common';
+import {COEMethodsService,RiskFreeRatesService,ExpMarketReturnsService} from '../masters/masters.service';
 
 @Injectable()
 export class IndustryService {
-  // constructor(@Inject(COEMethodsService)  private coeMethodService: COEMethodsService) {}
-  constructor(private readonly coeMethodService: COEMethodsService) {}
-  // constructor(
-  //   private coeMethodService: COEMethodsService,
-  //   // private riskFreeRateService: RiskFreeRatesService,
-  //   // private expMarketReturnService: ExpMarketReturnsService
-  //   ) {}
+  constructor(
+    private readonly coeMethodService: COEMethodsService,
+    private readonly riskFreeRateService: RiskFreeRatesService,
+    private readonly expMarketReturnService: ExpMarketReturnsService
+    ) {}
+
   private readonly value: number = 2;
 
  async getDiscountingFactor(inputs:any): Promise<number> {
-    const {coeMethodId,riskFreeRateId,expMarketReturnId}=inputs;
+    const{coeMethodId,riskFreeRateId,expMarketReturnId}=inputs;
     console.log(coeMethodId,riskFreeRateId,expMarketReturnId);
-    const coe = await this.coeMethodService.getCOEMethods();
-    console.log('Testing',coe)
+    const coeMethod = await this.coeMethodService.getCOEMethodById(coeMethodId);
+    const riskFreeRate = await this.riskFreeRateService.getRiskFreeRateById(riskFreeRateId);
+    const expMarketReturn = await this.expMarketReturnService.getExpMarketReturnById(expMarketReturnId);
+
+
+    console.log('Testing',coeMethod,riskFreeRate,expMarketReturn)
     return this.value;
   }
 }
