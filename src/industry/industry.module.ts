@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { IndustryService } from './industry.service';
-import {MastersModule} from '../masters/masters.module';
 
 @Module({
-    imports: [MastersModule],
+    imports: [],
     controllers: [], //ImportController
     providers: [IndustryService], //ImportService
     exports:[IndustryService]
