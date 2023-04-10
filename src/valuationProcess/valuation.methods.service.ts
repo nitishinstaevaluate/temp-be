@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IndustryService } from 'src/industry/industry.service';
 import { GetPAT,DepAndAmortisation,OtherNonCashItemsMethod,ChangeInNCA,DeferredTaxAssets,
     ChangeInFixedAssets,GetDebtAsOnDate,CashEquivalents,SurplusAssets} from './calculation.method';
-
+import { columnsList } from './excelSheetConfig';
 //Valuation Methods Service
 @Injectable()
 export class ValuationMethodsService {
@@ -17,9 +17,8 @@ return {result:null,msg:"Please Separate Text Label and year with comma in B1 Ce
 
 const years=[];
 years.push(firstYear.trim().split('-')[1]);
-const columns=['C','D','E','F','G','H','I','J'];
-for(let i=0;i<8;i++){
-  const yearCell = await worksheet1[`${columns[i]+1}`];
+for(let i=1;i<9;i++){
+  const yearCell = await worksheet1[`${columnsList[i]+1}`];
   if(yearCell===undefined)
        break;
   if(yearCell && yearCell!==undefined)

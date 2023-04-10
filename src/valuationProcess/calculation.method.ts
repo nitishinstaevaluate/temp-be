@@ -1,6 +1,5 @@
 import { sheet1_PLObj,sheet2_BSObj } from './excelSheetConfig';
-const columnsList=['B','C','D','E','F','G','H','I','J'];
-
+import { columnsList } from './excelSheetConfig';
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 //Common Method for geting Cell Value
 export async function getCellValue(worksheet:any,address:string){
