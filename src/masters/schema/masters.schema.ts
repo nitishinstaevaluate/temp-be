@@ -23,7 +23,10 @@ export const IndustrySchema = SchemaFactory.createForClass(Industry);
 @Schema()
 export class ValuationMethod {
  @Prop({ required: true })
-    method: string;
+    fieldLabel: string;
+
+  @Prop({ required: true })
+    fieldValue: string;
 
   @Prop({ default:true })
     isActive: boolean;
@@ -61,11 +64,8 @@ export const TaxRateSchema = SchemaFactory.createForClass(TaxRate);
 //Discount Rate Schema
 @Schema()
 export class DiscountRate {
- @Prop({ required: true })
-    name: string;
-
-  @Prop({ required:true })
-    rate:number;
+   @Prop({ required: true })
+    discountRate: string;
 
     @Prop({ default:true })
     isActive: boolean;
@@ -102,8 +102,11 @@ export const TerminalGrowthRateSchema = SchemaFactory.createForClass(TerminalGro
 @Schema()
 export class COEMethod {
 
-  @Prop({ required:true })
-    method:string;
+  @Prop({ required: true })
+  fieldLabel: string;
+
+  @Prop({ required: true })
+  fieldValue: string;
 
     @Prop({ default:true })
     isActive: boolean;

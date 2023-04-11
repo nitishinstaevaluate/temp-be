@@ -3,21 +3,22 @@ export class CreateIndustryDto {
   }
 
   export class CreateValuationMethodDto {
-    method: string;
+    fieldLabel: string;
+    fieldValue: string;
   }
   export class CreateTaxRateDto {
     name: string;
     rate:string;
   }
   export class CreateDiscountRateDto {
-    name: string;
-    rate:string;
+    discountRate:string;
   }
   export class CreateTerminalGrowthRateDto {
     rate:number;
   }
   export class CreateCOEMethodDto {
-    method:string;
+    fieldLabel:string;
+    fieldValue:string;
   }
   export class CreateRiskFreeRateDto {
     label:string;
