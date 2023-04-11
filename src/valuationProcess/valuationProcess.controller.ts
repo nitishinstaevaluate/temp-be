@@ -38,6 +38,32 @@ if(model==="FCFE"){
   // Send Valuation Report Id in  Response.
      return  {"reportId":reportId};
     // return valuationResult;
+}else if (model==="FCFF"){
+  const valuationResponse= await this.valuationMethodsService.FCFFMethod(inputs,worksheet1,worksheet2);
+  if(valuationResponse.result===null)
+  return valuationResponse.msg;
+  
+  const valuationResult=valuationResponse.result;
+  // Store the result in Database
+  const data={
+  "company":company,
+  "model":model,
+  "valuationData":valuationResult,
+  "userId":userId
+  };
+ const reportId= await this.valuationsService.createValuation(data);
+  
+  // Send Valuation Report Id in  Response.
+     return  {"reportId":reportId};
+    // return valuationResult;
+}else if(model==="Excess_Earnings"){
+  return "This model is Under Development.";
+}else if(model==="Relative_Valuation"){
+  return "This model is Under Development.";
+}else if(model==="CTM"){
+  return "This model is Under Development.";
+}else if(model==="NAV"){
+  return "This model is Under Development.";
 }else{
   return "Invalid Model: Input a valid model name.";
 }
