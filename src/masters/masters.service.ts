@@ -8,7 +8,7 @@ TerminalGrowthRateDocument,COEMethod,COEMethodDocument,
 RiskFreeRate,RiskFreeRateDocument,ExpMarketReturn,
 ExpMarketReturnDocument,Beta,BetaDocument,RiskPremium,
 RiskPremiumDocument,COPShareCapital,COPShareCapitalDocument,
-COD,CODDocument } from './schema/masters.schema';
+COD,CODDocument,CapitalStructure,CapitalStructureDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -294,5 +294,30 @@ export class CODService {
     
       async deleteCOD(id: string): Promise<any> {
         return this.codModel.findByIdAndRemove(id).exec();
+      }
+}
+
+//Capital Structure Service
+@Injectable()
+export class CapitalStructureService {
+    constructor(
+        @InjectModel('capitalStructure') private readonly capitalStructureModel: Model<CapitalStructureDocument>,
+      ) {}
+    
+      async createCapitalStructure(capitalStructure:object): Promise<CapitalStructure> {
+        return this.capitalStructureModel.create(capitalStructure);
+    }
+      async getCapitalStructure(): Promise<CapitalStructure[]> {
+        return this.capitalStructureModel.find().exec();
+      }
+      async getCapitalStructureById(id:string): Promise<CapitalStructure> {
+        return this.capitalStructureModel.findById(id);
+      }
+      async updateCapitalStructure(id: string, capitalStructure: CapitalStructure): Promise<CapitalStructure> {
+        return this.capitalStructureModel.findByIdAndUpdate(id,capitalStructure, { new: true }).exec();
+      }
+    
+      async deleteCapitalStructure(id: string): Promise<any> {
+        return this.capitalStructureModel.findByIdAndRemove(id).exec();
       }
 }

@@ -5,17 +5,17 @@ import { IndustriesController,ValuationMethodsController,
   TerminalGrowthRatesController,COEMethodsController,
   RiskFreeRatesController,ExpMarketReturnsController, 
   MastersController,BetasController,RiskPremiumsController
-  ,COPShareCapitalController,CODController } from './masters.controller';
+  ,COPShareCapitalController,CODController,CapitalStructureController } from './masters.controller';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
   RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService
-  ,COPShareCapitalService,CODService } from './masters.service';
+  ,COPShareCapitalService,CODService,CapitalStructureService } from './masters.service';
 
 import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
   DiscountRateSchema,TerminalGrowthRateSchema,COEMethodSchema,
   RiskFreeRateSchema,ExpMarketReturnSchema,BetaSchema,RiskPremiumSchema
-  ,COPShareCapitalSchema,CODSchema } from './schema/masters.schema';
+  ,COPShareCapitalSchema,CODSchema,CapitalStructureSchema } from './schema/masters.schema';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -31,17 +31,18 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
       { name: 'riskPremium',schema: RiskPremiumSchema },
       { name: 'copShareCapital',schema: COPShareCapitalSchema },
       { name: 'costOfDebt',schema: CODSchema },
+      { name: 'capitalStructure',schema: CapitalStructureSchema },
     ])],
   controllers: [IndustriesController,ValuationMethodsController,
     TaxRatesController,DiscountRatesController,TerminalGrowthRatesController,
     COEMethodsController,RiskFreeRatesController,ExpMarketReturnsController,
     MastersController,BetasController,RiskPremiumsController,
-    COPShareCapitalController,CODController],
+    COPShareCapitalController,CODController,CapitalStructureController],
 
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
     DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
     RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,
-    COPShareCapitalService,CODService],
+    COPShareCapitalService,CODService,CapitalStructureService],
     exports:[ValuationMethodsService]
 })
 export class MastersModule {}

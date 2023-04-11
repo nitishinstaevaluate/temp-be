@@ -44,4 +44,9 @@ export class CreateIndustryDto {
     fieldLabel:string;
     fieldValue:string;
   }
+  //Capital Structure Dto
+   export class CreateCapitalStructureDto {
+    fieldLabel:string;
+    fieldValue:string;
+  }
   

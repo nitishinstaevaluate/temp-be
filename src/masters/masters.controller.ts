@@ -5,17 +5,17 @@ import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTerminalGrowthRateDto,CreateCOEMethodDto,
   CreateRiskFreeRateDto,CreateExpMarketReturnDto,
   CreateBetaDto,CreateRiskPremiumDto,CreateCOPShareCapitalDto
-,CreateCODDto } from './dto/masters.dto';
+,CreateCODDto,CreateCapitalStructureDto } from './dto/masters.dto';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
    RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,
-   COPShareCapitalService,CODService } from './masters.service';
+   COPShareCapitalService,CODService,CapitalStructureService } from './masters.service';
 
 import { Industry,ValuationMethod,TaxRate,DiscountRate,
   TerminalGrowthRate,COEMethod,
   RiskFreeRate,ExpMarketReturn,Beta,RiskPremium,
-  COPShareCapital,COD } from './schema/masters.schema';
+  COPShareCapital,COD,CapitalStructure } from './schema/masters.schema';
 
   //Masters Controller for FrontEnd DropDowns Integration.
 @Controller('masters')
@@ -357,7 +357,7 @@ async update(@Param('id') id: string, @Body() copShareCapital:COPShareCapital): 
   }
 }
 
-//COEMethods Controller
+//Cost of Debt Controller
 @Controller('costOfDebts')
 export class CODController {
   constructor(private codService: CODService) {}
@@ -379,5 +379,31 @@ export class CODController {
     @Delete(':id')
     async delete(@Param('id') id: string): Promise<any> {
       return this.codService.deleteCOD(id);
+    }
+}
+
+
+//Capital Structure Controller
+@Controller('capitalStructures')
+export class CapitalStructureController {
+  constructor(private capitalStructureService: CapitalStructureService) {}
+
+  @Post()
+  async create(@Body() capitalStructureDto: CreateCapitalStructureDto) {
+    return this.capitalStructureService.createCapitalStructure(capitalStructureDto);
+  }
+
+  @Get()
+  async findAll(): Promise<CapitalStructure[]> {
+    return this.capitalStructureService.getCapitalStructure();
+  }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() capitalStructure:CapitalStructure): Promise<CapitalStructure> {
+    return this.capitalStructureService.updateCapitalStructure(id,capitalStructure);
+  }
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
+      return this.capitalStructureService.deleteCapitalStructure(id);
     }
 }
