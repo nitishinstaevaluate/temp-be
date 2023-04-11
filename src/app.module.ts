@@ -11,6 +11,7 @@ import { ValuationProcessModule } from './valuationProcess/valuationProcess.modu
 import { CorsMiddleware } from './middleware/CorsMiddleware';
 import { UploadController } from './uploadExcel/uploadExcel.controller';
 import { IndustryModule } from './industry/industry.module';
+import { ExportTemplateController } from './exportTemplate/exportTemplate.controller';
 require('dotenv').config();
 
 @Module({
@@ -18,7 +19,7 @@ require('dotenv').config();
     ValuationProcessModule,ExportResultsModule,
     AuthenticationModule,IndustryModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),],
-  controllers: [AppController,UploadController], //ImportController
+  controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, ], //ImportService
 })
 export class AppModule implements NestModule {
