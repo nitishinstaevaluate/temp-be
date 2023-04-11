@@ -4,16 +4,18 @@ import { CreateIndustryDto,CreateValuationMethodDto,
   CreateTaxRateDto,CreateDiscountRateDto,
   CreateTerminalGrowthRateDto,CreateCOEMethodDto,
   CreateRiskFreeRateDto,CreateExpMarketReturnDto,
-  CreateBetaDto,CreateRiskPremiumDto,CreateCOPShareCapitalDto } from './dto/masters.dto';
+  CreateBetaDto,CreateRiskPremiumDto,CreateCOPShareCapitalDto
+,CreateCODDto } from './dto/masters.dto';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
    DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
    RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,
-   COPShareCapitalService } from './masters.service';
+   COPShareCapitalService,CODService } from './masters.service';
 
 import { Industry,ValuationMethod,TaxRate,DiscountRate,
   TerminalGrowthRate,COEMethod,
-  RiskFreeRate,ExpMarketReturn,Beta,RiskPremium,COPShareCapital } from './schema/masters.schema';
+  RiskFreeRate,ExpMarketReturn,Beta,RiskPremium,
+  COPShareCapital,COD } from './schema/masters.schema';
 
   //Masters Controller for FrontEnd DropDowns Integration.
 @Controller('masters')
@@ -353,4 +355,29 @@ async update(@Param('id') id: string, @Body() copShareCapital:COPShareCapital): 
   async delete(@Param('id') id: string): Promise<any> {
     return this.copShareCapitalService.deleteCOPShareCapital(id);
   }
+}
+
+//COEMethods Controller
+@Controller('costOfDebts')
+export class CODController {
+  constructor(private codService: CODService) {}
+
+  @Post()
+  async create(@Body() codDto: CreateCODDto) {
+    return this.codService.createCOD(codDto);
+  }
+
+  @Get()
+  async findAll(): Promise<COD[]> {
+    return this.codService.getCOD();
+  }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() cod:COD): Promise<COD> {
+    return this.codService.updateCOD(id,cod);
+  }
+  
+    @Delete(':id')
+    async delete(@Param('id') id: string): Promise<any> {
+      return this.codService.deleteCOD(id);
+    }
 }

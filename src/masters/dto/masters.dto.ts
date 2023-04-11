@@ -39,4 +39,9 @@ export class CreateIndustryDto {
     label:string;
     cost:number;
   }
+  //Cost of Debt Dto
+  export class CreateCODDto {
+    fieldLabel:string;
+    fieldValue:string;
+  }
   

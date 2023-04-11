@@ -226,3 +226,25 @@ export class COPShareCapital {
 }
 export type COPShareCapitalDocument = COPShareCapital & Document;
 export const COPShareCapitalSchema = SchemaFactory.createForClass(COPShareCapital);
+
+//Cost of Debt Schema
+@Schema()
+export class COD {
+
+  @Prop({ required: true })
+  fieldLabel: string;
+
+  @Prop({ required: true })
+  fieldValue: string;
+
+  @Prop({ default:true })
+    isActive: boolean;
+    
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+  
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type CODDocument = COD & Document;
+export const CODSchema = SchemaFactory.createForClass(COD);

@@ -7,7 +7,8 @@ DiscountRate,DiscountRateDocument,TerminalGrowthRate,
 TerminalGrowthRateDocument,COEMethod,COEMethodDocument,
 RiskFreeRate,RiskFreeRateDocument,ExpMarketReturn,
 ExpMarketReturnDocument,Beta,BetaDocument,RiskPremium,
-RiskPremiumDocument,COPShareCapital,COPShareCapitalDocument } from './schema/masters.schema';
+RiskPremiumDocument,COPShareCapital,COPShareCapitalDocument,
+COD,CODDocument } from './schema/masters.schema';
 
 // Industries Service
 @Injectable()
@@ -268,5 +269,30 @@ export class COPShareCapitalService {
     
       async deleteCOPShareCapital(id: string): Promise<any> {
         return this.copShareCapitalModel.findByIdAndRemove(id).exec();
+      }
+}
+
+//Cost of Debt Service
+@Injectable()
+export class CODService {
+    constructor(
+        @InjectModel('costOfDebt') private readonly codModel: Model<CODDocument>,
+      ) {}
+    
+      async createCOD(cod:object): Promise<COD> {
+        return this.codModel.create(cod);
+    }
+      async getCOD(): Promise<COD[]> {
+        return this.codModel.find().exec();
+      }
+      async getCODById(id:string): Promise<COD> {
+        return this.codModel.findById(id);
+      }
+      async updateCOD(id: string, cod: COD): Promise<COD> {
+        return this.codModel.findByIdAndUpdate(id,cod, { new: true }).exec();
+      }
+    
+      async deleteCOD(id: string): Promise<any> {
+        return this.codModel.findByIdAndRemove(id).exec();
       }
 }

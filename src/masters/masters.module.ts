@@ -5,17 +5,17 @@ import { IndustriesController,ValuationMethodsController,
   TerminalGrowthRatesController,COEMethodsController,
   RiskFreeRatesController,ExpMarketReturnsController, 
   MastersController,BetasController,RiskPremiumsController
-  ,COPShareCapitalController } from './masters.controller';
+  ,COPShareCapitalController,CODController } from './masters.controller';
 
 import { IndustriesService,ValuationMethodsService,TaxRatesService,
   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
   RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService
-  ,COPShareCapitalService } from './masters.service';
+  ,COPShareCapitalService,CODService } from './masters.service';
 
 import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
   DiscountRateSchema,TerminalGrowthRateSchema,COEMethodSchema,
   RiskFreeRateSchema,ExpMarketReturnSchema,BetaSchema,RiskPremiumSchema
-  ,COPShareCapitalSchema } from './schema/masters.schema';
+  ,COPShareCapitalSchema,CODSchema } from './schema/masters.schema';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -30,15 +30,18 @@ import { IndustrySchema,ValuationMethodSchema,TaxRateSchema,
       { name: 'beta',schema: BetaSchema },
       { name: 'riskPremium',schema: RiskPremiumSchema },
       { name: 'copShareCapital',schema: COPShareCapitalSchema },
+      { name: 'costOfDebt',schema: CODSchema },
     ])],
   controllers: [IndustriesController,ValuationMethodsController,
     TaxRatesController,DiscountRatesController,TerminalGrowthRatesController,
     COEMethodsController,RiskFreeRatesController,ExpMarketReturnsController,
-    MastersController,BetasController,RiskPremiumsController,COPShareCapitalController],
+    MastersController,BetasController,RiskPremiumsController,
+    COPShareCapitalController,CODController],
 
   providers: [IndustriesService,ValuationMethodsService,TaxRatesService,
     DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
-    RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,COPShareCapitalService],
+    RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,
+    COPShareCapitalService,CODService],
     exports:[ValuationMethodsService]
 })
 export class MastersModule {}
