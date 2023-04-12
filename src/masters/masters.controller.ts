@@ -71,6 +71,8 @@ export class MastersController {
     private betaService: BetaService,
     private riskPremiumService: RiskPremiumService,
     private copShareCapitalService: COPShareCapitalService,
+    private codService: CODService,
+    private capitalStructureService: CapitalStructureService,
   ) {}
 
   @Get(':fieldName')
@@ -89,12 +91,14 @@ export class MastersController {
         await this.riskFreeRateService.getRiskFreeRates();
       dropDowns['expmarketreturns'] =
         await this.expMarketReturnService.getExpMarketReturns();
-        dropDowns['betas'] =
-        await this.betaService.getBetas();
-        dropDowns['riskPremiums'] =
+      dropDowns['betas'] = await this.betaService.getBetas();
+      dropDowns['riskPremiums'] =
         await this.riskPremiumService.getRiskPremiums();
-        dropDowns['copShareCapitals'] =
+      dropDowns['copShareCapitals'] =
         await this.copShareCapitalService.getCOPShareCapitals();
+      dropDowns['costOfDebts'] = await this.codService.getCOD();
+      dropDowns['capitalStructures'] =
+        await this.capitalStructureService.getCapitalStructure();
 
       return dropDowns;
     } else if (fieldName.toLowerCase() === 'industries')
@@ -113,12 +117,16 @@ export class MastersController {
       return await this.riskFreeRateService.getRiskFreeRates();
     else if (fieldName.toLowerCase() === 'expmarketreturns')
       return await this.expMarketReturnService.getExpMarketReturns();
-      else if (fieldName.toLowerCase() === 'betas')
-      return  await this.betaService.getBetas();
-      else if (fieldName.toLowerCase() === 'riskpremiums')
-      return  await this.riskPremiumService.getRiskPremiums();
-      else if (fieldName.toLowerCase() === 'copsharecapitals')
-      return   await this.copShareCapitalService.getCOPShareCapitals();
+    else if (fieldName.toLowerCase() === 'betas')
+      return await this.betaService.getBetas();
+    else if (fieldName.toLowerCase() === 'riskpremiums')
+      return await this.riskPremiumService.getRiskPremiums();
+    else if (fieldName.toLowerCase() === 'copsharecapitals')
+      return await this.copShareCapitalService.getCOPShareCapitals();
+    else if (fieldName.toLowerCase() === 'costofdebts')
+      return await this.codService.getCOD();
+    else if (fieldName.toLowerCase() === 'capitalstructures')
+      return await this.capitalStructureService.getCapitalStructure();
     else return [];
   }
 }
