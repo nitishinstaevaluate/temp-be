@@ -22,7 +22,7 @@ export class CreateCOEMethodDto {
 }
 export class CreateRiskFreeRateDto {
   label: string;
-  rate: number;
+  type: string;
 }
 export class CreateExpMarketReturnDto {
   marketReturn: string;

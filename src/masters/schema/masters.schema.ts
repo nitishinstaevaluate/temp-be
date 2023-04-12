@@ -127,7 +127,7 @@ export class RiskFreeRate {
   label: string;
 
   @Prop({ required: true })
-  rate: number;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
