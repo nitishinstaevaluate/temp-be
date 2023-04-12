@@ -7,19 +7,18 @@ class ValuationData {}
 //Valuations Table Schema
 @Schema()
 export class Valuation {
+  @Prop({ required: true })
+  company: string;
 
-  @Prop({ required:true })
-    company:string;
+  @Prop({ required: true })
+  model: string;
 
-    @Prop({required:true })
-    model: string;
+  @Prop({ required: true })
+  valuationData: ValuationData;
 
-    @Prop({required:true })
-    valuationData:ValuationData;
+  @Prop({ required: true })
+  userId: string;
 
-    @Prop({required:true })
-    userId: string;
-    
   @Prop({ default: () => new Date() })
   createdAt: Date;
 }

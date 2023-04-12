@@ -7,9 +7,12 @@ import { IndustryModule } from 'src/industry/industry.module';
 import { ValuationMethodsService } from './valuation.methods.service';
 
 @Module({
-    imports: [MongooseModule.forFeature([{ name: 'valuation',schema: ValuationSchema }]),IndustryModule],
-    controllers: [ValuationController], //ImportController
-    providers: [ValuationsService,ValuationMethodsService], //ImportService
-    exports:[ValuationsService,ValuationMethodsService]
-  })
-  export class ValuationProcessModule {}
+  imports: [
+    MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
+    IndustryModule,
+  ],
+  controllers: [ValuationController], //ImportController
+  providers: [ValuationsService, ValuationMethodsService], //ImportService
+  exports: [ValuationsService, ValuationMethodsService],
+})
+export class ValuationProcessModule {}

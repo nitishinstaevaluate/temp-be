@@ -15,7 +15,10 @@ export class ExportTemplateController {
     const fileStream = fs.createReadStream(filePath);
 
     res.setHeader('Content-Type', 'application/vnd.ms-excel');
-    res.setHeader('Content-Disposition', `attachment; filename= Template-${new Date().getTime()}.xlsx`);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename= Template-${new Date().getTime()}.xlsx`,
+    );
 
     fileStream.pipe(res);
   }

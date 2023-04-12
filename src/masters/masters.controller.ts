@@ -1,23 +1,62 @@
-import { Controller, Get, Post, Body, Delete, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  Put,
+} from '@nestjs/common';
 
-import { CreateIndustryDto,CreateValuationMethodDto,
-  CreateTaxRateDto,CreateDiscountRateDto,
-  CreateTerminalGrowthRateDto,CreateCOEMethodDto,
-  CreateRiskFreeRateDto,CreateExpMarketReturnDto,
-  CreateBetaDto,CreateRiskPremiumDto,CreateCOPShareCapitalDto
-,CreateCODDto,CreateCapitalStructureDto } from './dto/masters.dto';
+import {
+  CreateIndustryDto,
+  CreateValuationMethodDto,
+  CreateTaxRateDto,
+  CreateDiscountRateDto,
+  CreateTerminalGrowthRateDto,
+  CreateCOEMethodDto,
+  CreateRiskFreeRateDto,
+  CreateExpMarketReturnDto,
+  CreateBetaDto,
+  CreateRiskPremiumDto,
+  CreateCOPShareCapitalDto,
+  CreateCODDto,
+  CreateCapitalStructureDto,
+} from './dto/masters.dto';
 
-import { IndustriesService,ValuationMethodsService,TaxRatesService,
-   DiscountRatesService,TerminalGrowthRatesService,COEMethodsService,
-   RiskFreeRatesService,ExpMarketReturnsService,BetaService,RiskPremiumService,
-   COPShareCapitalService,CODService,CapitalStructureService } from './masters.service';
+import {
+  IndustriesService,
+  ValuationMethodsService,
+  TaxRatesService,
+  DiscountRatesService,
+  TerminalGrowthRatesService,
+  COEMethodsService,
+  RiskFreeRatesService,
+  ExpMarketReturnsService,
+  BetaService,
+  RiskPremiumService,
+  COPShareCapitalService,
+  CODService,
+  CapitalStructureService,
+} from './masters.service';
 
-import { Industry,ValuationMethod,TaxRate,DiscountRate,
-  TerminalGrowthRate,COEMethod,
-  RiskFreeRate,ExpMarketReturn,Beta,RiskPremium,
-  COPShareCapital,COD,CapitalStructure } from './schema/masters.schema';
+import {
+  Industry,
+  ValuationMethod,
+  TaxRate,
+  DiscountRate,
+  TerminalGrowthRate,
+  COEMethod,
+  RiskFreeRate,
+  ExpMarketReturn,
+  Beta,
+  RiskPremium,
+  COPShareCapital,
+  COD,
+  CapitalStructure,
+} from './schema/masters.schema';
 
-  //Masters Controller for FrontEnd DropDowns Integration.
+//Masters Controller for FrontEnd DropDowns Integration.
 @Controller('masters')
 export class MastersController {
   constructor(
@@ -28,53 +67,45 @@ export class MastersController {
     private growthRateService: TerminalGrowthRatesService,
     private coeMethodService: COEMethodsService,
     private riskFreeRateService: RiskFreeRatesService,
-    private expMarketReturnService: ExpMarketReturnsService
-    ) {}
- 
+    private expMarketReturnService: ExpMarketReturnsService,
+  ) {}
+
   @Get(':fieldName')
   async findByFieldName(@Param('fieldName') fieldName: string): Promise<any> {
-     if(fieldName.toLowerCase()==="all")
-      {
-       const dropDowns={};
-       dropDowns["industries"]= await this.industriesService.getIndustries();
-       dropDowns["valuationmethods"]= await this.methodService.getValuationMethods();
-       dropDowns["taxrates"]= await this.taxRateService.getTaxRates();
-       dropDowns["discountrates"]= await this.discountRateService.getDiscountRates();
-       dropDowns["growthrates"]= await this.growthRateService.getGrowthRates();
-       dropDowns["coemethods"]= await this.coeMethodService.getCOEMethods();
-       dropDowns["riskfreerates"]= await this.riskFreeRateService.getRiskFreeRates();
-       dropDowns["expmarketreturns"]= await this.expMarketReturnService.getExpMarketReturns();
+    if (fieldName.toLowerCase() === 'all') {
+      const dropDowns = {};
+      dropDowns['industries'] = await this.industriesService.getIndustries();
+      dropDowns['valuationmethods'] =
+        await this.methodService.getValuationMethods();
+      dropDowns['taxrates'] = await this.taxRateService.getTaxRates();
+      dropDowns['discountrates'] =
+        await this.discountRateService.getDiscountRates();
+      dropDowns['growthrates'] = await this.growthRateService.getGrowthRates();
+      dropDowns['coemethods'] = await this.coeMethodService.getCOEMethods();
+      dropDowns['riskfreerates'] =
+        await this.riskFreeRateService.getRiskFreeRates();
+      dropDowns['expmarketreturns'] =
+        await this.expMarketReturnService.getExpMarketReturns();
 
-       return dropDowns;
-     }
-    else if(fieldName.toLowerCase()==="industries")
-    return this.industriesService.getIndustries();
-
-    else if(fieldName.toLowerCase()==="valuationmethods")
-    return this.methodService.getValuationMethods();
-
-    else if(fieldName.toLowerCase()==="taxrates")
-    return this.taxRateService.getTaxRates();
-
-    else if(fieldName.toLowerCase()==="discountrates")
-    return this.discountRateService.getDiscountRates();
-
-    else if(fieldName.toLowerCase()==="growthrates")
-    return this.growthRateService.getGrowthRates();
-
-    else if(fieldName.toLowerCase()==="coemethods")
-    return this.coeMethodService.getCOEMethods();
-
-    else if(fieldName.toLowerCase()==="riskfreerates")
-    return this.riskFreeRateService.getRiskFreeRates();
-
-    else if(fieldName.toLowerCase()==="expmarketreturns")
-    return this.expMarketReturnService.getExpMarketReturns();
-    else 
-    return [];
+      return dropDowns;
+    } else if (fieldName.toLowerCase() === 'industries')
+      return this.industriesService.getIndustries();
+    else if (fieldName.toLowerCase() === 'valuationmethods')
+      return this.methodService.getValuationMethods();
+    else if (fieldName.toLowerCase() === 'taxrates')
+      return this.taxRateService.getTaxRates();
+    else if (fieldName.toLowerCase() === 'discountrates')
+      return this.discountRateService.getDiscountRates();
+    else if (fieldName.toLowerCase() === 'growthrates')
+      return this.growthRateService.getGrowthRates();
+    else if (fieldName.toLowerCase() === 'coemethods')
+      return this.coeMethodService.getCOEMethods();
+    else if (fieldName.toLowerCase() === 'riskfreerates')
+      return this.riskFreeRateService.getRiskFreeRates();
+    else if (fieldName.toLowerCase() === 'expmarketreturns')
+      return this.expMarketReturnService.getExpMarketReturns();
+    else return [];
   }
-
- 
 }
 
 //Industries Controller
@@ -92,13 +123,16 @@ export class IndustriesController {
     return this.industriesService.getIndustries();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() industry:Industry): Promise<Industry> {
-    return this.industriesService.updateIndustry(id,industry);
+  async update(
+    @Param('id') id: string,
+    @Body() industry: Industry,
+  ): Promise<Industry> {
+    return this.industriesService.updateIndustry(id, industry);
   }
-  
+
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
-      return this.industriesService.deleteIndustry(id);
+    return this.industriesService.deleteIndustry(id);
   }
 }
 
@@ -117,13 +151,16 @@ export class ValuationMethodsController {
     return this.methodService.getValuationMethods();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() method:ValuationMethod): Promise<ValuationMethod> {
-    return this.methodService.updateValuationMethod(id,method);
+  async update(
+    @Param('id') id: string,
+    @Body() method: ValuationMethod,
+  ): Promise<ValuationMethod> {
+    return this.methodService.updateValuationMethod(id, method);
   }
-  
+
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
-      return this.methodService.deleteValuationMethod(id);
+    return this.methodService.deleteValuationMethod(id);
   }
 }
 
@@ -142,13 +179,16 @@ export class TaxRatesController {
     return this.taxRateService.getTaxRates();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() taxRate:TaxRate): Promise<TaxRate> {
-    return this.taxRateService.updateTaxRate(id,taxRate);
+  async update(
+    @Param('id') id: string,
+    @Body() taxRate: TaxRate,
+  ): Promise<TaxRate> {
+    return this.taxRateService.updateTaxRate(id, taxRate);
   }
-  
+
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
-      return this.taxRateService.deleteTaxRate(id);
+    return this.taxRateService.deleteTaxRate(id);
   }
 }
 
@@ -167,14 +207,17 @@ export class DiscountRatesController {
     return this.discountRateService.getDiscountRates();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() discountRate:DiscountRate): Promise<DiscountRate> {
-    return this.discountRateService.updateDiscountRate(id,discountRate);
+  async update(
+    @Param('id') id: string,
+    @Body() discountRate: DiscountRate,
+  ): Promise<DiscountRate> {
+    return this.discountRateService.updateDiscountRate(id, discountRate);
   }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<any> {
-      return this.discountRateService.deleteDiscountRate(id);
-    }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.discountRateService.deleteDiscountRate(id);
+  }
 }
 
 //TerminalGrowthRates Controller
@@ -192,16 +235,18 @@ export class TerminalGrowthRatesController {
     return this.growthRateService.getGrowthRates();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() growthRate:TerminalGrowthRate): Promise<TerminalGrowthRate> {
-    return this.growthRateService.updateGrowthRate(id,growthRate);
+  async update(
+    @Param('id') id: string,
+    @Body() growthRate: TerminalGrowthRate,
+  ): Promise<TerminalGrowthRate> {
+    return this.growthRateService.updateGrowthRate(id, growthRate);
   }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<any> {
-      return this.growthRateService.deleteGrowthRate(id);
-    }
-}
 
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.growthRateService.deleteGrowthRate(id);
+  }
+}
 
 //COEMethods Controller
 @Controller('coeMethods')
@@ -218,14 +263,17 @@ export class COEMethodsController {
     return this.coeMethodService.getCOEMethods();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() coeMethod:COEMethod): Promise<COEMethod> {
-    return this.coeMethodService.updateCOEMethod(id,coeMethod);
+  async update(
+    @Param('id') id: string,
+    @Body() coeMethod: COEMethod,
+  ): Promise<COEMethod> {
+    return this.coeMethodService.updateCOEMethod(id, coeMethod);
   }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<any> {
-      return this.coeMethodService.deleteCOEMethod(id);
-    }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.coeMethodService.deleteCOEMethod(id);
+  }
 }
 
 //RiskFreeRates Controller
@@ -243,14 +291,17 @@ export class RiskFreeRatesController {
     return this.riskFreeRateService.getRiskFreeRates();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() riskFreeRate:RiskFreeRate): Promise<RiskFreeRate> {
-    return this.riskFreeRateService.updateRiskFreeRate(id,riskFreeRate);
+  async update(
+    @Param('id') id: string,
+    @Body() riskFreeRate: RiskFreeRate,
+  ): Promise<RiskFreeRate> {
+    return this.riskFreeRateService.updateRiskFreeRate(id, riskFreeRate);
   }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<any> {
-      return this.riskFreeRateService.deleteRiskFreeRate(id);
-    }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.riskFreeRateService.deleteRiskFreeRate(id);
+  }
 }
 
 //ExpMarketReturns Controller
@@ -260,7 +311,9 @@ export class ExpMarketReturnsController {
 
   @Post()
   async create(@Body() expMarketReturnDto: CreateExpMarketReturnDto) {
-    return this.expMarketReturnService.createExpMarketReturn(expMarketReturnDto);
+    return this.expMarketReturnService.createExpMarketReturn(
+      expMarketReturnDto,
+    );
   }
 
   @Get()
@@ -269,9 +322,15 @@ export class ExpMarketReturnsController {
   }
 
   @Put(':id')
-async update(@Param('id') id: string, @Body() expMarketReturn:ExpMarketReturn): Promise<ExpMarketReturn> {
-  return this.expMarketReturnService.updateExpMarketReturn(id,expMarketReturn);
-}
+  async update(
+    @Param('id') id: string,
+    @Body() expMarketReturn: ExpMarketReturn,
+  ): Promise<ExpMarketReturn> {
+    return this.expMarketReturnService.updateExpMarketReturn(
+      id,
+      expMarketReturn,
+    );
+  }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
@@ -295,9 +354,9 @@ export class BetasController {
   }
 
   @Put(':id')
-async update(@Param('id') id: string, @Body() beta:Beta): Promise<Beta> {
-  return this.betaService.updateBeta(id,beta);
-}
+  async update(@Param('id') id: string, @Body() beta: Beta): Promise<Beta> {
+    return this.betaService.updateBeta(id, beta);
+  }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
@@ -321,9 +380,12 @@ export class RiskPremiumsController {
   }
 
   @Put(':id')
-async update(@Param('id') id: string, @Body() riskPremium:RiskPremium): Promise<RiskPremium> {
-  return this.riskPremimumService.updateRiskPremium(id,riskPremium);
-}
+  async update(
+    @Param('id') id: string,
+    @Body() riskPremium: RiskPremium,
+  ): Promise<RiskPremium> {
+    return this.riskPremimumService.updateRiskPremium(id, riskPremium);
+  }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
@@ -338,7 +400,9 @@ export class COPShareCapitalController {
 
   @Post()
   async create(@Body() copShareCapitalDto: CreateCOPShareCapitalDto) {
-    return this.copShareCapitalService.createCOPShareCapital(copShareCapitalDto);
+    return this.copShareCapitalService.createCOPShareCapital(
+      copShareCapitalDto,
+    );
   }
 
   @Get()
@@ -347,9 +411,15 @@ export class COPShareCapitalController {
   }
 
   @Put(':id')
-async update(@Param('id') id: string, @Body() copShareCapital:COPShareCapital): Promise<COPShareCapital> {
-  return this.copShareCapitalService.updateCOPShareCapital(id,copShareCapital);
-}
+  async update(
+    @Param('id') id: string,
+    @Body() copShareCapital: COPShareCapital,
+  ): Promise<COPShareCapital> {
+    return this.copShareCapitalService.updateCOPShareCapital(
+      id,
+      copShareCapital,
+    );
+  }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
@@ -372,16 +442,15 @@ export class CODController {
     return this.codService.getCOD();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() cod:COD): Promise<COD> {
-    return this.codService.updateCOD(id,cod);
+  async update(@Param('id') id: string, @Body() cod: COD): Promise<COD> {
+    return this.codService.updateCOD(id, cod);
   }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<any> {
-      return this.codService.deleteCOD(id);
-    }
-}
 
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.codService.deleteCOD(id);
+  }
+}
 
 //Capital Structure Controller
 @Controller('capitalStructures')
@@ -390,7 +459,9 @@ export class CapitalStructureController {
 
   @Post()
   async create(@Body() capitalStructureDto: CreateCapitalStructureDto) {
-    return this.capitalStructureService.createCapitalStructure(capitalStructureDto);
+    return this.capitalStructureService.createCapitalStructure(
+      capitalStructureDto,
+    );
   }
 
   @Get()
@@ -398,12 +469,18 @@ export class CapitalStructureController {
     return this.capitalStructureService.getCapitalStructure();
   }
   @Put(':id')
-  async update(@Param('id') id: string, @Body() capitalStructure:CapitalStructure): Promise<CapitalStructure> {
-    return this.capitalStructureService.updateCapitalStructure(id,capitalStructure);
+  async update(
+    @Param('id') id: string,
+    @Body() capitalStructure: CapitalStructure,
+  ): Promise<CapitalStructure> {
+    return this.capitalStructureService.updateCapitalStructure(
+      id,
+      capitalStructure,
+    );
   }
-  
-    @Delete(':id')
-    async delete(@Param('id') id: string): Promise<any> {
-      return this.capitalStructureService.deleteCapitalStructure(id);
-    }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.capitalStructureService.deleteCapitalStructure(id);
+  }
 }
