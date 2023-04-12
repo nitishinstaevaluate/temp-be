@@ -23,9 +23,13 @@ export class ValuationMethodsService {
     worksheet2: any,
   ): Promise<any> {
     //Industry Calculation we needs to create new service for it.
-    const discountingFactor = await this.industryService.getFCFEDisFactor(
+    const res = await this.industryService.getFCFEDisFactor(
       inputs,
     );
+    if(res.result===null)
+    return res;
+
+    const discountingFactor=res.result;
     const result = await this.FCFEAndFCFF_Common(
       inputs,
       worksheet1,
@@ -48,7 +52,7 @@ export class ValuationMethodsService {
     if (capitalStructure === 'Company_Based') capitalStructureValue = 1;
     else if (capitalStructure === 'Industry_Based') capitalStructureValue = 2;
 
-    const discountingFactor = await this.industryService.getFCFFDisFactor(
+    const res = await this.industryService.getFCFFDisFactor(
       inputs,
       {
         costOfDebt: costOfDebtValueNow,
@@ -58,7 +62,10 @@ export class ValuationMethodsService {
         proportionOfPSC: 1,
       },
     );
-
+   if(res.result===null)
+    return res;
+    
+    const discountingFactor=res.result;
     const result = await this.FCFEAndFCFF_Common(
       inputs,
       worksheet1,

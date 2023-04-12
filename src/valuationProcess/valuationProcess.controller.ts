@@ -26,6 +26,7 @@ export class ValuationController {
         worksheet1,
         worksheet2,
       );
+     
       if (valuationResponse.result === null) return valuationResponse.msg;
 
       const valuationResult = valuationResponse.result;
@@ -33,6 +34,7 @@ export class ValuationController {
       const data = {
         company: company,
         model: model,
+        inputData:inputs,
         valuationData: valuationResult,
         userId: userId,
       };
