@@ -68,6 +68,8 @@ export class MastersController {
     private coeMethodService: COEMethodsService,
     private riskFreeRateService: RiskFreeRatesService,
     private expMarketReturnService: ExpMarketReturnsService,
+    private betaService: BetaService,
+    private riskPremiumService: RiskPremiumService,
   ) {}
 
   @Get(':fieldName')
@@ -86,6 +88,10 @@ export class MastersController {
         await this.riskFreeRateService.getRiskFreeRates();
       dropDowns['expmarketreturns'] =
         await this.expMarketReturnService.getExpMarketReturns();
+        dropDowns['betas'] =
+        await this.betaService.getBetas();
+        dropDowns['riskPremiums'] =
+        await this.riskPremiumService.getRiskPremiums();
 
       return dropDowns;
     } else if (fieldName.toLowerCase() === 'industries')
@@ -104,6 +110,10 @@ export class MastersController {
       return this.riskFreeRateService.getRiskFreeRates();
     else if (fieldName.toLowerCase() === 'expmarketreturns')
       return this.expMarketReturnService.getExpMarketReturns();
+      else if (fieldName.toLowerCase() === 'betas')
+      return  await this.betaService.getBetas();
+      else if (fieldName.toLowerCase() === 'riskPremiums')
+      return  await this.riskPremiumService.getRiskPremiums();
     else return [];
   }
 }
