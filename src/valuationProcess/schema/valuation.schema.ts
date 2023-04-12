@@ -3,6 +3,7 @@ import { Document } from 'mongoose';
 
 //ValuationData (output Result) Schema
 class ValuationData {}
+class inputData {}
 
 //Valuations Table Schema
 @Schema()
@@ -12,6 +13,9 @@ export class Valuation {
 
   @Prop({ required: true })
   model: string;
+
+  @Prop({ required: true })
+  inputData: inputData;
 
   @Prop({ required: true })
   valuationData: ValuationData;

@@ -45,10 +45,10 @@ export const ValuationMethodSchema =
 @Schema()
 export class TaxRate {
   @Prop({ required: true })
-  name: string;
+  label: string;
 
   @Prop({ required: true })
-  rate: number;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;

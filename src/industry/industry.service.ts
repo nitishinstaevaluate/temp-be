@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class IndustryService {
-  // Get Adjusted Cost of Equity
+  // Get Adjusted Cost of Equity. Industry Calculation based on Cost of Equity.
   async getACOE(inputs: any): Promise<number> {
     const { riskFreeRate, expMarketReturn, beta, riskPremium } = inputs;
 
@@ -17,12 +17,12 @@ export class IndustryService {
   async getFCFEDisFactor(inputs: any): Promise<number> {
     return this.getACOE(inputs);
   }
+  // Industry Calculation based on WACC.
   async getFCFFDisFactor(inputs: any, inputObj: any): Promise<number> {
-    const { taxRate } = inputs;
+    const { taxRate,copShareCapital } = inputs;
     const adjustedCostOfEquity = await this.getACOE(inputs);
 
     //Cost of Preference Share Capital
-    const COPShareCapital = 1;
     const costOfDebt = inputObj.costOfDebt;
     const capitalStructure = inputObj.capitalStructure;
     const proportionOfDebt = inputObj.proportionOfDebt;
@@ -33,7 +33,7 @@ export class IndustryService {
     const wacc =
       adjustedCostOfEquity * proportionOfEquity +
       costOfDebt * (1 - taxRate) * proportionOfDebt +
-      COPShareCapital * proportionOfPSC;
+      copShareCapital * proportionOfPSC;
     return wacc;
   }
 }

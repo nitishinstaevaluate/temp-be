@@ -54,6 +54,7 @@ export class ValuationController {
       const data = {
         company: company,
         model: model,
+        inputData:inputs,
         valuationData: valuationResult,
         userId: userId,
       };

@@ -7,8 +7,8 @@ export class CreateValuationMethodDto {
   fieldValue: string;
 }
 export class CreateTaxRateDto {
-  name: string;
-  rate: string;
+  label: string;
+  type: string;
 }
 export class CreateDiscountRateDto {
   discountRate: string;

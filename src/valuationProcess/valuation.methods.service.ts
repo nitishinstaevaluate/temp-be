@@ -89,13 +89,23 @@ export class ValuationMethodsService {
     worksheet2: any,
     discountingFactor: number,
   ): Promise<any> {
-    const { projectionYear, outstandingShares } = inputs;
+    const { projectionYear, outstandingShares,discountingPeriod } = inputs;
     const finalResult = [];
     const years = await this.getYearsList(worksheet1);
     if (years === null)
       return {
         result: null,
         msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
+      };
+      let discountingPeriodValue=null;
+      if(discountingPeriod==="Full_Period")
+      discountingPeriodValue=1;
+      else if(discountingPeriod==="Mid_Period")
+      discountingPeriodValue=6;
+      else
+      return {
+        result: null,
+        msg: 'Invalid discounting period.',
       };
     years.map(async (year, i) => {
       if (parseInt(year) >= projectionYear) {
@@ -141,6 +151,7 @@ export class ValuationMethodsService {
           surplusAssets +
           otherAdj;
         const valuePerShare = equityValue / outstandingShares;
+
         const result = {
           particulars: year,
           pat: pat,
@@ -151,7 +162,7 @@ export class ValuationMethodsService {
           netCashFlow: netCashFlow,
           fixedAssets: changeInFixedAssets,
           fcff: fcff,
-          discountingPeriod: 1,
+          discountingPeriod: discountingPeriodValue,
           discountingFactor: discountingFactor,
           presentFCFF: presentFCFF,
           sumOfCashFlows: sumOfCashFlows,
@@ -167,6 +178,6 @@ export class ValuationMethodsService {
       }
     });
 
-    return { result: finalResult, msg: 'FCFE Method Executed Successfully' };
+    return { result: finalResult, msg: 'Executed Successfully' };
   }
 }
