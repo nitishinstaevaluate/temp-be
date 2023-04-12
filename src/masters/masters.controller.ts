@@ -70,6 +70,7 @@ export class MastersController {
     private expMarketReturnService: ExpMarketReturnsService,
     private betaService: BetaService,
     private riskPremiumService: RiskPremiumService,
+    private copShareCapitalService: COPShareCapitalService,
   ) {}
 
   @Get(':fieldName')
@@ -92,28 +93,32 @@ export class MastersController {
         await this.betaService.getBetas();
         dropDowns['riskPremiums'] =
         await this.riskPremiumService.getRiskPremiums();
+        dropDowns['copShareCapitals'] =
+        await this.copShareCapitalService.getCOPShareCapitals();
 
       return dropDowns;
     } else if (fieldName.toLowerCase() === 'industries')
-      return this.industriesService.getIndustries();
+      return await this.industriesService.getIndustries();
     else if (fieldName.toLowerCase() === 'valuationmethods')
-      return this.methodService.getValuationMethods();
+      return await this.methodService.getValuationMethods();
     else if (fieldName.toLowerCase() === 'taxrates')
-      return this.taxRateService.getTaxRates();
+      return await this.taxRateService.getTaxRates();
     else if (fieldName.toLowerCase() === 'discountrates')
-      return this.discountRateService.getDiscountRates();
+      return await this.discountRateService.getDiscountRates();
     else if (fieldName.toLowerCase() === 'growthrates')
-      return this.growthRateService.getGrowthRates();
+      return await this.growthRateService.getGrowthRates();
     else if (fieldName.toLowerCase() === 'coemethods')
-      return this.coeMethodService.getCOEMethods();
+      return await this.coeMethodService.getCOEMethods();
     else if (fieldName.toLowerCase() === 'riskfreerates')
-      return this.riskFreeRateService.getRiskFreeRates();
+      return await this.riskFreeRateService.getRiskFreeRates();
     else if (fieldName.toLowerCase() === 'expmarketreturns')
-      return this.expMarketReturnService.getExpMarketReturns();
+      return await this.expMarketReturnService.getExpMarketReturns();
       else if (fieldName.toLowerCase() === 'betas')
       return  await this.betaService.getBetas();
-      else if (fieldName.toLowerCase() === 'riskPremiums')
+      else if (fieldName.toLowerCase() === 'riskpremiums')
       return  await this.riskPremiumService.getRiskPremiums();
+      else if (fieldName.toLowerCase() === 'copsharecapitals')
+      return   await this.copShareCapitalService.getCOPShareCapitals();
     else return [];
   }
 }

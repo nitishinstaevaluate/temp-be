@@ -209,7 +209,7 @@ export class COPShareCapital {
   label: string;
 
   @Prop({ required: true })
-  cost: number;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;

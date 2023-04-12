@@ -37,7 +37,7 @@ export class CreateRiskPremiumDto {
 }
 export class CreateCOPShareCapitalDto {
   label: string;
-  cost: number;
+  type: string;
 }
 //Cost of Debt Dto
 export class CreateCODDto {
