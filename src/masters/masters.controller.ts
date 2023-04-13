@@ -22,6 +22,7 @@ import {
   CreateCOPShareCapitalDto,
   CreateCODDto,
   CreateCapitalStructureDto,
+  CreatePOPShareCapitalDto,
 } from './dto/masters.dto';
 
 import {
@@ -38,6 +39,7 @@ import {
   COPShareCapitalService,
   CODService,
   CapitalStructureService,
+  POPShareCapitalService,
 } from './masters.service';
 
 import {
@@ -54,6 +56,7 @@ import {
   COPShareCapital,
   COD,
   CapitalStructure,
+  POPShareCapital,
 } from './schema/masters.schema';
 
 //Masters Controller for FrontEnd DropDowns Integration.
@@ -73,6 +76,7 @@ export class MastersController {
     private copShareCapitalService: COPShareCapitalService,
     private codService: CODService,
     private capitalStructureService: CapitalStructureService,
+    private popShareCapitalService: POPShareCapitalService,
   ) {}
 
   @Get(':fieldName')
@@ -99,6 +103,8 @@ export class MastersController {
       dropDowns['costOfDebts'] = await this.codService.getCOD();
       dropDowns['capitalStructures'] =
         await this.capitalStructureService.getCapitalStructure();
+        dropDowns['popShareCapitals'] =
+        await this.popShareCapitalService.getPOPShareCapitals();
 
       return dropDowns;
     } else if (fieldName.toLowerCase() === 'industries')
@@ -127,6 +133,8 @@ export class MastersController {
       return await this.codService.getCOD();
     else if (fieldName.toLowerCase() === 'capitalstructures')
       return await this.capitalStructureService.getCapitalStructure();
+      else if (fieldName.toLowerCase() === 'popsharecapitals')
+      return await this.popShareCapitalService.getPOPShareCapitals();
     else return [];
   }
 }
@@ -505,5 +513,40 @@ export class CapitalStructureController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
     return this.capitalStructureService.deleteCapitalStructure(id);
+  }
+}
+
+
+//Proportion of Preference Share Capital Controller
+@Controller('popShareCapitals')
+export class POPShareCapitalController {
+  constructor(private popShareCapitalService: POPShareCapitalService) {}
+
+  @Post()
+  async create(@Body() popShareCapitalDto: CreatePOPShareCapitalDto) {
+    return this.popShareCapitalService.createPOPShareCapital(
+      popShareCapitalDto,
+    );
+  }
+
+  @Get()
+  async findAll(): Promise<POPShareCapital[]> {
+    return this.popShareCapitalService.getPOPShareCapitals();
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() popShareCapital: POPShareCapital,
+  ): Promise<POPShareCapital> {
+    return this.popShareCapitalService.updatePOPShareCapital(
+      id,
+      popShareCapital,
+    );
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.popShareCapitalService.deletePOPShareCapital(id);
   }
 }

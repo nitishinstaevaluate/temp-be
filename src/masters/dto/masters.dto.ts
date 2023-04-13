@@ -49,3 +49,8 @@ export class CreateCapitalStructureDto {
   label: string;
   type: string;
 }
+//Proportion of Preference Share Capital Dto
+export class CreatePOPShareCapitalDto {
+  label: string;
+  type: string;
+}

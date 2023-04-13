@@ -266,3 +266,25 @@ export class CapitalStructure {
 export type CapitalStructureDocument = CapitalStructure & Document;
 export const CapitalStructureSchema =
   SchemaFactory.createForClass(CapitalStructure);
+
+  //Proportion of Preference Share Capital Schema
+@Schema()
+export class POPShareCapital {
+  @Prop({ required: true })
+  label: string;
+
+  @Prop({ required: true })
+  type: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type POPShareCapitalDocument = POPShareCapital & Document;
+export const POPShareCapitalSchema =
+  SchemaFactory.createForClass(POPShareCapital);

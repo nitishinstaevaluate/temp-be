@@ -15,6 +15,7 @@ import {
   COPShareCapitalController,
   CODController,
   CapitalStructureController,
+  POPShareCapitalController,
 } from './masters.controller';
 
 import {
@@ -31,6 +32,7 @@ import {
   COPShareCapitalService,
   CODService,
   CapitalStructureService,
+  POPShareCapitalService,
 } from './masters.service';
 
 import {
@@ -47,6 +49,7 @@ import {
   COPShareCapitalSchema,
   CODSchema,
   CapitalStructureSchema,
+  POPShareCapitalSchema,
 } from './schema/masters.schema';
 
 @Module({
@@ -65,6 +68,7 @@ import {
       { name: 'copShareCapital', schema: COPShareCapitalSchema },
       { name: 'costOfDebt', schema: CODSchema },
       { name: 'capitalStructure', schema: CapitalStructureSchema },
+      { name: 'popShareCapital', schema: POPShareCapitalSchema },
     ]),
   ],
   controllers: [
@@ -82,6 +86,7 @@ import {
     COPShareCapitalController,
     CODController,
     CapitalStructureController,
+    POPShareCapitalController,
   ],
 
   providers: [
@@ -98,6 +103,7 @@ import {
     COPShareCapitalService,
     CODService,
     CapitalStructureService,
+    POPShareCapitalService,
   ],
   exports: [ValuationMethodsService],
 })

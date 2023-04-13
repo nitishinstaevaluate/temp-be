@@ -28,6 +28,8 @@ import {
   CODDocument,
   CapitalStructure,
   CapitalStructureDocument,
+  POPShareCapital,
+  POPShareCapitalDocument
 } from './schema/masters.schema';
 
 // Industries Service
@@ -398,5 +400,36 @@ export class CapitalStructureService {
 
   async deleteCapitalStructure(id: string): Promise<any> {
     return this.capitalStructureModel.findByIdAndRemove(id).exec();
+  }
+}
+
+
+//Proportion of Preference Share Capital Service
+@Injectable()
+export class POPShareCapitalService {
+  constructor(
+    @InjectModel('popShareCapital')
+    private readonly popShareCapitalModel: Model<POPShareCapitalDocument>,
+  ) {}
+
+  async createPOPShareCapital(
+    popShareCapital: object,
+  ): Promise<POPShareCapital> {
+    return this.popShareCapitalModel.create(popShareCapital);
+  }
+  async getPOPShareCapitals(): Promise<POPShareCapital[]> {
+    return this.popShareCapitalModel.find().exec();
+  }
+  async updatePOPShareCapital(
+    id: string,
+    popShareCapital: POPShareCapital,
+  ): Promise<POPShareCapital> {
+    return this.popShareCapitalModel
+      .findByIdAndUpdate(id, popShareCapital, { new: true })
+      .exec();
+  }
+
+  async deletePOPShareCapital(id: string): Promise<any> {
+    return this.popShareCapitalModel.findByIdAndRemove(id).exec();
   }
 }
