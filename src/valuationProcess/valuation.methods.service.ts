@@ -96,7 +96,7 @@ export class ValuationMethodsService {
     worksheet2: any,
     discountingFactor: number,
   ): Promise<any> {
-    const { projectionYear, outstandingShares,discountingPeriod } = inputs;
+    const { projectionYears, outstandingShares,discountingPeriod } = inputs;
     const finalResult = [];
     const years = await this.getYearsList(worksheet1);
     if (years === null)
@@ -114,8 +114,8 @@ export class ValuationMethodsService {
         result: null,
         msg: 'Invalid discounting period.',
       };
-    years.map(async (year, i) => {
-      if (parseInt(year) >= projectionYear) {
+
+    years.map(async (year:string, i:number) => {
         let changeInNCA = null;
         let deferredTaxAssets = null;
         //Get PAT value
@@ -171,8 +171,8 @@ export class ValuationMethodsService {
           fcff: fcff,
           discountingPeriod: discountingPeriodValue,
           discountingFactor: discountingFactor,
-          presentFCFF: presentFCFF,
-          sumOfCashFlows: sumOfCashFlows,
+          presentFCFF: presentFCFF.toFixed(2),
+          sumOfCashFlows: sumOfCashFlows.toFixed(2),
           debtOnDate: debtAsOnDate,
           cashEquivalents: cashEquivalents.toFixed(2),
           surplusAssets: surplusAssets,
@@ -182,7 +182,6 @@ export class ValuationMethodsService {
           valuePerShare: valuePerShare.toFixed(2),
         };
         finalResult.push(result);
-      }
     });
 
     return { result: finalResult, msg: 'Executed Successfully' };
