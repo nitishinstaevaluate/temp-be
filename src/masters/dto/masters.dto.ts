@@ -25,12 +25,12 @@ export class CreateRiskFreeRateDto {
   type: string;
 }
 export class CreateExpMarketReturnDto {
-  marketReturn: string;
-  rate: number;
+  label: string;
+  type: string;
 }
 export class CreateBetaDto {
-  beta: string;
-  rate: number;
+  label: string;
+  type: string;
 }
 export class CreateRiskPremiumDto {
   riskPremium: number;
@@ -41,11 +41,11 @@ export class CreateCOPShareCapitalDto {
 }
 //Cost of Debt Dto
 export class CreateCODDto {
-  fieldLabel: string;
-  fieldValue: string;
+  label: string;
+  type: string;
 }
 //Capital Structure Dto
 export class CreateCapitalStructureDto {
-  fieldLabel: string;
-  fieldValue: string;
+  label: string;
+  type: string;
 }

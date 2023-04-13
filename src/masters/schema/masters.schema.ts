@@ -145,10 +145,10 @@ export const RiskFreeRateSchema = SchemaFactory.createForClass(RiskFreeRate);
 @Schema()
 export class ExpMarketReturn {
   @Prop({ required: true })
-  marketReturn: string;
+  label: string;
 
   @Prop({ required: true })
-  rate: number;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
@@ -167,10 +167,10 @@ export const ExpMarketReturnSchema =
 @Schema()
 export class Beta {
   @Prop({ required: true })
-  beta: string;
+  label: string;
 
   @Prop({ required: true })
-  rate: number;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
@@ -228,10 +228,10 @@ export const COPShareCapitalSchema =
 @Schema()
 export class COD {
   @Prop({ required: true })
-  fieldLabel: string;
+  label: string;
 
   @Prop({ required: true })
-  fieldValue: string;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
@@ -249,10 +249,10 @@ export const CODSchema = SchemaFactory.createForClass(COD);
 @Schema()
 export class CapitalStructure {
   @Prop({ required: true })
-  fieldLabel: string;
+  label: string;
 
   @Prop({ required: true })
-  fieldValue: string;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
