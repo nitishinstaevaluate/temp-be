@@ -6,7 +6,6 @@ export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
   let value = null;
   if (Cell && Cell.t === 'n') value = Cell.v;
-
   return value;
 }
 export async function GetPAT(i: number, worksheet1: any) {
@@ -172,4 +171,80 @@ export async function SurplusAssets(i: number, worksheet2: any) {
   );
 
   return nonCurrentInvestment + shortTermInvestments;
+}
+
+//Industry Calculations Related Methods, all are under development
+export async function CostOfDebt(i: number, worksheet1: any,worksheet2:any) {
+  //formula:  User formula Finance costs /(Long term borrowing + short term borrowing) as: P&L!C33/(BS!D31 + BS!D40)
+  const extraordinaryItems = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.extraordinaryItemsRow}`,
+  );
+
+  const deferredGovtGrant = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.deferredGovtGrantRow}`,
+  );
+  const interCo = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.interCoRow}`,
+  );
+const result=extraordinaryItems/(deferredGovtGrant+interCo);
+  return isNaN(result)?null:result;
+}
+
+export async function CapitalStructure(i: number, worksheet2: any) {
+  //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref). As: (BS!D31 + BS!D40)(BS!D10 note this formula is already a sum in sheet but user may chose to enter values hence calculate as BS!D11:D26 sum)
+  const nonCurrentInvestment = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.nonCurrentInvestmentRow}`,
+  );
+  const shortTermInvestments = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermInvestmentsRow}`,
+  );
+
+  return 1;
+}
+
+export async function ProportionOfDebt (i: number, worksheet2: any) {
+  //formula: sum(BS!SUM(D29:D35) + SUM(D38:D44))/BS!D45
+  const nonCurrentInvestment = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.nonCurrentInvestmentRow}`,
+  );
+  const shortTermInvestments = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermInvestmentsRow}`,
+  );
+
+  return 1;
+}
+
+export async function ProportionOfEquity(i: number, worksheet2: any) {
+  //formula: sum(BS!D11:D26)/BS!D45
+  const nonCurrentInvestment = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.nonCurrentInvestmentRow}`,
+  );
+  const shortTermInvestments = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermInvestmentsRow}`,
+  );
+
+  return 1;
+}
+
+export async function POPShareCapital(i: number, worksheet2: any) {
+  //formula: BS!D12/(BS!D11:BS!D26) or Ability to pick from BS!C12
+  const nonCurrentInvestment = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.nonCurrentInvestmentRow}`,
+  );
+  const shortTermInvestments = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermInvestmentsRow}`,
+  );
+
+  return 1;
 }

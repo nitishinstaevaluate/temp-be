@@ -13,6 +13,7 @@ export const sheet1_PLObj={
 export const sheet2_BSObj={
     deferredTaxLiabilityRow:"25",
     debtAsOnDateRow:"27",
+    deferredGovtGrantRow:"31",
     tradePayablesRow:"34",
     employeePayablesRow:"35",
     shortTermBorrowingsRow:"36",

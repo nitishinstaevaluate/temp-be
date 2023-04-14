@@ -5,48 +5,40 @@ export class IndustryService {
   // Get Adjusted Cost of Equity. Industry Calculation based on Cost of Equity.
 
   async getACOE(inputs: any): Promise<any> {
-   const {coeMethod}=inputs;
-   let result=null;
-   if(coeMethod==="CAPM")
-   result=await this.CAPM_Method(inputs);
-   else if(coeMethod==="Build_Up_CAPM")
-   result=await this.Build_Up_CAPM_Method();
-   else if(coeMethod==="BYRP")
-   result=await this.BYRP_Method();
-   else 
-   return {result:null,msg:"Invalid Cost of Equity Method."};
+    const { coeMethod } = inputs;
+    let result = null;
+    if (coeMethod === 'CAPM') result = await this.CAPM_Method(inputs);
+    else if (coeMethod === 'Build_Up_CAPM')
+      result = await this.Build_Up_CAPM_Method();
+    else if (coeMethod === 'BYRP') result = await this.BYRP_Method();
+    else return { result: null, msg: 'Invalid Cost of Equity Method.' };
 
-   return {result:result,msg:"Industry Calculation based on Cost of Equity Method."};
+    return {
+      result: result,
+      msg: 'Industry Calculation based on Cost of Equity Method.',
+    };
   }
   async getFCFEDisFactor(inputs: any): Promise<any> {
     return await this.getACOE(inputs);
   }
   // Industry Calculation based on WACC.
-  async getFCFFDisFactor(inputs: any, inputObj: any): Promise<any> {
-    const { taxRate,copShareCapital } = inputs;
+  async getFCFFDisFactor(inputs: any, inputObj:any): Promise<any> {
+    const { taxRate, copShareCapital } = inputs;
     const res = await this.getACOE(inputs);
-  
-    if(res.result===null)
-      return res;
 
-  const adjustedCostOfEquity=res.result;
-    //Cost of Preference Share Capital
-    const costOfDebt = inputObj.costOfDebt;
-    const capitalStructure = inputObj.capitalStructure;
-    const proportionOfDebt = inputObj.proportionOfDebt;
-    const proportionOfEquity = inputObj.proportionOfEquity;
-    const proportionOfPSC = inputObj.proportionOfPSC;
+    if (res.result === null) return res;
 
+    const adjustedCostOfEquity = res.result;
     //WACC, formula: =+B19*B27+B23*(1-B6)*B26+B21*B28
     const wacc =
-      adjustedCostOfEquity * proportionOfEquity +
-      costOfDebt * (1 - taxRate) * proportionOfDebt +
-      copShareCapital * proportionOfPSC;
-    return {result:wacc,msg:"Industry Calculation based on WACC."};
+      adjustedCostOfEquity * inputObj.proportionOfEquity +
+      inputObj.costOfDebt * (1 - taxRate) * inputObj.proportionOfDebt +
+      copShareCapital * inputObj.popShareCapital;
+    return { result: wacc, msg: 'Industry Calculation based on WACC.' };
   }
 
-  async CAPM_Method(inputs:any): Promise<number>{
-    const {riskFreeRate, expMarketReturn, beta, riskPremium } = inputs;
+  async CAPM_Method(inputs: any): Promise<number> {
+    const { riskFreeRate, expMarketReturn, beta, riskPremium } = inputs;
 
     //Cost of Equity Calculation, formula: =+C15+(C16-C15)*C17
     const COECalculation =
@@ -58,10 +50,10 @@ export class IndustryService {
   }
 
   //we will implement following two methods in future.
-  async Build_Up_CAPM_Method(): Promise<number>{
+  async Build_Up_CAPM_Method(): Promise<number> {
     return 1;
   }
-  async BYRP_Method(): Promise<number>{
+  async BYRP_Method(): Promise<number> {
     return 1;
   }
 }
