@@ -8,7 +8,6 @@ export const sheet1_PLObj={
     exceptionalItemsRow:"31",
     extraordinaryItemsRow:"33",
     financeCostsRow:"28",
-
 }
 
 export const sheet2_BSObj={
@@ -22,6 +21,7 @@ export const sheet2_BSObj={
     otherCurrentLiabilitiesRow:"38",
     shortTermProvisionsRow:"39",
     interCoRow:"40",
+    totalRow:"41",
     fixedAssetsRow:"46",
     nonCurrentInvestmentRow:"56",
     deferredTaxAssetsRow:"59",
