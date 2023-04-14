@@ -138,11 +138,11 @@ export async function ChangeInFixedAssets(i: number, worksheet2: any) {
 }
 
 export async function GetDebtAsOnDate(i: number, worksheet2: any) {
-  const debtAsOnDate = await getCellValue(
+  const longTermBorrowings = await getCellValue(
     worksheet2,
-    `${columnsList[i] + sheet2_BSObj.debtAsOnDateRow}`,
+    `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
   );
-  return debtAsOnDate;
+  return longTermBorrowings;
 }
 
 export async function CashEquivalents(i: number, worksheet2: any) {
@@ -175,21 +175,24 @@ export async function SurplusAssets(i: number, worksheet2: any) {
 
 //Industry Calculations Related Methods, all are under development
 export async function CostOfDebt(i: number, worksheet1: any,worksheet2:any) {
-  //formula:  User formula Finance costs /(Long term borrowing + short term borrowing) as: P&L!C33/(BS!D31 + BS!D40)
-  const extraordinaryItems = await getCellValue(
+  //formula:  User formula Finance costs /(Long term borrowing + short term borrowing) 
+  // as: P&L!C28/(BS!D27 + BS!D36)
+
+  const financeCosts = await getCellValue(
     worksheet1,
-    `${columnsList[i] + sheet1_PLObj.extraordinaryItemsRow}`,
+    `${columnsList[i] + sheet1_PLObj.financeCostsRow}`,
   );
 
-  const deferredGovtGrant = await getCellValue(
+  const longTermBorrowings = await getCellValue(
     worksheet2,
-    `${columnsList[i] + sheet2_BSObj.deferredGovtGrantRow}`,
+    `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
   );
-  const interCo = await getCellValue(
+  const shortTermBorrowings = await getCellValue(
     worksheet2,
-    `${columnsList[i] + sheet2_BSObj.interCoRow}`,
+    `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
-const result=extraordinaryItems/(deferredGovtGrant+interCo);
+const result=financeCosts/(longTermBorrowings+shortTermBorrowings);
+
   return isNaN(result)?null:result;
 }
 

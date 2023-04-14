@@ -6,13 +6,14 @@ export const sheet1_PLObj={
     depAndAmortisationRow:"26",
     otherIncomeRow:"29",
     exceptionalItemsRow:"31",
-    extraordinaryItemsRow:"33"
+    extraordinaryItemsRow:"33",
+    financeCostsRow:"28",
 
 }
 
 export const sheet2_BSObj={
     deferredTaxLiabilityRow:"25",
-    debtAsOnDateRow:"27",
+    longTermBorrowingsRow:"27",
     deferredGovtGrantRow:"31",
     tradePayablesRow:"34",
     employeePayablesRow:"35",

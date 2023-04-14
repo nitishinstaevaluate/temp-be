@@ -132,7 +132,7 @@ export class ValuationMethodsService {
         fixedAssets: changeInFixedAssets,
         fcff: fcff,
         discountingPeriod: discountingPeriodValue,
-        discountingFactor: discountingFactor,
+        discountingFactor: discountingFactor.toFixed(2),
         presentFCFF: presentFCFF.toFixed(2),
         sumOfCashFlows: sumOfCashFlows.toFixed(2),
         debtOnDate: debtAsOnDate,
