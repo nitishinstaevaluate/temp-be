@@ -26,26 +26,16 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const result = await this.FCFEAndFCFF_Common(
-      inputs,
-      worksheet1,
-      worksheet2,
-    );
-    return result;
+    return await this.FCFEAndFCFF_Common(inputs, worksheet1, worksheet2);
   }
   async FCFFMethod(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const result = await this.FCFEAndFCFF_Common(
-      inputs,
-      worksheet1,
-      worksheet2,
-    );
-    return result;
+    return await this.FCFEAndFCFF_Common(inputs, worksheet1, worksheet2);
   }
-
+  //Get Years List from Excel Sheet.
   async getYearsList(worksheet1: any): Promise<any> {
     const firstYearCell = worksheet1['B1'];
     const firstYear = firstYearCell.v.split(',')[1];
@@ -61,19 +51,14 @@ export class ValuationMethodsService {
     }
     return years;
   }
+
+  //Common Method for FCFE and FCFF Methods
   async FCFEAndFCFF_Common(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const {
-      model,
-      outstandingShares,
-      discountingPeriod,
-      popShareCapitalType,
-      costOfDebtType,
-      costOfDebt,
-    } = inputs;
+    const { outstandingShares, discountingPeriod } = inputs;
     const finalResult = [];
     const years = await this.getYearsList(worksheet1);
     if (years === null)
@@ -81,15 +66,11 @@ export class ValuationMethodsService {
         result: null,
         msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
       };
-    let discountingPeriodValue = null;
-    if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 6;
-    else
-      return {
-        result: null,
-        msg: 'Invalid discounting period.',
-      };
-
+    const discountingPeriodObj = await this.getDiscountingPeriod(
+      discountingPeriod,
+    );
+    if (discountingPeriodObj.result == null) return discountingPeriodObj;
+    const discountingPeriodValue = discountingPeriodObj.result;
     years.map(async (year: string, i: number) => {
       let changeInNCA = null;
       let deferredTaxAssets = null;
@@ -118,36 +99,13 @@ export class ValuationMethodsService {
         0;
       const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
       const fcff = netCashFlow + changeInFixedAssets;
-      //Industry Calculation we needs to create new service for it.
-      let discountingFactor = null;
-      if (model === 'FCFE') {
-        const res = await this.industryService.getFCFEDisFactor(inputs);
-        if (res.result === null) return res;
-
-        discountingFactor = res.result;
-      } else if (model === 'FCFF') {
-        let costOfDebtValue = null;
-        if (costOfDebtType === 'Use_Interest_Rate')
-          costOfDebtValue = costOfDebt;
-        else if (costOfDebtType === 'Finance_Cost') costOfDebtValue = await CostOfDebt(i, worksheet1,worksheet2); //We need to use formula
-
-        const proportionOfDebt = await ProportionOfDebt(i,worksheet2); //We need to use formula
-        const proportionOfEquity = await ProportionOfEquity(i,worksheet2); // We need to use fomula
-        let popShareCapitalValue = null;
-        if (popShareCapitalType === 'CFBS')
-          popShareCapitalValue = await POPShareCapital(i,worksheet2); //We need to use formula
-        else if (popShareCapitalType === 'DFBS_PC') popShareCapitalValue = 1; //We need to get label % value.
-        const res = await this.industryService.getFCFFDisFactor(inputs, {
-          costOfDebt: costOfDebtValue,
-          proportionOfDebt: proportionOfDebt,
-          proportionOfEquity: proportionOfEquity,
-          popShareCapital: popShareCapitalValue,
-        });
-        if (res.result === null) return res;
-
-        discountingFactor = res.result;
-      }
-
+      //Industry Calculation.
+      const discountingFactor = await this.getDiscountingFactor(
+        inputs,
+        i,
+        worksheet1,
+        worksheet2,
+      );
       const presentFCFF = discountingFactor * fcff;
       const sumOfCashFlows = presentFCFF;
       const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
@@ -189,5 +147,61 @@ export class ValuationMethodsService {
     });
 
     return { result: finalResult, msg: 'Executed Successfully' };
+  }
+
+  //Get Discounting Period.
+  async getDiscountingPeriod(discountingPeriod: string): Promise<any> {
+    let discountingPeriodValue = null;
+    if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
+    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 6;
+    else
+      return {
+        result: null,
+        msg: 'Invalid discounting period.',
+      };
+    return {
+      result: discountingPeriodValue,
+      msg: 'Discounting period get Successfully.',
+    };
+  }
+
+  //Get DiscountingFactor based on Industry based Calculations.
+  async getDiscountingFactor(
+    inputs: any,
+    i: number,
+    worksheet1: any,
+    worksheet2: any,
+  ): Promise<any> {
+    const { model, popShareCapitalType, costOfDebtType, costOfDebt } = inputs;
+    let discountingFactor = null;
+    if (model === 'FCFE') {
+      const res = await this.industryService.getFCFEDisFactor(inputs);
+      if (res.result === null) return res;
+
+      discountingFactor = res.result;
+    } else if (model === 'FCFF') {
+      let costOfDebtValue = null;
+      if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
+      else if (costOfDebtType === 'Finance_Cost')
+        costOfDebtValue = await CostOfDebt(i, worksheet1, worksheet2); //We need to use formula
+
+      const proportionOfDebt = await ProportionOfDebt(i, worksheet2); //We need to use formula
+      const proportionOfEquity = await ProportionOfEquity(i, worksheet2); // We need to use fomula
+      let popShareCapitalValue = null;
+      if (popShareCapitalType === 'CFBS')
+        popShareCapitalValue = await POPShareCapital(i, worksheet2);
+      //We need to use formula
+      else if (popShareCapitalType === 'DFBS_PC') popShareCapitalValue = 1; //We need to get label % value.
+      const res = await this.industryService.getFCFFDisFactor(inputs, {
+        costOfDebt: costOfDebtValue,
+        proportionOfDebt: proportionOfDebt,
+        proportionOfEquity: proportionOfEquity,
+        popShareCapital: popShareCapitalValue,
+      });
+      if (res.result === null) return res;
+
+      discountingFactor = res.result;
+    }
+    return discountingFactor;
   }
 }
