@@ -15,6 +15,7 @@ import {
   ProportionOfEquity,
   POPShareCapital,
   CapitalStructure,
+  POPShareCapitalLabelPer
 } from './calculation.method';
 import { columnsList } from './excelSheetConfig';
 //Valuation Methods Service
@@ -59,7 +60,7 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const { outstandingShares, discountingPeriod } = inputs;
+    const { outstandingShares, discountingPeriod,popShareCapitalType } = inputs;
     const finalResult = [];
     const years = await this.getYearsList(worksheet1);
     if (years === null)
@@ -70,6 +71,16 @@ export class ValuationMethodsService {
     const discountingPeriodObj = await this.getDiscountingPeriod(
       discountingPeriod,
     );
+
+    if(popShareCapitalType === 'DFBS_PC'){
+      const popShareCapitalValue = await POPShareCapitalLabelPer(0, worksheet2);
+      if(popShareCapitalValue>100)
+        return {
+          result:null,
+          msg:"Invalid: Preference Share Capital % value."
+        }
+    }
+
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     const discountingPeriodValue = discountingPeriodObj.result;
     years.map(async (year: string, i: number) => {
@@ -107,6 +118,10 @@ export class ValuationMethodsService {
         worksheet1,
         worksheet2,
       );
+  
+      if(discountingFactor.result===null)
+      return discountingFactor;
+      const discountingFactorValue=discountingFactor.result;
       const presentFCFF = discountingFactor * fcff;
       const sumOfCashFlows = presentFCFF;
       const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
@@ -133,7 +148,7 @@ export class ValuationMethodsService {
         fixedAssets: changeInFixedAssets,
         fcff: fcff,
         discountingPeriod: discountingPeriodValue,
-        discountingFactor: discountingFactor.toFixed(2),
+        discountingFactor: discountingFactorValue.toFixed(2),
         presentFCFF: presentFCFF.toFixed(2),
         sumOfCashFlows: sumOfCashFlows.toFixed(2),
         debtOnDate: debtAsOnDate,
@@ -192,7 +207,9 @@ export class ValuationMethodsService {
       if (popShareCapitalType === 'CFBS')
         popShareCapitalValue = await POPShareCapital(i, worksheet2);
       //We need to use formula
-      else if (popShareCapitalType === 'DFBS_PC') popShareCapitalValue = 1; //We need to get label % value.
+      else if (popShareCapitalType === 'DFBS_PC')
+        popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2);//We need to get label % value.
+      
       const res = await this.industryService.getFCFFDisFactor(inputs, {
         costOfDebt: costOfDebtValue,
         capitalStructure: capitalStructure,
@@ -204,6 +221,6 @@ export class ValuationMethodsService {
 
       discountingFactor = res.result;
     }
-    return discountingFactor;
+    return {result:discountingFactor,msg:"discountingFactor get Successfully."};
   }
 }

@@ -302,7 +302,7 @@ export async function ProportionOfEquity(i: number, worksheet2: any) {
 }
 
 export async function POPShareCapital(i: number, worksheet2: any) {
-  //formula: BS!D8/(BS!D7:BS!D22) or Ability to pick from BS!A8
+  //formula: BS!D8/(BS!D7:BS!D22)
   const preferenceShareCapital = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
@@ -326,4 +326,13 @@ export async function POPShareCapital(i: number, worksheet2: any) {
   }
 
   return preferenceShareCapital / sum;
+}
+
+export async function POPShareCapitalLabelPer(i: number, worksheet2: any) {
+  //formula: Ability to pick from BS!A8
+  const Cell = worksheet2['A8'];
+  let preferenceShareCapitalPer = null;
+  if (Cell && Cell.t === 's') preferenceShareCapitalPer = parseInt(Cell.v);
+  
+  return isNaN(preferenceShareCapitalPer)?null:preferenceShareCapitalPer;
 }
