@@ -185,7 +185,7 @@ export class ValuationMethodsService {
       if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
       else if (costOfDebtType === 'Finance_Cost')
         costOfDebtValue = await CostOfDebt(i, worksheet1, worksheet2); //We need to use formula
-const capitalStructure=await CapitalStructure(i, worksheet2);
+      const capitalStructure = await CapitalStructure(i, worksheet2);
       const proportionOfDebt = await ProportionOfDebt(i, worksheet2); //We need to use formula
       const proportionOfEquity = await ProportionOfEquity(i, worksheet2); // We need to use fomula
       let popShareCapitalValue = null;
@@ -195,7 +195,7 @@ const capitalStructure=await CapitalStructure(i, worksheet2);
       else if (popShareCapitalType === 'DFBS_PC') popShareCapitalValue = 1; //We need to get label % value.
       const res = await this.industryService.getFCFFDisFactor(inputs, {
         costOfDebt: costOfDebtValue,
-        capitalStructure:capitalStructure,
+        capitalStructure: capitalStructure,
         proportionOfDebt: proportionOfDebt,
         proportionOfEquity: proportionOfEquity,
         popShareCapital: popShareCapitalValue,

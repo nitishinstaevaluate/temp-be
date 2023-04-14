@@ -175,8 +175,8 @@ export async function SurplusAssets(i: number, worksheet2: any) {
 }
 
 //Industry Calculations Related Methods, all are under development
-export async function CostOfDebt(i: number, worksheet1: any,worksheet2:any) {
-  //formula:  User formula Finance costs /(Long term borrowing + short term borrowing) 
+export async function CostOfDebt(i: number, worksheet1: any, worksheet2: any) {
+  //formula:  User formula Finance costs /(Long term borrowing + short term borrowing)
   // as: P&L!C28/(BS!D27 + BS!D36)
 
   const financeCosts = await getCellValue(
@@ -192,14 +192,14 @@ export async function CostOfDebt(i: number, worksheet1: any,worksheet2:any) {
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
-const result=financeCosts/(longTermBorrowings+shortTermBorrowings);
+  const result = financeCosts / (longTermBorrowings + shortTermBorrowings);
 
-  return isNaN(result)?null:result;
+  return isNaN(result) ? null : result;
 }
 
 export async function CapitalStructure(i: number, worksheet2: any) {
-  //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref). 
-  // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but 
+  //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
+  // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
   // user may chose to enter values hence calculate as BS!D7:D22 sum)
   const longTermBorrowings = await getCellValue(
     worksheet2,
@@ -210,107 +210,120 @@ export async function CapitalStructure(i: number, worksheet2: any) {
     `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
 
-//Calculate total sum for BS!D7:D22
-const startCell = `${columnsList[i]}7`;
-const endCell = `${columnsList[i]}22`;
+  //Calculate total sum for BS!D7:D22
+  const startCell = `${columnsList[i]}7`;
+  const endCell = `${columnsList[i]}22`;
 
-const startCellRef = XLSX.utils.decode_cell(startCell);
-const endCellRef = XLSX.utils.decode_cell(endCell);
+  const startCellRef = XLSX.utils.decode_cell(startCell);
+  const endCellRef = XLSX.utils.decode_cell(endCell);
 
-let shareholderFunds = 0;
-for(let row = startCellRef.r; row <= endCellRef.r; row++) {
-  for(let col = startCellRef.c; col <= endCellRef.c; col++) {
-    const cellRef = XLSX.utils.encode_cell({r: row, c: col});
-    const cell = worksheet2[cellRef];
-    if(cell && cell.t === 'n') {
-      shareholderFunds += cell.v;
+  let shareholderFunds = 0;
+  for (let row = startCellRef.r; row <= endCellRef.r; row++) {
+    for (let col = startCellRef.c; col <= endCellRef.c; col++) {
+      const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet2[cellRef];
+      if (cell && cell.t === 'n') {
+        shareholderFunds += cell.v;
+      }
     }
   }
-}
-  return (longTermBorrowings+shortTermBorrowings)/shareholderFunds;
+  return (longTermBorrowings + shortTermBorrowings) / shareholderFunds;
 }
 
-export async function ProportionOfDebt (i: number, worksheet2: any) {
+export async function ProportionOfDebt(i: number, worksheet2: any) {
   //formula: sum(BS!SUM(D25:D31) + SUM(D32:D40))/BS!D41
 
-//Calculate total sum for BS!SUM(D25:D31)
-const startCell = `${columnsList[i]}25`;
-const endCell = `${columnsList[i]}31`;
+  //Calculate total sum for BS!SUM(D25:D31)
+  const startCell = `${columnsList[i]}25`;
+  const endCell = `${columnsList[i]}31`;
 
-const startCellRef = XLSX.utils.decode_cell(startCell);
-const endCellRef = XLSX.utils.decode_cell(endCell);
+  const startCellRef = XLSX.utils.decode_cell(startCell);
+  const endCellRef = XLSX.utils.decode_cell(endCell);
 
-let sum1 = 0;
-for(let row = startCellRef.r; row <= endCellRef.r; row++) {
-  for(let col = startCellRef.c; col <= endCellRef.c; col++) {
-    const cellRef = XLSX.utils.encode_cell({r: row, c: col});
-    const cell = worksheet2[cellRef];
-    if(cell && cell.t === 'n') {
-      sum1 += cell.v;
+  let sum1 = 0;
+  for (let row = startCellRef.r; row <= endCellRef.r; row++) {
+    for (let col = startCellRef.c; col <= endCellRef.c; col++) {
+      const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet2[cellRef];
+      if (cell && cell.t === 'n') {
+        sum1 += cell.v;
+      }
     }
   }
-}
 
-//Calculate total sum for BS!SUM(D32:D40)
-const startCell2 = `${columnsList[i]}32`;
-const endCell2 = `${columnsList[i]}40`;
+  //Calculate total sum for BS!SUM(D32:D40)
+  const startCell2 = `${columnsList[i]}32`;
+  const endCell2 = `${columnsList[i]}40`;
 
-const startCellRef2 = XLSX.utils.decode_cell(startCell2);
-const endCellRef2 = XLSX.utils.decode_cell(endCell2);
+  const startCellRef2 = XLSX.utils.decode_cell(startCell2);
+  const endCellRef2 = XLSX.utils.decode_cell(endCell2);
 
-let sum2 = 0;
-for(let row = startCellRef2.r; row <= endCellRef2.r; row++) {
-  for(let col = startCellRef2.c; col <= endCellRef2.c; col++) {
-    const cellRef = XLSX.utils.encode_cell({r: row, c: col});
-    const cell = worksheet2[cellRef];
-    if(cell && cell.t === 'n') {
-      sum2 += cell.v;
+  let sum2 = 0;
+  for (let row = startCellRef2.r; row <= endCellRef2.r; row++) {
+    for (let col = startCellRef2.c; col <= endCellRef2.c; col++) {
+      const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet2[cellRef];
+      if (cell && cell.t === 'n') {
+        sum2 += cell.v;
+      }
     }
   }
-}
-const total = await getCellValue(
-  worksheet2,
-  `${columnsList[i] + sheet2_BSObj.totalRow}`,
-);
-  return (sum1+sum2)/total;
+  const total = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.totalRow}`,
+  );
+  return (sum1 + sum2) / total;
 }
 
 export async function ProportionOfEquity(i: number, worksheet2: any) {
   //formula: sum(BS!D7:D22)/BS!D41
- //Calculate total sum for sum(BS!D7:D22)
-const startCell = `${columnsList[i]}7`;
-const endCell = `${columnsList[i]}22`;
+  //Calculate total sum for sum(BS!D7:D22)
+  const startCell = `${columnsList[i]}7`;
+  const endCell = `${columnsList[i]}22`;
 
-const startCellRef = XLSX.utils.decode_cell(startCell);
-const endCellRef = XLSX.utils.decode_cell(endCell);
+  const startCellRef = XLSX.utils.decode_cell(startCell);
+  const endCellRef = XLSX.utils.decode_cell(endCell);
 
-let sum = 0;
-for(let row = startCellRef.r; row <= endCellRef.r; row++) {
-  for(let col = startCellRef.c; col <= endCellRef.c; col++) {
-    const cellRef = XLSX.utils.encode_cell({r: row, c: col});
-    const cell = worksheet2[cellRef];
-    if(cell && cell.t === 'n') {
-      sum += cell.v;
+  let sum = 0;
+  for (let row = startCellRef.r; row <= endCellRef.r; row++) {
+    for (let col = startCellRef.c; col <= endCellRef.c; col++) {
+      const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet2[cellRef];
+      if (cell && cell.t === 'n') {
+        sum += cell.v;
+      }
     }
   }
-}
-const total = await getCellValue(
-  worksheet2,
-  `${columnsList[i] + sheet2_BSObj.totalRow}`,
-);
-  return sum/total;
+  const total = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.totalRow}`,
+  );
+  return sum / total;
 }
 
 export async function POPShareCapital(i: number, worksheet2: any) {
   //formula: BS!D8/(BS!D7:BS!D22) or Ability to pick from BS!A8
-  const nonCurrentInvestment = await getCellValue(
+  const preferenceShareCapital = await getCellValue(
     worksheet2,
-    `${columnsList[i] + sheet2_BSObj.nonCurrentInvestmentRow}`,
+    `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
   );
-  const shortTermInvestments = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.shortTermInvestmentsRow}`,
-  );
+  //Calculate total sum for sum(BS!D7:BS!D22)
+  const startCell = `${columnsList[i]}7`;
+  const endCell = `${columnsList[i]}22`;
 
-  return 1;
+  const startCellRef = XLSX.utils.decode_cell(startCell);
+  const endCellRef = XLSX.utils.decode_cell(endCell);
+
+  let sum = 0;
+  for (let row = startCellRef.r; row <= endCellRef.r; row++) {
+    for (let col = startCellRef.c; col <= endCellRef.c; col++) {
+      const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+      const cell = worksheet2[cellRef];
+      if (cell && cell.t === 'n') {
+        sum += cell.v;
+      }
+    }
+  }
+
+  return preferenceShareCapital / sum;
 }
