@@ -122,7 +122,8 @@ export class ValuationMethodsService {
       if(discountingFactor.result===null)
       return discountingFactor;
       const discountingFactorValue=discountingFactor.result;
-      const presentFCFF = discountingFactor * fcff;
+      const presentFCFF = discountingFactorValue*fcff;
+      
       const sumOfCashFlows = presentFCFF;
       const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
       const cashEquivalents = await CashEquivalents(i, worksheet2);
