@@ -3,8 +3,8 @@ export class CreateIndustryDto {
 }
 
 export class CreateValuationMethodDto {
-  fieldLabel: string;
-  fieldValue: string;
+  label: string;
+  type: string;
 }
 export class CreateTaxRateDto {
   label: string;
@@ -17,8 +17,8 @@ export class CreateTerminalGrowthRateDto {
   rate: number;
 }
 export class CreateCOEMethodDto {
-  fieldLabel: string;
-  fieldValue: string;
+  label: string;
+  type: string;
 }
 export class CreateRiskFreeRateDto {
   label: string;

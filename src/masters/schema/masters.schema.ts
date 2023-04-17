@@ -23,10 +23,10 @@ export const IndustrySchema = SchemaFactory.createForClass(Industry);
 @Schema()
 export class ValuationMethod {
   @Prop({ required: true })
-  fieldLabel: string;
+  label: string;
 
   @Prop({ required: true })
-  fieldValue: string;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
@@ -103,10 +103,10 @@ export const TerminalGrowthRateSchema =
 @Schema()
 export class COEMethod {
   @Prop({ required: true })
-  fieldLabel: string;
+  label: string;
 
   @Prop({ required: true })
-  fieldValue: string;
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
