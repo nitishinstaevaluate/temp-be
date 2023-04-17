@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as xlsx from 'xlsx';
 import * as stream from 'stream';
 import * as ExcelJS from 'exceljs';
-import { columnsList } from '../valuationProcess/excelSheetConfig';
+import { columnsList } from './excelSheetConfig';
 
 // @Controller('download')
 // export class ExportTemplateController {

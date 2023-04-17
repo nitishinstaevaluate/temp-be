@@ -9,9 +9,9 @@ import { MastersModule } from './masters/masters.module';
 import { ExportResultsModule } from './exportResults/exportResults.module';
 import { ValuationProcessModule } from './valuationProcess/valuationProcess.module';
 import { CorsMiddleware } from './middleware/CorsMiddleware';
-import { UploadController } from './uploadExcel/uploadExcel.controller';
+import { UploadController } from './excelFileServices/uploadExcel.controller';
 import { IndustryModule } from './industry/industry.module';
-import { ExportTemplateController } from './exportTemplate/exportTemplate.controller';
+import { ExportTemplateController } from './excelFileServices/exportTemplate.controller';
 require('dotenv').config();
 
 @Module({

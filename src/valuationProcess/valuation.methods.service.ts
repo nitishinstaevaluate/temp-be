@@ -16,8 +16,8 @@ import {
   POPShareCapital,
   CapitalStructure,
   POPShareCapitalLabelPer
-} from './calculation.method';
-import { columnsList } from './excelSheetConfig';
+} from '../excelFileServices/calculation.method';
+import { columnsList } from '../excelFileServices/excelSheetConfig';
 //Valuation Methods Service
 @Injectable()
 export class ValuationMethodsService {
