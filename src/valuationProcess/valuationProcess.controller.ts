@@ -39,9 +39,8 @@ export class ValuationController {
       };
       const reportId = await this.valuationsService.createValuation(data);
 
-      // Send Valuation Report Id in  Response.
-      return { reportId: reportId };
-      // return valuationResult;
+      // Send Response.
+      return { reportId: reportId,valuationData:valuationResult };
     } else if (model === 'FCFF') {
       const valuationResponse = await this.valuationMethodsService.FCFFMethod(
         inputs,
@@ -61,9 +60,8 @@ export class ValuationController {
       };
       const reportId = await this.valuationsService.createValuation(data);
 
-      // Send Valuation Report Id in  Response.
-      return { reportId: reportId };
-      // return valuationResult;
+      // Send Response.
+      return { reportId: reportId,valuationData:valuationResult };
     } else if (model === 'Excess_Earnings') {
       return 'This model is Under Development.';
     } else if (model === 'Relative_Valuation') {
