@@ -12,7 +12,7 @@ export class MyMiddleware implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
     const inputs = req.body;
-    const { excelSheetId, company, industry, model, discountingPeriod } =
+    const { excelSheetId, company, industry,projectionYears, model, discountingPeriod } =
       inputs;
 
     console.log('Middleware: This is Valuation Process Validation Middleware.');
@@ -23,6 +23,8 @@ export class MyMiddleware implements NestInterceptor {
     if (!company) throw new BadRequestException('company is required.');
 
     if (!industry) throw new BadRequestException('industry is required.');
+    if (!projectionYears) throw new BadRequestException('projectionYears is required.');
+    if (!model) throw new BadRequestException('model is required.');
 
     //discountingPeriod Validation
     const discountingPeriods = ['Full_Period', 'Mid_Period'];
