@@ -17,7 +17,6 @@ export class ValuationsService {
     } catch (e) {
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
-   
   }
 
   async getValuationById(id: string): Promise<Valuation> {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -29,7 +29,7 @@ import {
   CapitalStructure,
   CapitalStructureDocument,
   POPShareCapital,
-  POPShareCapitalDocument
+  POPShareCapitalDocument,
 } from './schema/masters.schema';
 
 // Industries Service
@@ -41,19 +41,23 @@ export class IndustriesService {
   ) {}
 
   async createIndustry(industry: object): Promise<Industry> {
-    return this.industryModel.create(industry);
+    try {
+      return await this.industryModel.create(industry);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getIndustries(): Promise<Industry[]> {
-    return this.industryModel.find().exec();
+    return await this.industryModel.find().exec();
   }
   async updateIndustry(id: string, industry: Industry): Promise<Industry> {
-    return this.industryModel
+    return await this.industryModel
       .findByIdAndUpdate(id, industry, { new: true })
       .exec();
   }
 
   async deleteIndustry(id: string): Promise<any> {
-    return this.industryModel.findByIdAndRemove(id).exec();
+    return await this.industryModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -66,23 +70,29 @@ export class ValuationMethodsService {
   ) {}
 
   async createValuationMethod(method: object): Promise<ValuationMethod> {
-    return this.methodModel.create(method);
+    try {
+      return await this.methodModel.create(method);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getValuationMethods(): Promise<ValuationMethod[]> {
-    return this.methodModel.find().exec();
+    return await this.methodModel.find().exec();
   }
   async getValuationMethodById(id: string): Promise<ValuationMethod> {
-    return this.methodModel.findById(id);
+    return await this.methodModel.findById(id);
   }
   async updateValuationMethod(
     id: string,
     method: ValuationMethod,
   ): Promise<ValuationMethod> {
-    return this.methodModel.findByIdAndUpdate(id, method, { new: true }).exec();
+    return await this.methodModel
+      .findByIdAndUpdate(id, method, { new: true })
+      .exec();
   }
 
   async deleteValuationMethod(id: string): Promise<any> {
-    return this.methodModel.findByIdAndRemove(id).exec();
+    return await this.methodModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -95,19 +105,23 @@ export class TaxRatesService {
   ) {}
 
   async createTaxRate(taxRate: object): Promise<TaxRate> {
-    return this.taxRateModel.create(taxRate);
+    try {
+      return await this.taxRateModel.create(taxRate);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getTaxRates(): Promise<TaxRate[]> {
-    return this.taxRateModel.find().exec();
+    return await this.taxRateModel.find().exec();
   }
   async updateTaxRate(id: string, taxRate: TaxRate): Promise<TaxRate> {
-    return this.taxRateModel
+    return await this.taxRateModel
       .findByIdAndUpdate(id, taxRate, { new: true })
       .exec();
   }
 
   async deleteTaxRate(id: string): Promise<any> {
-    return this.taxRateModel.findByIdAndRemove(id).exec();
+    return await this.taxRateModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -120,22 +134,26 @@ export class DiscountRatesService {
   ) {}
 
   async createDiscountRate(discountRate: object): Promise<DiscountRate> {
-    return this.discountRateModel.create(discountRate);
+    try {
+      return await this.discountRateModel.create(discountRate);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getDiscountRates(): Promise<DiscountRate[]> {
-    return this.discountRateModel.find().exec();
+    return await this.discountRateModel.find().exec();
   }
   async updateDiscountRate(
     id: string,
     discountRate: DiscountRate,
   ): Promise<DiscountRate> {
-    return this.discountRateModel
+    return await this.discountRateModel
       .findByIdAndUpdate(id, discountRate, { new: true })
       .exec();
   }
 
   async deleteDiscountRate(id: string): Promise<any> {
-    return this.discountRateModel.findByIdAndRemove(id).exec();
+    return await this.discountRateModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -148,22 +166,26 @@ export class TerminalGrowthRatesService {
   ) {}
 
   async createGrowthRate(growthRate: object): Promise<TerminalGrowthRate> {
-    return this.growthRateModel.create(growthRate);
+    try {
+      return await this.growthRateModel.create(growthRate);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getGrowthRates(): Promise<TerminalGrowthRate[]> {
-    return this.growthRateModel.find().exec();
+    return await this.growthRateModel.find().exec();
   }
   async updateGrowthRate(
     id: string,
     growthRate: TerminalGrowthRate,
   ): Promise<TerminalGrowthRate> {
-    return this.growthRateModel
+    return await this.growthRateModel
       .findByIdAndUpdate(id, growthRate, { new: true })
       .exec();
   }
 
   async deleteGrowthRate(id: string): Promise<any> {
-    return this.growthRateModel.findByIdAndRemove(id).exec();
+    return await this.growthRateModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -176,22 +198,26 @@ export class COEMethodsService {
   ) {}
 
   async createCOEMethod(coeMethod: object): Promise<COEMethod> {
-    return this.coeMethodModel.create(coeMethod);
+    try {
+      return await this.coeMethodModel.create(coeMethod);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getCOEMethods(): Promise<COEMethod[]> {
-    return this.coeMethodModel.find().exec();
+    return await this.coeMethodModel.find().exec();
   }
   async getCOEMethodById(id: string): Promise<COEMethod> {
-    return this.coeMethodModel.findById(id);
+    return await this.coeMethodModel.findById(id);
   }
   async updateCOEMethod(id: string, coeMethod: COEMethod): Promise<COEMethod> {
-    return this.coeMethodModel
+    return await this.coeMethodModel
       .findByIdAndUpdate(id, coeMethod, { new: true })
       .exec();
   }
 
   async deleteCOEMethod(id: string): Promise<any> {
-    return this.coeMethodModel.findByIdAndRemove(id).exec();
+    return await this.coeMethodModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -204,25 +230,29 @@ export class RiskFreeRatesService {
   ) {}
 
   async createRiskFreeRate(riskFreeRate: object): Promise<RiskFreeRate> {
-    return this.riskFreeRateModel.create(riskFreeRate);
+    try {
+      return await this.riskFreeRateModel.create(riskFreeRate);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getRiskFreeRates(): Promise<RiskFreeRate[]> {
-    return this.riskFreeRateModel.find().exec();
+    return await this.riskFreeRateModel.find().exec();
   }
   async getRiskFreeRateById(id: string): Promise<RiskFreeRate> {
-    return this.riskFreeRateModel.findById(id);
+    return await this.riskFreeRateModel.findById(id);
   }
   async updateRiskFreeRate(
     id: string,
     riskFreeRate: RiskFreeRate,
   ): Promise<RiskFreeRate> {
-    return this.riskFreeRateModel
+    return await this.riskFreeRateModel
       .findByIdAndUpdate(id, riskFreeRate, { new: true })
       .exec();
   }
 
   async deleteRiskFreeRate(id: string): Promise<any> {
-    return this.riskFreeRateModel.findByIdAndRemove(id).exec();
+    return await this.riskFreeRateModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -237,25 +267,29 @@ export class ExpMarketReturnsService {
   async createExpMarketReturn(
     expMarketReturn: object,
   ): Promise<ExpMarketReturn> {
-    return this.expMarketReturnModel.create(expMarketReturn);
+    try {
+      return await this.expMarketReturnModel.create(expMarketReturn);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getExpMarketReturns(): Promise<ExpMarketReturn[]> {
-    return this.expMarketReturnModel.find().exec();
+    return await this.expMarketReturnModel.find().exec();
   }
   async getExpMarketReturnById(id: string): Promise<ExpMarketReturn> {
-    return this.expMarketReturnModel.findById(id);
+    return await this.expMarketReturnModel.findById(id);
   }
   async updateExpMarketReturn(
     id: string,
     expMarketReturn: ExpMarketReturn,
   ): Promise<ExpMarketReturn> {
-    return this.expMarketReturnModel
+    return await this.expMarketReturnModel
       .findByIdAndUpdate(id, expMarketReturn, { new: true })
       .exec();
   }
 
   async deleteExpReturn(id: string): Promise<any> {
-    return this.expMarketReturnModel.findByIdAndRemove(id).exec();
+    return await this.expMarketReturnModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -267,20 +301,26 @@ export class BetaService {
   ) {}
 
   async createBeta(beta: object): Promise<Beta> {
-    return this.betaModel.create(beta);
+    try {
+      return await this.betaModel.create(beta);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getBetas(): Promise<Beta[]> {
-    return this.betaModel.find().exec();
+    return await this.betaModel.find().exec();
   }
   async getBetaById(id: string): Promise<Beta> {
-    return this.betaModel.findById(id);
+    return await this.betaModel.findById(id);
   }
   async updateBeta(id: string, beta: Beta): Promise<Beta> {
-    return this.betaModel.findByIdAndUpdate(id, beta, { new: true }).exec();
+    return await this.betaModel
+      .findByIdAndUpdate(id, beta, { new: true })
+      .exec();
   }
 
   async deleteBeta(id: string): Promise<any> {
-    return this.betaModel.findByIdAndRemove(id).exec();
+    return await this.betaModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -293,25 +333,29 @@ export class RiskPremiumService {
   ) {}
 
   async createRiskPremium(riskPremium: object): Promise<RiskPremium> {
-    return this.riskPremiumModel.create(riskPremium);
+    try {
+      return await this.riskPremiumModel.create(riskPremium);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getRiskPremiums(): Promise<RiskPremium[]> {
-    return this.riskPremiumModel.find().exec();
+    return await this.riskPremiumModel.find().exec();
   }
   async getRiskPremiumById(id: string): Promise<RiskPremium> {
-    return this.riskPremiumModel.findById(id);
+    return await this.riskPremiumModel.findById(id);
   }
   async updateRiskPremium(
     id: string,
     riskPremium: RiskPremium,
   ): Promise<RiskPremium> {
-    return this.riskPremiumModel
+    return await this.riskPremiumModel
       .findByIdAndUpdate(id, riskPremium, { new: true })
       .exec();
   }
 
   async deleteRiskPremium(id: string): Promise<any> {
-    return this.riskPremiumModel.findByIdAndRemove(id).exec();
+    return await this.riskPremiumModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -326,22 +370,26 @@ export class COPShareCapitalService {
   async createCOPShareCapital(
     copShareCapital: object,
   ): Promise<COPShareCapital> {
-    return this.copShareCapitalModel.create(copShareCapital);
+    try {
+      return await this.copShareCapitalModel.create(copShareCapital);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getCOPShareCapitals(): Promise<COPShareCapital[]> {
-    return this.copShareCapitalModel.find().exec();
+    return await this.copShareCapitalModel.find().exec();
   }
   async updateCOPShareCapital(
     id: string,
     copShareCapital: COPShareCapital,
   ): Promise<COPShareCapital> {
-    return this.copShareCapitalModel
+    return await this.copShareCapitalModel
       .findByIdAndUpdate(id, copShareCapital, { new: true })
       .exec();
   }
 
   async deleteCOPShareCapital(id: string): Promise<any> {
-    return this.copShareCapitalModel.findByIdAndRemove(id).exec();
+    return await this.copShareCapitalModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -353,20 +401,24 @@ export class CODService {
   ) {}
 
   async createCOD(cod: object): Promise<COD> {
-    return this.codModel.create(cod);
+    try {
+      return await this.codModel.create(cod);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getCOD(): Promise<COD[]> {
-    return this.codModel.find().exec();
+    return await this.codModel.find().exec();
   }
   async getCODById(id: string): Promise<COD> {
-    return this.codModel.findById(id);
+    return await this.codModel.findById(id);
   }
   async updateCOD(id: string, cod: COD): Promise<COD> {
-    return this.codModel.findByIdAndUpdate(id, cod, { new: true }).exec();
+    return await this.codModel.findByIdAndUpdate(id, cod, { new: true }).exec();
   }
 
   async deleteCOD(id: string): Promise<any> {
-    return this.codModel.findByIdAndRemove(id).exec();
+    return await this.codModel.findByIdAndRemove(id).exec();
   }
 }
 
@@ -381,28 +433,31 @@ export class CapitalStructureService {
   async createCapitalStructure(
     capitalStructure: object,
   ): Promise<CapitalStructure> {
-    return this.capitalStructureModel.create(capitalStructure);
+    try {
+      return await this.capitalStructureModel.create(capitalStructure);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getCapitalStructure(): Promise<CapitalStructure[]> {
-    return this.capitalStructureModel.find().exec();
+    return await this.capitalStructureModel.find().exec();
   }
   async getCapitalStructureById(id: string): Promise<CapitalStructure> {
-    return this.capitalStructureModel.findById(id);
+    return await this.capitalStructureModel.findById(id);
   }
   async updateCapitalStructure(
     id: string,
     capitalStructure: CapitalStructure,
   ): Promise<CapitalStructure> {
-    return this.capitalStructureModel
+    return await this.capitalStructureModel
       .findByIdAndUpdate(id, capitalStructure, { new: true })
       .exec();
   }
 
   async deleteCapitalStructure(id: string): Promise<any> {
-    return this.capitalStructureModel.findByIdAndRemove(id).exec();
+    return await this.capitalStructureModel.findByIdAndRemove(id).exec();
   }
 }
-
 
 //Proportion of Preference Share Capital Service
 @Injectable()
@@ -415,21 +470,25 @@ export class POPShareCapitalService {
   async createPOPShareCapital(
     popShareCapital: object,
   ): Promise<POPShareCapital> {
-    return this.popShareCapitalModel.create(popShareCapital);
+    try {
+      return await this.popShareCapitalModel.create(popShareCapital);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
   }
   async getPOPShareCapitals(): Promise<POPShareCapital[]> {
-    return this.popShareCapitalModel.find().exec();
+    return await this.popShareCapitalModel.find().exec();
   }
   async updatePOPShareCapital(
     id: string,
     popShareCapital: POPShareCapital,
   ): Promise<POPShareCapital> {
-    return this.popShareCapitalModel
+    return await this.popShareCapitalModel
       .findByIdAndUpdate(id, popShareCapital, { new: true })
       .exec();
   }
 
   async deletePOPShareCapital(id: string): Promise<any> {
-    return this.popShareCapitalModel.findByIdAndRemove(id).exec();
+    return await this.popShareCapitalModel.findByIdAndRemove(id).exec();
   }
 }
