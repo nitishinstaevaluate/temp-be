@@ -11,12 +11,12 @@ export class MyMiddleware implements NestInterceptor {
 console.log('Middleware: This is Valuation Process Validation Middleware.');
 
  
- 
+ //discountingPeriod Validation
  const discountingPeriods=['Full_Period','Mid_Period'];
     if(!discountingPeriods.includes(discountingPeriod))
     throw new BadRequestException('Invalid discounting period.');
-   
-   
+
+    //models Validation   
     const developedModels=["FCFE","FCFF"];
     if(developedModels.includes(model))
     return next.handle();

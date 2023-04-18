@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Valuation, ValuationDocument } from './schema/valuation.schema';
@@ -11,8 +11,13 @@ export class ValuationsService {
   ) {}
 
   async createValuation(valuation: object): Promise<string> {
-    const createdFoo = await this.valuationModel.create(valuation);
-    return createdFoo._id;
+    try {
+      const createdFoo = await this.valuationModel.create(valuation);
+      return createdFoo._id;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+   
   }
 
   async getValuationById(id: string): Promise<Valuation> {
