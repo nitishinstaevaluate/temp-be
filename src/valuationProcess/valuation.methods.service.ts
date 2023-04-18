@@ -171,11 +171,6 @@ export class ValuationMethodsService {
     let discountingPeriodValue = null;
     if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
     else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 6;
-    else
-      return {
-        result: null,
-        msg: 'Invalid discounting period.',
-      };
     return {
       result: discountingPeriodValue,
       msg: 'Discounting period get Successfully.',
