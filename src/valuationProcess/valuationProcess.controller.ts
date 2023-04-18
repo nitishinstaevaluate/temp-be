@@ -1,9 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post,UseInterceptors  } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
 import { ValuationMethodsService } from './valuation.methods.service';
-
+import { MyMiddleware } from '../middleware/Valuation.middleware';
 @Controller('valuationProcess')
+@UseInterceptors(MyMiddleware)
 export class ValuationController {
   constructor(
     private valuationsService: ValuationsService,
@@ -62,16 +63,6 @@ export class ValuationController {
 
       // Send Response.
       return { reportId: reportId,valuationData:valuationResult };
-    } else if (model === 'Excess_Earnings') {
-      return 'This model is Under Development.';
-    } else if (model === 'Relative_Valuation') {
-      return 'This model is Under Development.';
-    } else if (model === 'CTM') {
-      return 'This model is Under Development.';
-    } else if (model === 'NAV') {
-      return 'This model is Under Development.';
-    } else {
-      return 'Invalid Model: Input a valid model name.';
-    }
+    } 
   }
 }
