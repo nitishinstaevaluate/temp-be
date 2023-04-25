@@ -13,6 +13,8 @@ import { UploadController } from './excelFileServices/uploadExcel.controller';
 import { IndustryModule } from './industry/industry.module';
 import { ExportTemplateController } from './excelFileServices/exportTemplate.controller';
 import {LoggerModule} from './loggerService/logger.module'
+import { ExceptionsFilter } from './middleware/exceptions.middleware';
+import { APP_FILTER } from '@nestjs/core';
 require('dotenv').config();
 
 @Module({
@@ -21,7 +23,10 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
-  providers: [AppService, ], //ImportService
+  providers: [AppService, {
+    provide: APP_FILTER,
+    useClass: ExceptionsFilter,
+  }, ], //ImportService
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
