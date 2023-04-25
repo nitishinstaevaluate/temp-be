@@ -35,7 +35,7 @@ export class ExceptionsFilter implements ExceptionFilter {
     }
 
     const logger: Logger = {
-      userId: 'user_id',
+      userId: '640a4783337b1b37d6fd04c7',
       requestMethod: request.method,
       requestBody: requestBody || null,
       level: 'Error',
