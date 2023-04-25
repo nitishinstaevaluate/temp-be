@@ -27,7 +27,6 @@ export class CustomLogger  implements LoggerService {
       new DailyRotateFile({
         filename: './loggerFiles/logger-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
-        zippedArchive: true,
         maxSize: '16m',
       })
     ]
