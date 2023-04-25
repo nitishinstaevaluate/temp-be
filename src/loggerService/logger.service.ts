@@ -23,7 +23,6 @@ export class CustomLogger  implements LoggerService {
     ),
     transports: [
       new transports.File({ filename: './loggerFiles/error.log', level: 'error' }),
-      new transports.File({ filename: './loggerFiles/combined.log' })
     ]
   });
 
