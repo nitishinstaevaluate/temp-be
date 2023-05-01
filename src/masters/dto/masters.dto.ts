@@ -2,6 +2,10 @@ export class CreateIndustryDto {
   industry: string;
 }
 
+export class CreateSubIndustryDto {
+  subIndustry: string;
+}
+
 export class CreateValuationMethodDto {
   label: string;
   type: string;
