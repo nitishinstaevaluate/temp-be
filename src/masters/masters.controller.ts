@@ -109,7 +109,7 @@ export class MastersController {
       dropDowns['costOfDebts'] = await this.codService.getCOD();
       dropDowns['capitalStructures'] =
         await this.capitalStructureService.getCapitalStructure();
-        dropDowns['popShareCapitals'] =
+      dropDowns['popShareCapitals'] =
         await this.popShareCapitalService.getPOPShareCapitals();
 
       return dropDowns;
@@ -139,7 +139,7 @@ export class MastersController {
       return await this.codService.getCOD();
     else if (fieldName.toLowerCase() === 'capitalstructures')
       return await this.capitalStructureService.getCapitalStructure();
-      else if (fieldName.toLowerCase() === 'popsharecapitals')
+    else if (fieldName.toLowerCase() === 'popsharecapitals')
       return await this.popShareCapitalService.getPOPShareCapitals();
     else return [];
   }
@@ -184,10 +184,12 @@ export class SubIndustriesController {
   }
 
   @Get(':industryId')
-  async findAll(  @Param('industryId') industryId: string,): Promise<SubIndustry[]> {
+  async findAll(
+    @Param('industryId') industryId: string,
+  ): Promise<SubIndustry[]> {
     return this.subIndustriesService.getSubIndustries(industryId);
   }
-  
+
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -213,10 +215,10 @@ export class CompaniesController {
   }
 
   @Get(':industryId')
-  async findAll(  @Param('industryId') industryId: string,): Promise<Company[]> {
+  async findAll(@Param('industryId') industryId: string): Promise<Company[]> {
     return this.companiesService.getCompanies(industryId);
   }
-  
+
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -579,7 +581,6 @@ export class CapitalStructureController {
     return this.capitalStructureService.deleteCapitalStructure(id);
   }
 }
-
 
 //Proportion of Preference Share Capital Controller
 @Controller('popShareCapitals')

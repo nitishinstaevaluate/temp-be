@@ -20,3 +20,9 @@ export const headingObj = {
   noOfShares: 'No. of Shares',
   valuePerShare: 'Value per Share',
 };
+
+export const footerInfo = {
+  address:
+    '(Unit No. 8, 2nd Floor, Senior Estate, 7/C Parsi Panchayat Road, Andheri (East), Mumbai – 400069)',
+  email: 'Valuation@ifinworth.com',
+};

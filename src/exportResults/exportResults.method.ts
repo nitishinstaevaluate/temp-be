@@ -1,11 +1,15 @@
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { headingObj } from './exportResults.data';
+import { headingObj, footerInfo } from './exportResults.data';
 import * as moment from 'moment';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export function generatePdf(valuation: any, res: any) {
-  const valuationData = getOrganizedData(valuation.valuationData as any[]);
+  const valuationData = getOrganizedData(
+    valuation.model,
+    valuation.valuationData as any[],
+  );
+  console.log('Testing.........', valuationData);
   const docDefinition = {
     tableLayout: 'auto',
     pageOrientation: 'landscape',
@@ -19,15 +23,14 @@ export function generatePdf(valuation: any, res: any) {
           text: `${valuation.company}`,
           style: 'footer',
         },
-        { text: `Address: (Unit No. 8, 2nd Floor, Senior Estate, 7/C Parsi Panchayat Road, Andheri (East), Mumbai – 400069)`,
-        style: 'footer'},
-        { text: `Email -Valuation@ifinworth.com`,
-        style: 'footer'},
+        { text: `Address: ${footerInfo.address}`, style: 'footer' },
+        { text: `Email - ${footerInfo.email}`, style: 'footer' },
         {
-        text: `Page ${currentPage} of ${pageCount}`,
-        alignment: 'center',
-        style: 'footer',
-      }];
+          text: `Page ${currentPage} of ${pageCount}`,
+          alignment: 'center',
+          style: 'footer',
+        },
+      ];
     },
     content: [
       {
@@ -54,7 +57,7 @@ export function generatePdf(valuation: any, res: any) {
         table: {
           headerRows: 1,
           body: valuationData || [],
-          style:'table'
+          style: 'table',
         },
       },
     ],
@@ -69,7 +72,7 @@ export function generatePdf(valuation: any, res: any) {
       },
       footer: {
         fontSize: 8,
-        margin: [30,0, 0, 0],
+        margin: [30, 0, 0, 0],
       },
     },
   };
@@ -90,7 +93,28 @@ export function generatePdf(valuation: any, res: any) {
   });
 }
 
-export function getOrganizedData(valuationInputData: any[]) {
+export function getOrganizedData(model, valuationInputData: any[]) {
+  if (model === 'FCFE' || model === 'FCFE')
+    return FCFEAndFCFF_Format(valuationInputData);
+  else if (model === 'Relative_Valuation') {
+    const headerData = [
+      'Sr.No',
+      'Name',
+      'P/E Ratio as on Valuation Date',
+      'P/B Ratio as on Valuation Date',
+      'EV/EBITDA as on Valuation Date',
+      'Price/Sales Valuation Date',
+    ];
+    const data1 = [1, 'abc', 3.7, 5.6, 3.4, 0.78];
+    const data2 = [2, 'def', 3.7, 5.6, 3.4, 0.78];
+    const emptyRow = ['', '', '', '', '', ''];
+    const average = ['', 'Average', 3.7, 5.6, 3.4, 0.78];
+    const median = ['', 'Median', 3.7, 5.6, 3.4, 0.78];
+    return [headerData, data1, data2, emptyRow, average, median];
+  }
+}
+
+function FCFEAndFCFF_Format(valuationInputData: any[]) {
   const particulars = [],
     pat = [],
     depAndAmortisation = [],

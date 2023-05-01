@@ -80,10 +80,13 @@ export class SubIndustriesService {
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
-  async getSubIndustries(industryId:string): Promise<SubIndustry[]> {
-    return await this.subIndustryModel.find({industryId}).exec();
+  async getSubIndustries(industryId: string): Promise<SubIndustry[]> {
+    return await this.subIndustryModel.find({ industryId }).exec();
   }
-  async updateSubIndustry(id: string, subIndustry: SubIndustry): Promise<SubIndustry> {
+  async updateSubIndustry(
+    id: string,
+    subIndustry: SubIndustry,
+  ): Promise<SubIndustry> {
     return await this.subIndustryModel
       .findByIdAndUpdate(id, subIndustry, { new: true })
       .exec();
@@ -109,8 +112,8 @@ export class CompaniesService {
       throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
     }
   }
-  async getCompanies(industryId:string): Promise<Company[]> {
-    return await this.companyModel.find({industryId}).exec();
+  async getCompanies(industryId: string): Promise<Company[]> {
+    return await this.companyModel.find({ industryId }).exec();
   }
   async updateCompany(id: string, company: Company): Promise<Company> {
     return await this.companyModel
@@ -122,7 +125,6 @@ export class CompaniesService {
     return await this.companyModel.findByIdAndRemove(id).exec();
   }
 }
-
 
 //ValuationMethods Service
 @Injectable()
