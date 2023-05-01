@@ -115,6 +115,9 @@ export class CompaniesService {
   async getCompanies(industryId: string): Promise<Company[]> {
     return await this.companyModel.find({ industryId }).exec();
   }
+  async getCompanyById(id: string): Promise<Company> {
+    return await this.companyModel.findById(id);
+  }
   async updateCompany(id: string, company: Company): Promise<Company> {
     return await this.companyModel
       .findByIdAndUpdate(id, company, { new: true })

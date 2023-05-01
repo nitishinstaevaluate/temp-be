@@ -3,7 +3,9 @@ import { Document } from 'mongoose';
 
 //ValuationData (output Result) Schema
 class ValuationData {}
-class inputData {}
+class inputData {
+  companies: any;
+}
 
 //Valuations Table Schema
 @Schema()
