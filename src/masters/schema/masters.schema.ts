@@ -56,7 +56,7 @@ export class Company {
   pbRatio: number;
 
   @Prop({ required: true })
-  ebitdaRatio: number;
+  ebitda: number;
 
   @Prop({ required: true })
   sales: number;
