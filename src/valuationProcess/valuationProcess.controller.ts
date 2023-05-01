@@ -63,6 +63,8 @@ export class ValuationController {
 
       // Send Response.
       return { reportId: reportId,valuationData:valuationResult };
-    } 
+    }  else if (model === 'Relative_Valuation') {
+      return 'hi, Relative_Valuation';
+    }
   }
 }

@@ -49,6 +49,18 @@ export class Company {
   @Prop({ required: true })
   industryId: string;
   
+  @Prop({ required: true })
+  peRatio: number;
+
+  @Prop({ required: true })
+  pbRatio: number;
+
+  @Prop({ required: true })
+  ebitdaRatio: number;
+
+  @Prop({ required: true })
+  sales: number;
+
   @Prop({ default: true })
   isActive: boolean;
 

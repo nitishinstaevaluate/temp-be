@@ -32,12 +32,11 @@ export class MyMiddleware implements NestInterceptor {
       throw new BadRequestException('Invalid discounting period.');
 
     //models Validation
-    const developedModels = ['FCFE', 'FCFF'];
+    const developedModels = ['FCFE', 'FCFF','Relative_Valuation'];
     if (developedModels.includes(model)) return next.handle();
 
     const futureModels = [
       'Excess_Earnings',
-      'Relative_Valuation',
       'CTM',
       'NAV',
     ];

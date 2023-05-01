@@ -9,6 +9,10 @@ export class CreateSubIndustryDto {
 export class CreateCompanyDto {
   company:string;
   industryId: string;
+  peRatio:number;
+  pbRatio:number;
+  ebitda:number;
+  sales:number;
 }
 export class CreateValuationMethodDto {
   label: string;
