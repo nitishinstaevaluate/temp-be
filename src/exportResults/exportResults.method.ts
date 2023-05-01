@@ -5,11 +5,7 @@ import * as moment from 'moment';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export function generatePdf(valuation: any, res: any) {
-  const valuationData = getOrganizedData(
-    valuation.model,
-    valuation.valuationData as any[],
-  );
-  console.log('Testing.........', valuationData);
+  const valuationData = getOrganizedData(valuation);
   const docDefinition = {
     tableLayout: 'auto',
     pageOrientation: 'landscape',
@@ -93,10 +89,12 @@ export function generatePdf(valuation: any, res: any) {
   });
 }
 
-export function getOrganizedData(model, valuationInputData: any[]) {
+export function getOrganizedData(valuation) {
+  const {model,valuationInputData}=valuation;
   if (model === 'FCFE' || model === 'FCFE')
     return FCFEAndFCFF_Format(valuationInputData);
   else if (model === 'Relative_Valuation') {
+    const {inputData}=valuation;
     const headerData = [
       'Sr.No',
       'Name',
@@ -105,6 +103,8 @@ export function getOrganizedData(model, valuationInputData: any[]) {
       'EV/EBITDA as on Valuation Date',
       'Price/Sales Valuation Date',
     ];
+    console.log('Testing.................',inputData.companies)
+    //Get Companies data here ..........
     const data1 = [1, 'abc', 3.7, 5.6, 3.4, 0.78];
     const data2 = [2, 'def', 3.7, 5.6, 3.4, 0.78];
     const emptyRow = ['', '', '', '', '', ''];
