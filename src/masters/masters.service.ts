@@ -6,6 +6,8 @@ import {
   IndustryDocument,
   SubIndustry,
   SubIndustryDocument,
+  Company,
+  CompanyDocument,
   ValuationMethod,
   ValuationMethodDocument,
   TaxRate,
@@ -91,6 +93,36 @@ export class SubIndustriesService {
     return await this.subIndustryModel.findByIdAndRemove(id).exec();
   }
 }
+
+//Company Service
+@Injectable()
+export class CompaniesService {
+  constructor(
+    @InjectModel('company')
+    private readonly companyModel: Model<CompanyDocument>,
+  ) {}
+
+  async createCompany(company: object): Promise<Company> {
+    try {
+      return await this.companyModel.create(company);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async getCompanies(industryId:string): Promise<Company[]> {
+    return await this.companyModel.find({industryId}).exec();
+  }
+  async updateCompany(id: string, company: Company): Promise<Company> {
+    return await this.companyModel
+      .findByIdAndUpdate(id, company, { new: true })
+      .exec();
+  }
+
+  async deleteCompany(id: string): Promise<any> {
+    return await this.companyModel.findByIdAndRemove(id).exec();
+  }
+}
+
 
 //ValuationMethods Service
 @Injectable()

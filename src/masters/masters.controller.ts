@@ -11,6 +11,7 @@ import {
 import {
   CreateIndustryDto,
   CreateSubIndustryDto,
+  CreateCompanyDto,
   CreateValuationMethodDto,
   CreateTaxRateDto,
   CreateDiscountRateDto,
@@ -29,6 +30,7 @@ import {
 import {
   IndustriesService,
   SubIndustriesService,
+  CompaniesService,
   ValuationMethodsService,
   TaxRatesService,
   DiscountRatesService,
@@ -47,6 +49,7 @@ import {
 import {
   Industry,
   SubIndustry,
+  Company,
   ValuationMethod,
   TaxRate,
   DiscountRate,
@@ -196,6 +199,35 @@ export class SubIndustriesController {
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<any> {
     return this.subIndustriesService.deleteSubIndustry(id);
+  }
+}
+
+//Companies Controller
+@Controller('companies')
+export class CompaniesController {
+  constructor(private companiesService: CompaniesService) {}
+
+  @Post()
+  async create(@Body() createCompanyDto: CreateCompanyDto) {
+    return this.companiesService.createCompany(createCompanyDto);
+  }
+
+  @Get(':industryId')
+  async findAll(  @Param('industryId') industryId: string,): Promise<Company[]> {
+    return this.companiesService.getCompanies(industryId);
+  }
+  
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() subIndustry: Company,
+  ): Promise<Company> {
+    return this.companiesService.updateCompany(id, subIndustry);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<any> {
+    return this.companiesService.deleteCompany(id);
   }
 }
 

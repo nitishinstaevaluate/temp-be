@@ -40,6 +40,27 @@ export class SubIndustry {
 export type SubIndustryDocument = SubIndustry & Document;
 export const SubIndustrySchema = SchemaFactory.createForClass(SubIndustry);
 
+//Company Schema
+@Schema()
+export class Company {
+  @Prop({ required: true })
+  company: string;
+
+  @Prop({ required: true })
+  industryId: string;
+  
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type CompanyDocument = Company & Document;
+export const CompanySchema = SchemaFactory.createForClass(Company);
+
 //ValuationMethod Schema
 @Schema()
 export class ValuationMethod {

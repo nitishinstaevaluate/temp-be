@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   IndustriesController,
   SubIndustriesController,
+  CompaniesController,
   ValuationMethodsController,
   TaxRatesController,
   DiscountRatesController,
@@ -22,6 +23,7 @@ import {
 import {
   IndustriesService,
   ValuationMethodsService,
+  CompaniesService,
   TaxRatesService,
   DiscountRatesService,
   TerminalGrowthRatesService,
@@ -40,6 +42,7 @@ import {
 import {
   IndustrySchema,
   SubIndustrySchema,
+  CompanySchema,
   ValuationMethodSchema,
   TaxRateSchema,
   DiscountRateSchema,
@@ -60,6 +63,7 @@ import {
     MongooseModule.forFeature([
       { name: 'industry', schema: IndustrySchema },
       { name: 'subIndustry', schema: SubIndustrySchema },
+      { name: 'company', schema: CompanySchema },
       { name: 'valuationMethod', schema: ValuationMethodSchema },
       { name: 'taxRate', schema: TaxRateSchema },
       { name: 'discountRate', schema: DiscountRateSchema },
@@ -78,6 +82,7 @@ import {
   controllers: [
     IndustriesController,
     SubIndustriesController,
+    CompaniesController,
     ValuationMethodsController,
     TaxRatesController,
     DiscountRatesController,
@@ -97,6 +102,7 @@ import {
   providers: [
     IndustriesService,
     SubIndustriesService,
+    CompaniesService,
     ValuationMethodsService,
     TaxRatesService,
     DiscountRatesService,

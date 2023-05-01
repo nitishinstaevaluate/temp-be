@@ -3,9 +3,13 @@ export class CreateIndustryDto {
 }
 
 export class CreateSubIndustryDto {
+  industryId:string;
   subIndustry: string;
 }
-
+export class CreateCompanyDto {
+  company:string;
+  industryId: string;
+}
 export class CreateValuationMethodDto {
   label: string;
   type: string;
