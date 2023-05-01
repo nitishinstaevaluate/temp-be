@@ -1,10 +1,11 @@
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { headingObj } from './exportResults.data';
+import * as moment from 'moment';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
-export function generatePdf(valuationInputData: any, res: any) {
-  const valuationData = getOrganizedData(valuationInputData as any[]);
+export function generatePdf(valuation: any, res: any) {
+  const valuationData = getOrganizedData(valuation.valuationData as any[]);
   const docDefinition = {
     tableLayout: 'auto',
     pageOrientation: 'landscape',
@@ -15,7 +16,7 @@ export function generatePdf(valuationInputData: any, res: any) {
           style: 'footer',
         },
         {
-          text: `Company Name`,
+          text: `${valuation.company}`,
           style: 'footer',
         },
         { text: `Address: (Unit No. 8, 2nd Floor, Senior Estate, 7/C Parsi Panchayat Road, Andheri (East), Mumbai – 400069)`,
@@ -30,7 +31,11 @@ export function generatePdf(valuationInputData: any, res: any) {
     },
     content: [
       {
-        text: 'ABC, 25-04-2023',
+        text: `${valuation.company}`,
+        style: 'header',
+      },
+      {
+        text: `Valuation Date: ${moment().format('MMM D, YYYY')}`,
         style: 'header',
       },
       {
@@ -38,7 +43,7 @@ export function generatePdf(valuationInputData: any, res: any) {
         style: 'header',
       },
       {
-        text: 'Generated On- 25-04-2023',
+        text: `Generated On- ${moment().format('MMM D, YYYY')}`,
         style: 'header',
       },
       {
@@ -64,25 +69,25 @@ export function generatePdf(valuationInputData: any, res: any) {
       },
       footer: {
         fontSize: 8,
-        margin: [15,0, 0, 0],
+        margin: [30,0, 0, 0],
       },
     },
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  pdfDoc.getBuffer((buffer) => {
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
-    );
-    res.setHeader('Content-Length', buffer.length);
-    res.end(buffer);
-  });
   // pdfDoc.getBuffer((buffer) => {
-  //   res.type('application/pdf');
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader(
+  //     'Content-Disposition',
+  //     `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
+  //   );
+  //   res.setHeader('Content-Length', buffer.length);
   //   res.end(buffer);
   // });
+  pdfDoc.getBuffer((buffer) => {
+    res.type('application/pdf');
+    res.end(buffer);
+  });
 }
 
 export function getOrganizedData(valuationInputData: any[]) {

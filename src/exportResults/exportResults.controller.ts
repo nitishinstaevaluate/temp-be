@@ -10,7 +10,8 @@ export class ExportResultsController {
   async generatePdf(@Param('reportId') reportId: string, @Res() res: Response) {
     const valuation = await this.valuationsService.getValuationById(reportId);
     if (valuation) {
-      generatePdf(valuation.valuationData, res);
+    
+      generatePdf(valuation, res);
     } else res.send(`Valuation Data not found for this reportId: ${reportId}`);
   }
 }
