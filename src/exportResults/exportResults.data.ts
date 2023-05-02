@@ -21,12 +21,17 @@ export const fcfe_fcff_headingObj = {
   valuePerShare: 'Value per Share',
 };
 export const relative_valuation_headingObj = {
-  pbRatio: 'P/B Ratio',
+  pbRatioLabel: 'P/B Ratio',
   netWorth: 'Net Worth of Company',
-  noOfShares: 'Number of Shares',
+  pbShares: 'Number of Shares',
   bookValue: 'Book Value per Share',
-  ratio: 'P/B Ratio of Industry',
-  marketPrice: 'Market Price',
+  pbRatio: 'P/B Ratio of Industry',
+  pbMarketPrice: 'Market Price',
+  peRatioLabel:"P/E Ratio",
+  peRatio:"P/E Ratio of Industry",
+  eps:"EPS",
+  peMarketPrice: 'Market Price',
+
 };
 export const footerInfo = {
   address:

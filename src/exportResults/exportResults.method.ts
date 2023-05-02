@@ -90,7 +90,7 @@ export function generatePdf(valuation: any, res: any) {
   });
 }
 
-export function getPdfContent(valuation) {
+export function getPdfContent(valuation:any) {
   const { model, valuationData } = valuation;
   if (model === 'FCFE' || model === 'FCFE')
     return {
@@ -125,11 +125,11 @@ export function getPdfContent(valuation) {
     const average = ['', 'Average', 7.03, 0.67, 4.63, 0.63];
     const median = ['', 'Median', 5.03, 0.45, 6.22, 0.43];
     const result2 = [];
-    valuationData.map((obj, index) => {
+    valuationData.map((obj:any, index:number) => {
       if (obj.particular === 'pbRatio') {
         result2.push([
           index + 1,
-          relative_valuation_headingObj[obj.particular],
+          relative_valuation_headingObj['pbRatioLabel'],
           '',
           '',
         ]);
@@ -141,9 +141,9 @@ export function getPdfContent(valuation) {
         ]);
         result2.push([
           '',
-          relative_valuation_headingObj['noOfShares'],
-          obj.noOfSharesAvg,
-          obj.noOfSharesMed,
+          relative_valuation_headingObj['pbShares'],
+          obj.pbSharesAvg,
+          obj.pbSharesMed,
         ]);
         result2.push([
           '',
@@ -153,19 +153,43 @@ export function getPdfContent(valuation) {
         ]);
         result2.push([
           '',
-          relative_valuation_headingObj['ratio'],
-          obj.ratioAvg,
-          obj.ratioMed,
+          relative_valuation_headingObj['pbRatio'],
+          obj.pbRatioAvg,
+          obj.pbRatioMed,
         ]);
         result2.push([
           '',
-          relative_valuation_headingObj['marketPrice'],
-          obj.marketPriceAvg,
-          obj.marketPriceMed,
+          relative_valuation_headingObj['pbMarketPrice'],
+          obj.pbMarketPriceAvg,
+          obj.pbMarketPriceMed,
+        ]);
+      }else if (obj.particular === 'peRatio') {
+        result2.push([
+          index + 1,
+          relative_valuation_headingObj['peRatioLabel'],
+          '',
+          '',
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['eps'],
+          obj.epsAvg,
+          obj.epsMed,
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['peRatio'],
+          obj.peRatioAvg,
+          obj.peRatioMed,
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['peMarketPrice'],
+          obj.peMarketPriceAvg,
+          obj.peMarketPriceMed,
         ]);
       }
     });
-    console.log('Testing...........', result2);
     return [
       {
         table: {
