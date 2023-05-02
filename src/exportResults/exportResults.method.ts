@@ -56,6 +56,27 @@ export function generatePdf(valuation: any, res: any) {
           style: 'table',
         },
       },
+     
+    valuation.model==="Relative_Valuation"?[
+      {
+        text: '\n\n',
+      },{
+        table: {
+          headerRows: 1,
+          body: [
+            [
+              {text: 'Valuation of CMM InfraProjects Ltd                                Amount (in INR)', colSpan: 4},
+              {},
+              {},
+              {}
+            ],
+            ['Sr.No', 'Particulars', 'As on 31.03.2018','As on 31.03.2018'],
+            ['Value 1', 'Value 2', 'Value 3','Value 4'],
+        
+        ] || [],
+          style: 'table',
+        },
+      }]:null,
     ],
     styles: {
       header: {
