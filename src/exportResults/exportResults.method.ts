@@ -90,9 +90,9 @@ export function generatePdf(valuation: any, res: any) {
 }
 
 export function getOrganizedData(valuation) {
-  const { model, valuationInputData } = valuation;
+  const { model, valuationData } = valuation;
   if (model === 'FCFE' || model === 'FCFE')
-    return FCFEAndFCFF_Format(valuationInputData);
+    return FCFEAndFCFF_Format(valuationData);
   else if (model === 'Relative_Valuation') {
     const headerData = [
       'Sr.No',
@@ -114,7 +114,7 @@ rows.push([index+1,obj.company,obj.peRatio,obj.pbRatio,obj.ebitda,obj.sales])
   }
 }
 
-function FCFEAndFCFF_Format(valuationInputData: any[]) {
+function FCFEAndFCFF_Format(valuationData: any[]) {
   const particulars = [],
     pat = [],
     depAndAmortisation = [],
@@ -159,7 +159,7 @@ function FCFEAndFCFF_Format(valuationInputData: any[]) {
   valuePerShare.push(headingObj['valuePerShare']);
 
   //Organized Data Process
-  valuationInputData.map((valuation) => {
+  valuationData.map((valuation) => {
     Object.entries(valuation).forEach(([key, value]) => {
       if (value === null) value = '';
       if (key === 'particulars') particulars.push(value);
