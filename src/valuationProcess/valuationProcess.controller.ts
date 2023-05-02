@@ -64,7 +64,14 @@ export class ValuationController {
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'Relative_Valuation') {
-      const valuationResult = [];
+      const valuationResponse = await this.valuationMethodsService.Relative_Valuation_Method(
+        inputs,
+        worksheet1,
+        worksheet2,
+      );
+      if (valuationResponse.result === null) return valuationResponse.msg;
+
+      const valuationResult = valuationResponse.result;
       // Store the result in Database
       const data = {
         company: company,

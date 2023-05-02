@@ -37,6 +37,66 @@ export class ValuationMethodsService {
   ): Promise<any> {
     return await this.FCFEAndFCFF_Common(inputs, worksheet1, worksheet2);
   }
+
+  async Relative_Valuation_Method(
+    inputs: any,
+    worksheet1: any,
+    worksheet2: any,
+  ): Promise<any> {
+    const finalResult=[
+      {
+        "particular":"pbRatio",
+        "netWorthAvg":114742908,
+        "netWorthMed":114742908,
+        "noOfSharesAvg":2,
+        "noOfShareMed":3,
+        "bookValueAvg":1,
+        "bookValueMed":2,
+        "ratioAvg":0.76,
+        "ratioMed":8.0,
+        "marketPriceAvg":60.02,
+        "marketPriceMed":50.76,
+    },{
+      "particular":"peRatio",
+      "epsAvg":4,
+      "epsMed":8.03,
+      "ratioAvg":8.08,
+      "ratioMed":8.06,
+      "marketPriceAvg":60.80,
+      "marketPriceMed":64.84,
+    },{
+      "particular":"ebitda",
+      "ebitdaAvg":23,
+      "ebitdaMed":25,
+      "evAvg":5.19,
+      "evMed":5.64,
+      "enterpriseAvg":2,
+      "enterpriseMed":3,
+      "debtAvg":164295281,
+      "debtMed":164295281,
+      "equityAvg":4,
+      "equityMed":5,
+      "noOfSharesAvg":3,
+      "noOfSharesMed":4,
+      "marketPriceAvg":50.03,
+      "marketPriceMed":78.08,
+    },{
+      "particular":"sales",
+      "salesAvg":551394242,
+      "salesMed":551394243,
+      "ratioAvg":0.51,
+      "ratioMed":0.40,
+      "equityAvg":279373083,
+      "equityMed":220557697,
+      "noOfShareAvg":2,
+      "noOfShareMed":3,
+      "marketPriceAvg":56,
+      "marketPriceMed":67,
+    }
+    ];
+    return { result: finalResult, msg: 'Executed Successfully' };
+  }
+
   //Get Years List from Excel Sheet.
   async getYearsList(worksheet1: any): Promise<any> {
     const firstYearCell = worksheet1['B1'];
