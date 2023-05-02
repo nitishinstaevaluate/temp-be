@@ -107,6 +107,7 @@ export function getOrganizedData(valuation) {
     valuation.companies.map((obj:any,index:number)=>{
 rows.push([index+1,obj.company,obj.peRatio,obj.pbRatio,obj.ebitda,obj.sales])
     })
+    // const emptyRow=[{},{},{},{},{},{}];
     const average=["","Average",7.03,0.67,4.63,0.63];
     const median=["","Median",5.03,0.45,6.22,0.43];
     return [headerData,...rows,average,median];
