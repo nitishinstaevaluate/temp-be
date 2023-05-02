@@ -15,7 +15,7 @@ import {
   ProportionOfEquity,
   POPShareCapital,
   CapitalStructure,
-  POPShareCapitalLabelPer
+  POPShareCapitalLabelPer,
 } from '../excelFileServices/calculation.method';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 //Valuation Methods Service
@@ -43,56 +43,59 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const finalResult=[
+    const finalResult = [
       {
-        "particular":"pbRatio",
-        "netWorthAvg":114742908,
-        "netWorthMed":114742908,
-        "noOfSharesAvg":2,
-        "noOfShareMed":3,
-        "bookValueAvg":1,
-        "bookValueMed":2,
-        "ratioAvg":0.76,
-        "ratioMed":8.0,
-        "marketPriceAvg":60.02,
-        "marketPriceMed":50.76,
-    },{
-      "particular":"peRatio",
-      "epsAvg":4,
-      "epsMed":8.03,
-      "ratioAvg":8.08,
-      "ratioMed":8.06,
-      "marketPriceAvg":60.80,
-      "marketPriceMed":64.84,
-    },{
-      "particular":"ebitda",
-      "ebitdaAvg":23,
-      "ebitdaMed":25,
-      "evAvg":5.19,
-      "evMed":5.64,
-      "enterpriseAvg":2,
-      "enterpriseMed":3,
-      "debtAvg":164295281,
-      "debtMed":164295281,
-      "equityAvg":4,
-      "equityMed":5,
-      "noOfSharesAvg":3,
-      "noOfSharesMed":4,
-      "marketPriceAvg":50.03,
-      "marketPriceMed":78.08,
-    },{
-      "particular":"sales",
-      "salesAvg":551394242,
-      "salesMed":551394243,
-      "ratioAvg":0.51,
-      "ratioMed":0.40,
-      "equityAvg":279373083,
-      "equityMed":220557697,
-      "noOfShareAvg":2,
-      "noOfShareMed":3,
-      "marketPriceAvg":56,
-      "marketPriceMed":67,
-    }
+        particular: 'pbRatio',
+        netWorthAvg: 114742908,
+        netWorthMed: 114742908,
+        noOfSharesAvg: 2,
+        noOfShareMed: 3,
+        bookValueAvg: 1,
+        bookValueMed: 2,
+        ratioAvg: 0.76,
+        ratioMed: 8.0,
+        marketPriceAvg: 60.02,
+        marketPriceMed: 50.76,
+      },
+      {
+        particular: 'peRatio',
+        epsAvg: 4,
+        epsMed: 8.03,
+        ratioAvg: 8.08,
+        ratioMed: 8.06,
+        marketPriceAvg: 60.8,
+        marketPriceMed: 64.84,
+      },
+      {
+        particular: 'ebitda',
+        ebitdaAvg: 23,
+        ebitdaMed: 25,
+        evAvg: 5.19,
+        evMed: 5.64,
+        enterpriseAvg: 2,
+        enterpriseMed: 3,
+        debtAvg: 164295281,
+        debtMed: 164295281,
+        equityAvg: 4,
+        equityMed: 5,
+        noOfSharesAvg: 3,
+        noOfSharesMed: 4,
+        marketPriceAvg: 50.03,
+        marketPriceMed: 78.08,
+      },
+      {
+        particular: 'sales',
+        salesAvg: 551394242,
+        salesMed: 551394243,
+        ratioAvg: 0.51,
+        ratioMed: 0.4,
+        equityAvg: 279373083,
+        equityMed: 220557697,
+        noOfShareAvg: 2,
+        noOfShareMed: 3,
+        marketPriceAvg: 56,
+        marketPriceMed: 67,
+      },
     ];
     return { result: finalResult, msg: 'Executed Successfully' };
   }
@@ -120,7 +123,8 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const { outstandingShares, discountingPeriod,popShareCapitalType } = inputs;
+    const { outstandingShares, discountingPeriod, popShareCapitalType } =
+      inputs;
     const finalResult = [];
     const years = await this.getYearsList(worksheet1);
     if (years === null)
@@ -132,13 +136,13 @@ export class ValuationMethodsService {
       discountingPeriod,
     );
 
-    if(popShareCapitalType === 'DFBS_PC'){
+    if (popShareCapitalType === 'DFBS_PC') {
       const popShareCapitalValue = await POPShareCapitalLabelPer(0, worksheet2);
-      if(popShareCapitalValue>100)
+      if (popShareCapitalValue > 100)
         return {
-          result:null,
-          msg:"Invalid: Preference Share Capital % value."
-        }
+          result: null,
+          msg: 'Invalid: Preference Share Capital % value.',
+        };
     }
 
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
@@ -178,12 +182,11 @@ export class ValuationMethodsService {
         worksheet1,
         worksheet2,
       );
-  
-      if(discountingFactor.result===null)
-      return discountingFactor;
-      const discountingFactorValue=discountingFactor.result;
-      const presentFCFF = discountingFactorValue*fcff;
-      
+
+      if (discountingFactor.result === null) return discountingFactor;
+      const discountingFactorValue = discountingFactor.result;
+      const presentFCFF = discountingFactorValue * fcff;
+
       const sumOfCashFlows = presentFCFF;
       const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
       const cashEquivalents = await CashEquivalents(i, worksheet2);
@@ -264,8 +267,8 @@ export class ValuationMethodsService {
         popShareCapitalValue = await POPShareCapital(i, worksheet2);
       //We need to use formula
       else if (popShareCapitalType === 'DFBS_PC')
-        popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2);//We need to get label % value.
-      
+        popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2); //We need to get label % value.
+
       const res = await this.industryService.getFCFFDisFactor(inputs, {
         costOfDebt: costOfDebtValue,
         capitalStructure: capitalStructure,
@@ -277,6 +280,9 @@ export class ValuationMethodsService {
 
       discountingFactor = res.result;
     }
-    return {result:discountingFactor,msg:"discountingFactor get Successfully."};
+    return {
+      result: discountingFactor,
+      msg: 'discountingFactor get Successfully.',
+    };
   }
 }

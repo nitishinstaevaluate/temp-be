@@ -34,7 +34,9 @@ export function generatePdf(valuation: any, res: any) {
         style: 'header',
       },
       {
-        text: `Valuation Date: ${moment(valuation.inputData.valuationDate).format('MMM D, YYYY')}`,
+        text: `Valuation Date: ${moment(
+          valuation.inputData.valuationDate,
+        ).format('MMM D, YYYY')}`,
         style: 'header',
       },
       {
@@ -42,7 +44,9 @@ export function generatePdf(valuation: any, res: any) {
         style: 'header',
       },
       {
-        text: `Generated On- ${moment(valuation.createdAt).format('MMM D, YYYY')}`,
+        text: `Generated On- ${moment(valuation.createdAt).format(
+          'MMM D, YYYY',
+        )}`,
         style: 'header',
       },
       {
@@ -56,27 +60,39 @@ export function generatePdf(valuation: any, res: any) {
           style: 'table',
         },
       },
-     
-    valuation.model==="Relative_Valuation"?[
-      {
-        text: '\n\n',
-      },{
-        table: {
-          headerRows: 1,
-          body: [
-            [
-              {text: 'Valuation of CMM InfraProjects Ltd                                Amount (in INR)', colSpan: 4},
-              {},
-              {},
-              {}
-            ],
-            ['Sr.No', 'Particulars', 'As on 31.03.2018','As on 31.03.2018'],
-            ['Value 1', 'Value 2', 'Value 3','Value 4'],
-        
-        ] || [],
-          style: 'table',
-        },
-      }]:null,
+
+      valuation.model === 'Relative_Valuation'
+        ? [
+            {
+              text: '\n\n',
+            },
+            {
+              table: {
+                headerRows: 1,
+                body:
+                  [
+                    [
+                      {
+                        text: 'Valuation of CMM InfraProjects Ltd                                Amount (in INR)',
+                        colSpan: 4,
+                      },
+                      {},
+                      {},
+                      {},
+                    ],
+                    [
+                      'Sr.No',
+                      'Particulars',
+                      'As on 31.03.2018',
+                      'As on 31.03.2018',
+                    ],
+                    ['Value 1', 'Value 2', 'Value 3', 'Value 4'],
+                  ] || [],
+                style: 'table',
+              },
+            },
+          ]
+        : null,
     ],
     styles: {
       header: {
@@ -123,15 +139,22 @@ export function getOrganizedData(valuation) {
       'EV/EBITDA as on Valuation Date',
       'Price/Sales Valuation Date',
     ];
-  //Get Companies data here ..........
-    const rows=[];
-    valuation.companies.map((obj:any,index:number)=>{
-rows.push([index+1,obj.company,obj.peRatio,obj.pbRatio,obj.ebitda,obj.sales])
-    })
+    //Get Companies data here ..........
+    const rows = [];
+    valuation.companies.map((obj: any, index: number) => {
+      rows.push([
+        index + 1,
+        obj.company,
+        obj.peRatio,
+        obj.pbRatio,
+        obj.ebitda,
+        obj.sales,
+      ]);
+    });
     // const emptyRow=[{},{},{},{},{},{}];
-    const average=["","Average",7.03,0.67,4.63,0.63];
-    const median=["","Median",5.03,0.45,6.22,0.43];
-    return [headerData,...rows,average,median];
+    const average = ['', 'Average', 7.03, 0.67, 4.63, 0.63];
+    const median = ['', 'Median', 5.03, 0.45, 6.22, 0.43];
+    return [headerData, ...rows, average, median];
   }
 }
 
