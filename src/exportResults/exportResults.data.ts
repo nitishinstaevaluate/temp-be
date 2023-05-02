@@ -1,4 +1,4 @@
-export const headingObj = {
+export const fcfe_fcff_headingObj = {
   particulars: 'Particulars',
   pat: 'PAT',
   depAndAmortisation: 'Depn and Amortisation',
@@ -20,7 +20,14 @@ export const headingObj = {
   noOfShares: 'No. of Shares',
   valuePerShare: 'Value per Share',
 };
-
+export const relative_valuation_headingObj = {
+  pbRatio: 'P/B Ratio',
+  netWorth: 'Net Worth of Company',
+  noOfShares: 'Number of Shares',
+  bookValue: 'Book Value per Share',
+  ratio: 'P/B Ratio of Industry',
+  marketPrice: 'Market Price',
+};
 export const footerInfo = {
   address:
     '(Unit No. 8, 2nd Floor, Senior Estate, 7/C Parsi Panchayat Road, Andheri (East), Mumbai – 400069)',

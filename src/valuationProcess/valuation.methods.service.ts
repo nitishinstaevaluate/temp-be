@@ -49,7 +49,7 @@ export class ValuationMethodsService {
         netWorthAvg: 114742908,
         netWorthMed: 114742908,
         noOfSharesAvg: 2,
-        noOfShareMed: 3,
+        noOfSharesMed: 3,
         bookValueAvg: 1,
         bookValueMed: 2,
         ratioAvg: 0.76,

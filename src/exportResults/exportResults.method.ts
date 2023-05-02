@@ -1,11 +1,14 @@
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { headingObj, footerInfo } from './exportResults.data';
+import {
+  fcfe_fcff_headingObj,
+  relative_valuation_headingObj,
+  footerInfo,
+} from './exportResults.data';
 import * as moment from 'moment';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export function generatePdf(valuation: any, res: any) {
-  const valuationData = getOrganizedData(valuation);
   const docDefinition = {
     tableLayout: 'auto',
     pageOrientation: 'landscape',
@@ -53,46 +56,7 @@ export function generatePdf(valuation: any, res: any) {
         text: 'Valuation of a firm based on Profit loss and balance sheet statements.',
         style: 'subHeader',
       },
-      {
-        table: {
-          headerRows: 1,
-          body: valuationData || [],
-          style: 'table',
-        },
-      },
-
-      valuation.model === 'Relative_Valuation'
-        ? [
-            {
-              text: '\n\n',
-            },
-            {
-              table: {
-                headerRows: 1,
-                body:
-                  [
-                    [
-                      {
-                        text: 'Valuation of CMM InfraProjects Ltd                                Amount (in INR)',
-                        colSpan: 4,
-                      },
-                      {},
-                      {},
-                      {},
-                    ],
-                    [
-                      'Sr.No',
-                      'Particulars',
-                      'As on 31.03.2018',
-                      'As on 31.03.2018',
-                    ],
-                    ['Value 1', 'Value 2', 'Value 3', 'Value 4'],
-                  ] || [],
-                style: 'table',
-              },
-            },
-          ]
-        : null,
+      getPdfContent(valuation),
     ],
     styles: {
       header: {
@@ -126,10 +90,16 @@ export function generatePdf(valuation: any, res: any) {
   });
 }
 
-export function getOrganizedData(valuation) {
+export function getPdfContent(valuation) {
   const { model, valuationData } = valuation;
   if (model === 'FCFE' || model === 'FCFE')
-    return FCFEAndFCFF_Format(valuationData);
+    return {
+      table: {
+        headerRows: 1,
+        body: FCFEAndFCFF_Format(valuationData) || [],
+        style: 'table',
+      },
+    };
   else if (model === 'Relative_Valuation') {
     const headerData = [
       'Sr.No',
@@ -154,7 +124,80 @@ export function getOrganizedData(valuation) {
     // const emptyRow=[{},{},{},{},{},{}];
     const average = ['', 'Average', 7.03, 0.67, 4.63, 0.63];
     const median = ['', 'Median', 5.03, 0.45, 6.22, 0.43];
-    return [headerData, ...rows, average, median];
+    const result2 = [];
+    valuationData.map((obj, index) => {
+      if (obj.particular === 'pbRatio') {
+        result2.push([
+          index + 1,
+          relative_valuation_headingObj[obj.particular],
+          '',
+          '',
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['netWorth'],
+          obj.netWorthAvg,
+          obj.netWorthMed,
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['noOfShares'],
+          obj.noOfSharesAvg,
+          obj.noOfSharesMed,
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['bookValue'],
+          obj.bookValueAvg,
+          obj.bookValueMed,
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['ratio'],
+          obj.ratioAvg,
+          obj.ratioMed,
+        ]);
+        result2.push([
+          '',
+          relative_valuation_headingObj['marketPrice'],
+          obj.marketPriceAvg,
+          obj.marketPriceMed,
+        ]);
+      }
+    });
+    console.log('Testing...........', result2);
+    return [
+      {
+        table: {
+          headerRows: 1,
+          body: [headerData, ...rows, average, median] || [],
+          style: 'table',
+        },
+      },
+      {
+        text: '\n\n',
+      },
+      {
+        table: {
+          headerRows: 1,
+          body:
+            [
+              [
+                {
+                  text: 'Valuation of CMM InfraProjects Ltd                                Amount (in INR)',
+                  colSpan: 4,
+                },
+                {},
+                {},
+                {},
+              ],
+              ['Sr.No', 'Particulars', 'As on 31.03.2018', 'As on 31.03.2018'],
+              ...result2,
+            ] || [],
+          style: 'table',
+        },
+      },
+    ];
   }
 }
 
@@ -181,26 +224,26 @@ function FCFEAndFCFF_Format(valuationData: any[]) {
     valuePerShare = [];
 
   //Set Headers
-  particulars.push(headingObj['particulars']);
-  pat.push(headingObj['pat']);
-  depAndAmortisation.push(headingObj['depAndAmortisation']);
-  onCashItems.push(headingObj['onCashItems']);
-  nca.push(headingObj['nca']);
-  defferedTaxAssets.push(headingObj['defferedTaxAssets']);
-  netCashFlow.push(headingObj['netCashFlow']);
-  fixedAssets.push(headingObj['fixedAssets']);
-  fcff.push(headingObj['fcff']);
-  discountingPeriod.push(headingObj['discountingPeriod']);
-  discountingFactor.push(headingObj['discountingFactor']);
-  presentFCFF.push(headingObj['presentFCFF']);
-  sumOfCashFlows.push(headingObj['sumOfCashFlows']);
-  debtOnDate.push(headingObj['debtOnDate']);
-  cashEquivalents.push(headingObj['cashEquivalents']);
-  surplusAssets.push(headingObj['surplusAssets']);
-  otherAdj.push(headingObj['otherAdj']);
-  equityValue.push(headingObj['equityValue']);
-  noOfShares.push(headingObj['noOfShares']);
-  valuePerShare.push(headingObj['valuePerShare']);
+  particulars.push(fcfe_fcff_headingObj['particulars']);
+  pat.push(fcfe_fcff_headingObj['pat']);
+  depAndAmortisation.push(fcfe_fcff_headingObj['depAndAmortisation']);
+  onCashItems.push(fcfe_fcff_headingObj['onCashItems']);
+  nca.push(fcfe_fcff_headingObj['nca']);
+  defferedTaxAssets.push(fcfe_fcff_headingObj['defferedTaxAssets']);
+  netCashFlow.push(fcfe_fcff_headingObj['netCashFlow']);
+  fixedAssets.push(fcfe_fcff_headingObj['fixedAssets']);
+  fcff.push(fcfe_fcff_headingObj['fcff']);
+  discountingPeriod.push(fcfe_fcff_headingObj['discountingPeriod']);
+  discountingFactor.push(fcfe_fcff_headingObj['discountingFactor']);
+  presentFCFF.push(fcfe_fcff_headingObj['presentFCFF']);
+  sumOfCashFlows.push(fcfe_fcff_headingObj['sumOfCashFlows']);
+  debtOnDate.push(fcfe_fcff_headingObj['debtOnDate']);
+  cashEquivalents.push(fcfe_fcff_headingObj['cashEquivalents']);
+  surplusAssets.push(fcfe_fcff_headingObj['surplusAssets']);
+  otherAdj.push(fcfe_fcff_headingObj['otherAdj']);
+  equityValue.push(fcfe_fcff_headingObj['equityValue']);
+  noOfShares.push(fcfe_fcff_headingObj['noOfShares']);
+  valuePerShare.push(fcfe_fcff_headingObj['valuePerShare']);
 
   //Organized Data Process
   valuationData.map((valuation) => {
