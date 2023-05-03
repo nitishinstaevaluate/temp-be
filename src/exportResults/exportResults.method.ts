@@ -75,19 +75,19 @@ export function generatePdf(valuation: any, res: any) {
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  pdfDoc.getBuffer((buffer) => {
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
-    );
-    res.setHeader('Content-Length', buffer.length);
-    res.end(buffer);
-  });
   // pdfDoc.getBuffer((buffer) => {
-  //   res.type('application/pdf');
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader(
+  //     'Content-Disposition',
+  //     `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
+  //   );
+  //   res.setHeader('Content-Length', buffer.length);
   //   res.end(buffer);
   // });
+  pdfDoc.getBuffer((buffer) => {
+    res.type('application/pdf');
+    res.end(buffer);
+  });
 }
 
 export function getPdfContent(valuation: any) {
@@ -129,6 +129,10 @@ export function getPdfContent(valuation: any) {
               ],
               ['Sr.No', 'Particulars', 'As on 31.03.2018', 'As on 31.03.2018'],
               ...tablesData.table2,
+              ["",relative_valuation_headingObj['tentativeIssuePrice'],{
+                text: valuationData[4].tentativeIssuePrice,
+                colSpan:2,
+              },]
             ] || [],
           style: 'table',
         },
@@ -372,6 +376,71 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         relative_valuation_headingObj['ebitdaMarketPrice'],
         obj.ebitdaMarketPriceAvg,
         obj.ebitdaMarketPriceMed,
+      ]);
+    }else if (obj.particular === 'sales') {
+      table2.push(['', '', '', '']);
+      table2.push([
+        index + 1,
+        relative_valuation_headingObj['salesLabel'],
+        '',
+        '',
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['sales'],
+        obj.salesAvg,
+        obj.salesMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['salesRatio'],
+        obj.salesRatioAvg,
+        obj.salesRatioMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['salesEquity'],
+        obj.salesEquityAvg,
+        obj.salesEquityMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['salesShare'],
+        obj.salesShareAvg,
+        obj.salesShareMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['salesMarketPrice'],
+        obj.salesMarketPriceAvg,
+        obj.salesMarketPriceMed,
+      ]);
+    }else if (obj.particular === 'result') {
+      table2.push(['', '', '', '']);
+      table2.push([
+        '',
+        relative_valuation_headingObj['avgPricePerShare'],
+        obj.avgPricePerShareAvg,
+        obj.avgPricePerShareMed,
+      ]);
+      table2.push(['', '', '', '']);
+      table2.push([
+        '',
+        relative_valuation_headingObj['average'],
+        obj.averageAvg,
+        obj.averageMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['loc'],
+        obj.locAvg,
+        obj.locMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['finalPrice'],
+        obj.finalPriceAvg,
+        obj.finalPriceMed,
       ]);
     }
   });

@@ -96,6 +96,18 @@ export class ValuationMethodsService {
         salesMarketPriceAvg: 56,
         salesMarketPriceMed: 67,
       },
+      {
+        particular:'result',
+        avgPricePerShareAvg:2,
+        avgPricePerShareMed:3,
+        averageAvg:2,
+        averageMed:3,
+        locAvg:2,
+        locMed:3,
+        finalPriceAvg:2,
+        finalPriceMed:3,
+        tentativeIssuePrice:23444,
+      }
     ];
     return { result: finalResult, msg: 'Executed Successfully' };
   }

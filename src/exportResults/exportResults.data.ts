@@ -39,6 +39,17 @@ export const relative_valuation_headingObj = {
   ebitdaEquity:"Value of Equity",
   ebitdaShares:"Number of share",
   ebitdaMarketPrice:"Market Price",
+  salesLabel:"Price to Sales",
+  sales:"Sales of company (INR)",
+  salesRatio:"P/S Ratio",
+  salesEquity:"Value of Equity",
+  salesShare:"Number of share",
+  salesMarketPrice:"Market Price",
+  avgPricePerShare:"Average Price per Share",
+  average:"Average",
+  loc:"Less: Illiquidity Discount/size/lack of control",
+  finalPrice:"Final Price",
+  tentativeIssuePrice:"Tentative Issue Price (Average of above)",
 };
 export const footerInfo = {
   address:
