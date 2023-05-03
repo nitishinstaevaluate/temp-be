@@ -4,6 +4,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   Industry,
   IndustryDocument,
+  SubIndustry,
+  SubIndustryDocument,
+  Company,
+  CompanyDocument,
   ValuationMethod,
   ValuationMethodDocument,
   TaxRate,
@@ -58,6 +62,70 @@ export class IndustriesService {
 
   async deleteIndustry(id: string): Promise<any> {
     return await this.industryModel.findByIdAndRemove(id).exec();
+  }
+}
+
+// Sub Industries Service
+@Injectable()
+export class SubIndustriesService {
+  constructor(
+    @InjectModel('subIndustry')
+    private readonly subIndustryModel: Model<SubIndustryDocument>,
+  ) {}
+
+  async createSubIndustry(subIndustry: object): Promise<SubIndustry> {
+    try {
+      return await this.subIndustryModel.create(subIndustry);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async getSubIndustries(industryId: string): Promise<SubIndustry[]> {
+    return await this.subIndustryModel.find({ industryId }).exec();
+  }
+  async updateSubIndustry(
+    id: string,
+    subIndustry: SubIndustry,
+  ): Promise<SubIndustry> {
+    return await this.subIndustryModel
+      .findByIdAndUpdate(id, subIndustry, { new: true })
+      .exec();
+  }
+
+  async deleteSubIndustry(id: string): Promise<any> {
+    return await this.subIndustryModel.findByIdAndRemove(id).exec();
+  }
+}
+
+//Company Service
+@Injectable()
+export class CompaniesService {
+  constructor(
+    @InjectModel('company')
+    private readonly companyModel: Model<CompanyDocument>,
+  ) {}
+
+  async createCompany(company: object): Promise<Company> {
+    try {
+      return await this.companyModel.create(company);
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async getCompanies(industryId: string): Promise<Company[]> {
+    return await this.companyModel.find({ industryId }).exec();
+  }
+  async getCompanyById(id: string): Promise<Company> {
+    return await this.companyModel.findById(id);
+  }
+  async updateCompany(id: string, company: Company): Promise<Company> {
+    return await this.companyModel
+      .findByIdAndUpdate(id, company, { new: true })
+      .exec();
+  }
+
+  async deleteCompany(id: string): Promise<any> {
+    return await this.companyModel.findByIdAndRemove(id).exec();
   }
 }
 

@@ -19,6 +19,60 @@ export class Industry {
 export type IndustryDocument = Industry & Document;
 export const IndustrySchema = SchemaFactory.createForClass(Industry);
 
+//SubIndustry Schema
+@Schema()
+export class SubIndustry {
+  @Prop({ required: true })
+  industryId: string;
+
+  @Prop({ required: true })
+  subIndustry: string;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type SubIndustryDocument = SubIndustry & Document;
+export const SubIndustrySchema = SchemaFactory.createForClass(SubIndustry);
+
+//Company Schema
+@Schema()
+export class Company {
+  @Prop({ required: true })
+  company: string;
+
+  @Prop({ required: true })
+  industryId: string;
+  
+  @Prop({ required: true })
+  peRatio: number;
+
+  @Prop({ required: true })
+  pbRatio: number;
+
+  @Prop({ required: true })
+  ebitda: number;
+
+  @Prop({ required: true })
+  sales: number;
+
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @Prop({ default: () => new Date() })
+  modifiedAt: Date;
+
+  @Prop({ default: () => new Date() })
+  createdAt: Date;
+}
+export type CompanyDocument = Company & Document;
+export const CompanySchema = SchemaFactory.createForClass(Company);
+
 //ValuationMethod Schema
 @Schema()
 export class ValuationMethod {

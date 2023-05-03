@@ -20,6 +20,10 @@ export class UsersService {
       async getUsers(): Promise<User[]> {
         return this.userModel.find().exec();
       }
+
+      async getUserById(id: string): Promise<User> {
+        return await this.userModel.findById(id);
+      }
     
       async getUser(query: object): Promise<User | undefined> {
         return this.userModel.findOne({

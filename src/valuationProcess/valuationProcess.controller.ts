@@ -1,4 +1,4 @@
-import { Body, Controller, Post,UseInterceptors  } from '@nestjs/common';
+import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
 import { ValuationMethodsService } from './valuation.methods.service';
@@ -41,7 +41,7 @@ export class ValuationController {
       const reportId = await this.valuationsService.createValuation(data);
 
       // Send Response.
-      return { reportId: reportId,valuationData:valuationResult };
+      return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'FCFF') {
       const valuationResponse = await this.valuationMethodsService.FCFFMethod(
         inputs,
@@ -62,7 +62,29 @@ export class ValuationController {
       const reportId = await this.valuationsService.createValuation(data);
 
       // Send Response.
-      return { reportId: reportId,valuationData:valuationResult };
-    } 
+      return { reportId: reportId, valuationData: valuationResult };
+    } else if (model === 'Relative_Valuation') {
+      const valuationResponse =
+        await this.valuationMethodsService.Relative_Valuation_Method(
+          inputs,
+          worksheet1,
+          worksheet2,
+        );
+      if (valuationResponse.result === null) return valuationResponse.msg;
+
+      const valuationResult = valuationResponse.result;
+      // Store the result in Database
+      const data = {
+        company: company,
+        model: model,
+        inputData: inputs,
+        valuationData: valuationResult,
+        userId: userId,
+      };
+      const reportId = await this.valuationsService.createValuation(data);
+
+      // Send Response.
+      return { reportId: reportId, valuationData: valuationResult };
+    }
   }
 }

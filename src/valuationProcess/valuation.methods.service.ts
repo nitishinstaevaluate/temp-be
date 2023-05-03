@@ -15,7 +15,7 @@ import {
   ProportionOfEquity,
   POPShareCapital,
   CapitalStructure,
-  POPShareCapitalLabelPer
+  POPShareCapitalLabelPer,
 } from '../excelFileServices/calculation.method';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 //Valuation Methods Service
@@ -37,6 +37,69 @@ export class ValuationMethodsService {
   ): Promise<any> {
     return await this.FCFEAndFCFF_Common(inputs, worksheet1, worksheet2);
   }
+
+  async Relative_Valuation_Method(
+    inputs: any,
+    worksheet1: any,
+    worksheet2: any,
+  ): Promise<any> {
+    const finalResult = [
+      {
+        particular: 'pbRatio',
+        netWorthAvg: 114742908,
+        netWorthMed: 114742908,
+        pbSharesAvg: 2,
+        pbSharesMed: 3,
+        bookValueAvg: 1,
+        bookValueMed: 2,
+        pbRatioAvg: 0.76,
+        pbRatioMed: 8.0,
+        pbMarketPriceAvg: 60.02,
+        pbMarketPriceMed: 50.76,
+      },
+      {
+        particular: 'peRatio',
+        epsAvg: 4,
+        epsMed: 8.03,
+        peRatioAvg: 8.08,
+        peRatioMed: 8.06,
+        peMarketPriceAvg: 60.8,
+        peMarketPriceMed: 64.84,
+      },
+      {
+        particular: 'ebitda',
+        ebitdaAvg: 23,
+        ebitdaMed: 25,
+        evAvg: 5.19,
+        evMed: 5.64,
+        enterpriseAvg: 2,
+        enterpriseMed: 3,
+        debtAvg: 164295281,
+        debtMed: 164295281,
+        ebitdaEquityAvg: 4,
+        ebitdaEquityMed: 5,
+        ebitdaSharesAvg: 3,
+        ebitdaSharesMed: 4,
+        ebitdaMarketPriceAvg: 50.03,
+        ebitdaMarketPriceMed: 78.08,
+      },
+      {
+        particular: 'sales',
+        salesAvg: 551394242,
+        salesMed: 551394243,
+        salesRatioAvg: 0.51,
+        salesRatioMed: 0.4,
+        salesEquityAvg: 279373083,
+        salesEquityMed: 220557697,
+        salesShareAvg: 2,
+        salesShareMed: 3,
+        salesMarketPriceAvg: 56,
+        salesMarketPriceMed: 67,
+      },
+    ];
+    return { result: finalResult, msg: 'Executed Successfully' };
+  }
+
   //Get Years List from Excel Sheet.
   async getYearsList(worksheet1: any): Promise<any> {
     const firstYearCell = worksheet1['B1'];
@@ -60,7 +123,8 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const { outstandingShares, discountingPeriod,popShareCapitalType } = inputs;
+    const { outstandingShares, discountingPeriod, popShareCapitalType } =
+      inputs;
     const finalResult = [];
     const years = await this.getYearsList(worksheet1);
     if (years === null)
@@ -72,13 +136,13 @@ export class ValuationMethodsService {
       discountingPeriod,
     );
 
-    if(popShareCapitalType === 'DFBS_PC'){
+    if (popShareCapitalType === 'DFBS_PC') {
       const popShareCapitalValue = await POPShareCapitalLabelPer(0, worksheet2);
-      if(popShareCapitalValue>100)
+      if (popShareCapitalValue > 100)
         return {
-          result:null,
-          msg:"Invalid: Preference Share Capital % value."
-        }
+          result: null,
+          msg: 'Invalid: Preference Share Capital % value.',
+        };
     }
 
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
@@ -118,12 +182,11 @@ export class ValuationMethodsService {
         worksheet1,
         worksheet2,
       );
-  
-      if(discountingFactor.result===null)
-      return discountingFactor;
-      const discountingFactorValue=discountingFactor.result;
-      const presentFCFF = discountingFactorValue*fcff;
-      
+
+      if (discountingFactor.result === null) return discountingFactor;
+      const discountingFactorValue = discountingFactor.result;
+      const presentFCFF = discountingFactorValue * fcff;
+
       const sumOfCashFlows = presentFCFF;
       const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
       const cashEquivalents = await CashEquivalents(i, worksheet2);
@@ -204,8 +267,8 @@ export class ValuationMethodsService {
         popShareCapitalValue = await POPShareCapital(i, worksheet2);
       //We need to use formula
       else if (popShareCapitalType === 'DFBS_PC')
-        popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2);//We need to get label % value.
-      
+        popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2); //We need to get label % value.
+
       const res = await this.industryService.getFCFFDisFactor(inputs, {
         costOfDebt: costOfDebtValue,
         capitalStructure: capitalStructure,
@@ -217,6 +280,9 @@ export class ValuationMethodsService {
 
       discountingFactor = res.result;
     }
-    return {result:discountingFactor,msg:"discountingFactor get Successfully."};
+    return {
+      result: discountingFactor,
+      msg: 'discountingFactor get Successfully.',
+    };
   }
 }

@@ -2,6 +2,18 @@ export class CreateIndustryDto {
   industry: string;
 }
 
+export class CreateSubIndustryDto {
+  industryId:string;
+  subIndustry: string;
+}
+export class CreateCompanyDto {
+  company:string;
+  industryId: string;
+  peRatio:number;
+  pbRatio:number;
+  ebitda:number;
+  sales:number;
+}
 export class CreateValuationMethodDto {
   label: string;
   type: string;
