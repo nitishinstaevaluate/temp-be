@@ -19,26 +19,22 @@ export function generatePdf(valuation: any, res: any) {
     // pageOrientation: 'landscape',
     footer: function (currentPage, pageCount) {
       return [
-        {
-          image:logoDataURL,
-          fit: [100, 100],
-          alignment: 'center',
-          margin: [0, 10, 0, 0],
-        },
+      
         {
           text: `${valuation.company}`,
           style: 'footer',
         },
-        { text: `Address: ${footerInfo.address}`, style: 'footer' },
+        { text: `Address: ${footerInfo.address}            Page ${currentPage} of ${pageCount}`, style: 'footer' },
         { text: `Email - ${footerInfo.email}`, style: 'footer' },
-        {
-          text: `Page ${currentPage} of ${pageCount}`,
-          alignment: 'center',
-          style: 'footer',
-        },
       ];
     },
     content: [
+      {
+        image:logoDataURL,
+        fit: [100, 100],
+        alignment: 'center',
+        margin: [0, 0, 0, 0],
+      },
       {
         text: `${valuation.company}`,
         style: 'header',
@@ -75,8 +71,8 @@ export function generatePdf(valuation: any, res: any) {
         margin: [0, 15, 0, 10],
       },
       footer: {
-        fontSize: 8,
-        margin: [30, 0, 0, 0],
+        fontSize: 9,
+        margin: [40, 0, 0, 0],
       },
     },
   };
