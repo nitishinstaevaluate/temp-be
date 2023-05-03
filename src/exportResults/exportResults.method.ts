@@ -6,8 +6,13 @@ import {
   footerInfo,
 } from './exportResults.data';
 import * as moment from 'moment';
+import * as fs from 'fs';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
+const logoPath = './logo/logo.jpg'; // specify the relative path to your image file
+const logoData = fs.readFileSync(logoPath);
+const logoDataURL = `data:image/jpeg;base64,${logoData.toString('base64')}`;
+
 export function generatePdf(valuation: any, res: any) {
   const docDefinition = {
     tableLayout: 'auto',
@@ -15,8 +20,10 @@ export function generatePdf(valuation: any, res: any) {
     footer: function (currentPage, pageCount) {
       return [
         {
-          text: `Company Logo`,
-          style: 'footer',
+          image:logoDataURL,
+          fit: [100, 100],
+          alignment: 'center',
+          margin: [0, 10, 0, 0],
         },
         {
           text: `${valuation.company}`,
