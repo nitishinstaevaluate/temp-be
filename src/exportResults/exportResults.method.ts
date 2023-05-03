@@ -11,7 +11,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;
 export function generatePdf(valuation: any, res: any) {
   const docDefinition = {
     tableLayout: 'auto',
-    pageOrientation: 'landscape',
+    // pageOrientation: 'landscape',
     footer: function (currentPage, pageCount) {
       return [
         {
@@ -75,131 +75,43 @@ export function generatePdf(valuation: any, res: any) {
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  // pdfDoc.getBuffer((buffer) => {
-  //   res.setHeader('Content-Type', 'application/pdf');
-  //   res.setHeader(
-  //     'Content-Disposition',
-  //     `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
-  //   );
-  //   res.setHeader('Content-Length', buffer.length);
-  //   res.end(buffer);
-  // });
   pdfDoc.getBuffer((buffer) => {
-    res.type('application/pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
+    );
+    res.setHeader('Content-Length', buffer.length);
     res.end(buffer);
   });
+  // pdfDoc.getBuffer((buffer) => {
+  //   res.type('application/pdf');
+  //   res.end(buffer);
+  // });
 }
 
-export function getPdfContent(valuation:any) {
+export function getPdfContent(valuation: any) {
   const { model, valuationData } = valuation;
   if (model === 'FCFE' || model === 'FCFE')
     return {
       table: {
         headerRows: 1,
-        body: FCFEAndFCFF_Format(valuationData) || [],
+        body: FCFEAndFCFF_Organized_Data(valuationData) || [],
         style: 'table',
       },
     };
   else if (model === 'Relative_Valuation') {
-    const headerData = [
-      'Sr.No',
-      'Name',
-      'P/E Ratio as on Valuation Date',
-      'P/B Ratio as on Valuation Date',
-      'EV/EBITDA as on Valuation Date',
-      'Price/Sales Valuation Date',
-    ];
-    //Get Companies data here ..........
-    const rows = [];
-    valuation.companies.map((obj: any, index: number) => {
-      rows.push([
-        index + 1,
-        obj.company,
-        obj.peRatio,
-        obj.pbRatio,
-        obj.ebitda,
-        obj.sales,
-      ]);
-    });
-    // const emptyRow=[{},{},{},{},{},{}];
-    const average = ['', 'Average', 7.03, 0.67, 4.63, 0.63];
-    const median = ['', 'Median', 5.03, 0.45, 6.22, 0.43];
-    const result2 = [];
-    valuationData.map((obj:any, index:number) => {
-      if (obj.particular === 'pbRatio') {
-        result2.push([
-          index + 1,
-          relative_valuation_headingObj['pbRatioLabel'],
-          '',
-          '',
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['netWorth'],
-          obj.netWorthAvg,
-          obj.netWorthMed,
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['pbShares'],
-          obj.pbSharesAvg,
-          obj.pbSharesMed,
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['bookValue'],
-          obj.bookValueAvg,
-          obj.bookValueMed,
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['pbRatio'],
-          obj.pbRatioAvg,
-          obj.pbRatioMed,
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['pbMarketPrice'],
-          obj.pbMarketPriceAvg,
-          obj.pbMarketPriceMed,
-        ]);
-      }else if (obj.particular === 'peRatio') {
-        result2.push([
-          index + 1,
-          relative_valuation_headingObj['peRatioLabel'],
-          '',
-          '',
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['eps'],
-          obj.epsAvg,
-          obj.epsMed,
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['peRatio'],
-          obj.peRatioAvg,
-          obj.peRatioMed,
-        ]);
-        result2.push([
-          '',
-          relative_valuation_headingObj['peMarketPrice'],
-          obj.peMarketPriceAvg,
-          obj.peMarketPriceMed,
-        ]);
-      }
-    });
+    const tablesData = Relative_Valuation_Organized_Data(valuation);
     return [
       {
         table: {
           headerRows: 1,
-          body: [headerData, ...rows, average, median] || [],
+          body: tablesData.table1 || [],
           style: 'table',
         },
       },
       {
-        text: '\n\n',
+        text: '\n',
       },
       {
         table: {
@@ -216,7 +128,7 @@ export function getPdfContent(valuation:any) {
                 {},
               ],
               ['Sr.No', 'Particulars', 'As on 31.03.2018', 'As on 31.03.2018'],
-              ...result2,
+              ...tablesData.table2,
             ] || [],
           style: 'table',
         },
@@ -225,7 +137,7 @@ export function getPdfContent(valuation:any) {
   }
 }
 
-function FCFEAndFCFF_Format(valuationData: any[]) {
+function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
   const particulars = [],
     pat = [],
     depAndAmortisation = [],
@@ -317,4 +229,155 @@ function FCFEAndFCFF_Format(valuationData: any[]) {
     noOfShares,
     valuePerShare,
   ];
+}
+
+function Relative_Valuation_Organized_Data(valuation: any) {
+  const { valuationData } = valuation;
+  const headerData = [
+    'Sr.No',
+    'Name',
+    'P/E Ratio as on Valuation Date',
+    'P/B Ratio as on Valuation Date',
+    'EV/EBITDA as on Valuation Date',
+    'Price/Sales Valuation Date',
+  ];
+  //Get Companies data here ..........
+  const rows = [];
+  valuation.companies.map((obj: any, index: number) => {
+    rows.push([
+      index + 1,
+      obj.company,
+      obj.peRatio,
+      obj.pbRatio,
+      obj.ebitda,
+      obj.sales,
+    ]);
+  });
+  const emptyRow = [{}, {}, {}, {}, {}, {}];
+  const average = ['', 'Average', 7.03, 0.67, 4.63, 0.63];
+  const median = ['', 'Median', 5.03, 0.45, 6.22, 0.43];
+  const table1=[headerData, ...rows, emptyRow, average, median];
+  const table2 = [];
+  table2.push(['', '', 'Average', 'Median']);
+  valuationData.map((obj: any, index: number) => {
+    if (obj.particular === 'pbRatio') {
+      table2.push([
+        index + 1,
+        relative_valuation_headingObj['pbRatioLabel'],
+        '',
+        '',
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['netWorth'],
+        obj.netWorthAvg,
+        obj.netWorthMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['pbShares'],
+        obj.pbSharesAvg,
+        obj.pbSharesMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['bookValue'],
+        obj.bookValueAvg,
+        obj.bookValueMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['pbRatio'],
+        obj.pbRatioAvg,
+        obj.pbRatioMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['pbMarketPrice'],
+        obj.pbMarketPriceAvg,
+        obj.pbMarketPriceMed,
+      ]);
+    } else if (obj.particular === 'peRatio') {
+      table2.push(['', '', '', '']);
+      table2.push([
+        index + 1,
+        relative_valuation_headingObj['peRatioLabel'],
+        '',
+        '',
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['eps'],
+        obj.epsAvg,
+        obj.epsMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['peRatio'],
+        obj.peRatioAvg,
+        obj.peRatioMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['peMarketPrice'],
+        obj.peMarketPriceAvg,
+        obj.peMarketPriceMed,
+      ]);
+    } else if (obj.particular === 'ebitda') {
+      table2.push(['', '', '', '']);
+      table2.push([
+        index + 1,
+        relative_valuation_headingObj['ebitdaLabel'],
+        '',
+        '',
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['ebitda'],
+        obj.ebitdaAvg,
+        obj.ebitdaMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['ev'],
+        obj.evAvg,
+        obj.evMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['enterprise'],
+        obj.enterpriseAvg,
+        obj.enterpriseMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['debt'],
+        obj.debtAvg,
+        obj.debtMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['ebitdaEquity'],
+        obj.ebitdaEquityAvg,
+        obj.ebitdaEquityMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['ebitdaShares'],
+        obj.ebitdaSharesAvg,
+        obj.ebitdaSharesMed,
+      ]);
+      table2.push([
+        '',
+        relative_valuation_headingObj['ebitdaMarketPrice'],
+        obj.ebitdaMarketPriceAvg,
+        obj.ebitdaMarketPriceMed,
+      ]);
+    }
+  });
+
+  return {
+    table1,
+    table2,
+  };
 }

@@ -31,7 +31,14 @@ export const relative_valuation_headingObj = {
   peRatio:"P/E Ratio of Industry",
   eps:"EPS",
   peMarketPrice: 'Market Price',
-
+  ebitdaLabel:"EV/EBITDA",
+  ebitda:"EBITDA",
+  ev:"EV/EBITDA",
+  enterprise:"Enterprise Value",
+  debt:"Less : Value of Debt",
+  ebitdaEquity:"Value of Equity",
+  ebitdaShares:"Number of share",
+  ebitdaMarketPrice:"Market Price",
 };
 export const footerInfo = {
   address:
