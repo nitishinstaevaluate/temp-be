@@ -16,7 +16,7 @@ const logoDataURL = `data:image/jpeg;base64,${logoData.toString('base64')}`;
 export function generatePdf(valuation: any, res: any) {
   const docDefinition = {
     tableLayout: 'auto',
-    // pageOrientation: 'landscape',
+    pageOrientation: getOrientation(valuation.model),
     footer: function (currentPage, pageCount) {
       return [
       
@@ -92,10 +92,15 @@ export function generatePdf(valuation: any, res: any) {
     res.end(buffer);
   });
 }
-
+function getOrientation(model){
+if(model==='FCFE'||model==='FCFF')
+return 'landscape';
+else
+return 'portrate'
+}
 export function getPdfContent(valuation: any) {
   const { model, valuationData } = valuation;
-  if (model === 'FCFE' || model === 'FCFE')
+  if (model === 'FCFE' || model === 'FCFF')
     return {
       table: {
         headerRows: 1,
