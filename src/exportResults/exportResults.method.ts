@@ -24,8 +24,21 @@ export function generatePdf(valuation: any, res: any) {
           text: `${valuation.company}`,
           style: 'footer',
         },
-        { text: `Address: ${footerInfo.address}            Page ${currentPage} of ${pageCount}`, style: 'footer' },
-        { text: `Email - ${footerInfo.email}`, style: 'footer' },
+        {
+          columns: [
+            {
+              width: '80%',
+              margin:[40,0,0,0],
+              text: [{ text: `Address: ${footerInfo.address}`, style: 'footer' }],
+            },
+            {
+              width: '20%',
+              margin:[0,0,10,0],
+              text: [{ text: `Page ${currentPage} of ${pageCount}`, style: 'pageNumber', alignment: 'right' }],
+            },
+          ],
+        },
+        { text: `Email - ${footerInfo.email}`, style: 'footer',  noWrap: true },
       ];
     },
     content: [
@@ -71,9 +84,14 @@ export function generatePdf(valuation: any, res: any) {
         margin: [0, 15, 0, 10],
       },
       footer: {
-        fontSize: 9,
+        fontSize: 8,
         margin: [40, 0, 0, 0],
       },
+      pageNumber:{
+        fontSize:8,
+        margin:[0,0,10,0],
+        alignment: 'right'
+      }
     },
   };
 
