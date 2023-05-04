@@ -42,7 +42,7 @@ export function generatePdf(valuation: any, res: any) {
       {
         text: `Valuation Date: ${moment(
           valuation.inputData.valuationDate,
-        ).format('MMM D, YYYY')}`,
+        ).format('MMM D, YYYY')}, Method: ${valuation.model}`,
         style: 'header',
       },
       {

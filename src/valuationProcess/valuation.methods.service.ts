@@ -18,10 +18,14 @@ import {
   POPShareCapitalLabelPer,
 } from '../excelFileServices/calculation.method';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
+import { CompaniesService } from 'src/masters/masters.service';
 //Valuation Methods Service
 @Injectable()
 export class ValuationMethodsService {
-  constructor(private readonly industryService: IndustryService) {}
+  constructor(
+    private readonly industryService: IndustryService,
+    private companiesService: CompaniesService,
+  ) {}
 
   async FCFEMethod(
     inputs: any,
@@ -43,6 +47,30 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
+    const promises = inputs.companies.map((id) =>
+      this.companiesService.getCompanyById(id),
+    );
+    const companies = await Promise.all(promises);
+    const peRatio = [];
+    const pbRatio = [];
+    const ebitda = [];
+    const sales = [];
+    companies.map((company) => {
+      peRatio.push(company.peRatio);
+      pbRatio.push(company.pbRatio);
+      ebitda.push(company.ebitda);
+      sales.push(company.sales);
+    });
+    const companiesInfo = {
+      peRatioAvg: findAverage(peRatio),
+      peRatioMed: findMedian(peRatio),
+      pbRatioAvg: findAverage(pbRatio),
+      pbRatioMed: findMedian(pbRatio),
+      ebitdaAvg: findAverage(ebitda),
+      ebitdaMed: findMedian(ebitda),
+      salesAvg: findAverage(sales),
+      salesMed: findMedian(sales),
+    };
     const finalResult = [
       {
         particular: 'pbRatio',
@@ -97,17 +125,17 @@ export class ValuationMethodsService {
         salesMarketPriceMed: 67,
       },
       {
-        particular:'result',
-        avgPricePerShareAvg:2,
-        avgPricePerShareMed:3,
-        averageAvg:2,
-        averageMed:3,
-        locAvg:2,
-        locMed:3,
-        finalPriceAvg:2,
-        finalPriceMed:3,
-        tentativeIssuePrice:23444,
-      }
+        particular: 'result',
+        avgPricePerShareAvg: 2,
+        avgPricePerShareMed: 3,
+        averageAvg: 2,
+        averageMed: 3,
+        locAvg: 2,
+        locMed: 3,
+        finalPriceAvg: 2,
+        finalPriceMed: 3,
+        tentativeIssuePrice: 23444,
+      },
     ];
     return { result: finalResult, msg: 'Executed Successfully' };
   }
@@ -297,4 +325,24 @@ export class ValuationMethodsService {
       msg: 'discountingFactor get Successfully.',
     };
   }
+}
+
+function findMedian(numbers) {
+  numbers.sort((a, b) => a - b);
+  const middleIndex = Math.floor(numbers.length / 2);
+  const isEvenLength = numbers.length % 2 === 0;
+  if (isEvenLength) {
+    return (numbers[middleIndex - 1] + numbers[middleIndex]) / 2;
+  } else {
+    return numbers[middleIndex];
+  }
+}
+
+function findAverage(numbers) {
+  const sum = numbers.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+  const average = sum / numbers.length;
+  return average;
 }
