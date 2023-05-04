@@ -45,3 +45,25 @@ export async function earningPerShare(column, worksheet1: any) {
   );
   return earningPerShare;
 }
+
+export async function ebitdaMethod(column, worksheet1: any) {
+  //formula: =+'P&L'!C25
+  const ebitda = await getCellValue(
+    worksheet1,
+    `${column + sheet1_PLObj.ebitdaRow}`,
+  );
+  return ebitda;
+}
+
+export async function debtMethod(column, worksheet2: any) {
+  //formula: =+BS!D27+BS!D36
+  const longTermBorrowings= await getCellValue(
+    worksheet2,
+    `${column + sheet2_BSObj.longTermBorrowingsRow}`,
+  );
+  const  shortTermBorrowings = await getCellValue(
+    worksheet2,
+    `${column + sheet2_BSObj.shortTermBorrowingsRow}`,
+  );
+  return longTermBorrowings+ shortTermBorrowings;
+}

@@ -22,6 +22,8 @@ import { CompaniesService } from 'src/masters/masters.service';
 import {
   netWorthOfCompany,
   earningPerShare,
+  ebitdaMethod,
+  debtMethod,
 } from 'src/excelFileServices/relativeValuation.methods';
 //Valuation Methods Service
 @Injectable()
@@ -85,6 +87,17 @@ export class ValuationMethodsService {
     const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
     const peMarketPriceMed = eps * companiesInfo.peRatioMed;
 
+const ebitdaValue= await ebitdaMethod('B',worksheet1);
+const enterpriseAvg=ebitdaValue*companiesInfo.ebitdaAvg;
+const enterpriseMed=ebitdaValue*companiesInfo.ebitdaMed;
+
+const debt = await debtMethod('B', worksheet2);
+const ebitdaEquityAvg=enterpriseAvg-debt;
+const ebitdaEquityMed=enterpriseMed-debt;
+const ebitdaMarketPriceAvg=ebitdaEquityAvg/outstandingShares;
+const ebitdaMarketPriceMed=ebitdaEquityMed/outstandingShares;
+
+
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
@@ -113,20 +126,20 @@ export class ValuationMethodsService {
         },
         {
           particular: 'ebitda',
-          ebitdaAvg: 23,
-          ebitdaMed: 25,
-          evAvg: 5.19,
-          evMed: 5.64,
-          enterpriseAvg: 2,
-          enterpriseMed: 3,
-          debtAvg: 164295281,
-          debtMed: 164295281,
-          ebitdaEquityAvg: 4,
-          ebitdaEquityMed: 5,
+          ebitdaAvg:ebitdaValue,
+          ebitdaMed:ebitdaValue,
+          evAvg:companiesInfo.ebitdaAvg,
+          evMed:companiesInfo.ebitdaMed,
+          enterpriseAvg:enterpriseAvg,
+          enterpriseMed:enterpriseMed,
+          debtAvg:debt,
+          debtMed:debt,
+          ebitdaEquityAvg:ebitdaEquityAvg,
+          ebitdaEquityMed: ebitdaEquityMed,
           ebitdaSharesAvg: outstandingShares,
           ebitdaSharesMed: outstandingShares,
-          ebitdaMarketPriceAvg: 50.03,
-          ebitdaMarketPriceMed: 78.08,
+          ebitdaMarketPriceAvg: ebitdaMarketPriceAvg,
+          ebitdaMarketPriceMed:ebitdaMarketPriceMed,
         },
         {
           particular: 'sales',

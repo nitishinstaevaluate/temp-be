@@ -3,6 +3,7 @@ export const columnsList=['B','C','D','E','F','G','H','I','J','K','L','M','N','O
 
 export const sheet1_PLObj={
     patRow:"42",
+    ebitdaRow:"25",
     depAndAmortisationRow:"26",
     otherIncomeRow:"29",
     exceptionalItemsRow:"31",
