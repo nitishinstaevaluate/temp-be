@@ -455,9 +455,9 @@ function Relative_Valuation_Organized_Data(valuation: any) {
       ]);
       table2.push([
         '',
-        relative_valuation_headingObj['salesShare'],
-        obj.salesShareAvg,
-        obj.salesShareMed,
+        relative_valuation_headingObj['salesShares'],
+        obj.salesSharesAvg,
+        obj.salesSharesMed,
       ]);
       table2.push([
         '',

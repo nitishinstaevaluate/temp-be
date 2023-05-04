@@ -11,6 +11,7 @@ export const sheet1_PLObj={
 }
 
 export const sheet2_BSObj={
+    equityShareCapitalRow:"7",
     preferenceShareCapitalRow:"8",
     deferredTaxLiabilityRow:"25",
     longTermBorrowingsRow:"27",

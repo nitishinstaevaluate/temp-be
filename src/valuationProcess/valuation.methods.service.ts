@@ -19,6 +19,7 @@ import {
 } from '../excelFileServices/calculation.method';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import { CompaniesService } from 'src/masters/masters.service';
+import { netWorthOfCompany } from 'src/excelFileServices/relativeValuation.methods';
 //Valuation Methods Service
 @Injectable()
 export class ValuationMethodsService {
@@ -47,6 +48,7 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
+    const {outstandingShares}=inputs;
     const promises = inputs.companies.map((id) =>
       this.companiesService.getCompanyById(id),
     );
@@ -71,22 +73,26 @@ export class ValuationMethodsService {
       salesAvg: findAverage(sales),
       salesMed: findMedian(sales),
     };
+    const netWorth = await netWorthOfCompany('B', worksheet2);
+    const bookValue=netWorth/outstandingShares;
+    const pbMarketPriceAvg=bookValue*companiesInfo.pbRatioAvg;
+    const pbMarketPriceMed=bookValue*companiesInfo.pbRatioMed;
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
       valuation: [
         {
           particular: 'pbRatio',
-          netWorthAvg: 114742908,
-          netWorthMed: 114742908,
-          pbSharesAvg: 2,
-          pbSharesMed: 3,
-          bookValueAvg: 1,
-          bookValueMed: 2,
-          pbRatioAvg: 0.76,
-          pbRatioMed: 8.0,
-          pbMarketPriceAvg: 60.02,
-          pbMarketPriceMed: 50.76,
+          netWorthAvg:netWorth,
+          netWorthMed: netWorth,
+          pbSharesAvg:outstandingShares,
+          pbSharesMed:outstandingShares,
+          bookValueAvg:bookValue,
+          bookValueMed:bookValue,
+          pbRatioAvg:companiesInfo.pbRatioAvg,
+          pbRatioMed:companiesInfo.pbRatioMed,
+          pbMarketPriceAvg:pbMarketPriceAvg,
+          pbMarketPriceMed:pbMarketPriceMed,
         },
         {
           particular: 'peRatio',
@@ -109,8 +115,8 @@ export class ValuationMethodsService {
           debtMed: 164295281,
           ebitdaEquityAvg: 4,
           ebitdaEquityMed: 5,
-          ebitdaSharesAvg: 3,
-          ebitdaSharesMed: 4,
+          ebitdaSharesAvg: outstandingShares,
+          ebitdaSharesMed: outstandingShares,
           ebitdaMarketPriceAvg: 50.03,
           ebitdaMarketPriceMed: 78.08,
         },
@@ -122,8 +128,8 @@ export class ValuationMethodsService {
           salesRatioMed: 0.4,
           salesEquityAvg: 279373083,
           salesEquityMed: 220557697,
-          salesShareAvg: 2,
-          salesShareMed: 3,
+          salesSharesAvg: outstandingShares,
+          salesSharesMed:outstandingShares,
           salesMarketPriceAvg: 56,
           salesMarketPriceMed: 67,
         },

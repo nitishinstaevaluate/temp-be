@@ -302,7 +302,7 @@ export async function ProportionOfEquity(i: number, worksheet2: any) {
 }
 
 export async function POPShareCapital(i: number, worksheet2: any) {
-  //formula: BS!D8/(BS!D7:BS!D22)
+  //formula: BS!D8/Sum(BS!D7:BS!D22)
   const preferenceShareCapital = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
