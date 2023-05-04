@@ -57,13 +57,22 @@ export async function ebitdaMethod(column, worksheet1: any) {
 
 export async function debtMethod(column, worksheet2: any) {
   //formula: =+BS!D27+BS!D36
-  const longTermBorrowings= await getCellValue(
+  const longTermBorrowings = await getCellValue(
     worksheet2,
     `${column + sheet2_BSObj.longTermBorrowingsRow}`,
   );
-  const  shortTermBorrowings = await getCellValue(
+  const shortTermBorrowings = await getCellValue(
     worksheet2,
     `${column + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
-  return longTermBorrowings+ shortTermBorrowings;
+  return longTermBorrowings + shortTermBorrowings;
+}
+
+export async function incomeFromOperation(column, worksheet1: any) {
+  //formula: =+'P&L'!C7
+  const incomeFromOperation = await getCellValue(
+    worksheet1,
+    `${column + sheet1_PLObj.incomeFromOperationRow}`,
+  );
+  return incomeFromOperation;
 }

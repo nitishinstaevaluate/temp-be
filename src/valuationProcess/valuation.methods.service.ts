@@ -24,6 +24,7 @@ import {
   earningPerShare,
   ebitdaMethod,
   debtMethod,
+  incomeFromOperation,
 } from 'src/excelFileServices/relativeValuation.methods';
 //Valuation Methods Service
 @Injectable()
@@ -53,7 +54,7 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const { outstandingShares } = inputs;
+    const { outstandingShares, discountRateValue } = inputs;
     const promises = inputs.companies.map((id) =>
       this.companiesService.getCompanyById(id),
     );
@@ -87,17 +88,43 @@ export class ValuationMethodsService {
     const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
     const peMarketPriceMed = eps * companiesInfo.peRatioMed;
 
-const ebitdaValue= await ebitdaMethod('B',worksheet1);
-const enterpriseAvg=ebitdaValue*companiesInfo.ebitdaAvg;
-const enterpriseMed=ebitdaValue*companiesInfo.ebitdaMed;
+    const ebitdaValue = await ebitdaMethod('B', worksheet1);
+    const enterpriseAvg = ebitdaValue * companiesInfo.ebitdaAvg;
+    const enterpriseMed = ebitdaValue * companiesInfo.ebitdaMed;
 
-const debt = await debtMethod('B', worksheet2);
-const ebitdaEquityAvg=enterpriseAvg-debt;
-const ebitdaEquityMed=enterpriseMed-debt;
-const ebitdaMarketPriceAvg=ebitdaEquityAvg/outstandingShares;
-const ebitdaMarketPriceMed=ebitdaEquityMed/outstandingShares;
+    const debt = await debtMethod('B', worksheet2);
+    const ebitdaEquityAvg = enterpriseAvg - debt;
+    const ebitdaEquityMed = enterpriseMed - debt;
+    const ebitdaMarketPriceAvg = ebitdaEquityAvg / outstandingShares;
+    const ebitdaMarketPriceMed = ebitdaEquityMed / outstandingShares;
 
+    const salesValue = await incomeFromOperation('B', worksheet1);
+    const salesEquityAvg = salesValue * companiesInfo.salesAvg;
+    const salesEquityMed = salesValue * companiesInfo.salesMed;
+    const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
+    const salesMarketPriceMed = salesEquityMed / outstandingShares;
 
+    const avgPricePerShareAvg = findAverage([
+      pbMarketPriceAvg,
+      peMarketPriceAvg,
+      ebitdaMarketPriceAvg,
+      salesMarketPriceAvg,
+    ]);
+    const avgPricePerShareMed = findAverage([
+      pbMarketPriceMed,
+      peMarketPriceMed,
+      ebitdaMarketPriceMed,
+      salesMarketPriceMed,
+    ]);
+
+    const locAvg = avgPricePerShareAvg * discountRateValue;
+    const locMed = avgPricePerShareMed * discountRateValue;
+    const finalPriceAvg = avgPricePerShareAvg - locAvg;
+    const finalPriceMed = avgPricePerShareMed - locMed;
+
+    const tentativeIssuePrice = Math.round(
+      findAverage([finalPriceAvg, finalPriceMed]),
+    );
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
@@ -126,45 +153,45 @@ const ebitdaMarketPriceMed=ebitdaEquityMed/outstandingShares;
         },
         {
           particular: 'ebitda',
-          ebitdaAvg:ebitdaValue,
-          ebitdaMed:ebitdaValue,
-          evAvg:companiesInfo.ebitdaAvg,
-          evMed:companiesInfo.ebitdaMed,
-          enterpriseAvg:enterpriseAvg,
-          enterpriseMed:enterpriseMed,
-          debtAvg:debt,
-          debtMed:debt,
-          ebitdaEquityAvg:ebitdaEquityAvg,
+          ebitdaAvg: ebitdaValue,
+          ebitdaMed: ebitdaValue,
+          evAvg: companiesInfo.ebitdaAvg,
+          evMed: companiesInfo.ebitdaMed,
+          enterpriseAvg: enterpriseAvg,
+          enterpriseMed: enterpriseMed,
+          debtAvg: debt,
+          debtMed: debt,
+          ebitdaEquityAvg: ebitdaEquityAvg,
           ebitdaEquityMed: ebitdaEquityMed,
           ebitdaSharesAvg: outstandingShares,
           ebitdaSharesMed: outstandingShares,
           ebitdaMarketPriceAvg: ebitdaMarketPriceAvg,
-          ebitdaMarketPriceMed:ebitdaMarketPriceMed,
+          ebitdaMarketPriceMed: ebitdaMarketPriceMed,
         },
         {
           particular: 'sales',
-          salesAvg: 551394242,
-          salesMed: 551394243,
-          salesRatioAvg: 0.51,
-          salesRatioMed: 0.4,
-          salesEquityAvg: 279373083,
-          salesEquityMed: 220557697,
+          salesAvg: salesValue,
+          salesMed: salesValue,
+          salesRatioAvg: companiesInfo.salesAvg,
+          salesRatioMed: companiesInfo.salesMed,
+          salesEquityAvg: salesEquityAvg,
+          salesEquityMed: salesEquityMed,
           salesSharesAvg: outstandingShares,
           salesSharesMed: outstandingShares,
-          salesMarketPriceAvg: 56,
-          salesMarketPriceMed: 67,
+          salesMarketPriceAvg: salesMarketPriceAvg,
+          salesMarketPriceMed: salesMarketPriceMed,
         },
         {
           particular: 'result',
-          avgPricePerShareAvg: 2,
-          avgPricePerShareMed: 3,
-          averageAvg: 2,
-          averageMed: 3,
-          locAvg: 2,
-          locMed: 3,
-          finalPriceAvg: 2,
-          finalPriceMed: 3,
-          tentativeIssuePrice: 23444,
+          avgPricePerShareAvg: avgPricePerShareAvg,
+          avgPricePerShareMed: avgPricePerShareMed,
+          averageAvg: avgPricePerShareAvg,
+          averageMed: avgPricePerShareMed,
+          locAvg: locAvg,
+          locMed: locMed,
+          finalPriceAvg: finalPriceAvg,
+          finalPriceMed: finalPriceMed,
+          tentativeIssuePrice: tentativeIssuePrice,
         },
       ],
     };
