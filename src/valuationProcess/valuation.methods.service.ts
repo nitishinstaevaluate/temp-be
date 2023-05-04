@@ -16,7 +16,7 @@ import {
   POPShareCapital,
   CapitalStructure,
   POPShareCapitalLabelPer,
-} from '../excelFileServices/calculation.method';
+} from '../excelFileServices/fcfeAndFCFF.method';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import { CompaniesService } from 'src/masters/masters.service';
 import {

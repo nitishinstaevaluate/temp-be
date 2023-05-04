@@ -1,5 +1,4 @@
 import { sheet1_PLObj, sheet2_BSObj } from './excelSheetConfig';
-import { columnsList } from './excelSheetConfig';
 import * as XLSX from 'xlsx';
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 //Common Method for geting Cell Value

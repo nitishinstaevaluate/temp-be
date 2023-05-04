@@ -53,8 +53,9 @@ export class MyMiddleware implements NestInterceptor {
       throw new BadRequestException('Invalid Model: Input a valid model name.');
 
     if (model === 'Relative_Valuation') {
-      const { companies } = inputs;
+      const { companies,discountRateValue } = inputs;
       if (!companies) throw new BadRequestException('companies is required.');
+      if (!discountRateValue) throw new BadRequestException('discountRateValue is required.');
     }
     return next.handle();
   }
