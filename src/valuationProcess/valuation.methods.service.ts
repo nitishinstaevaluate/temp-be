@@ -54,7 +54,17 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const { outstandingShares, discountRateValue } = inputs;
+    const { outstandingShares, discountRateValue, valuationDate } = inputs;
+    const years = await this.getYearsList(worksheet1);
+    if (years === null)
+      return {
+        result: null,
+        msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
+      };
+    const year = new Date(valuationDate).getFullYear().toString();
+    const columnIndex = years.indexOf(year);
+    console.log(columnsList[columnIndex], columnIndex, year);
+    const column = columnsList[columnIndex];
     const promises = inputs.companies.map((id) =>
       this.companiesService.getCompanyById(id),
     );
@@ -79,26 +89,26 @@ export class ValuationMethodsService {
       salesAvg: findAverage(sales),
       salesMed: findMedian(sales),
     };
-    const netWorth = await netWorthOfCompany('B', worksheet2);
+    const netWorth = await netWorthOfCompany(column, worksheet2);
     const bookValue = netWorth / outstandingShares;
     const pbMarketPriceAvg = bookValue * companiesInfo.pbRatioAvg;
     const pbMarketPriceMed = bookValue * companiesInfo.pbRatioMed;
 
-    const eps = await earningPerShare('B', worksheet1);
+    const eps = await earningPerShare(column, worksheet1);
     const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
     const peMarketPriceMed = eps * companiesInfo.peRatioMed;
 
-    const ebitdaValue = await ebitdaMethod('B', worksheet1);
+    const ebitdaValue = await ebitdaMethod(column, worksheet1);
     const enterpriseAvg = ebitdaValue * companiesInfo.ebitdaAvg;
     const enterpriseMed = ebitdaValue * companiesInfo.ebitdaMed;
 
-    const debt = await debtMethod('B', worksheet2);
+    const debt = await debtMethod(column, worksheet2);
     const ebitdaEquityAvg = enterpriseAvg - debt;
     const ebitdaEquityMed = enterpriseMed - debt;
     const ebitdaMarketPriceAvg = ebitdaEquityAvg / outstandingShares;
     const ebitdaMarketPriceMed = ebitdaEquityMed / outstandingShares;
 
-    const salesValue = await incomeFromOperation('B', worksheet1);
+    const salesValue = await incomeFromOperation(column, worksheet1);
     const salesEquityAvg = salesValue * companiesInfo.salesAvg;
     const salesEquityMed = salesValue * companiesInfo.salesMed;
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
