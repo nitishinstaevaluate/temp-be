@@ -8,6 +8,7 @@ export const sheet1_PLObj={
     exceptionalItemsRow:"31",
     extraordinaryItemsRow:"33",
     financeCostsRow:"28",
+    earningPerShareRow:"58",
 }
 
 export const sheet2_BSObj={

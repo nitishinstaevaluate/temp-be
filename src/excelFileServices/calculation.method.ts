@@ -333,6 +333,6 @@ export async function POPShareCapitalLabelPer(i: number, worksheet2: any) {
   const Cell = worksheet2['A8'];
   let preferenceShareCapitalPer = null;
   if (Cell && Cell.t === 's') preferenceShareCapitalPer = parseInt(Cell.v);
-  
-  return isNaN(preferenceShareCapitalPer)?null:preferenceShareCapitalPer;
+
+  return isNaN(preferenceShareCapitalPer) ? null : preferenceShareCapitalPer;
 }

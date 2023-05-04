@@ -19,7 +19,10 @@ import {
 } from '../excelFileServices/calculation.method';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import { CompaniesService } from 'src/masters/masters.service';
-import { netWorthOfCompany } from 'src/excelFileServices/relativeValuation.methods';
+import {
+  netWorthOfCompany,
+  earningPerShare,
+} from 'src/excelFileServices/relativeValuation.methods';
 //Valuation Methods Service
 @Injectable()
 export class ValuationMethodsService {
@@ -48,7 +51,7 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const {outstandingShares}=inputs;
+    const { outstandingShares } = inputs;
     const promises = inputs.companies.map((id) =>
       this.companiesService.getCompanyById(id),
     );
@@ -74,34 +77,39 @@ export class ValuationMethodsService {
       salesMed: findMedian(sales),
     };
     const netWorth = await netWorthOfCompany('B', worksheet2);
-    const bookValue=netWorth/outstandingShares;
-    const pbMarketPriceAvg=bookValue*companiesInfo.pbRatioAvg;
-    const pbMarketPriceMed=bookValue*companiesInfo.pbRatioMed;
+    const bookValue = netWorth / outstandingShares;
+    const pbMarketPriceAvg = bookValue * companiesInfo.pbRatioAvg;
+    const pbMarketPriceMed = bookValue * companiesInfo.pbRatioMed;
+
+    const eps = await earningPerShare('B', worksheet1);
+    const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
+    const peMarketPriceMed = eps * companiesInfo.peRatioMed;
+
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
       valuation: [
         {
           particular: 'pbRatio',
-          netWorthAvg:netWorth,
+          netWorthAvg: netWorth,
           netWorthMed: netWorth,
-          pbSharesAvg:outstandingShares,
-          pbSharesMed:outstandingShares,
-          bookValueAvg:bookValue,
-          bookValueMed:bookValue,
-          pbRatioAvg:companiesInfo.pbRatioAvg,
-          pbRatioMed:companiesInfo.pbRatioMed,
-          pbMarketPriceAvg:pbMarketPriceAvg,
-          pbMarketPriceMed:pbMarketPriceMed,
+          pbSharesAvg: outstandingShares,
+          pbSharesMed: outstandingShares,
+          bookValueAvg: bookValue,
+          bookValueMed: bookValue,
+          pbRatioAvg: companiesInfo.pbRatioAvg,
+          pbRatioMed: companiesInfo.pbRatioMed,
+          pbMarketPriceAvg: pbMarketPriceAvg,
+          pbMarketPriceMed: pbMarketPriceMed,
         },
         {
           particular: 'peRatio',
-          epsAvg: 4,
-          epsMed: 8.03,
-          peRatioAvg: 8.08,
-          peRatioMed: 8.06,
-          peMarketPriceAvg: 60.8,
-          peMarketPriceMed: 64.84,
+          epsAvg: eps,
+          epsMed: eps,
+          peRatioAvg: companiesInfo.peRatioAvg,
+          peRatioMed: companiesInfo.peRatioMed,
+          peMarketPriceAvg: peMarketPriceAvg,
+          peMarketPriceMed: peMarketPriceMed,
         },
         {
           particular: 'ebitda',
@@ -129,7 +137,7 @@ export class ValuationMethodsService {
           salesEquityAvg: 279373083,
           salesEquityMed: 220557697,
           salesSharesAvg: outstandingShares,
-          salesSharesMed:outstandingShares,
+          salesSharesMed: outstandingShares,
           salesMarketPriceAvg: 56,
           salesMarketPriceMed: 67,
         },
