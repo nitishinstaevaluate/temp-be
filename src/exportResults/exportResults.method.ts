@@ -19,7 +19,6 @@ export function generatePdf(valuation: any, res: any) {
     pageOrientation: getOrientation(valuation.model),
     footer: function (currentPage, pageCount) {
       return [
-      
         {
           text: `${valuation.company}`,
           style: 'footer',
@@ -28,22 +27,30 @@ export function generatePdf(valuation: any, res: any) {
           columns: [
             {
               width: '80%',
-              margin:[40,0,0,0],
-              text: [{ text: `Address: ${footerInfo.address}`, style: 'footer' }],
+              margin: [40, 0, 0, 0],
+              text: [
+                { text: `Address: ${footerInfo.address}`, style: 'footer' },
+              ],
             },
             {
               width: '20%',
-              margin:[0,0,10,0],
-              text: [{ text: `Page ${currentPage} of ${pageCount}`, style: 'pageNumber', alignment: 'right' }],
+              margin: [0, 0, 10, 0],
+              text: [
+                {
+                  text: `Page ${currentPage} of ${pageCount}`,
+                  style: 'pageNumber',
+                  alignment: 'right',
+                },
+              ],
             },
           ],
         },
-        { text: `Email - ${footerInfo.email}`, style: 'footer',  noWrap: true },
+        { text: `Email - ${footerInfo.email}`, style: 'footer', noWrap: true },
       ];
     },
     content: [
       {
-        image:logoDataURL,
+        image: logoDataURL,
         fit: [100, 100],
         alignment: 'center',
         margin: [0, 0, 0, 0],
@@ -87,11 +94,11 @@ export function generatePdf(valuation: any, res: any) {
         fontSize: 8,
         margin: [40, 0, 0, 0],
       },
-      pageNumber:{
-        fontSize:8,
-        margin:[0,0,10,0],
-        alignment: 'right'
-      }
+      pageNumber: {
+        fontSize: 8,
+        margin: [0, 0, 10, 0],
+        alignment: 'right',
+      },
     },
   };
 
@@ -110,11 +117,9 @@ export function generatePdf(valuation: any, res: any) {
     res.end(buffer);
   });
 }
-function getOrientation(model){
-if(model==='FCFE'||model==='FCFF')
-return 'landscape';
-else
-return 'portrate'
+function getOrientation(model) {
+  if (model === 'FCFE' || model === 'FCFF') return 'landscape';
+  else return 'portrate';
 }
 export function getPdfContent(valuation: any) {
   const { model, valuationData } = valuation;
@@ -155,10 +160,14 @@ export function getPdfContent(valuation: any) {
               ],
               ['Sr.No', 'Particulars', 'As on 31.03.2018', 'As on 31.03.2018'],
               ...tablesData.table2,
-              ["",relative_valuation_headingObj['tentativeIssuePrice'],{
-                text: valuationData[4].tentativeIssuePrice,
-                colSpan:2,
-              },]
+              [
+                '',
+                relative_valuation_headingObj['tentativeIssuePrice'],
+                {
+                  text: valuationData.valuation[4].tentativeIssuePrice,
+                  colSpan: 2,
+                },
+              ],
             ] || [],
           style: 'table',
         },
@@ -273,7 +282,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
   ];
   //Get Companies data here ..........
   const rows = [];
-  valuation.companies.map((obj: any, index: number) => {
+  valuationData.companies.map((obj: any, index: number) => {
     rows.push([
       index + 1,
       obj.company,
@@ -284,12 +293,27 @@ function Relative_Valuation_Organized_Data(valuation: any) {
     ]);
   });
   const emptyRow = [{}, {}, {}, {}, {}, {}];
-  const average = ['', 'Average', 7.03, 0.67, 4.63, 0.63];
-  const median = ['', 'Median', 5.03, 0.45, 6.22, 0.43];
-  const table1=[headerData, ...rows, emptyRow, average, median];
+  const companiesInfo = valuationData.companiesInfo;
+  const average = [
+    '',
+    'Average',
+    companiesInfo.peRatioAvg,
+    companiesInfo.pbRatioAvg,
+    companiesInfo.ebitdaAvg,
+    companiesInfo.salesAvg,
+  ];
+  const median = [
+    '',
+    'Median',
+    companiesInfo.peRatioMed,
+    companiesInfo.pbRatioMed,
+    companiesInfo.ebitdaMed,
+    companiesInfo.salesMed,
+  ];
+  const table1 = [headerData, ...rows, emptyRow, average, median];
   const table2 = [];
   table2.push(['', '', 'Average', 'Median']);
-  valuationData.map((obj: any, index: number) => {
+  valuationData.valuation.map((obj: any, index: number) => {
     if (obj.particular === 'pbRatio') {
       table2.push([
         index + 1,
@@ -403,7 +427,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         obj.ebitdaMarketPriceAvg,
         obj.ebitdaMarketPriceMed,
       ]);
-    }else if (obj.particular === 'sales') {
+    } else if (obj.particular === 'sales') {
       table2.push(['', '', '', '']);
       table2.push([
         index + 1,
@@ -441,7 +465,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         obj.salesMarketPriceAvg,
         obj.salesMarketPriceMed,
       ]);
-    }else if (obj.particular === 'result') {
+    } else if (obj.particular === 'result') {
       table2.push(['', '', '', '']);
       table2.push([
         '',
