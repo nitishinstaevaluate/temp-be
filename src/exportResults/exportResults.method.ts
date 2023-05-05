@@ -154,7 +154,7 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
     res.end(buffer);
   });
 }
-function getOrientation(model) {
+function getOrientation(model:string) {
   if (model === 'FCFE' || model === 'FCFF') return 'landscape';
   else return 'portrate';
 }

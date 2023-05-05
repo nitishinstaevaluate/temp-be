@@ -3,13 +3,13 @@ export const columnsList=['B','C','D','E','F','G','H','I','J','K','L','M','N','O
 
 export const sheet1_PLObj={
     incomeFromOperationRow:"7",
-    patRow:"42",
     ebitdaRow:"25",
     depAndAmortisationRow:"26",
+    financeCostsRow:"28",
     otherIncomeRow:"29",
     exceptionalItemsRow:"31",
     extraordinaryItemsRow:"33",
-    financeCostsRow:"28",
+    patRow:"42",
     earningPerShareRow:"58",
 }
 
