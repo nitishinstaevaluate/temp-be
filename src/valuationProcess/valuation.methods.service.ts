@@ -65,7 +65,7 @@ export class ValuationMethodsService {
 
     const years = [];
     years.push(firstYear.trim().split('-')[1]);
-    for (let i = 1; i < 9; i++) {
+    for (let i = 1; i < 100; i++) {
       const yearCell = await worksheet1[`${columnsList[i] + 1}`];
       if (yearCell === undefined) break;
       if (yearCell && yearCell !== undefined)
@@ -157,9 +157,8 @@ export class ValuationMethodsService {
         surplusAssets +
         otherAdj;
       const valuePerShare = equityValue / outstandingShares;
-
       const result = {
-        particulars: year,
+        particulars:`${parseInt(year)-1}-${year}`,
         pat: pat,
         depAndAmortisation: depAndAmortisation,
         onCashItems: otherNonCashItems.toFixed(2),
