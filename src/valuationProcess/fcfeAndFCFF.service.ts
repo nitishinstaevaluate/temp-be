@@ -96,13 +96,6 @@ export class FCFEAndFCFFService {
         const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
         const cashEquivalents = await CashEquivalents(i, worksheet2);
         const surplusAssets = await SurplusAssets(i, worksheet2);
-        console.log(
-          'Testing values..........',
-          sumOfCashFlows,
-          debtAsOnDate,
-          cashEquivalents,
-          surplusAssets,
-        );
         const otherAdj = 100000;
         //formula: =+B16-B17+B18+B19+B20
         const equityValue =

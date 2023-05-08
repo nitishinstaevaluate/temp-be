@@ -45,11 +45,17 @@ export class MyMiddleware implements NestInterceptor {
 
     if (!company) throw new BadRequestException('company is required.');
     if (model === 'FCFE' || model === 'FCFF') {
-      const { industry, coeMethod, discountingPeriod } = inputs;
+      const { industry, coeMethod, discountingPeriod, outstandingShares } =
+        inputs;
       if (!industry) throw new BadRequestException('industry is required.');
       else if (!coeMethod)
         throw new BadRequestException('coeMethod is required.');
-      else if (coeMethod === 'CAPM') {
+      else if (!discountingPeriod)
+        throw new BadRequestException('discountingPeriod is required.');
+      else if (!outstandingShares)
+        throw new BadRequestException('outstandingShares is required.');
+
+      if (coeMethod === 'CAPM') {
         const {
           riskFreeRateType,
           riskFreeRate,
@@ -69,8 +75,7 @@ export class MyMiddleware implements NestInterceptor {
         else if (!beta) throw new BadRequestException('beta is required.');
         else if (!riskPremium)
           throw new BadRequestException('riskPremium is required.');
-      } else if (!discountingPeriod)
-        throw new BadRequestException('discountingPeriod is required.');
+      }
       //discountingPeriod Validation
       const discountingPeriods = ['Full_Period', 'Mid_Period'];
       if (!discountingPeriods.includes(discountingPeriod))
