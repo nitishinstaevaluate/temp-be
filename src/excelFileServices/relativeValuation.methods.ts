@@ -4,7 +4,7 @@ import { getCellValue } from './common.methods';
 
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 
-export async function netWorthOfCompany(column, worksheet2: any) {
+export async function netWorthOfCompany(column:string, worksheet2: any) {
   //formula: =+BS!D7+SUM(BS!D9:D19)
   const equityShareCapital = await getCellValue(
     worksheet2,
@@ -31,7 +31,7 @@ export async function netWorthOfCompany(column, worksheet2: any) {
   return equityShareCapital + sum;
 }
 
-export async function earningPerShare(column, worksheet1: any) {
+export async function earningPerShare(column:string, worksheet1: any) {
   //formula: P&L'!C58
   const earningPerShare = await getCellValue(
     worksheet1,
@@ -40,7 +40,7 @@ export async function earningPerShare(column, worksheet1: any) {
   return earningPerShare;
 }
 
-export async function ebitdaMethod(column, worksheet1: any) {
+export async function ebitdaMethod(column:string, worksheet1: any) {
   //formula: =+'P&L'!C25
   const ebitda = await getCellValue(
     worksheet1,
@@ -49,7 +49,7 @@ export async function ebitdaMethod(column, worksheet1: any) {
   return ebitda;
 }
 
-export async function debtMethod(column, worksheet2: any) {
+export async function debtMethod(column:string, worksheet2: any) {
   //formula: =+BS!D27+BS!D36
   const longTermBorrowings = await getCellValue(
     worksheet2,
@@ -62,7 +62,7 @@ export async function debtMethod(column, worksheet2: any) {
   return longTermBorrowings + shortTermBorrowings;
 }
 
-export async function incomeFromOperation(column, worksheet1: any) {
+export async function incomeFromOperation(column:string, worksheet1: any) {
   //formula: =+'P&L'!C7
   const incomeFromOperation = await getCellValue(
     worksheet1,

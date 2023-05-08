@@ -1,6 +1,3 @@
-
-//worksheet1 is P&L sheet and worksheet2 is BS sheet.
-//Common Method for geting Cell Value
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
   let value = null;
@@ -9,7 +6,7 @@ export async function getCellValue(worksheet: any, address: string) {
 }
 
 
-export function findMedian(numbers) {
+export function findMedian(numbers:number[]) {
     numbers.sort((a, b) => a - b);
     const middleIndex = Math.floor(numbers.length / 2);
     const isEvenLength = numbers.length % 2 === 0;
@@ -20,7 +17,7 @@ export function findMedian(numbers) {
     }
   }
   
- export function findAverage(numbers) {
+ export function findAverage(numbers:number[]) {
     const sum = numbers.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       0,
