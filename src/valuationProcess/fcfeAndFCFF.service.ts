@@ -151,7 +151,13 @@ export class FCFEAndFCFFService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
-    const { model, popShareCapitalType, costOfDebtType, costOfDebt } = inputs;
+    const {
+      model,
+      popShareCapitalType,
+      costOfDebtType,
+      costOfDebt,
+      capitalStructureType,
+    } = inputs;
     let discountingFactor = null;
     if (model === 'FCFE') {
       const res = await this.industryService.getFCFEDisFactor(inputs);
@@ -163,7 +169,9 @@ export class FCFEAndFCFFService {
       if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
       else if (costOfDebtType === 'Finance_Cost')
         costOfDebtValue = await CostOfDebt(i, worksheet1, worksheet2); //We need to use formula
-      const capitalStructure = await CapitalStructure(i, worksheet2);
+      let capitalStructure = 0;
+      if (capitalStructureType === 'Company_Based')
+        capitalStructure = await CapitalStructure(i, worksheet2);
       const proportionOfDebt = await ProportionOfDebt(i, worksheet2); //We need to use formula
       const proportionOfEquity = await ProportionOfEquity(i, worksheet2); // We need to use fomula
       let popShareCapitalValue = null;

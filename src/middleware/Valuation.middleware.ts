@@ -82,10 +82,26 @@ export class MyMiddleware implements NestInterceptor {
         throw new BadRequestException('Invalid discounting period.');
     }
 
-    if(model==="FCFF"){
-     const {taxRate,copShareCapital}=inputs; 
-     if (!taxRate) throw new BadRequestException('taxRate is required.');
-     else if (!copShareCapital) throw new BadRequestException('copShareCapital is required.');
+    if (model === 'FCFF') {
+      const {
+        taxRate,
+        copShareCapital,
+        popShareCapitalType,
+        costOfDebtType,
+        costOfDebt,
+        capitalStructureType,
+      } = inputs;
+      if (!taxRate) throw new BadRequestException('taxRate is required.');
+      else if (!copShareCapital)
+        throw new BadRequestException('copShareCapital is required.');
+      else if (!popShareCapitalType)
+        throw new BadRequestException('popShareCapitalType is required.');
+      else if (!costOfDebtType)
+        throw new BadRequestException('costOfDebtType is required.');
+      else if (!costOfDebt)
+        throw new BadRequestException('costOfDebt is required.');
+      else if (!capitalStructureType)
+        throw new BadRequestException('capitalStructureType is required.');
     }
 
     if (model === 'Relative_Valuation') {
