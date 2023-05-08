@@ -17,10 +17,8 @@ export class MyMiddleware implements NestInterceptor {
       excelSheetId,
       valuationDate,
       company,
-      industry,
       projectionYears,
       model,
-      discountingPeriod,
     } = inputs;
 
     console.log('Middleware: This is Valuation Process Validation Middleware.');
@@ -28,20 +26,13 @@ export class MyMiddleware implements NestInterceptor {
     if (!excelSheetId)
       throw new BadRequestException('excelSheetId is required.');
 
+    if (!projectionYears)
+      throw new BadRequestException('projectionYears is required.');
+
     if (!valuationDate)
       throw new BadRequestException('valuationDate is required.');
 
-    if (!company) throw new BadRequestException('company is required.');
-
-    if (!industry) throw new BadRequestException('industry is required.');
-    if (!projectionYears)
-      throw new BadRequestException('projectionYears is required.');
     if (!model) throw new BadRequestException('model is required.');
-
-    //discountingPeriod Validation
-    const discountingPeriods = ['Full_Period', 'Mid_Period'];
-    if (!discountingPeriods.includes(discountingPeriod))
-      throw new BadRequestException('Invalid discounting period.');
 
     const futureModels = ['Excess_Earnings', 'CTM', 'NAV'];
     if (futureModels.includes(model))
@@ -52,10 +43,47 @@ export class MyMiddleware implements NestInterceptor {
     if (!developedModels.includes(model))
       throw new BadRequestException('Invalid Model: Input a valid model name.');
 
+    if (!company) throw new BadRequestException('company is required.');
+    if (model === 'FCFE' || model === 'FCFF') {
+      const { industry, coeMethod, discountingPeriod } = inputs;
+      if (!industry) throw new BadRequestException('industry is required.');
+      else if (!coeMethod)
+        throw new BadRequestException('coeMethod is required.');
+      else if (coeMethod === 'CAPM') {
+        const {
+          riskFreeRateType,
+          riskFreeRate,
+          expMarketReturn,
+          beta,
+          riskPremium,
+        } = inputs;
+        if (riskFreeRateType === 'user_input_year') {
+          const { riskFreeRateYear } = inputs;
+          if (!riskFreeRateYear)
+            throw new BadRequestException('riskFreeRateYear is required.');
+        }
+        if (!riskFreeRate)
+          throw new BadRequestException('riskFreeRate is required.');
+        else if (!expMarketReturn)
+          throw new BadRequestException('expMarketReturn is required.');
+        else if (!beta) throw new BadRequestException('beta is required.');
+        else if (!riskPremium)
+          throw new BadRequestException('riskPremium is required.');
+      } else if (!discountingPeriod)
+        throw new BadRequestException('discountingPeriod is required.');
+      //discountingPeriod Validation
+      const discountingPeriods = ['Full_Period', 'Mid_Period'];
+      if (!discountingPeriods.includes(discountingPeriod))
+        throw new BadRequestException('Invalid discounting period.');
+    }
+
     if (model === 'Relative_Valuation') {
-      const { companies,discountRateValue } = inputs;
+      const { companies, discountRate, discountRateValue } = inputs;
       if (!companies) throw new BadRequestException('companies is required.');
-      if (!discountRateValue) throw new BadRequestException('discountRateValue is required.');
+      else if (!discountRate)
+        throw new BadRequestException('discountRate is required.');
+      else if (!discountRateValue)
+        throw new BadRequestException('discountRateValue is required.');
     }
     return next.handle();
   }

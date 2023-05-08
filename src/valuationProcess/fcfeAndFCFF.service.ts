@@ -30,7 +30,6 @@ export class FCFEAndFCFFService {
   ): Promise<any> {
     const { outstandingShares, discountingPeriod, popShareCapitalType } =
       inputs;
-    const finalResult = [];
     const years = await getYearsList(worksheet1);
     if (years === null)
       return {
@@ -52,84 +51,92 @@ export class FCFEAndFCFFService {
 
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     const discountingPeriodValue = discountingPeriodObj.result;
-    years.map(async (year: string, i: number) => {
-      let changeInNCA = null;
-      let deferredTaxAssets = null;
-      //Get PAT value
-      let pat = await GetPAT(i, worksheet1);
-      if (pat !== null) pat = pat.toFixed(2);
-      //Get Depn and Amortisation value
-      let depAndAmortisation = await DepAndAmortisation(i, worksheet1);
-      if (depAndAmortisation !== null)
-        depAndAmortisation = depAndAmortisation.toFixed(2);
+    const finalResult = await Promise.all(
+      years.map(async (year: string, i: number) => {
+        let changeInNCA = null;
+        let deferredTaxAssets = null;
+        //Get PAT value
+        let pat = await GetPAT(i, worksheet1);
+        if (pat !== null) pat = pat.toFixed(2);
+        //Get Depn and Amortisation value
+        let depAndAmortisation = await DepAndAmortisation(i, worksheet1);
+        if (depAndAmortisation !== null)
+          depAndAmortisation = depAndAmortisation.toFixed(2);
 
-      //Get Oher Non Cash items Value
-      const otherNonCashItems = await OtherNonCashItemsMethod(i, worksheet1);
-      const changeInNCAValue = await ChangeInNCA(i, worksheet2);
-      changeInNCA = changeInNCA - changeInNCAValue;
+        //Get Oher Non Cash items Value
+        const otherNonCashItems = await OtherNonCashItemsMethod(i, worksheet1);
+        const changeInNCAValue = await ChangeInNCA(i, worksheet2);
+        changeInNCA = changeInNCA - changeInNCAValue;
 
-      const deferredTaxAssetsValue = await DeferredTaxAssets(i, worksheet2);
-      deferredTaxAssets = deferredTaxAssets - deferredTaxAssetsValue;
-      // Net Cash Flow
-      const netCashFlow =
-        parseInt(pat) ||
-        0 + parseInt(depAndAmortisation) ||
-        0 + parseInt(otherNonCashItems) ||
-        0 + parseInt(changeInNCA) ||
-        0 + parseInt(deferredTaxAssets) ||
-        0;
-      const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
-      const fcff = netCashFlow + changeInFixedAssets;
-      //Industry Calculation.
-      const discountingFactor = await this.getDiscountingFactor(
-        inputs,
-        i,
-        worksheet1,
-        worksheet2,
-      );
+        const deferredTaxAssetsValue = await DeferredTaxAssets(i, worksheet2);
+        deferredTaxAssets = deferredTaxAssets - deferredTaxAssetsValue;
+        // Net Cash Flow
+        const netCashFlow =
+          parseInt(pat) ||
+          0 + parseInt(depAndAmortisation) ||
+          0 + parseInt(otherNonCashItems) ||
+          0 + parseInt(changeInNCA) ||
+          0 + parseInt(deferredTaxAssets) ||
+          0;
+        const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
+        const fcff = netCashFlow + changeInFixedAssets;
 
-      if (discountingFactor.result === null) return discountingFactor;
-      const discountingFactorValue = discountingFactor.result;
-      const presentFCFF = discountingFactorValue * fcff;
+        //Industry Calculation.
+        const discountingFactor = await this.getDiscountingFactor(
+          inputs,
+          i,
+          worksheet1,
+          worksheet2,
+        );
+        if (discountingFactor.result === null) return discountingFactor;
+        const discountingFactorValue = discountingFactor.result;
+        const presentFCFF = discountingFactorValue * fcff;
 
-      const sumOfCashFlows = presentFCFF;
-      const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
-      const cashEquivalents = await CashEquivalents(i, worksheet2);
-      const surplusAssets = await SurplusAssets(i, worksheet2);
-      const otherAdj = 100000;
-      //formula: =+B16-B17+B18+B19+B20
-      const equityValue =
-        sumOfCashFlows -
-        debtAsOnDate +
-        cashEquivalents +
-        surplusAssets +
-        otherAdj;
-      const valuePerShare = equityValue / outstandingShares;
-      const result = {
-        particulars: `${parseInt(year) - 1}-${year}`,
-        pat: pat,
-        depAndAmortisation: depAndAmortisation,
-        onCashItems: otherNonCashItems.toFixed(2),
-        nca: changeInNCA.toFixed(2),
-        defferedTaxAssets: deferredTaxAssets,
-        netCashFlow: netCashFlow,
-        fixedAssets: changeInFixedAssets,
-        fcff: fcff,
-        discountingPeriod: discountingPeriodValue,
-        discountingFactor: discountingFactorValue.toFixed(2),
-        presentFCFF: presentFCFF.toFixed(2),
-        sumOfCashFlows: sumOfCashFlows.toFixed(2),
-        debtOnDate: debtAsOnDate,
-        cashEquivalents: cashEquivalents.toFixed(2),
-        surplusAssets: surplusAssets,
-        otherAdj: otherAdj,
-        equityValue: equityValue.toFixed(2),
-        noOfShares: outstandingShares,
-        valuePerShare: valuePerShare.toFixed(2),
-      };
-      finalResult.push(result);
-    });
-
+        const sumOfCashFlows = presentFCFF;
+        const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
+        const cashEquivalents = await CashEquivalents(i, worksheet2);
+        const surplusAssets = await SurplusAssets(i, worksheet2);
+        console.log(
+          'Testing values..........',
+          sumOfCashFlows,
+          debtAsOnDate,
+          cashEquivalents,
+          surplusAssets,
+        );
+        const otherAdj = 100000;
+        //formula: =+B16-B17+B18+B19+B20
+        const equityValue =
+          sumOfCashFlows -
+          debtAsOnDate +
+          cashEquivalents +
+          surplusAssets +
+          otherAdj;
+        const valuePerShare = equityValue / outstandingShares;
+        const result = {
+          particulars: `${parseInt(year) - 1}-${year}`,
+          pat: pat,
+          depAndAmortisation: depAndAmortisation,
+          onCashItems: otherNonCashItems.toFixed(2),
+          nca: changeInNCA.toFixed(2),
+          defferedTaxAssets: deferredTaxAssets,
+          netCashFlow: netCashFlow,
+          fixedAssets: changeInFixedAssets,
+          fcff: fcff,
+          discountingPeriod: discountingPeriodValue,
+          discountingFactor: discountingFactorValue.toFixed(2),
+          presentFCFF: presentFCFF.toFixed(2),
+          sumOfCashFlows: sumOfCashFlows.toFixed(2),
+          debtOnDate: debtAsOnDate,
+          cashEquivalents: cashEquivalents.toFixed(2),
+          surplusAssets: surplusAssets,
+          otherAdj: otherAdj,
+          equityValue: equityValue.toFixed(2),
+          noOfShares: outstandingShares,
+          valuePerShare: valuePerShare.toFixed(2),
+        };
+        return result;
+      }),
+    );
     return { result: finalResult, msg: 'Executed Successfully' };
   }
 
