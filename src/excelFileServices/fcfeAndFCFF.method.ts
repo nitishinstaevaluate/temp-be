@@ -1,14 +1,10 @@
 import { sheet1_PLObj, sheet2_BSObj } from './excelSheetConfig';
 import { columnsList } from './excelSheetConfig';
 import * as XLSX from 'xlsx';
+import { getCellValue } from './common.methods';
+
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
-//Common Method for geting Cell Value
-export async function getCellValue(worksheet: any, address: string) {
-  const Cell = worksheet[address];
-  let value = null;
-  if (Cell && Cell.t === 'n') value = Cell.v;
-  return value;
-}
+
 export async function GetPAT(i: number, worksheet1: any) {
   //formula: =+'P&L'!B42
   const pat = await getCellValue(
