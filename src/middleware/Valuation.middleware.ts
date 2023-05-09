@@ -59,7 +59,9 @@ export class MyMiddleware implements NestInterceptor {
         const {
           riskFreeRateType,
           riskFreeRate,
+          expMarketReturnType,
           expMarketReturn,
+          betaType,
           beta,
           riskPremium,
         } = inputs;
@@ -70,8 +72,12 @@ export class MyMiddleware implements NestInterceptor {
         }
         if (!riskFreeRate)
           throw new BadRequestException('riskFreeRate is required.');
+        else if (!expMarketReturnType)
+          throw new BadRequestException('expMarketReturnType is required.');
         else if (!expMarketReturn)
           throw new BadRequestException('expMarketReturn is required.');
+        else if (!betaType)
+          throw new BadRequestException('betaType is required.');
         else if (!beta) throw new BadRequestException('beta is required.');
         else if (!riskPremium)
           throw new BadRequestException('riskPremium is required.');
@@ -84,14 +90,20 @@ export class MyMiddleware implements NestInterceptor {
 
     if (model === 'FCFF') {
       const {
+        taxRateType,
         taxRate,
+        copShareCapitalType,
         copShareCapital,
         popShareCapitalType,
         costOfDebtType,
         costOfDebt,
         capitalStructureType,
       } = inputs;
-      if (!taxRate) throw new BadRequestException('taxRate is required.');
+      if (!taxRateType)
+        throw new BadRequestException('taxRateType is required.');
+      else if (!taxRate) throw new BadRequestException('taxRate is required.');
+      else if (!copShareCapitalType)
+        throw new BadRequestException('copShareCapitalType is required.');
       else if (!copShareCapital)
         throw new BadRequestException('copShareCapital is required.');
       else if (!popShareCapitalType)

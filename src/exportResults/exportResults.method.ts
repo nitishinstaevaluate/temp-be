@@ -140,19 +140,19 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  // pdfDoc.getBuffer((buffer) => {
-  //   res.setHeader('Content-Type', 'application/pdf');
-  //   res.setHeader(
-  //     'Content-Disposition',
-  //     `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
-  //   );
-  //   res.setHeader('Content-Length', buffer.length);
-  //   res.end(buffer);
-  // });
   pdfDoc.getBuffer((buffer) => {
-    res.type('application/pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
+    );
+    res.setHeader('Content-Length', buffer.length);
     res.end(buffer);
   });
+  // pdfDoc.getBuffer((buffer) => {
+  //   res.type('application/pdf');
+  //   res.end(buffer);
+  // });
 }
 function getOrientation(model:string) {
   if (model === 'FCFE' || model === 'FCFF') return 'landscape';
