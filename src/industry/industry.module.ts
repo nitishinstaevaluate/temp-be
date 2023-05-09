@@ -3,8 +3,8 @@ import { IndustryService } from './industry.service';
 
 @Module({
   imports: [],
-  controllers: [], //ImportController
-  providers: [IndustryService], //ImportService
+  controllers: [], 
+  providers: [IndustryService],
   exports: [IndustryService],
 })
 export class IndustryModule {}

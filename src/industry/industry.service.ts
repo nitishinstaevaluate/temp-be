@@ -22,21 +22,25 @@ export class IndustryService {
     return await this.getACOE(inputs);
   }
   // Industry Calculation based on WACC.
-  async getFCFFDisFactor(inputs: any, inputObj:any): Promise<any> {
-    const { taxRate, copShareCapital } = inputs;
+  async getFCFFDisFactor(inputs: any, inputObj: any): Promise<any> {
+    const { taxRate, copShareCapitalType, copShareCapital } = inputs;
+    let copShareCapitalValue = null;
+    if (copShareCapitalType === 'user_input')
+      copShareCapitalValue = copShareCapital;
+    else copShareCapitalValue = 0; // calculated from another service.
     const res = await this.getACOE(inputs);
 
     if (res.result === null) return res;
 
     const adjustedCostOfEquity = res.result;
 
-    const capitalStructure=inputObj.capitalStructure;
-    console.log('Testing capitalStructure:',capitalStructure)
+    const capitalStructure = inputObj.capitalStructure;
+    console.log('Testing capitalStructure:', capitalStructure);
     //WACC, formula: =+B19*B27+B23*(1-B6)*B26+B21*B28
     const wacc =
       adjustedCostOfEquity * inputObj.proportionOfEquity +
       inputObj.costOfDebt * (1 - taxRate) * inputObj.proportionOfDebt +
-      copShareCapital * inputObj.popShareCapital;
+      copShareCapitalValue * inputObj.popShareCapital;
     return { result: wacc, msg: 'Industry Calculation based on WACC.' };
   }
 

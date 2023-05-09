@@ -2,15 +2,19 @@
 export const columnsList=['B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 
 export const sheet1_PLObj={
-    patRow:"42",
+    incomeFromOperationRow:"7",
+    ebitdaRow:"25",
     depAndAmortisationRow:"26",
+    financeCostsRow:"28",
     otherIncomeRow:"29",
     exceptionalItemsRow:"31",
     extraordinaryItemsRow:"33",
-    financeCostsRow:"28",
+    patRow:"42",
+    earningPerShareRow:"58",
 }
 
 export const sheet2_BSObj={
+    equityShareCapitalRow:"7",
     preferenceShareCapitalRow:"8",
     deferredTaxLiabilityRow:"25",
     longTermBorrowingsRow:"27",
