@@ -136,6 +136,9 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
         margin: [0, 0, 10, 0],
         alignment: 'right',
       },
+      tableHeader:{
+        bold:true
+      }
     },
   };
 
@@ -190,12 +193,13 @@ export function getPdfContent(valuation: any) {
                 {
                   text: 'Valuation of CMM InfraProjects Ltd                                Amount (in INR)',
                   colSpan: 4,
+                  style:'tableHeader'
                 },
                 {},
                 {},
                 {},
               ],
-              ['Sr.No', 'Particulars', 'As on 31.03.2018', 'As on 31.03.2018'],
+              [{text:'Sr.No',style:'tableHeader'}, {text:'Particulars',style:'tableHeader'}, {text:'As on 31.03.2018',style:'tableHeader'}, {text:'As on 31.03.2018',style:'tableHeader'}],
               ...tablesData.table2,
               [
                 '',
@@ -319,6 +323,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
   ];
   //Get Companies data here ..........
   const rows = [];
+  const table1EmptyRow = [" ","", "", "","",""];
   valuationData.companies.map((obj: any, index: number) => {
     rows.push([
       index + 1,
@@ -329,7 +334,6 @@ function Relative_Valuation_Organized_Data(valuation: any) {
       obj.sales,
     ]);
   });
-  const emptyRow = [{}, {}, {}, {}, {}, {}];
   const companiesInfo = valuationData.companiesInfo;
   const average = [
     '',
@@ -347,7 +351,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
     companiesInfo.ebitdaMed,
     companiesInfo.salesMed,
   ];
-  const table1 = [headerData, ...rows, emptyRow, average, median];
+  const table1 = [headerData, ...rows, table1EmptyRow, average, median];
   const table2 = [];
   table2.push(['', '', 'Average', 'Median']);
   valuationData.valuation.map((obj: any, index: number) => {
@@ -389,7 +393,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         obj.pbMarketPriceMed,
       ]);
     } else if (obj.particular === 'peRatio') {
-      table2.push(['', '', '', '']);
+      table2.push(["  ","", "",""]);
       table2.push([
         index + 1,
         relative_valuation_headingObj['peRatioLabel'],
@@ -415,7 +419,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         obj.peMarketPriceMed,
       ]);
     } else if (obj.particular === 'ebitda') {
-      table2.push(['', '', '', '']);
+      table2.push(["  ","", "",""]);
       table2.push([
         index + 1,
         relative_valuation_headingObj['ebitdaLabel'],
@@ -465,7 +469,7 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         obj.ebitdaMarketPriceMed,
       ]);
     } else if (obj.particular === 'sales') {
-      table2.push(['', '', '', '']);
+      table2.push(["  ","", "",""]);
       table2.push([
         index + 1,
         relative_valuation_headingObj['salesLabel'],
@@ -503,14 +507,14 @@ function Relative_Valuation_Organized_Data(valuation: any) {
         obj.salesMarketPriceMed,
       ]);
     } else if (obj.particular === 'result') {
-      table2.push(['', '', '', '']);
+      table2.push(["  ","", "",""]);
       table2.push([
         '',
         relative_valuation_headingObj['avgPricePerShare'],
         obj.avgPricePerShareAvg,
         obj.avgPricePerShareMed,
       ]);
-      table2.push(['', '', '', '']);
+      table2.push(["  ","", "",""]);
       table2.push([
         '',
         relative_valuation_headingObj['average'],
