@@ -8,8 +8,11 @@ import {
 import { Observable } from 'rxjs';
 import {
   BetaService,
+  CODService,
   COPShareCapitalService,
+  CapitalStructureService,
   ExpMarketReturnsService,
+  POPShareCapitalService,
   RiskFreeRatesService,
   TaxRatesService,
 } from 'src/masters/masters.service';
@@ -21,7 +24,10 @@ export class MyMiddleware implements NestInterceptor {
     private readonly expMarketReturnsService: ExpMarketReturnsService,
     private readonly betaService: BetaService,
     private readonly taxRatesService: TaxRatesService,
-    private readonly copShareCapitalService:COPShareCapitalService,
+    private readonly copShareCapitalService: COPShareCapitalService,
+    private readonly popShareCapitalService: POPShareCapitalService,
+    private readonly codService: CODService,
+    private readonly capitalStructureService: CapitalStructureService,
   ) {}
   async intercept(
     context: ExecutionContext,
@@ -137,13 +143,13 @@ export class MyMiddleware implements NestInterceptor {
       } = inputs;
       if (!taxRateType)
         throw new BadRequestException('taxRateType is required.');
-        else if (!copShareCapitalType)
+      else if (!copShareCapitalType)
         throw new BadRequestException('copShareCapitalType is required.');
-        else if (!popShareCapitalType)
+      else if (!popShareCapitalType)
         throw new BadRequestException('popShareCapitalType is required.');
-        else if (!costOfDebtType)
+      else if (!costOfDebtType)
         throw new BadRequestException('costOfDebtType is required.');
-        else if (!capitalStructureType)
+      else if (!capitalStructureType)
         throw new BadRequestException('capitalStructureType is required.');
 
       const isTaxRateTypeExist = await this.taxRatesService.isTypeExists(
@@ -153,12 +159,30 @@ export class MyMiddleware implements NestInterceptor {
       if (!isTaxRateTypeExist)
         throw new BadRequestException('Invalid taxRateType');
 
-        const isCopShareCapitalTypeExist = await this.copShareCapitalService.isTypeExists(
-          copShareCapitalType,
-        );
-  
-        if (!isCopShareCapitalTypeExist)
-          throw new BadRequestException('Invalid copShareCapitalType');
+      const isCopShareCapitalTypeExist =
+        await this.copShareCapitalService.isTypeExists(copShareCapitalType);
+
+      if (!isCopShareCapitalTypeExist)
+        throw new BadRequestException('Invalid copShareCapitalType');
+
+      const isPopShareCapitalTypeExist =
+        await this.popShareCapitalService.isTypeExists(popShareCapitalType);
+
+      if (!isPopShareCapitalTypeExist)
+        throw new BadRequestException('Invalid popShareCapitalType');
+
+      const isCostOfDebtTypeExist = await this.codService.isTypeExists(
+        costOfDebtType,
+      );
+
+      if (!isCostOfDebtTypeExist)
+        throw new BadRequestException('Invalid costOfDebtType');
+
+      const isCapitalStructureTypeExist =
+        await this.capitalStructureService.isTypeExists(capitalStructureType);
+
+      if (!isCapitalStructureTypeExist)
+        throw new BadRequestException('Invalid capitalStructureType');
 
       if (!taxRate) throw new BadRequestException('taxRate is required.');
       else if (!copShareCapital)
