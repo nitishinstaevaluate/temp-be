@@ -57,11 +57,11 @@ export class FCFEAndFCFFService {
         let deferredTaxAssets = null;
         //Get PAT value
         let pat = await GetPAT(i, worksheet1);
-        if (pat !== null) pat = pat.toFixed(2);
+        if (pat !== null) pat = pat;
         //Get Depn and Amortisation value
         let depAndAmortisation = await DepAndAmortisation(i, worksheet1);
         if (depAndAmortisation !== null)
-          depAndAmortisation = depAndAmortisation.toFixed(2);
+          depAndAmortisation = depAndAmortisation;
 
         //Get Oher Non Cash items Value
         const otherNonCashItems = await OtherNonCashItemsMethod(i, worksheet1);
@@ -109,23 +109,23 @@ export class FCFEAndFCFFService {
           particulars: `${parseInt(year) - 1}-${year}`,
           pat: pat,
           depAndAmortisation: depAndAmortisation,
-          onCashItems: otherNonCashItems.toFixed(2),
-          nca: changeInNCA.toFixed(2),
+          onCashItems: otherNonCashItems,
+          nca: changeInNCA,
           defferedTaxAssets: deferredTaxAssets,
           netCashFlow: netCashFlow,
           fixedAssets: changeInFixedAssets,
           fcff: fcff,
           discountingPeriod: discountingPeriodValue,
-          discountingFactor: discountingFactorValue.toFixed(2),
-          presentFCFF: presentFCFF.toFixed(2),
-          sumOfCashFlows: sumOfCashFlows.toFixed(2),
+          discountingFactor: discountingFactorValue,
+          presentFCFF: presentFCFF,
+          sumOfCashFlows: sumOfCashFlows,
           debtOnDate: debtAsOnDate,
-          cashEquivalents: cashEquivalents.toFixed(2),
+          cashEquivalents: cashEquivalents,
           surplusAssets: surplusAssets,
           otherAdj: otherAdj,
-          equityValue: equityValue.toFixed(2),
+          equityValue: equityValue,
           noOfShares: outstandingShares,
-          valuePerShare: valuePerShare.toFixed(2),
+          valuePerShare: valuePerShare,
         };
         return result;
       }),

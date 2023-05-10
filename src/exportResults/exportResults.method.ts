@@ -33,7 +33,7 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
         {
           text: generatedOn,
           alignment: 'right',
-          margin: [0, -20, 20, 0],
+          margin: [0, -25, 20, 0],
           fontSize: 10,
         },
       ];
@@ -107,6 +107,10 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
                 )}`,
                 style: 'header',
               },
+              {
+                text: `\nCurrency- All figures in INR`,
+                style: 'header',
+              },
             ],
           },
         ],
@@ -144,19 +148,19 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  // pdfDoc.getBuffer((buffer) => {
-  //   res.setHeader('Content-Type', 'application/pdf');
-  //   res.setHeader(
-  //     'Content-Disposition',
-  //     `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
-  //   );
-  //   res.setHeader('Content-Length', buffer.length);
-  //   res.end(buffer);
-  // });
   pdfDoc.getBuffer((buffer) => {
-    res.type('application/pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
+    );
+    res.setHeader('Content-Length', buffer.length);
     res.end(buffer);
   });
+  // pdfDoc.getBuffer((buffer) => {
+  //   res.type('application/pdf');
+  //   res.end(buffer);
+  // });
 }
 function getOrientation(model:string) {
   if (model === 'FCFE' || model === 'FCFF') return 'landscape';
@@ -187,7 +191,7 @@ export function getPdfContent(valuation: any) {
       },
       {
         table: {
-          headerRows: 1,
+          headerRows: 3,
           body:
             [
               [
@@ -241,7 +245,7 @@ function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
     valuePerShare = [];
 
   //Set Headers
-  particulars.push(fcfe_fcff_headingObj['particulars']);
+  particulars.push({text:fcfe_fcff_headingObj['particulars'],style:'tableHeader'});
   pat.push(fcfe_fcff_headingObj['pat']);
   depAndAmortisation.push(fcfe_fcff_headingObj['depAndAmortisation']);
   onCashItems.push(fcfe_fcff_headingObj['onCashItems']);
@@ -265,8 +269,10 @@ function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
   //Organized Data Process
   valuationData.map((valuation) => {
     Object.entries(valuation).forEach(([key, value]) => {
-      if (value === null) value = '';
-      if (key === 'particulars') particulars.push(value);
+      if (typeof value === 'number') value = (value as number).toFixed(decimalPoints);
+      if(value==null|| value==undefined)
+        value="";
+      if (key === 'particulars') particulars.push({text:value,style:'tableHeader'});
       else if (key === 'pat') pat.push(value);
       else if (key === 'depAndAmortisation') depAndAmortisation.push(value);
       else if (key === 'onCashItems') onCashItems.push(value);
