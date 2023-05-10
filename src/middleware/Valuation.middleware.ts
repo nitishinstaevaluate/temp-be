@@ -11,6 +11,7 @@ import {
   CODService,
   COPShareCapitalService,
   CapitalStructureService,
+  DiscountRatesService,
   ExpMarketReturnsService,
   POPShareCapitalService,
   RiskFreeRatesService,
@@ -28,6 +29,7 @@ export class MyMiddleware implements NestInterceptor {
     private readonly popShareCapitalService: POPShareCapitalService,
     private readonly codService: CODService,
     private readonly capitalStructureService: CapitalStructureService,
+    private readonly discountRatesService: DiscountRatesService,
   ) {}
   async intercept(
     context: ExecutionContext,
@@ -192,11 +194,19 @@ export class MyMiddleware implements NestInterceptor {
     }
 
     if (model === 'Relative_Valuation') {
-      const { companies, discountRate, discountRateValue } = inputs;
+      const { companies, discountRateType, discountRateValue } = inputs;
       if (!companies) throw new BadRequestException('companies is required.');
-      else if (!discountRate)
-        throw new BadRequestException('discountRate is required.');
-      else if (!discountRateValue)
+
+      if (!discountRateType)
+        throw new BadRequestException('discountRateType is required.');
+
+      const isDiscountRateTypeExist =
+        await this.discountRatesService.isTypeExists(discountRateType);
+
+      if (!isDiscountRateTypeExist)
+        throw new BadRequestException('Invalid discountRateType');
+
+      if (!discountRateValue)
         throw new BadRequestException('discountRateValue is required.');
     }
     return next.handle();

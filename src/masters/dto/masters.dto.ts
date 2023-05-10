@@ -23,7 +23,8 @@ export class CreateTaxRateDto {
   type: string;
 }
 export class CreateDiscountRateDto {
-  discountRate: string;
+  label: string;
+  type: string;
 }
 export class CreateTerminalGrowthRateDto {
   rate: number;

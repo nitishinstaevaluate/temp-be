@@ -128,6 +128,7 @@ import {
     POPShareCapitalService,
     CODService,
     CapitalStructureService,
+    DiscountRatesService,
   ],
 })
 export class MastersModule {}

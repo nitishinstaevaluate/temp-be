@@ -227,6 +227,10 @@ export class DiscountRatesService {
   async deleteDiscountRate(id: string): Promise<any> {
     return await this.discountRateModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.discountRateModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //TerminalGrowthRates Service
