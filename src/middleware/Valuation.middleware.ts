@@ -6,12 +6,15 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ExpMarketReturnsService, RiskFreeRatesService } from 'src/masters/masters.service';
+import { BetaService, ExpMarketReturnsService, RiskFreeRatesService, TaxRatesService } from 'src/masters/masters.service';
 
 @Injectable()
 export class MyMiddleware implements NestInterceptor {
   constructor(private readonly riskFreeRatesService: RiskFreeRatesService,
-    private readonly expMarketReturnsService:ExpMarketReturnsService) {}
+    private readonly expMarketReturnsService:ExpMarketReturnsService,
+    private readonly betaService:BetaService,
+    private readonly taxRatesService:TaxRatesService,
+    ) {}
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -76,6 +79,8 @@ export class MyMiddleware implements NestInterceptor {
           throw new BadRequestException('riskFreeRateType is required.');
           else if (!expMarketReturnType)
           throw new BadRequestException('expMarketReturnType is required.');
+          else if (!betaType)
+          throw new BadRequestException('betaType is required.');
 
         const isRiskFreeRatesTypeExist =
           await this.riskFreeRatesService.isTypeExists(riskFreeRateType);
@@ -86,6 +91,11 @@ export class MyMiddleware implements NestInterceptor {
 
           if(!isExpMarketReturnTypeExist)
           throw new BadRequestException('Invalid expMarketReturnType');
+          
+          const isBetaTypeExist= await this.betaService.isTypeExists(betaType)
+
+          if(!isBetaTypeExist)
+          throw new BadRequestException('Invalid betaType');
 
         if (riskFreeRateType === 'user_input_year') {
           const { riskFreeRateYear } = inputs;
@@ -97,8 +107,6 @@ export class MyMiddleware implements NestInterceptor {
           
         else if (!expMarketReturn)
           throw new BadRequestException('expMarketReturn is required.');
-        else if (!betaType)
-          throw new BadRequestException('betaType is required.');
         else if (!beta) throw new BadRequestException('beta is required.');
         else if (!riskPremium)
           throw new BadRequestException('riskPremium is required.');
@@ -122,7 +130,13 @@ export class MyMiddleware implements NestInterceptor {
       } = inputs;
       if (!taxRateType)
         throw new BadRequestException('taxRateType is required.');
-      else if (!taxRate) throw new BadRequestException('taxRate is required.');
+
+        const isTaxRateTypeExist= await this.taxRatesService.isTypeExists(taxRateType)
+
+        if(!isTaxRateTypeExist)
+        throw new BadRequestException('Invalid taxRateType');
+      
+        if (!taxRate) throw new BadRequestException('taxRate is required.');
       else if (!copShareCapitalType)
         throw new BadRequestException('copShareCapitalType is required.');
       else if (!copShareCapital)

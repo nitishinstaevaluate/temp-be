@@ -191,6 +191,10 @@ export class TaxRatesService {
   async deleteTaxRate(id: string): Promise<any> {
     return await this.taxRateModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.taxRateModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //DiscountRates Service
@@ -397,6 +401,10 @@ export class BetaService {
 
   async deleteBeta(id: string): Promise<any> {
     return await this.betaModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.betaModel.exists({ type: type });
+    return result ? true : false;
   }
 }
 
