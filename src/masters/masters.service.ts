@@ -322,6 +322,10 @@ export class RiskFreeRatesService {
   async deleteRiskFreeRate(id: string): Promise<any> {
     return await this.riskFreeRateModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.riskFreeRateModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //ExpMarketReturns Service
@@ -358,6 +362,10 @@ export class ExpMarketReturnsService {
 
   async deleteExpReturn(id: string): Promise<any> {
     return await this.expMarketReturnModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.expMarketReturnModel.exists({ type: type });
+    return result ? true : false;
   }
 }
 

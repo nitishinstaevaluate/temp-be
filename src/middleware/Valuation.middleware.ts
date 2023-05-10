@@ -6,10 +6,16 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
+import { ExpMarketReturnsService, RiskFreeRatesService } from 'src/masters/masters.service';
 
 @Injectable()
 export class MyMiddleware implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  constructor(private readonly riskFreeRatesService: RiskFreeRatesService,
+    private readonly expMarketReturnsService:ExpMarketReturnsService) {}
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
     const inputs = req.body;
     const {
@@ -65,6 +71,22 @@ export class MyMiddleware implements NestInterceptor {
           beta,
           riskPremium,
         } = inputs;
+
+        if (!riskFreeRateType)
+          throw new BadRequestException('riskFreeRateType is required.');
+          else if (!expMarketReturnType)
+          throw new BadRequestException('expMarketReturnType is required.');
+
+        const isRiskFreeRatesTypeExist =
+          await this.riskFreeRatesService.isTypeExists(riskFreeRateType);
+        if (!isRiskFreeRatesTypeExist)
+          throw new BadRequestException('Invalid riskFreeRateType');
+
+          const isExpMarketReturnTypeExist= await this.expMarketReturnsService.isTypeExists(expMarketReturnType)
+
+          if(!isExpMarketReturnTypeExist)
+          throw new BadRequestException('Invalid expMarketReturnType');
+
         if (riskFreeRateType === 'user_input_year') {
           const { riskFreeRateYear } = inputs;
           if (!riskFreeRateYear)
@@ -72,8 +94,7 @@ export class MyMiddleware implements NestInterceptor {
         }
         if (!riskFreeRate)
           throw new BadRequestException('riskFreeRate is required.');
-        else if (!expMarketReturnType)
-          throw new BadRequestException('expMarketReturnType is required.');
+          
         else if (!expMarketReturn)
           throw new BadRequestException('expMarketReturn is required.');
         else if (!betaType)
