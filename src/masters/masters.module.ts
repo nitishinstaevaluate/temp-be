@@ -117,6 +117,17 @@ import {
     CapitalStructureService,
     POPShareCapitalService,
   ],
-  exports: [ValuationMethodsService,CompaniesService,RiskFreeRatesService,ExpMarketReturnsService,BetaService,TaxRatesService],
+  exports: [
+    ValuationMethodsService,
+    CompaniesService,
+    RiskFreeRatesService,
+    ExpMarketReturnsService,
+    BetaService,
+    TaxRatesService,
+    COPShareCapitalService,
+    POPShareCapitalService,
+    CODService,
+    CapitalStructureService,
+  ],
 })
 export class MastersModule {}

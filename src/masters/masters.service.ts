@@ -475,6 +475,10 @@ export class COPShareCapitalService {
   async deleteCOPShareCapital(id: string): Promise<any> {
     return await this.copShareCapitalModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.copShareCapitalModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //Cost of Debt Service
@@ -503,6 +507,10 @@ export class CODService {
 
   async deleteCOD(id: string): Promise<any> {
     return await this.codModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.codModel.exists({ type: type });
+    return result ? true : false;
   }
 }
 
@@ -541,6 +549,10 @@ export class CapitalStructureService {
   async deleteCapitalStructure(id: string): Promise<any> {
     return await this.capitalStructureModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.capitalStructureModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //Proportion of Preference Share Capital Service
@@ -574,5 +586,9 @@ export class POPShareCapitalService {
 
   async deletePOPShareCapital(id: string): Promise<any> {
     return await this.popShareCapitalModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.popShareCapitalModel.exists({ type: type });
+    return result ? true : false;
   }
 }
