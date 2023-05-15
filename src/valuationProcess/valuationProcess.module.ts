@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ValuationController } from './valuationProcess.controller';
+import { ValuationProcessController, ValuationsController } from './valuationProcess.controller';
 import { ValuationsService } from './valuationProcess.service';
 import { ValuationSchema } from './schema/valuation.schema';
 import { IndustryModule } from 'src/industry/industry.module';
@@ -15,7 +15,7 @@ import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
     IndustryModule,
     MastersModule,
   ],
-  controllers: [ValuationController], //ImportController
+  controllers: [ValuationProcessController,ValuationsController], //ImportController
   providers: [
     ValuationsService,
     FCFEAndFCFFService,

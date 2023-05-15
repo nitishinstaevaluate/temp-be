@@ -1,11 +1,18 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseInterceptors,
+  Get,
+  Param,
+} from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
 import { ValuationMethodsService } from './valuation.methods.service';
 import { MyMiddleware } from '../middleware/Valuation.middleware';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
-export class ValuationController {
+export class ValuationProcessController {
   constructor(
     private valuationsService: ValuationsService,
     private valuationMethodsService: ValuationMethodsService,
@@ -86,5 +93,15 @@ export class ValuationController {
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     }
+  }
+}
+
+//Industries Controller
+@Controller('valuations')
+export class ValuationsController {
+  constructor(private valuationsService: ValuationsService) {}
+  @Get(':userId')
+  async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
+    return this.valuationsService.getValuationsByUserId(userId);
   }
 }
