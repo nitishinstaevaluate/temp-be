@@ -17,6 +17,9 @@ export class Valuation {
   model: string;
 
   @Prop({ required: true })
+  valuation: number;
+  
+  @Prop({ required: true })
   inputData: inputData;
 
   @Prop({ required: true })

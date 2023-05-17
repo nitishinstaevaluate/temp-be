@@ -23,6 +23,6 @@ export class ValuationsService {
     return this.valuationModel.findById(id);
   }
   async getValuationsByUserId(userId: string): Promise<Valuation[]> {
-    return this.valuationModel.find({ userId: userId }).exec();
+    return this.valuationModel.find({ userId: userId }) .select('company model valuation createdAt').exec();
   }
 }

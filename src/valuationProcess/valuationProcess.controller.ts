@@ -41,6 +41,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
+        valuation:245387,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
@@ -62,6 +63,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
+        valuation:348383,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
@@ -84,6 +86,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
+        valuation:845397,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
