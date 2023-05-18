@@ -30,10 +30,7 @@ export class RelativeValuationService {
     const columnIndex = years.indexOf(year);
     console.log(columnsList[columnIndex], columnIndex, year);
     const column = columnsList[columnIndex];
-    const promises = inputs.companies.map((id) =>
-      this.companiesService.getCompanyById(id),
-    );
-    const companies = await Promise.all(promises);
+    const companies = inputs.companies;
     const peRatio = [];
     const pbRatio = [];
     const ebitda = [];
