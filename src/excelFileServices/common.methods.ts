@@ -25,3 +25,13 @@ export function findMedian(numbers:number[]) {
     const average = sum / numbers.length;
     return average;
   }
+
+  export function calculateDaysFromDate(dateString:string) {
+    const date = new Date(dateString);
+    const startDate = new Date(`${date.getFullYear()}-04-01`); // April 1st
+    const endDate =date;
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+    
+    return days;
+  }
