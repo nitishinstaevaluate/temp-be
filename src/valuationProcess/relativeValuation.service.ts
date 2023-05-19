@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CompaniesService } from 'src/masters/masters.service';
 import {
   netWorthOfCompany,
   earningPerShare,
@@ -13,7 +12,6 @@ import { getYearsList } from './common.methods';
 
 @Injectable()
 export class RelativeValuationService {
-  constructor(private companiesService: CompaniesService) {}
   async Relative_Valuation(
     inputs: any,
     worksheet1: any,

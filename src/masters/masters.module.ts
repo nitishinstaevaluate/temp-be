@@ -119,7 +119,6 @@ import {
   ],
   exports: [
     ValuationMethodsService,
-    CompaniesService,
     RiskFreeRatesService,
     ExpMarketReturnsService,
     BetaService,
