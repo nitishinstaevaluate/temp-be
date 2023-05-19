@@ -165,6 +165,10 @@ export class RelativeValuationService {
         },
       ],
     };
-    return { result: finalResult, msg: 'Executed Successfully' };
+    return {
+      result: finalResult,
+      valuation: { finalPriceAvg: finalPriceAvg, finalPriceMed: finalPriceMed },
+      msg: 'Executed Successfully',
+    };
   }
 }

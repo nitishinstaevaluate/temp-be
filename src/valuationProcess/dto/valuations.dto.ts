@@ -1,7 +1,7 @@
 export class ValuationDto {
   company: string;
   model: string;
-  valuation:number;
+  valuation:any;
   inputData:object;
   valuationData: object;
   userId: string;

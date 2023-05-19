@@ -51,6 +51,7 @@ export class FCFEAndFCFFService {
 
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     const discountingPeriodValue = discountingPeriodObj.result;
+    let valuation=null;
     const finalResult = await Promise.all(
       years.map(async (year: string, i: number) => {
         let changeInNCA = null;
@@ -80,7 +81,8 @@ export class FCFEAndFCFFService {
           0;
         const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
         const fcff = netCashFlow + changeInFixedAssets;
-
+        if(i===0)
+        valuation=fcff;
         //Industry Calculation.
         const discountingFactor = await this.getDiscountingFactor(
           inputs,
@@ -130,7 +132,7 @@ export class FCFEAndFCFFService {
         return result;
       }),
     );
-    return { result: finalResult, msg: 'Executed Successfully' };
+    return { result: finalResult,valuation:valuation, msg: 'Executed Successfully' };
   }
 
   //Get Discounting Period.

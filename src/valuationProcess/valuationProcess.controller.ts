@@ -10,7 +10,7 @@ import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
 import { ValuationMethodsService } from './valuation.methods.service';
 import { MyMiddleware } from '../middleware/Valuation.middleware';
-import { calculateDaysFromDate} from '../excelFileServices/common.methods';
+import { calculateDaysFromDate } from '../excelFileServices/common.methods';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -25,35 +25,40 @@ export class ValuationProcessController {
 
     const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
     const worksheet1 = workbook.Sheets['P&L'];
-    const B1Cell=worksheet1["B1"];
-    const B1Value=B1Cell.v;
-    const data=B1Value.split(",");
-    const date=data[2];
-
-    const plDays=calculateDaysFromDate(date);
-    console.log('Testing....................',date,plDays)
-  // Change column B values for worksheet1
-  const range = XLSX.utils.decode_range(worksheet1['!ref']);
-
-  for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
-    const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
-    const cell = worksheet1[cellAddress];
-    if (cell && cell.t === 'n') { // Check if the cell contains a number
-      cell.v=(cell.v/plDays)*(365-plDays)+cell.v;
-    }
-  }
-
     const worksheet2 = workbook.Sheets['BS'];
+    
+    if (model === 'FCFE'||model==="FCFF") {
+    const B1Cell = worksheet1['B1'];
+    const B1Value = B1Cell.v;
+    const data = B1Value.split(',');
+    const date = data[2];
+
+    const plDays = calculateDaysFromDate(date);
+    console.log('Testing....................', date, plDays);
+    // Change column B values for worksheet1
+    const range = XLSX.utils.decode_range(worksheet1['!ref']);
+
+    for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
+      const cell = worksheet1[cellAddress];
+      if (cell && cell.t === 'n') {
+        // Check if the cell contains a number
+        cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+      }
+    }
 
     // Change column B values for worksheet2
-  const range2 = XLSX.utils.decode_range(worksheet2['!ref']);
+    const range2 = XLSX.utils.decode_range(worksheet2['!ref']);
 
-  for (let rowNum = range2.s.r + 1; rowNum <= range2.e.r; rowNum++) {
-    const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
-    const cell = worksheet2[cellAddress];
-    if (cell && cell.t === 'n') { // Check if the cell contains a number
-      cell.v=(cell.v/plDays)*(365-plDays)+cell.v;
+    for (let rowNum = range2.s.r + 1; rowNum <= range2.e.r; rowNum++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
+      const cell = worksheet2[cellAddress];
+      if (cell && cell.t === 'n') {
+        // Check if the cell contains a number
+        cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+      }
     }
+
   }
 
     // Performe calculation by specific method
@@ -70,7 +75,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
-        valuation:245387,
+        valuation:valuationResponse.valuation,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
@@ -92,7 +97,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
-        valuation:348383,
+        valuation:valuationResponse.valuation,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
@@ -115,7 +120,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
-        valuation:845397,
+        valuation: valuationResponse.valuation,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
