@@ -17,7 +17,7 @@ import {
   CapitalStructure,
   POPShareCapitalLabelPer,
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList } from './common.methods';
+import { getYearsList } from '../excelFileServices/common.methods';
 
 @Injectable()
 export class FCFEAndFCFFService {

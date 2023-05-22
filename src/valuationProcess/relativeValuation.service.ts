@@ -6,9 +6,8 @@ import {
   debtMethod,
   incomeFromOperation,
 } from 'src/excelFileServices/relativeValuation.methods';
-import { findAverage, findMedian } from 'src/excelFileServices/common.methods';
+import {getYearsList ,findAverage, findMedian } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
-import { getYearsList } from './common.methods';
 
 @Injectable()
 export class RelativeValuationService {

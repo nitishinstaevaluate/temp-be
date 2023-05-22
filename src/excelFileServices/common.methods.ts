@@ -1,10 +1,26 @@
+import { columnsList } from './excelSheetConfig';
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
   let value = null;
   if (Cell && Cell.t === 'n') value = Cell.v;
   return value;
 }
+//Get Years List from Excel Sheet.
+export async function getYearsList(worksheet1: any): Promise<any> {
+  const firstYearCell = worksheet1['B1'];
+  const firstYear = firstYearCell.v.split(',')[1];
+  if (firstYear === undefined) return null;
 
+  const years = [];
+  years.push(firstYear.trim().split('-')[1]);
+  for (let i = 1; i < 100; i++) {
+    const yearCell = await worksheet1[`${columnsList[i] + 1}`];
+    if (yearCell === undefined) break;
+    if (yearCell && yearCell !== undefined)
+      years.push(yearCell.v.split('-')[1]);
+  }
+  return years;
+}
 export function findMedian(numbers: number[]) {
   numbers.sort((a, b) => a - b);
   const middleIndex = Math.floor(numbers.length / 2);
