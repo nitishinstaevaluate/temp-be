@@ -10,7 +10,10 @@ import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
 import { ValuationMethodsService } from './valuation.methods.service';
 import { MyMiddleware } from '../middleware/Valuation.middleware';
-import { calculateDaysFromDate } from '../excelFileServices/common.methods';
+import {
+  calculateDaysFromDate,
+  isLeapYear,
+} from '../excelFileServices/common.methods';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -21,40 +24,49 @@ export class ValuationProcessController {
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
-    const { model,valuationDate, company, userId, excelSheetId } = inputs;
+    const { model, valuationDate, company, userId, excelSheetId } = inputs;
 
     const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
-    
-    if (model === 'FCFE'||model==="FCFF") {
-    const plDays = calculateDaysFromDate(valuationDate);
-    console.log('Testing....................','Date: ',valuationDate,"Days:", plDays);
-    // Change column B values for worksheet1
-    const range = XLSX.utils.decode_range(worksheet1['!ref']);
 
-    for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
-      const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
-      const cell = worksheet1[cellAddress];
-      if (cell && cell.t === 'n') {
-        // Check if the cell contains a number
-        cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+    if (model === 'FCFE' || model === 'FCFF') {
+      const plDays = calculateDaysFromDate(valuationDate);
+      const date = new Date(valuationDate);
+      const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
+      if (plDays <totalDays) {
+        console.log(
+          'Testing....................',
+          'Date: ',
+          valuationDate,
+          'Days:',
+          plDays,
+        );
+        // Change column B values for worksheet1
+        const range = XLSX.utils.decode_range(worksheet1['!ref']);
+
+        for (let rowNum = range.s.r + 1; rowNum <= range.e.r; rowNum++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
+          const cell = worksheet1[cellAddress];
+          if (cell && cell.t === 'n') {
+            // Check if the cell contains a number
+            cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+          }
+        }
+
+        // Change column B values for worksheet2
+        const range2 = XLSX.utils.decode_range(worksheet2['!ref']);
+
+        for (let rowNum = range2.s.r + 1; rowNum <= range2.e.r; rowNum++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
+          const cell = worksheet2[cellAddress];
+          if (cell && cell.t === 'n') {
+            // Check if the cell contains a number
+            cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+          }
+        }
       }
     }
-
-    // Change column B values for worksheet2
-    const range2 = XLSX.utils.decode_range(worksheet2['!ref']);
-
-    for (let rowNum = range2.s.r + 1; rowNum <= range2.e.r; rowNum++) {
-      const cellAddress = XLSX.utils.encode_cell({ r: rowNum, c: 1 }); // Column B
-      const cell = worksheet2[cellAddress];
-      if (cell && cell.t === 'n') {
-        // Check if the cell contains a number
-        cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
-      }
-    }
-
-  }
 
     // Performe calculation by specific method
     if (model === 'FCFE') {
@@ -70,7 +82,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
-        valuation:valuationResponse.valuation,
+        valuation: valuationResponse.valuation,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
@@ -92,7 +104,7 @@ export class ValuationProcessController {
       const data = {
         company: company,
         model: model,
-        valuation:valuationResponse.valuation,
+        valuation: valuationResponse.valuation,
         inputData: inputs,
         valuationData: valuationResult,
         userId: userId,
