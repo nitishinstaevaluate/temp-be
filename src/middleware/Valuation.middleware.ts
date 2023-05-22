@@ -40,7 +40,6 @@ export class MyMiddleware implements NestInterceptor {
     const {
       userId,
       excelSheetId,
-      valuationDate,
       company,
       projectionYears,
       model,
@@ -53,9 +52,6 @@ export class MyMiddleware implements NestInterceptor {
 
     if (!projectionYears)
       throw new BadRequestException('projectionYears is required.');
-
-    if (!valuationDate)
-      throw new BadRequestException('valuationDate is required.');
 
     if (!model) throw new BadRequestException('model is required.');
 
@@ -70,9 +66,11 @@ export class MyMiddleware implements NestInterceptor {
 
     if (!company) throw new BadRequestException('company is required.');
     if (model === 'FCFE' || model === 'FCFF') {
-      const { industry, coeMethod, discountingPeriod, outstandingShares } =
+      const { valuationDate,industry, coeMethod, discountingPeriod, outstandingShares } =
         inputs;
-      if (!industry) throw new BadRequestException('industry is required.');
+        if (!valuationDate)
+        throw new BadRequestException('valuationDate is required.');
+      else if (!industry) throw new BadRequestException('industry is required.');
       else if (!coeMethod)
         throw new BadRequestException('coeMethod is required.');
       else if (!discountingPeriod)

@@ -21,20 +21,15 @@ export class ValuationProcessController {
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
-    const { model, company, userId, excelSheetId } = inputs;
+    const { model,valuationDate, company, userId, excelSheetId } = inputs;
 
     const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
     
     if (model === 'FCFE'||model==="FCFF") {
-    const B1Cell = worksheet1['B1'];
-    const B1Value = B1Cell.v;
-    const data = B1Value.split(',');
-    const date = data[2];
-
-    const plDays = calculateDaysFromDate(date);
-    console.log('Testing....................', date, plDays);
+    const plDays = calculateDaysFromDate(valuationDate);
+    console.log('Testing....................','Date: ',valuationDate,"Days:", plDays);
     // Change column B values for worksheet1
     const range = XLSX.utils.decode_range(worksheet1['!ref']);
 
