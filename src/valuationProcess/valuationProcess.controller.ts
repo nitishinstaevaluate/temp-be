@@ -30,6 +30,12 @@ export class ValuationProcessController {
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
 
+    //if we want to get date from excel sheet.
+    // const B1Cell = worksheet1['B1'];
+    // const B1Value = B1Cell.v;
+    // const data = B1Value.split(',');
+    // const date = data[2];
+    
     if (model === 'FCFE' || model === 'FCFF') {
       const plDays = calculateDaysFromDate(valuationDate);
       const date = new Date(valuationDate);
