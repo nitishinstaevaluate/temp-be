@@ -6,7 +6,7 @@ class ValuationData {}
 class inputData {
   companies: any;
 }
-
+class valuation {};
 //Valuations Table Schema
 @Schema()
 export class Valuation {
@@ -16,6 +16,9 @@ export class Valuation {
   @Prop({ required: true })
   model: string;
 
+  @Prop({ required: true })
+  valuation: valuation;
+  
   @Prop({ required: true })
   inputData: inputData;
 

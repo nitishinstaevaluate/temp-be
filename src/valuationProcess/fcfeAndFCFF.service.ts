@@ -17,7 +17,7 @@ import {
   CapitalStructure,
   POPShareCapitalLabelPer,
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList } from './common.methods';
+import { getYearsList } from '../excelFileServices/common.methods';
 
 @Injectable()
 export class FCFEAndFCFFService {
@@ -51,17 +51,18 @@ export class FCFEAndFCFFService {
 
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     const discountingPeriodValue = discountingPeriodObj.result;
+    let valuation=null;
     const finalResult = await Promise.all(
       years.map(async (year: string, i: number) => {
         let changeInNCA = null;
         let deferredTaxAssets = null;
         //Get PAT value
         let pat = await GetPAT(i, worksheet1);
-        if (pat !== null) pat = pat.toFixed(2);
+        if (pat !== null) pat = pat;
         //Get Depn and Amortisation value
         let depAndAmortisation = await DepAndAmortisation(i, worksheet1);
         if (depAndAmortisation !== null)
-          depAndAmortisation = depAndAmortisation.toFixed(2);
+          depAndAmortisation = depAndAmortisation;
 
         //Get Oher Non Cash items Value
         const otherNonCashItems = await OtherNonCashItemsMethod(i, worksheet1);
@@ -80,7 +81,8 @@ export class FCFEAndFCFFService {
           0;
         const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
         const fcff = netCashFlow + changeInFixedAssets;
-
+        if(i===0)
+        valuation=fcff;
         //Industry Calculation.
         const discountingFactor = await this.getDiscountingFactor(
           inputs,
@@ -109,28 +111,28 @@ export class FCFEAndFCFFService {
           particulars: `${parseInt(year) - 1}-${year}`,
           pat: pat,
           depAndAmortisation: depAndAmortisation,
-          onCashItems: otherNonCashItems.toFixed(2),
-          nca: changeInNCA.toFixed(2),
+          onCashItems: otherNonCashItems,
+          nca: changeInNCA,
           defferedTaxAssets: deferredTaxAssets,
           netCashFlow: netCashFlow,
           fixedAssets: changeInFixedAssets,
           fcff: fcff,
           discountingPeriod: discountingPeriodValue,
-          discountingFactor: discountingFactorValue.toFixed(2),
-          presentFCFF: presentFCFF.toFixed(2),
-          sumOfCashFlows: sumOfCashFlows.toFixed(2),
+          discountingFactor: discountingFactorValue,
+          presentFCFF: presentFCFF,
+          sumOfCashFlows: sumOfCashFlows,
           debtOnDate: debtAsOnDate,
-          cashEquivalents: cashEquivalents.toFixed(2),
+          cashEquivalents: cashEquivalents,
           surplusAssets: surplusAssets,
           otherAdj: otherAdj,
-          equityValue: equityValue.toFixed(2),
+          equityValue: equityValue,
           noOfShares: outstandingShares,
-          valuePerShare: valuePerShare.toFixed(2),
+          valuePerShare: valuePerShare,
         };
         return result;
       }),
     );
-    return { result: finalResult, msg: 'Executed Successfully' };
+    return { result: finalResult,valuation:valuation, msg: 'Executed Successfully' };
   }
 
   //Get Discounting Period.

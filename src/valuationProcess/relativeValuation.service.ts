@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CompaniesService } from 'src/masters/masters.service';
 import {
   netWorthOfCompany,
   earningPerShare,
@@ -7,13 +6,11 @@ import {
   debtMethod,
   incomeFromOperation,
 } from 'src/excelFileServices/relativeValuation.methods';
-import { findAverage, findMedian } from 'src/excelFileServices/common.methods';
+import {getYearsList ,findAverage, findMedian } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
-import { getYearsList } from './common.methods';
 
 @Injectable()
 export class RelativeValuationService {
-  constructor(private companiesService: CompaniesService) {}
   async Relative_Valuation(
     inputs: any,
     worksheet1: any,
@@ -30,10 +27,7 @@ export class RelativeValuationService {
     const columnIndex = years.indexOf(year);
     console.log(columnsList[columnIndex], columnIndex, year);
     const column = columnsList[columnIndex];
-    const promises = inputs.companies.map((id) =>
-      this.companiesService.getCompanyById(id),
-    );
-    const companies = await Promise.all(promises);
+    const companies = inputs.companies;
     const peRatio = [];
     const pbRatio = [];
     const ebitda = [];
@@ -170,6 +164,10 @@ export class RelativeValuationService {
         },
       ],
     };
-    return { result: finalResult, msg: 'Executed Successfully' };
+    return {
+      result: finalResult,
+      valuation: { finalPriceAvg: finalPriceAvg, finalPriceMed: finalPriceMed },
+      msg: 'Executed Successfully',
+    };
   }
 }

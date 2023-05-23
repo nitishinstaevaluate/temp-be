@@ -191,6 +191,10 @@ export class TaxRatesService {
   async deleteTaxRate(id: string): Promise<any> {
     return await this.taxRateModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.taxRateModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //DiscountRates Service
@@ -222,6 +226,10 @@ export class DiscountRatesService {
 
   async deleteDiscountRate(id: string): Promise<any> {
     return await this.discountRateModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.discountRateModel.exists({ type: type });
+    return result ? true : false;
   }
 }
 
@@ -322,6 +330,10 @@ export class RiskFreeRatesService {
   async deleteRiskFreeRate(id: string): Promise<any> {
     return await this.riskFreeRateModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.riskFreeRateModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //ExpMarketReturns Service
@@ -359,6 +371,10 @@ export class ExpMarketReturnsService {
   async deleteExpReturn(id: string): Promise<any> {
     return await this.expMarketReturnModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.expMarketReturnModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //Beta Service
@@ -389,6 +405,10 @@ export class BetaService {
 
   async deleteBeta(id: string): Promise<any> {
     return await this.betaModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.betaModel.exists({ type: type });
+    return result ? true : false;
   }
 }
 
@@ -459,6 +479,10 @@ export class COPShareCapitalService {
   async deleteCOPShareCapital(id: string): Promise<any> {
     return await this.copShareCapitalModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.copShareCapitalModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //Cost of Debt Service
@@ -487,6 +511,10 @@ export class CODService {
 
   async deleteCOD(id: string): Promise<any> {
     return await this.codModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.codModel.exists({ type: type });
+    return result ? true : false;
   }
 }
 
@@ -525,6 +553,10 @@ export class CapitalStructureService {
   async deleteCapitalStructure(id: string): Promise<any> {
     return await this.capitalStructureModel.findByIdAndRemove(id).exec();
   }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.capitalStructureModel.exists({ type: type });
+    return result ? true : false;
+  }
 }
 
 //Proportion of Preference Share Capital Service
@@ -558,5 +590,9 @@ export class POPShareCapitalService {
 
   async deletePOPShareCapital(id: string): Promise<any> {
     return await this.popShareCapitalModel.findByIdAndRemove(id).exec();
+  }
+  async isTypeExists(type: string): Promise<boolean> {
+    const result = await this.popShareCapitalModel.exists({ type: type });
+    return result ? true : false;
   }
 }

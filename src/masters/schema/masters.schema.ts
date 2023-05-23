@@ -120,7 +120,10 @@ export const TaxRateSchema = SchemaFactory.createForClass(TaxRate);
 @Schema()
 export class DiscountRate {
   @Prop({ required: true })
-  discountRate: string;
+  label: string;
+
+  @Prop({ required: true })
+  type: string;
 
   @Prop({ default: true })
   isActive: boolean;
