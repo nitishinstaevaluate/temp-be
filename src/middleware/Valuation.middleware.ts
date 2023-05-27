@@ -192,9 +192,10 @@ export class MyMiddleware implements NestInterceptor {
     }
 
     if (model === 'Relative_Valuation') {
-      const { companies, discountRateType, discountRateValue } = inputs;
+      const { companies, discountRateType, discountRateValue,outstandingShares } = inputs;
       if (!companies) throw new BadRequestException('companies is required.');
-
+      else if (!outstandingShares)
+        throw new BadRequestException('outstandingShares is required.');
       if (!discountRateType)
         throw new BadRequestException('discountRateType is required.');
 
