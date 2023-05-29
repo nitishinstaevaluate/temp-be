@@ -190,7 +190,7 @@ export class MyMiddleware implements NestInterceptor {
       else if (!costOfDebt)
         throw new BadRequestException('costOfDebt is required.');
     }
-console.log("hi")
+    
     if (model === 'Relative_Valuation') {
       const { companies, discountRateType, discountRateValue,outstandingShares } = inputs;
       if (!companies) throw new BadRequestException('companies is required.');
