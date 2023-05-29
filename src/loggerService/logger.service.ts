@@ -6,7 +6,7 @@ import * as DailyRotateFile from 'winston-daily-rotate-file';
 @Injectable()
 export class CustomLogger  implements LoggerService {
   private logger = createLogger({
-    level: 'info',
+    level: 'error',
     format: format.combine(
       format.timestamp(),
       format.printf((obj) => {
