@@ -20,6 +20,17 @@ const storage = diskStorage({
 
 @Controller('upload')
 export class UploadController {
+  constructor() {
+    this.createUploadsDirectoryIfNotExist();
+  }
+
+  private createUploadsDirectoryIfNotExist() {
+    const directory = './uploads';
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory);
+    }
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() file) {
