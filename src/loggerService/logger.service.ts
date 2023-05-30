@@ -39,7 +39,7 @@ export class CustomLogger implements LoggerService {
         let message = '';
         message += `"timestamp": "${obj.timestamp}",\n`;
         message += `"level": "${obj.level}",\n`;
-        message += `"userId": "${obj.userId}",\n`;
+       if(obj.userId) message += `"userId": "${obj.userId}",\n`;
         message += `"message": "${obj.message}",\n`;
         return `${obj.timestamp} ${obj.level} : {\n ${message}}`;
       }),
