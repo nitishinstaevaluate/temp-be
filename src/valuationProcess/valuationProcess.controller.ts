@@ -100,7 +100,11 @@ export class ValuationProcessController {
         userId: userId,
       };
       const reportId = await this.valuationsService.createValuation(data);
-
+      this.customLogger.log({
+        message:
+          ' FCFE Request is sucessfully executed in Valuation Process Controller.',
+        userId: inputs.userId,
+      });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'FCFF') {
@@ -122,7 +126,11 @@ export class ValuationProcessController {
         userId: userId,
       };
       const reportId = await this.valuationsService.createValuation(data);
-
+      this.customLogger.log({
+        message:
+          'FCFF Request is sucessfully executed in Valuation Process Controller.',
+        userId: inputs.userId,
+      });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'Relative_Valuation') {
@@ -145,7 +153,11 @@ export class ValuationProcessController {
         userId: userId,
       };
       const reportId = await this.valuationsService.createValuation(data);
-
+      this.customLogger.log({
+        message:
+          'Relative Valuation Request is sucessfully executed in Valuation Process Controller.',
+        userId: inputs.userId,
+      });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     }
