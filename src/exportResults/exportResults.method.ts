@@ -88,7 +88,7 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
               {
                 text: `Valuation Date: ${moment(
                   valuation.inputData.valuationDate,
-                ).format('MMM D, YYYY')}\nMethod: ${valuation.model}`,
+                ).format('MMM D, YYYY')}\nMethod: ${getValuationMethod(valuation.model)}`,
                 style:'header'
               },
             ],
@@ -148,19 +148,19 @@ const generatedOn = `Generated On: ${moment(valuation.createdAt).format('MMM D, 
   };
 
   const pdfDoc = pdfMake.createPdf(docDefinition);
-  pdfDoc.getBuffer((buffer) => {
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
-    );
-    res.setHeader('Content-Length', buffer.length);
-    res.end(buffer);
-  });
   // pdfDoc.getBuffer((buffer) => {
-  //   res.type('application/pdf');
+  //   res.setHeader('Content-Type', 'application/pdf');
+  //   res.setHeader(
+  //     'Content-Disposition',
+  //     `attachment; filename=ValuationResult-${new Date().getTime()}.pdf`,
+  //   );
+  //   res.setHeader('Content-Length', buffer.length);
   //   res.end(buffer);
   // });
+  pdfDoc.getBuffer((buffer) => {
+    res.type('application/pdf');
+    res.end(buffer);
+  });
 }
 function getOrientation(model:string) {
   if (model === 'FCFE' || model === 'FCFF') return 'landscape';
@@ -547,4 +547,15 @@ function Relative_Valuation_Organized_Data(valuation: any) {
     table1,
     table2,
   };
+}
+function getValuationMethod(method:string){
+  if(method==="Relative_Valuation")
+  return "Relative Valuation";
+  else if (method==="Excess_Earnings")
+  return "Excess Earnings";
+  else if (method==="CTM")
+  return "Comparable Transaction Multiple";
+  else if (method==="NAV")
+  return "Net Asset Value";
+  else method;
 }
