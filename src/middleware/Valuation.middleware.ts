@@ -17,7 +17,7 @@ import {
   RiskFreeRatesService,
   TaxRatesService,
 } from 'src/masters/masters.service';
-
+import { CustomLogger } from 'src/loggerService/logger.service';
 @Injectable()
 export class MyMiddleware implements NestInterceptor {
   constructor(
@@ -30,6 +30,7 @@ export class MyMiddleware implements NestInterceptor {
     private readonly codService: CODService,
     private readonly capitalStructureService: CapitalStructureService,
     private readonly discountRatesService: DiscountRatesService,
+    private readonly customLogger: CustomLogger,
   ) {}
   async intercept(
     context: ExecutionContext,
@@ -37,13 +38,11 @@ export class MyMiddleware implements NestInterceptor {
   ): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest();
     const inputs = req.body;
-    const {
-      userId,
-      excelSheetId,
-      company,
-      projectionYears,
-      model,
-    } = inputs;
+    this.customLogger.log({
+      message: 'Request is entered into Valuation Middleware.',
+      userId: inputs.userId,
+    });
+    const { userId, excelSheetId, company, projectionYears, model } = inputs;
 
     console.log('Middleware: This is Valuation Process Validation Middleware.');
     if (!userId) throw new BadRequestException('userId is required.');
@@ -66,11 +65,17 @@ export class MyMiddleware implements NestInterceptor {
 
     if (!company) throw new BadRequestException('company is required.');
     if (model === 'FCFE' || model === 'FCFF') {
-      const { valuationDate,industry, coeMethod, discountingPeriod, outstandingShares } =
-        inputs;
-        if (!valuationDate)
+      const {
+        valuationDate,
+        industry,
+        coeMethod,
+        discountingPeriod,
+        outstandingShares,
+      } = inputs;
+      if (!valuationDate)
         throw new BadRequestException('valuationDate is required.');
-      else if (!industry) throw new BadRequestException('industry is required.');
+      else if (!industry)
+        throw new BadRequestException('industry is required.');
       else if (!coeMethod)
         throw new BadRequestException('coeMethod is required.');
       else if (!discountingPeriod)
@@ -190,9 +195,14 @@ export class MyMiddleware implements NestInterceptor {
       else if (!costOfDebt)
         throw new BadRequestException('costOfDebt is required.');
     }
-    
+
     if (model === 'Relative_Valuation') {
-      const { companies, discountRateType, discountRateValue,outstandingShares } = inputs;
+      const {
+        companies,
+        discountRateType,
+        discountRateValue,
+        outstandingShares,
+      } = inputs;
       if (!companies) throw new BadRequestException('companies is required.');
       else if (!outstandingShares)
         throw new BadRequestException('outstandingShares is required.');
@@ -208,6 +218,10 @@ export class MyMiddleware implements NestInterceptor {
       if (!discountRateValue)
         throw new BadRequestException('discountRateValue is required.');
     }
+    this.customLogger.log({
+      message: 'Request sucessfully pass the Valuation Middleware.',
+      userId: inputs.userId,
+    });
     return next.handle();
   }
 }

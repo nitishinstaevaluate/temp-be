@@ -21,13 +21,15 @@ export class ValuationProcessController {
   constructor(
     private valuationsService: ValuationsService,
     private valuationMethodsService: ValuationMethodsService,
-    private customLogger: CustomLogger
+    private customLogger: CustomLogger,
   ) {}
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
-    console.log('i am called')
-    this.customLogger.log("Request is entered into Valuation Process Controller.");
+    this.customLogger.log({
+      message: 'Request is entered into Valuation Process Controller.',
+      userId: inputs.userId,
+    });
     const { model, valuationDate, company, userId, excelSheetId } = inputs;
 
     const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
@@ -39,12 +41,12 @@ export class ValuationProcessController {
     // const B1Value = B1Cell.v;
     // const data = B1Value.split(',');
     // const date = data[2];
-    
+
     if (model === 'FCFE' || model === 'FCFF') {
       const plDays = calculateDaysFromDate(valuationDate);
       const date = new Date(valuationDate);
       const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
-      if (plDays <totalDays) {
+      if (plDays < totalDays) {
         console.log(
           'Testing....................',
           'Date: ',
