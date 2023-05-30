@@ -31,8 +31,19 @@ export class ValuationProcessController {
       userId: inputs.userId,
     });
     const { model, valuationDate, company, userId, excelSheetId } = inputs;
-
-    const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+let workbook=null;
+    try{
+   workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+}catch{
+  this.customLogger.log({
+    message: `excelSheetId: ${excelSheetId} not available`,
+    userId: inputs.userId,
+  });
+  return {
+    result: null,
+    msg: `excelSheetId: ${excelSheetId} not available`,
+  };
+}
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
 
