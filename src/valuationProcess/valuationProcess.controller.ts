@@ -14,16 +14,20 @@ import {
   calculateDaysFromDate,
   isLeapYear,
 } from '../excelFileServices/common.methods';
+import { CustomLogger } from 'src/loggerService/logger.service';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
   constructor(
     private valuationsService: ValuationsService,
     private valuationMethodsService: ValuationMethodsService,
+    private customLogger: CustomLogger
   ) {}
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
+    console.log('i am called')
+    this.customLogger.log("Request is entered into Valuation Process Controller.");
     const { model, valuationDate, company, userId, excelSheetId } = inputs;
 
     const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);

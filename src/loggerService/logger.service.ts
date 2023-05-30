@@ -32,6 +32,27 @@ export class CustomLogger  implements LoggerService {
     ]
   });
 
+  private infoLogger = createLogger({
+    level: 'info',
+    format: format.combine(
+      format.timestamp(),
+      format.printf((obj) => {
+        let message = '';
+        message += `"timestamp": "${obj.timestamp}",\n`;
+        message += `"level": "${obj.level}",\n`;
+        message += `"message": "${obj.message}",\n`;
+        return `${obj.timestamp} ${obj.level} : {\n ${message}}`;
+      })
+    ),
+    transports: [
+      new DailyRotateFile({
+        filename: './loggerFiles/logger-%DATE%.log',
+        datePattern: 'YYYY-MM-DD',
+        maxSize: '16m',
+      })
+    ]
+  });
+
   error(error: any, context?: string) {
     this.logger.error(error);
   }
@@ -41,6 +62,6 @@ export class CustomLogger  implements LoggerService {
   }
 
   log(message: any, context?: string) {
-    this.logger.info(message);
+    this.infoLogger.info(message);
   }
 }
