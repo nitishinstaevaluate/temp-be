@@ -335,28 +335,28 @@ function Relative_Valuation_Organized_Data(valuation: any) {
     rows.push([
       index + 1,
       obj.company,
-      obj.peRatio?obj.peRatio.toFixed(decimalPoints):"",
-      obj.pbRatio?obj.pbRatio.toFixed(decimalPoints):"",
-      obj.ebitda?obj.ebitda.toFixed(decimalPoints):"",
-      obj.sales?obj.sales.toFixed(decimalPoints):"",
+      obj.peRatio?parseInt(obj.peRatio).toFixed(decimalPoints):"",
+      obj.pbRatio?parseInt(obj.pbRatio).toFixed(decimalPoints):"",
+      obj.ebitda?parseInt(obj.ebitda).toFixed(decimalPoints):"",
+      obj.sales?parseInt(obj.sales).toFixed(decimalPoints):"",
     ]);
   });
   const companiesInfo = valuationData.companiesInfo;
   const average = [
     '',
     'Average',
-    companiesInfo.peRatioAvg? companiesInfo.peRatioAvg.toFixed(decimalPoints):"",
-    companiesInfo.pbRatioAvg?companiesInfo.pbRatioAvg.toFixed(decimalPoints):"",
-    companiesInfo.ebitdaAvg?companiesInfo.ebitdaAvg.toFixed(decimalPoints):"",
-    companiesInfo.salesAvg?companiesInfo.salesAvg.toFixed(decimalPoints):"",
+    companiesInfo.peRatioAvg? parseInt(companiesInfo.peRatioAvg).toFixed(decimalPoints):"",
+    companiesInfo.pbRatioAvg?parseInt(companiesInfo.pbRatioAvg).toFixed(decimalPoints):"",
+    companiesInfo.ebitdaAvg?parseInt(companiesInfo.ebitdaAvg).toFixed(decimalPoints):"",
+    companiesInfo.salesAvg?parseInt(companiesInfo.salesAvg).toFixed(decimalPoints):"",
   ];
   const median = [
     '',
     'Median',
-    companiesInfo.peRatioMed?companiesInfo.peRatioMed.toFixed(decimalPoints):"",
-    companiesInfo.pbRatioMed?companiesInfo.pbRatioMed.toFixed(decimalPoints):"",
-    companiesInfo.ebitdaMed?companiesInfo.ebitdaMed.toFixed(decimalPoints):"",
-    companiesInfo.salesMed?companiesInfo.salesMed.toFixed(decimalPoints):"",
+    companiesInfo.peRatioMed?parseInt(companiesInfo.peRatioMed).toFixed(decimalPoints):"",
+    companiesInfo.pbRatioMed?parseInt(companiesInfo.pbRatioMed).toFixed(decimalPoints):"",
+    companiesInfo.ebitdaMed?parseInt(companiesInfo.ebitdaMed).toFixed(decimalPoints):"",
+    companiesInfo.salesMed?parseInt(companiesInfo.salesMed).toFixed(decimalPoints):"",
   ];
   const table1 = [headerData, ...rows, table1EmptyRow, average, median];
   const table2 = [];
@@ -372,32 +372,32 @@ function Relative_Valuation_Organized_Data(valuation: any) {
       table2.push([
         '',
         relative_valuation_headingObj['netWorth'],
-        obj.netWorthAvg?obj.netWorthAvg.toFixed(decimalPoints):"",
-        obj.netWorthMed?obj.netWorthMed.toFixed(decimalPoints):"",
+        obj.netWorthAvg?parseInt(obj.netWorthAvg).toFixed(decimalPoints):"",
+        obj.netWorthMed?parseInt(obj.netWorthMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['pbShares'],
-        obj.pbSharesAvg?obj.pbSharesAvg.toFixed(decimalPoints):"",
-        obj.pbSharesMed?obj.pbSharesMed.toFixed(decimalPoints):"",
+        obj.pbSharesAvg?parseInt(obj.pbSharesAvg).toFixed(decimalPoints):"",
+        obj.pbSharesMed?parseInt(obj.pbSharesMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['bookValue'],
-        obj.bookValueAvg?obj.bookValueAvg.toFixed(decimalPoints):"",
-        obj.bookValueMed?obj.bookValueMed.toFixed(decimalPoints):"",
+        obj.bookValueAvg?parseInt(obj.bookValueAvg).toFixed(decimalPoints):"",
+        obj.bookValueMed?parseInt(obj.bookValueMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['pbRatio'],
-        obj.pbRatioAvg?obj.pbRatioAvg.toFixed(decimalPoints):"",
-        obj.pbRatioMed?obj.pbRatioMed.toFixed(decimalPoints):"",
+        obj.pbRatioAvg?parseInt(obj.pbRatioAvg).toFixed(decimalPoints):"",
+        obj.pbRatioMed?parseInt(obj.pbRatioMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['pbMarketPrice'],
-        obj.pbMarketPriceAvg?obj.pbMarketPriceAvg.toFixed(decimalPoints):"",
-        obj.pbMarketPriceMed?obj.pbMarketPriceMed.toFixed(decimalPoints):"",
+        obj.pbMarketPriceAvg?parseInt(obj.pbMarketPriceAvg).toFixed(decimalPoints):"",
+        obj.pbMarketPriceMed?parseInt(obj.pbMarketPriceMed).toFixed(decimalPoints):"",
       ]);
     } else if (obj.particular === 'peRatio') {
       table2.push(["  ","", "",""]);
@@ -410,20 +410,20 @@ function Relative_Valuation_Organized_Data(valuation: any) {
       table2.push([
         '',
         relative_valuation_headingObj['eps'],
-        obj.epsAvg?obj.epsAvg.toFixed(decimalPoints):"",
-        obj.epsMed?obj.epsMed.toFixed(decimalPoints):"",
+        obj.epsAvg?parseInt(obj.epsAvg).toFixed(decimalPoints):"",
+        obj.epsMed?parseInt(obj.epsMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['peRatio'],
-        obj.peRatioAvg?obj.peRatioAvg.toFixed(decimalPoints):"",
-        obj.peRatioMed?obj.peRatioMed.toFixed(decimalPoints):"",
+        obj.peRatioAvg?parseInt(obj.peRatioAvg).toFixed(decimalPoints):"",
+        obj.peRatioMed?parseInt(obj.peRatioMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['peMarketPrice'],
-        obj.peMarketPriceAvg?obj.peMarketPriceAvg.toFixed(decimalPoints):"",
-        obj.peMarketPriceMed?obj.peMarketPriceMed.toFixed(decimalPoints):"",
+        obj.peMarketPriceAvg?parseInt(obj.peMarketPriceAvg).toFixed(decimalPoints):"",
+        obj.peMarketPriceMed?parseInt(obj.peMarketPriceMed).toFixed(decimalPoints):"",
       ]);
     } else if (obj.particular === 'ebitda') {
       table2.push(["  ","", "",""]);
@@ -436,44 +436,44 @@ function Relative_Valuation_Organized_Data(valuation: any) {
       table2.push([
         '',
         relative_valuation_headingObj['ebitda'],
-        obj.ebitdaAvg?obj.ebitdaAvg.toFixed(decimalPoints):"",
-        obj.ebitdaMed?obj.ebitdaMed.toFixed(decimalPoints):"",
+        obj.ebitdaAvg?parseInt(obj.ebitdaAvg).toFixed(decimalPoints):"",
+        obj.ebitdaMed?parseInt(obj.ebitdaMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['ev'],
-        obj.evAvg?obj.evAvg.toFixed(decimalPoints):"",
-        obj.evMed?obj.evMed.toFixed(decimalPoints):"",
+        obj.evAvg?parseInt(obj.evAvg).toFixed(decimalPoints):"",
+        obj.evMed?parseInt(obj.evMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['enterprise'],
-        obj.enterpriseAvg?obj.enterpriseAvg.toFixed(decimalPoints):"",
-        obj.enterpriseMed?obj.enterpriseMed.toFixed(decimalPoints):"",
+        obj.enterpriseAvg?parseInt(obj.enterpriseAvg).toFixed(decimalPoints):"",
+        obj.enterpriseMed?parseInt(obj.enterpriseMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['debt'],
-        obj.debtAvg?obj.debtAvg.toFixed(decimalPoints):"",
-        obj.debtMed?obj.debtMed.toFixed(decimalPoints):"",
+        obj.debtAvg?parseInt(obj.debtAvg).toFixed(decimalPoints):"",
+        obj.debtMed?parseInt(obj.debtMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['ebitdaEquity'],
-        obj.ebitdaEquityAvg?obj.ebitdaEquityAvg.toFixed(decimalPoints):"",
-        obj.ebitdaEquityMed?obj.ebitdaEquityMed.toFixed(decimalPoints):"",
+        obj.ebitdaEquityAvg?parseInt(obj.ebitdaEquityAvg).toFixed(decimalPoints):"",
+        obj.ebitdaEquityMed?parseInt(obj.ebitdaEquityMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['ebitdaShares'],
-        obj.ebitdaSharesAvg?obj.ebitdaSharesAvg.toFixed(decimalPoints):"",
-        obj.ebitdaSharesMed?obj.ebitdaSharesMed.toFixed(decimalPoints):"",
+        obj.ebitdaSharesAvg?parseInt(obj.ebitdaSharesAvg).toFixed(decimalPoints):"",
+        obj.ebitdaSharesMed?parseInt(obj.ebitdaSharesMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['ebitdaMarketPrice'],
-        obj.ebitdaMarketPriceAvg?obj.ebitdaMarketPriceAvg.toFixed(decimalPoints):"",
-        obj.ebitdaMarketPriceMed?obj.ebitdaMarketPriceMed.toFixed(decimalPoints):"",
+        obj.ebitdaMarketPriceAvg?parseInt(obj.ebitdaMarketPriceAvg).toFixed(decimalPoints):"",
+        obj.ebitdaMarketPriceMed?parseInt(obj.ebitdaMarketPriceMed).toFixed(decimalPoints):"",
       ]);
     } else if (obj.particular === 'sales') {
       table2.push(["  ","", "",""]);
@@ -486,59 +486,59 @@ function Relative_Valuation_Organized_Data(valuation: any) {
       table2.push([
         '',
         relative_valuation_headingObj['sales'],
-        obj.salesAvg?obj.salesAvg.toFixed(decimalPoints):"",
-        obj.salesMed?obj.salesMed.toFixed(decimalPoints):"",
+        obj.salesAvg?parseInt(obj.salesAvg).toFixed(decimalPoints):"",
+        obj.salesMed?parseInt(obj.salesMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['salesRatio'],
-        obj.salesRatioAvg?obj.salesRatioAvg.toFixed(decimalPoints):"",
-        obj.salesRatioMed?obj.salesRatioMed.toFixed(decimalPoints):"",
+        obj.salesRatioAvg?parseInt(obj.salesRatioAvg).toFixed(decimalPoints):"",
+        obj.salesRatioMed?parseInt(obj.salesRatioMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['salesEquity'],
-        obj.salesEquityAvg?obj.salesEquityAvg.toFixed(decimalPoints):"",
-        obj.salesEquityMed?obj.salesEquityMed.toFixed(decimalPoints):"",
+        obj.salesEquityAvg?parseInt(obj.salesEquityAvg).toFixed(decimalPoints):"",
+        obj.salesEquityMed?parseInt(obj.salesEquityMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['salesShares'],
-        obj.salesSharesAvg?obj.salesSharesAvg.toFixed(decimalPoints):"",
-        obj.salesSharesMed?obj.salesSharesMed.toFixed(decimalPoints):"",
+        obj.salesSharesAvg?parseInt(obj.salesSharesAvg).toFixed(decimalPoints):"",
+        obj.salesSharesMed?parseInt(obj.salesSharesMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['salesMarketPrice'],
-        obj.salesMarketPriceAvg?obj.salesMarketPriceAvg.toFixed(decimalPoints):"",
-        obj.salesMarketPriceMed?obj.salesMarketPriceMed.toFixed(decimalPoints):"",
+        obj.salesMarketPriceAvg?parseInt(obj.salesMarketPriceAvg).toFixed(decimalPoints):"",
+        obj.salesMarketPriceMed?parseInt(obj.salesMarketPriceMed).toFixed(decimalPoints):"",
       ]);
     } else if (obj.particular === 'result') {
       table2.push(["  ","", "",""]);
       table2.push([
         '',
         relative_valuation_headingObj['avgPricePerShare'],
-        obj.avgPricePerShareAvg?obj.avgPricePerShareAvg.toFixed(decimalPoints):"",
-        obj.avgPricePerShareMed?obj.avgPricePerShareMed.toFixed(decimalPoints):"",
+        obj.avgPricePerShareAvg?parseInt(obj.avgPricePerShareAvg).toFixed(decimalPoints):"",
+        obj.avgPricePerShareMed?parseInt(obj.avgPricePerShareMed).toFixed(decimalPoints):"",
       ]);
       table2.push(["  ","", "",""]);
       table2.push([
         '',
         relative_valuation_headingObj['average'],
-        obj.averageAvg?obj.averageAvg.toFixed(decimalPoints):"",
-        obj.averageMed?obj.averageMed.toFixed(decimalPoints):"",
+        obj.averageAvg?parseInt(obj.averageAvg).toFixed(decimalPoints):"",
+        obj.averageMed?parseInt(obj.averageMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['loc'],
-        obj.locAvg?obj.locAvg.toFixed(decimalPoints):"",
-        obj.locMed?obj.locMed.toFixed(decimalPoints):"",
+        obj.locAvg?parseInt(obj.locAvg).toFixed(decimalPoints):"",
+        obj.locMed?parseInt(obj.locMed).toFixed(decimalPoints):"",
       ]);
       table2.push([
         '',
         relative_valuation_headingObj['finalPrice'],
-        obj.finalPriceAvg?obj.finalPriceAvg.toFixed(decimalPoints):"",
-        obj.finalPriceMed?obj.finalPriceMed.toFixed(decimalPoints):"",
+        obj.finalPriceAvg?parseInt(obj.finalPriceAvg).toFixed(decimalPoints):"",
+        obj.finalPriceMed?parseInt(obj.finalPriceMed).toFixed(decimalPoints):"",
       ]);
     }
   });
