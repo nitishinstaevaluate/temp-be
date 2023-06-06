@@ -1,12 +1,11 @@
 import { Injectable, LoggerService } from '@nestjs/common';
-import { createLogger, format} from 'winston';
+import { createLogger, format } from 'winston';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 
-
 @Injectable()
-export class CustomLogger  implements LoggerService {
+export class CustomLogger implements LoggerService {
   private logger = createLogger({
-    level: 'info',
+    level: 'error',
     format: format.combine(
       format.timestamp(),
       format.printf((obj) => {
@@ -21,15 +20,37 @@ export class CustomLogger  implements LoggerService {
         message += `"error": ${JSON.stringify(obj.error, null, 2)},\n`;
         message += `"stack": "${obj.stack}"`;
         return `${obj.timestamp} ${obj.level} : {\n ${message}\n}`;
-      })
+      }),
     ),
     transports: [
       new DailyRotateFile({
         filename: './loggerFiles/logger-%DATE%.log',
         datePattern: 'YYYY-MM-DD',
         maxSize: '16m',
-      })
-    ]
+      }),
+    ],
+  });
+
+  private infoLogger = createLogger({
+    level: 'info',
+    format: format.combine(
+      format.timestamp(),
+      format.printf((obj) => {
+        let message = '';
+        message += `"timestamp": "${obj.timestamp}",\n`;
+        message += `"level": "${obj.level}",\n`;
+       if(obj.userId) message += `"userId": "${obj.userId}",\n`;
+        message += `"message": "${obj.message}",\n`;
+        return `${obj.timestamp} ${obj.level} : {\n ${message}}`;
+      }),
+    ),
+    transports: [
+      new DailyRotateFile({
+        filename: './loggerFiles/logger-%DATE%.log',
+        datePattern: 'YYYY-MM-DD',
+        maxSize: '16m',
+      }),
+    ],
   });
 
   error(error: any, context?: string) {
@@ -40,7 +61,7 @@ export class CustomLogger  implements LoggerService {
     this.logger.warn(message);
   }
 
-  log(message: any, context?: string) {
-    this.logger.info(message);
+  log(payload: any) {
+    this.infoLogger.info(payload);
   }
 }

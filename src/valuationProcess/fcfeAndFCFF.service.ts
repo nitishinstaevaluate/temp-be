@@ -18,16 +18,24 @@ import {
   POPShareCapitalLabelPer,
 } from '../excelFileServices/fcfeAndFCFF.method';
 import { getYearsList } from '../excelFileServices/common.methods';
-
+import { CustomLogger } from 'src/loggerService/logger.service';
 @Injectable()
 export class FCFEAndFCFFService {
-  constructor(private readonly industryService: IndustryService) {}
+  constructor(
+    private readonly industryService: IndustryService,
+    private readonly customLogger: CustomLogger,
+  ) {}
+
   //Common Method for FCFE and FCFF Methods
   async FCFEAndFCFF_Common(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
+    this.customLogger.log({
+      message: 'Request is entered into FCFEAndFCFF Service.',
+      userId: inputs.userId,
+    });
     const { outstandingShares, discountingPeriod, popShareCapitalType } =
       inputs;
     const years = await getYearsList(worksheet1);
@@ -51,7 +59,7 @@ export class FCFEAndFCFFService {
 
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     const discountingPeriodValue = discountingPeriodObj.result;
-    let valuation=null;
+    let valuation = null;
     const finalResult = await Promise.all(
       years.map(async (year: string, i: number) => {
         let changeInNCA = null;
@@ -81,8 +89,7 @@ export class FCFEAndFCFFService {
           0;
         const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
         const fcff = netCashFlow + changeInFixedAssets;
-        if(i===0)
-        valuation=fcff;
+        if (i === 0) valuation = fcff;
         //Industry Calculation.
         const discountingFactor = await this.getDiscountingFactor(
           inputs,
@@ -132,7 +139,15 @@ export class FCFEAndFCFFService {
         return result;
       }),
     );
-    return { result: finalResult,valuation:valuation, msg: 'Executed Successfully' };
+    this.customLogger.log({
+      message: 'Request is sucessfully executed in FCFEAndFCFF Service.',
+      userId: inputs.userId,
+    });
+    return {
+      result: finalResult,
+      valuation: valuation,
+      msg: 'Executed Successfully',
+    };
   }
 
   //Get Discounting Period.
