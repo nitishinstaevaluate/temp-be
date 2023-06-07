@@ -63,4 +63,6 @@ export class IndustryService {
   async BYRP_Method(): Promise<number> {
     return 1;
   }
+
+
 }
