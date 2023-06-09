@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
     BetaIndustry,
     BetaIndustryDocument,
+    IndustriesRatio,
+    IndustriesRatioDocument
   } from './schema/data-references.schema';
 
 @Injectable()
@@ -25,5 +27,23 @@ export class BetaIndustriesService {
 
   async getBetaIndustriesById(id: string): Promise<BetaIndustry[]> {
     return await this.betaIndustryModel.findById(id);
+  }
+}
+
+// Beta Industries Service
+@Injectable()
+export class IndustriesRatioService {
+  constructor(
+    @InjectModel('industriesRatio')
+    private readonly industryRatioModel: Model<IndustriesRatioDocument>
+  ) {}
+
+  async getIndustriesRatio(): Promise<IndustriesRatio[]> {
+
+    return await this.industryRatioModel.find().exec();
+  }
+
+  async getIndustriesRatioById(id: string): Promise<BetaIndustry[]> {
+    return await this.industryRatioModel.findById(id);
   }
 }

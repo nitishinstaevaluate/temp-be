@@ -12,11 +12,13 @@ import {
 
   import {
     BetaIndustry,
+    IndustriesRatio
   } from './schema/data-references.schema';
 
 
   import {
     BetaIndustriesService,
+    IndustriesRatioService
   } from './data-references.service';
 
 @Controller('data-references')
@@ -38,6 +40,25 @@ export class BetaIndustriesController {
   async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
     return this.betaIndustriesService.getBetaIndustriesById(id);
   }
+
+}
+
+// Industries Ratio Controller
+@Controller('industriesratio')
+export class IndustriesRatioController {
+  constructor(private industriesRatioService: IndustriesRatioService) { }
+
+//   @Get()
+//   async findAll(
+//     @Param('industryId') industryId: string,
+//   ): Promise<IndustryRatio[]> {
+//     return this.industriesRatioService.getIndustriesRatio();
+//   }
+
+//   @Get(':industryId')
+//   async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
+//     return this.industriesRatioService.getIndustriesRatioById(id);
+//   }
 
 
 }
