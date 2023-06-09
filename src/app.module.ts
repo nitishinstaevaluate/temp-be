@@ -15,13 +15,15 @@ import { ExportTemplateController } from './excelFileServices/exportTemplate.con
 import {LoggerModule} from './loggerService/logger.module'
 import { ExceptionsFilter } from './middleware/exceptions.middleware';
 import { APP_FILTER } from '@nestjs/core';
+import { DataReferencesModule } from './data-references/data-references.module';
 require('dotenv').config();
 
 @Module({
   imports: [UsersModule,MastersModule,
     ValuationProcessModule,ExportResultsModule,
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
-    ConfigModule.forRoot(),],
+    ConfigModule.forRoot(),
+    DataReferencesModule,],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,

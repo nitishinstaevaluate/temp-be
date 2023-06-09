@@ -6,7 +6,10 @@ import {
   Delete,
   Param,
   Put,
+  UploadedFile,
+  UseInterceptors
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import {
   CreateIndustryDto,
@@ -64,12 +67,22 @@ import {
   CapitalStructure,
   POPShareCapital,
 } from './schema/masters.schema';
+import { diskStorage } from 'multer';
+
+const storage = diskStorage({
+  destination: './uploads',
+  filename: (req, file, cb) => {
+    const fileName = `${Date.now()}-${file.originalname}`;
+    cb(null, fileName);
+  },
+});
 
 //Masters Controller for FrontEnd DropDowns Integration.
 @Controller('masters')
 export class MastersController {
   constructor(
     private industriesService: IndustriesService,
+    // private betaIndustriesService: BetaIndustriesService,
     private methodService: ValuationMethodsService,
     private taxRateService: TaxRatesService,
     private discountRateService: DiscountRatesService,
@@ -83,7 +96,7 @@ export class MastersController {
     private codService: CODService,
     private capitalStructureService: CapitalStructureService,
     private popShareCapitalService: POPShareCapitalService,
-  ) {}
+  ) { }
 
   @Get(':fieldName')
   async findByFieldName(@Param('fieldName') fieldName: string): Promise<any> {
@@ -148,7 +161,7 @@ export class MastersController {
 //Industries Controller
 @Controller('industries')
 export class IndustriesController {
-  constructor(private industriesService: IndustriesService) {}
+  constructor(private industriesService: IndustriesService) { }
 
   @Post()
   async create(@Body() createIndustryDto: CreateIndustryDto) {
@@ -171,12 +184,13 @@ export class IndustriesController {
   async delete(@Param('id') id: string): Promise<any> {
     return this.industriesService.deleteIndustry(id);
   }
+
 }
 
 //Sub Industries Controller
 @Controller('subIndustries')
 export class SubIndustriesController {
-  constructor(private subIndustriesService: SubIndustriesService) {}
+  constructor(private subIndustriesService: SubIndustriesService) { }
 
   @Post()
   async create(@Body() createSubIndustryDto: CreateSubIndustryDto) {
@@ -207,7 +221,7 @@ export class SubIndustriesController {
 //Companies Controller
 @Controller('companies')
 export class CompaniesController {
-  constructor(private companiesService: CompaniesService) {}
+  constructor(private companiesService: CompaniesService) { }
 
   @Post()
   async create(@Body() createCompanyDto: CreateCompanyDto) {
@@ -236,7 +250,7 @@ export class CompaniesController {
 //ValuationMethods Controller
 @Controller('valuationMethods')
 export class ValuationMethodsController {
-  constructor(private methodService: ValuationMethodsService) {}
+  constructor(private methodService: ValuationMethodsService) { }
 
   @Post()
   async create(@Body() methodDto: CreateValuationMethodDto) {
@@ -264,7 +278,7 @@ export class ValuationMethodsController {
 //TaxRates Controller
 @Controller('taxRates')
 export class TaxRatesController {
-  constructor(private taxRateService: TaxRatesService) {}
+  constructor(private taxRateService: TaxRatesService) { }
 
   @Post()
   async create(@Body() taxRateDto: CreateTaxRateDto) {
@@ -292,7 +306,7 @@ export class TaxRatesController {
 //DiscountRates Controller
 @Controller('discountRates')
 export class DiscountRatesController {
-  constructor(private discountRateService: DiscountRatesService) {}
+  constructor(private discountRateService: DiscountRatesService) { }
 
   @Post()
   async create(@Body() discountRateDto: CreateDiscountRateDto) {
@@ -320,7 +334,7 @@ export class DiscountRatesController {
 //TerminalGrowthRates Controller
 @Controller('terminalGrowthRates')
 export class TerminalGrowthRatesController {
-  constructor(private growthRateService: TerminalGrowthRatesService) {}
+  constructor(private growthRateService: TerminalGrowthRatesService) { }
 
   @Post()
   async create(@Body() growthRateDto: CreateTerminalGrowthRateDto) {
@@ -348,7 +362,7 @@ export class TerminalGrowthRatesController {
 //COEMethods Controller
 @Controller('coeMethods')
 export class COEMethodsController {
-  constructor(private coeMethodService: COEMethodsService) {}
+  constructor(private coeMethodService: COEMethodsService) { }
 
   @Post()
   async create(@Body() coeMethodDto: CreateCOEMethodDto) {
@@ -376,7 +390,7 @@ export class COEMethodsController {
 //RiskFreeRates Controller
 @Controller('riskFreeRates')
 export class RiskFreeRatesController {
-  constructor(private riskFreeRateService: RiskFreeRatesService) {}
+  constructor(private riskFreeRateService: RiskFreeRatesService) { }
 
   @Post()
   async create(@Body() riskFreeRateDto: CreateRiskFreeRateDto) {
@@ -404,7 +418,7 @@ export class RiskFreeRatesController {
 //ExpMarketReturns Controller
 @Controller('expMarketReturns')
 export class ExpMarketReturnsController {
-  constructor(private expMarketReturnService: ExpMarketReturnsService) {}
+  constructor(private expMarketReturnService: ExpMarketReturnsService) { }
 
   @Post()
   async create(@Body() expMarketReturnDto: CreateExpMarketReturnDto) {
@@ -438,7 +452,7 @@ export class ExpMarketReturnsController {
 //Betas Controller
 @Controller('betas')
 export class BetasController {
-  constructor(private betaService: BetaService) {}
+  constructor(private betaService: BetaService) { }
 
   @Post()
   async create(@Body() betaDto: CreateBetaDto) {
@@ -464,7 +478,7 @@ export class BetasController {
 //Risk Premium Controller
 @Controller('riskPremiums')
 export class RiskPremiumsController {
-  constructor(private riskPremimumService: RiskPremiumService) {}
+  constructor(private riskPremimumService: RiskPremiumService) { }
 
   @Post()
   async create(@Body() riskPremiumDto: CreateRiskPremiumDto) {
@@ -493,7 +507,7 @@ export class RiskPremiumsController {
 //Cost of Preference Share Capital Controller
 @Controller('copShareCapitals')
 export class COPShareCapitalController {
-  constructor(private copShareCapitalService: COPShareCapitalService) {}
+  constructor(private copShareCapitalService: COPShareCapitalService) { }
 
   @Post()
   async create(@Body() copShareCapitalDto: CreateCOPShareCapitalDto) {
@@ -527,7 +541,7 @@ export class COPShareCapitalController {
 //Cost of Debt Controller
 @Controller('costOfDebts')
 export class CODController {
-  constructor(private codService: CODService) {}
+  constructor(private codService: CODService) { }
 
   @Post()
   async create(@Body() codDto: CreateCODDto) {
@@ -552,7 +566,7 @@ export class CODController {
 //Capital Structure Controller
 @Controller('capitalStructures')
 export class CapitalStructureController {
-  constructor(private capitalStructureService: CapitalStructureService) {}
+  constructor(private capitalStructureService: CapitalStructureService) { }
 
   @Post()
   async create(@Body() capitalStructureDto: CreateCapitalStructureDto) {
@@ -585,7 +599,7 @@ export class CapitalStructureController {
 //Proportion of Preference Share Capital Controller
 @Controller('popShareCapitals')
 export class POPShareCapitalController {
-  constructor(private popShareCapitalService: POPShareCapitalService) {}
+  constructor(private popShareCapitalService: POPShareCapitalService) { }
 
   @Post()
   async create(@Body() popShareCapitalDto: CreatePOPShareCapitalDto) {

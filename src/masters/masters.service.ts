@@ -36,12 +36,16 @@ import {
   POPShareCapitalDocument,
 } from './schema/masters.schema';
 
+const fs = require("fs");
+const csv = require("csv-parse");
+
+
 // Industries Service
 @Injectable()
 export class IndustriesService {
   constructor(
     @InjectModel('industry')
-    private readonly industryModel: Model<IndustryDocument>,
+    private readonly industryModel: Model<IndustryDocument>
   ) {}
 
   async createIndustry(industry: object): Promise<Industry> {
@@ -63,6 +67,7 @@ export class IndustriesService {
   async deleteIndustry(id: string): Promise<any> {
     return await this.industryModel.findByIdAndRemove(id).exec();
   }
+  
 }
 
 // Sub Industries Service

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+
 import {
   IndustriesController,
   SubIndustriesController,
@@ -55,7 +56,7 @@ import {
   COPShareCapitalSchema,
   CODSchema,
   CapitalStructureSchema,
-  POPShareCapitalSchema,
+  POPShareCapitalSchema
 } from './schema/masters.schema';
 
 @Module({
@@ -116,6 +117,7 @@ import {
     CODService,
     CapitalStructureService,
     POPShareCapitalService,
+    // DumpCsvToMongoService
   ],
   exports: [
     ValuationMethodsService,
