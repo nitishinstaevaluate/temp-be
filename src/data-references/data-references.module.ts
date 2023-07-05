@@ -3,17 +3,23 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import {
     BetaIndustriesController,
-    IndustriesRatioController
+    HistoricalReturnsController,
+    IndustriesRatioController,
+    IndianTreasuryYieldController
 } from './data-references.controller';
 
 import {
     BetaIndustriesService,
-    IndustriesRatioService
+    HistoricalReturnsService,
+    IndustriesRatioService,
+    IndianTreasuryYieldService
 } from './data-references.service';
 
 import {
     BetaIndustrySchema,
-    IndustriesRatioSchema
+    IndustriesRatioSchema,
+    HistoricalReturnsSchema,
+    IndianTreasuryYieldSchema
 } from './schema/data-references.schema';
 
 @Module({
@@ -21,16 +27,22 @@ import {
         MongooseModule.forFeature([
           { name: 'betaIndustry', schema: BetaIndustrySchema },
           { name: 'industriesRatio', schema: IndustriesRatioSchema },
+          { name: 'historicalReturns', schema : HistoricalReturnsSchema},
+          { name: 'indianTreasuryYield', schema : IndianTreasuryYieldSchema}
         ]),
       ],
       controllers: [
         BetaIndustriesController,
-        IndustriesRatioController
+        IndustriesRatioController,
+        HistoricalReturnsController,
+        IndianTreasuryYieldController
       ],
     
       providers: [
         BetaIndustriesService,
-        IndustriesRatioService
+        IndustriesRatioService,
+        HistoricalReturnsService,
+        IndianTreasuryYieldService
       ],
       exports: [
 
