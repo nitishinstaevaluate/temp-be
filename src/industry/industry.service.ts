@@ -35,7 +35,7 @@ export class IndustryService {
     const adjustedCostOfEquity = res.result;
 
     const capitalStructure = inputObj.capitalStructure;
-    console.log('Testing capitalStructure:', capitalStructure);
+    // console.log('Testing capitalStructure:', capitalStructure);
     //WACC, formula: =+B19*B27+B23*(1-B6)*B26+B21*B28
     const wacc =
       adjustedCostOfEquity * inputObj.proportionOfEquity +

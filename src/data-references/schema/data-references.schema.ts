@@ -21,16 +21,16 @@ export class BetaIndustry {
   taxType: String;
 
   @Prop({ required: true })
-  deRatio: number;
+  deRatio: String;
 
   @Prop({ required: true })
-  effectiveTaxRate: number;
+  effectiveTaxRate: String;
 
   @Prop({ required: false })
   unleveredBeta: number;
 
   @Prop({ required: false })
-  cashFirmValue: number;
+  cashFirmValue: String;
 
   @Prop({ required: false })
   unleveredBetaCash: number;
@@ -40,10 +40,10 @@ export class BetaIndustry {
   hiloRisk: number;
 
   @Prop({ required: false })
-  stdEquity: number;
+  stdEquity: String;
 
   @Prop({ required: false })
-  stdOprIncome: number;
+  stdOprIncome: String;
 
   @Prop({ required: false })
   beta_2019: number;

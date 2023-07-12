@@ -9,7 +9,7 @@ export const fcfe_fcff_headingObj = {
   fixedAssets: 'Change in fixed assets',
   fcff: 'FCFF',
   discountingPeriod: 'Discounting Period (Mid Year)',
-  discountingFactor: 'Discounting Factor @WACCAT',
+  discountingFactor: 'Discounting Factor',
   presentFCFF: 'Present Value of FCFF',
   sumOfCashFlows: 'Sum of Cash Flows',
   debtOnDate: 'Less: Debt as on Date',

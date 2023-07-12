@@ -101,11 +101,11 @@ export class MyMiddleware implements NestInterceptor {
         if (!isRiskFreeRatesTypeExist)
           throw new BadRequestException('Invalid riskFreeRateType');
 
-        const isExpMarketReturnTypeExist =
-          await this.expMarketReturnsService.isTypeExists(expMarketReturnType);
+        // const isExpMarketReturnTypeExist =
+        //   await this.expMarketReturnsService.isTypeExists(expMarketReturnType);
 
-        if (!isExpMarketReturnTypeExist)
-          throw new BadRequestException('Invalid expMarketReturnType');
+        // if (!isExpMarketReturnTypeExist)
+        //   throw new BadRequestException('Invalid expMarketReturnType');
 
         const isBetaTypeExist = await this.betaService.isTypeExists(betaType);
 
@@ -147,8 +147,8 @@ export class MyMiddleware implements NestInterceptor {
         throw new BadRequestException('copShareCapitalType is required.');
       else if (!popShareCapitalType)
         throw new BadRequestException('popShareCapitalType is required.');
-      else if (!costOfDebtType)
-        throw new BadRequestException('costOfDebtType is required.');
+      // else if (!costOfDebtType)
+      //   throw new BadRequestException('costOfDebtType is required.');
       else if (!capitalStructureType)
         throw new BadRequestException('capitalStructureType is required.');
 
@@ -171,12 +171,12 @@ export class MyMiddleware implements NestInterceptor {
       if (!isPopShareCapitalTypeExist)
         throw new BadRequestException('Invalid popShareCapitalType');
 
-      const isCostOfDebtTypeExist = await this.codService.isTypeExists(
-        costOfDebtType,
-      );
+      // const isCostOfDebtTypeExist = await this.codService.isTypeExists(
+      //   costOfDebtType,
+      // );
 
-      if (!isCostOfDebtTypeExist)
-        throw new BadRequestException('Invalid costOfDebtType');
+      // if (!isCostOfDebtTypeExist)
+      //   throw new BadRequestException('Invalid costOfDebtType');
 
       const isCapitalStructureTypeExist =
         await this.capitalStructureService.isTypeExists(capitalStructureType);
@@ -190,11 +190,11 @@ export class MyMiddleware implements NestInterceptor {
       else if (!costOfDebt)
         throw new BadRequestException('costOfDebt is required.');
     }
-console.log("hi")
+
     if (model === 'Relative_Valuation') {
       const { companies, discountRateType, discountRateValue,outstandingShares } = inputs;
-      if (!companies) throw new BadRequestException('companies is required.');
-      else if (!outstandingShares)
+      // if (!companies) throw new BadRequestException('companies is required.');
+      if (!outstandingShares)
         throw new BadRequestException('outstandingShares is required.');
       if (!discountRateType)
         throw new BadRequestException('discountRateType is required.');

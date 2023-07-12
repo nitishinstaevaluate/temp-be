@@ -93,6 +93,7 @@ export class ValuationProcessController {
         valuationData: valuationResult,
         userId: userId,
       };
+      console.log(inputs);
       const reportId = await this.valuationsService.createValuation(data);
 
       // Send Response.

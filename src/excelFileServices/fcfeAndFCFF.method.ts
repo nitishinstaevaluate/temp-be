@@ -226,6 +226,62 @@ export async function CapitalStructure(i: number, worksheet2: any) {
   return (longTermBorrowings + shortTermBorrowings) / shareholderFunds;
 }
 
+export async function CapitalStruc(i: number, worksheet2: any) {
+  //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
+  // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
+  // user may chose to enter values hence calculate as BS!D7:D22 sum)
+
+  // Total Equity = Shareholders' Funds - Preference Share Capital
+  // Total Debt = Other Unsecured Loans + Long Term Borrowings + Liability component of CCD's + Short Term Borrowings
+  // Total Preference Share Capital = Preference Share Capital
+  
+  const shareholderFunds = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shareholderFundsRow}`,
+  );
+
+  const preferenceShareCapital = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
+  );
+
+  const totalEquity = shareholderFunds -preferenceShareCapital;
+
+  const otherUnsecuredLoans = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+  );
+
+  const liabilityComponentofCCD = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.liabilityComponentofCCDRow}`,
+  );
+  const longTermBorrowings = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
+  );
+  const shortTermBorrowings = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
+  );
+
+  const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
+
+  const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
+  const debtProp = totalDebt / totalCapital;
+  const equityProp = totalEquity / totalCapital
+  const prefProp = preferenceShareCapital / totalCapital
+
+  let capitalStructure = {
+    capitalStructureType : 'Company_Based',
+    debtProp : debtProp,
+    equityProp : equityProp,
+    prefProp: prefProp,
+    totalCapital : totalCapital           // this is actual value and not a proporation.
+  }
+  return capitalStructure;
+}
+
 export async function ProportionOfDebt(i: number, worksheet2: any) {
   //formula: sum(BS!SUM(D25:D31) + SUM(D32:D40))/BS!D41
 

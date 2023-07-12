@@ -14,10 +14,13 @@ export const sheet1_PLObj={
 }
 
 export const sheet2_BSObj={
+    shareholderFundsRow:"6",
     equityShareCapitalRow:"7",
     preferenceShareCapitalRow:"8",
     deferredTaxLiabilityRow:"25",
+    otherUnsecuredLoansRow:"26",
     longTermBorrowingsRow:"27",
+    liabilityComponentofCCDRow:"28",
     deferredGovtGrantRow:"31",
     tradePayablesRow:"34",
     employeePayablesRow:"35",

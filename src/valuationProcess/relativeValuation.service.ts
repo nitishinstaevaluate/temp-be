@@ -15,9 +15,11 @@ export class RelativeValuationService {
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    // companiesInfo: any,
   ): Promise<any> {
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
+    
     if (years === null)
       return {
         result: null,
@@ -26,28 +28,62 @@ export class RelativeValuationService {
     const year = new Date(valuationDate).getFullYear().toString();
     const columnIndex = years.indexOf(year);
     console.log(columnsList[columnIndex], columnIndex, year);
+    
     const column = columnsList[columnIndex];
     const companies = inputs.companies;
+    const industries = inputs.industries;
+    const ratiotypebased = inputs.type;
     const peRatio = [];
     const pbRatio = [];
     const ebitda = [];
     const sales = [];
-    companies.map((company) => {
-      peRatio.push(company.peRatio);
-      pbRatio.push(company.pbRatio);
-      ebitda.push(company.ebitda);
-      sales.push(company.sales);
-    });
-    const companiesInfo = {
-      peRatioAvg: findAverage(peRatio),
-      peRatioMed: findMedian(peRatio),
-      pbRatioAvg: findAverage(pbRatio),
-      pbRatioMed: findMedian(pbRatio),
-      ebitdaAvg: findAverage(ebitda),
-      ebitdaMed: findMedian(ebitda),
-      salesAvg: findAverage(sales),
-      salesMed: findMedian(sales),
-    };
+    var companiesInfo: any;
+    
+    // const companiesInfo = {
+    //   peRatioAvg: findAverage(peRatio),
+    //   peRatioMed: findMedian(peRatio),
+    //   pbRatioAvg: findAverage(pbRatio),
+    //   pbRatioMed: findMedian(pbRatio),
+    //   ebitdaAvg: findAverage(ebitda),
+    //   ebitdaMed: findMedian(ebitda),
+    //   salesAvg: findAverage(sales),
+    //   salesMed: findMedian(sales),
+    // };
+    
+    if (inputs.type == 'manual') {                // Make it smarter in next release
+      companies.map((company) => {
+        peRatio.push(company.peRatio);
+        pbRatio.push(company.pbRatio);
+        ebitda.push(company.ebitda);
+        sales.push(company.sales);
+      });
+
+       companiesInfo = {
+        peRatioAvg: findAverage(peRatio),
+        peRatioMed: findMedian(peRatio),
+        pbRatioAvg: findAverage(pbRatio),
+        pbRatioMed: findMedian(pbRatio),
+        ebitdaAvg: findAverage(ebitda),
+        ebitdaMed: findMedian(ebitda),
+        salesAvg: findAverage(sales),
+        salesMed: findMedian(sales),
+      };
+    } else if (inputs.type =='industry'){
+        companiesInfo = {
+        peRatioAvg: industries.currentPE,
+        peRatioMed: industries.currentPE,
+        pbRatioAvg: industries.pbv,
+        pbRatioMed: industries.pbv,
+        ebitdaAvg: industries.evEBITDA_PV,
+        ebitdaMed: industries.evEBITDA_PV,
+        salesAvg: industries.priceSales,
+        salesMed: industries.priceSales,
+      };
+    }
+      else
+        // Do nothing for now
+      ;
+
     const netWorth = await netWorthOfCompany(column, worksheet2);
     const bookValue = netWorth / outstandingShares;
     const pbMarketPriceAvg = bookValue * companiesInfo.pbRatioAvg;
@@ -97,6 +133,8 @@ export class RelativeValuationService {
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
+      industries : industries,
+      ratiotypebased : ratiotypebased,
       valuation: [
         {
           particular: 'pbRatio',

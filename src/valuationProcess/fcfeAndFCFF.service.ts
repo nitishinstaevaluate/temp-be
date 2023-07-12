@@ -16,6 +16,7 @@ import {
   POPShareCapital,
   CapitalStructure,
   POPShareCapitalLabelPer,
+  CapitalStruc,
 } from '../excelFileServices/fcfeAndFCFF.method';
 import { getYearsList } from '../excelFileServices/common.methods';
 
@@ -139,7 +140,7 @@ export class FCFEAndFCFFService {
   async getDiscountingPeriod(discountingPeriod: string): Promise<any> {
     let discountingPeriodValue = null;
     if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 6;
+    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
     return {
       result: discountingPeriodValue,
       msg: 'Discounting period get Successfully.',
@@ -161,6 +162,7 @@ export class FCFEAndFCFFService {
       capitalStructureType,
     } = inputs;
     let discountingFactor = null;
+    let capitalStruc: any;
     if (model === 'FCFE') {
       const res = await this.industryService.getFCFEDisFactor(inputs);
       if (res.result === null) return res;
@@ -174,6 +176,8 @@ export class FCFEAndFCFFService {
       let capitalStructure = 0;
       if (capitalStructureType === 'Company_Based')
         capitalStructure = await CapitalStructure(i, worksheet2);
+        capitalStruc = await CapitalStruc(i,worksheet2);
+        console.log(capitalStruc.debtProp);
       const proportionOfDebt = await ProportionOfDebt(i, worksheet2); //We need to use formula
       const proportionOfEquity = await ProportionOfEquity(i, worksheet2); // We need to use fomula
       let popShareCapitalValue = null;
