@@ -17,7 +17,6 @@ export class ExportResultsController {
       const user = await this.usersService.getUserById(valuation.userId);
       valuation['user'] = user;
       generatePdf(valuation, res);
-      console.log("Step 5");
     } else res.send(`Valuation Data not found for this reportId: ${reportId}`);
   }
 }

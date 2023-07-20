@@ -7,10 +7,19 @@ import { getCellValue } from './common.methods';
 
 export async function GetPAT(i: number, worksheet1: any) {
   //formula: =+'P&L'!B42
+  // console.log(worksheet1);
   const pat = await getCellValue(
     worksheet1,
     `${columnsList[i] + sheet1_PLObj.patRow}`,
   );
+
+  const testVar = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`,
+  );
+
+  // console.log(`${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`);
+  // console.log(`${columnsList[i+1] + sheet1_PLObj.changeInInventoryRow}`);
   return pat;
 }
 
@@ -36,13 +45,13 @@ export async function OtherNonCashItemsMethod(i: number, worksheet1: any) {
     worksheet1,
     `${columnsList[i] + sheet1_PLObj.extraordinaryItemsRow}`,
   );
-
-  return otherIncome + exceptionalItems + extraordinaryItems;
+  return exceptionalItems + extraordinaryItems - otherIncome;
 }
 
 export async function ChangeInNCA(i: number, worksheet2: any) {
-  //formula: =+(SUM(_xlfn.SINGLE(BS!B64:B69)-BS!B68)-SUM(BS!B34:B40))-(SUM(_xlfn.SINGLE(BS!#REF!)-BS!#REF!)-SUM(BS!#REF!))
+  //formula: =+(SUM(@BS!B64:B69-BS!B68)-SUM(BS!B34:B40))-(SUM(@BS!C64:C69-BS!C68)-SUM(BS!C34:C40))
 
+  // Current Column
   const tradeReceivables = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.tradeReceivablesRow}`,
@@ -109,29 +118,154 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
     shortTermProvisions +
     interCo;
 
-  return sum1 - sum2;
+    const currentSum = sum1 - sum2;
+
+    // For next year
+    // Current Column
+  const nextTradeReceivables = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.tradeReceivablesRow}`,
+  );
+  const nextUnbilledRevenues = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.unbilledRevenuesRow}`,
+  );
+  const nextInventories = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.inventoriesRow}`,
+  );
+  const nextAdvances = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.advancesRow}`,
+  );
+  const nextOtherCurrentAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.otherCurrentAssetsRow}`,
+  );
+
+  // b variables
+  const nextTradePayables = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.tradePayablesRow}`,
+  );
+  const nextEmployeePayables = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.employeePayablesRow}`,
+  );
+  const nextShortTermBorrowings = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.shortTermBorrowingsRow}`,
+  );
+  const nextLcPayablesRow = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.lcPayablesRow}`,
+  );
+  const nextOtherCurrentLiabilities = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
+  );
+  const nextShortTermProvisions = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.shortTermProvisionsRow}`,
+  );
+  const nextInterCo = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.interCoRow}`,
+  );
+
+  const nextSum1 = nextTradeReceivables + nextUnbilledRevenues + nextInventories + nextAdvances + nextOtherCurrentAssets
+  const nextSum2 = nextTradePayables + nextEmployeePayables + nextShortTermBorrowings + nextLcPayablesRow + nextOtherCurrentLiabilities + nextShortTermProvisions + nextInterCo
+  const nextSum = nextSum1 - nextSum2
+
+  return currentSum - nextSum;
 }
 
 export async function DeferredTaxAssets(i: number, worksheet2: any) {
-  //formula: =+(BS!B59-BS!B25)-(BS!#REF!-BS!#REF!)
-  const deferredTaxAssets = await getCellValue(
+  //formula: =+(BS!B59-BS!B25)-(BS!C59-BS!C25)
+  // console.log(worksheet2);
+  // Get Current year first
+  const currentDeferredTaxAssets = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.deferredTaxAssetsRow}`,
   );
-  const deferredTaxLiability = await getCellValue(
+  const currentDeferredTaxLiability = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.deferredTaxLiabilityRow}`,
   );
-
-  return deferredTaxAssets - deferredTaxLiability;
+  // Get Next year data
+  const nextDeferredTaxAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.deferredTaxAssetsRow}`,
+  );
+  const nextDeferredTaxLiability = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.deferredTaxLiabilityRow}`,
+  );
+  console.log('Deferred ' ,' ' , currentDeferredTaxAssets, ' ', currentDeferredTaxLiability ,' ' , nextDeferredTaxAssets, ' ', nextDeferredTaxLiability);
+  return (currentDeferredTaxAssets - currentDeferredTaxLiability)-(nextDeferredTaxAssets - nextDeferredTaxLiability);
 }
 
 export async function ChangeInFixedAssets(i: number, worksheet2: any) {
-  const fixedAssets = await getCellValue(
+  const tangibleAssets = await getCellValue(
     worksheet2,
-    `${columnsList[i] + sheet2_BSObj.fixedAssetsRow}`,
+    `${columnsList[i] + sheet2_BSObj.tangibleAssetsRow}`,
   );
-  return fixedAssets;
+  const intangibleAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.intangibleAssetsRow}`,
+  );
+  const capitalWorkInProgress = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalWorkInProgressRow}`,
+  );
+  const preOperativeExpenses = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.preOperativeExpensesRow}`,
+  );
+  const capitalAdvances = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalAdvancesRow}`,
+  );
+  const capitalLiabilities = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalLiabilitiesRow}`,
+  );
+
+  const netFixedAsset = tangibleAssets + intangibleAssets + capitalWorkInProgress + preOperativeExpenses + capitalAdvances + capitalLiabilities
+
+  const nextTangibleAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i+1] + sheet2_BSObj.tangibleAssetsRow}`,
+  );
+  const nextIntangibleAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.intangibleAssetsRow}`,
+  );
+  const nextCapitalWorkInProgress = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalWorkInProgressRow}`,
+  );
+  const nextPreOperativeExpenses = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.preOperativeExpensesRow}`,
+  );
+  const nextCapitalAdvances = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalAdvancesRow}`,
+  );
+  const nextCapitalLiabilities = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalLiabilitiesRow}`,
+  );
+
+  // const nextCapitalLiabilities = await getCellValue(
+  //   worksheet2,
+  //   `${columnsList[i] + sheet2_BSObj.capitalLiabilitiesRow}`,
+  // );
+  const nextNetFixedAsset = nextTangibleAssets + nextIntangibleAssets + nextCapitalWorkInProgress + 
+  nextPreOperativeExpenses + nextCapitalAdvances + nextCapitalLiabilities
+
+  return netFixedAsset - nextNetFixedAsset;
 }
 
 export async function GetDebtAsOnDate(i: number, worksheet2: any) {
@@ -387,4 +521,130 @@ export async function POPShareCapitalLabelPer(i: number, worksheet2: any) {
   if (Cell && Cell.t === 's') preferenceShareCapitalPer = parseInt(Cell.v);
 
   return isNaN(preferenceShareCapitalPer) ? null : preferenceShareCapitalPer;
+}
+
+export async function getWACCInputValues(i:number, worksheet2: any){
+
+  const reserverAndSurplus = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.reserveAndSurplusRow}`,
+  );
+
+  const preferenceShareCapital = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
+  );
+
+  const equityCap = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.equityShareCapitalRow}`,
+  );
+
+
+  const longTermBorrowings = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
+  );
+
+  const shortTermBorrowings = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
+  );
+
+    let waccCalInputs = {
+      equityCapital: equityCap,
+      preferenceShareCapital: preferenceShareCapital,
+      longTermBorrowings: longTermBorrowings,
+      shortTermBorrowings: shortTermBorrowings
+    }
+
+    return waccCalInputs;
+}
+
+
+export async function getShareholderFunds(i:number, worksheet2: any){
+  const equityShareCapital = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.equityShareCapitalRow}`,
+  );
+
+  const preferenceShareCapital = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
+  );
+
+  const otherEquity = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.otherEquityRow}`,
+  );
+
+  const sharePremium = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.sharePremiumRow}`,
+  );
+
+  const reserveAndSurplus = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.reserveAndSurplusRow}`,
+  );
+
+  const revaluationReserve = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.revaluationReserveRow}`,
+  );
+
+  const capitalReserve = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalReserveRow}`,
+  );
+
+  const capitalRedemptionReserve = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.capitalRedemptionReserveRow}`,
+  );
+
+  const debentureRedemptionReserve = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.debentureRedemptionReserveRow}`,
+  );
+
+  const shareBasedPaymentReserve = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shareBasedPaymentReserveRow}`,
+  );
+
+  const definedBenefitObligationReserve = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.definedBenefitObligationReserveRow}`,
+  );
+
+  const otherComprehensiveIncome = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.otherComprehensiveIncomeRow}`,
+  );
+
+  const nonControllingInterest = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.nonControllingInterestRow}`,
+  );
+
+  const shareWarrants = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shareWarrantsRow}`,
+  );
+
+  const shareApplication = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shareApplicationRow}`,
+  );
+
+  const shareHolderFunds = equityShareCapital + preferenceShareCapital + otherEquity +sharePremium + reserveAndSurplus +
+          revaluationReserve + capitalReserve +capitalRedemptionReserve + debentureRedemptionReserve +shareBasedPaymentReserve +definedBenefitObligationReserve +
+          otherComprehensiveIncome + shareWarrants + nonControllingInterest + 
+          shareApplication;
+
+
+
+  return shareHolderFunds;
+
 }

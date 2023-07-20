@@ -14,6 +14,7 @@ import {
   calculateDaysFromDate,
   isLeapYear,
 } from '../excelFileServices/common.methods';
+import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -24,11 +25,17 @@ export class ValuationProcessController {
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
+    console.log("Initiating Process");
+    console.log(inputs);
     const { model, valuationDate, company, userId, excelSheetId } = inputs;
 
     const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
+    let capitalStruc: any;
+
+    // capitalStruc = await CapitalStruc(i,worksheet2);
+    // console.log(capitalStruc.debtProp);
 
     //if we want to get date from excel sheet.
     // const B1Cell = worksheet1['B1'];
@@ -42,7 +49,7 @@ export class ValuationProcessController {
       const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
       if (plDays <totalDays) {
         console.log(
-          'Testing....................',
+          'Running Valuation ..............',
           'Date: ',
           valuationDate,
           'Days:',
@@ -93,7 +100,7 @@ export class ValuationProcessController {
         valuationData: valuationResult,
         userId: userId,
       };
-      console.log(inputs);
+      // console.log(inputs);
       const reportId = await this.valuationsService.createValuation(data);
 
       // Send Response.
@@ -104,6 +111,7 @@ export class ValuationProcessController {
         worksheet1,
         worksheet2,
       );
+      // console.log(inputs);
       if (valuationResponse.result === null) return valuationResponse.msg;
 
       const valuationResult = valuationResponse.result;

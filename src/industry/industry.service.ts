@@ -49,7 +49,7 @@ export class IndustryService {
 
     //Cost of Equity Calculation, formula: =+C15+(C16-C15)*C17
     const COECalculation =
-      riskFreeRate + (expMarketReturn - riskFreeRate) * beta;
+      riskFreeRate + (parseFloat(expMarketReturn) - riskFreeRate) * beta;
 
     //Adjusted Cost of Equity, formula: =+C18+C19
     const adjustedCostOfEquity = COECalculation + riskPremium;
@@ -63,6 +63,8 @@ export class IndustryService {
   async BYRP_Method(): Promise<number> {
     return 1;
   }
+
+
 
 
 }
