@@ -18,14 +18,18 @@ import {
   POPShareCapitalLabelPer,
   CapitalStruc,
   getShareholderFunds,
+  changeInBorrowings,
+  interestAdjustedTaxes,
+  fcfeTerminalValue,
+  fcffTerminalValue,
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate } from '../excelFileServices/common.methods';
 
 @Injectable()
 export class FCFEAndFCFFService {
   constructor(private readonly industryService: IndustryService) { }
   //Common Method for FCFE and FCFF Methods
-  calculatedWacc :  any;
+  calculatedWacc :  any = 0;
   discountingPeriodObj : any;
   discountingFactorWACC: any;
   async FCFEAndFCFF_Common(
@@ -35,6 +39,9 @@ export class FCFEAndFCFFService {
   ): Promise<any> {
     const { outstandingShares, discountingPeriod, popShareCapitalType } =
       inputs;
+      // console.log(inputs);
+      // discountingPeriodValue:number: 0;
+      let equityValue =0;
     const years = await getYearsList(worksheet1);
     if (years === null)
       return {
@@ -42,18 +49,19 @@ export class FCFEAndFCFFService {
         msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
       };
     const discountingPeriodObj = await this.getDiscountingPeriod(
-      discountingPeriod,
+      discountingPeriod
     );
-
-    var vdate = new Date(inputs.valuationDate);
-    var vday = vdate.getDay();
-    var vdayLeft = vday - 90 ;
-    if (vday <= 90) {
-      vdayLeft = 90 - vday;
-    } else {
-      vdayLeft = 365 - vday - 90;
-    }
-
+    
+    
+    var vdate = calculateDaysFromDate(inputs.valuationDate);
+    var vdayLeft = 365 - vdate;
+    vdayLeft = vdayLeft < 1 ? 365 : vdayLeft;
+    // if (vday <= 90) {
+    //   vdayLeft = 90 - vday;
+    // } else {
+    //   vdayLeft = 365 - vday - 90;
+    // }
+    
     if (popShareCapitalType === 'DFBS_PC') {
       const popShareCapitalValue = await POPShareCapitalLabelPer(0, worksheet2);
       if (popShareCapitalValue > 100)
@@ -62,17 +70,33 @@ export class FCFEAndFCFFService {
           msg: 'Invalid: Preference Share Capital % value.',
         };
     }
-
+    let discountingPeriodValue = 0;
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
-    const discountingPeriodValue = discountingPeriodObj.result;
+    discountingPeriodValue = parseInt(discountingPeriodObj.result);
+    // console.log(discountingPeriodValue);
     const fractionOfYearLeft = vdayLeft/ 365;             // Adjust based on next fiscal year
-    const calcDiscountPeriod = fractionOfYearLeft / discountingPeriodValue;
-    // getDiscountingPeriod = 
+    const calcDiscountPeriod = fractionOfYearLeft / discountingPeriodValue;      // To be used as in WACC Calc next
+    // console.log(calcDiscountPeriod);
     let valuation = null;
+    let yearstoUse = years.slice(0, -1);
+    let yearsLength = years.length;
+    const yearLengthT = yearsLength - 1;
+    let sumOfCashFlows = 0;
+    let debtAsOnDate = 0;
+    // console.log(yearsLength);
     const finalResult = await Promise.all(
       years.map(async (year: string, i: number) => {
+        
         let changeInNCA = null;
         let deferredTaxAssets = null;
+        let changeInBorrowingsVal = 0;
+        let addInterestAdjTaxes = 0;
+        let result = {};
+        
+        let fcfeValueAtTerminalRate = 0;
+        let fcffValueAtTerminalRate = 0;
+        // let equityValue =0;
+        let presentFCFF = 0;
         //Get PAT value
         let pat = await GetPAT(i, worksheet1);
         if (pat !== null) pat = pat;
@@ -88,98 +112,131 @@ export class FCFEAndFCFFService {
 
         const deferredTaxAssetsValue = await DeferredTaxAssets(i, worksheet2);
         deferredTaxAssets =  deferredTaxAssetsValue;
-        // Net Cash Flow
-        const netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets;
-          // pat ||
-          // 0 + depAndAmortisation ||
-          // 0 + otherNonCashItems ||
-          // 0 + parseInt(changeInNCA) ||
-          // 0 + parseInt(deferredTaxAssets) ||
-          // 0;
-
-        const shareHolderFundsValue = await getShareholderFunds(i, worksheet2);
-        const changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
-
-        const fcff = netCashFlow + changeInFixedAssets //- shareHolderFundsValue;                                       // Valuation data
         
-        // Perform one time WACC calculation
+        var changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
+        // if (i==0) {}
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
-
-        // Determining WACC @ book value vs market value
-        // if (inputs.capitalStructureType === 'Company_Based') {
-        //     // Determine wacc at book value
-        //     this.calculatedWacc = '';
-        // } else {                                // Only two types enabled for now.
-        //    // Determine wacc at market value
-
-        //    this.calculatedWacc = '';
-        // }
-        const capitalStruc = await CapitalStruc(i,worksheet2);
-        // Get WACC at Discounting Factor. If cost of equity then directly go for adjuste COE otherwise do at WACC
+        // console.log('Change in Net Fixed Assets ', changeInFixedAssets);
         
-        // if (inputs.model === 'FCFF') {
-        //   this.discountingFactorWACC = 1 / (1 + this.calculatedWacc) ^ calcDiscountPeriod
-        // } else if (inputs.model === 'FCFE') {
-        //   this.discountingFactorWACC = 1 / (1 + adjustedCostOfEquity) ^ calcDiscountPeriod
-        // }
-
+        // console.log('disc ', discountingPeriodValue);
+        // var ndiscountingPeriodValue = discountingPeriodValue + 1
+       
 
 
         
-
-        if (i === 0)
-          valuation = fcff;
-        //Industry Calculation.
-        const discountingFactor = await this.getDiscountingFactor(
-          inputs,
-          i,
-          worksheet1,
-          worksheet2,
-        );
-        if (discountingFactor.result === null) return discountingFactor;
-        const discountingFactorValue = discountingFactor.result;
-        const presentFCFF = this.discountingFactorWACC * fcff * fractionOfYearLeft;                                                                 // old code ->     discountingFactorValue * fcff;
-
-        const sumOfCashFlows = presentFCFF;                                                     // To be checked
-        const debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
+        // console.log('WACC Value - ',this.discountingFactorWACC);
+        // if (i === 0)        // Control from here not to print next set of values
+                                                                       // old code ->     discountingFactorValue * fcff;
+        
+        // console.log('out disc ', discountingPeriodValue);
+        // const sumOfCashFlows = 1000000; //presentFCFF;                                                     // To be checked
+        debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
         const cashEquivalents = await CashEquivalents(i, worksheet2);
         const surplusAssets = await SurplusAssets(i, worksheet2);
-        const otherAdj = parseInt(inputs.otherAdj);                                                                // ValidateHere
+        changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
+        addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
+        const capitalStruc = await CapitalStruc(i,worksheet2);
+        const otherAdj = parseFloat(inputs.otherAdj);                                                                // ValidateHere
         //formula: =+B16-B17+B18+B19+B20
-        const equityValue =
-          sumOfCashFlows -
-          debtAsOnDate +
+        console.log('out disc ', discountingPeriodValue);
+
+        
+        
+        const netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets + changeInBorrowingsVal + addInterestAdjTaxes;
+        changeInFixedAssets = changeInFixedAssets - depAndAmortisation;
+        const fcff = netCashFlow + changeInFixedAssets ;    
+        // Calculate wacc for FCFF
+        // =+D22*D30+D26*(1-D7)*D29+D24*D31
+
+        this.calculatedWacc = adjustedCostOfEquity * capitalStruc.equityProp + (inputs.costOfDebt/100)*(1-inputs.taxRate/100)*capitalStruc.debtProp + inputs.copShareCapital/100 * capitalStruc.prefProp
+
+        if  (i === yearLengthT && inputs.model === 'FCFE') {                                // Valuation data
+        fcfeValueAtTerminalRate = await fcfeTerminalValue(fcff,inputs.terminalGrowthRate,adjustedCostOfEquity)
+        // console.log('fcfe ter ', fcfeValueAtTerminalRate)
+        discountingPeriodValue = discountingPeriodValue - 1;
+        } else if (i === yearLengthT && inputs.model === 'FCFF') {  
+          fcffValueAtTerminalRate = await fcffTerminalValue(fcff,inputs.terminalGrowthRate, this.calculatedWacc)
+        }
+        
+
+        if (inputs.model === 'FCFE') {
+          // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
+          if (i === yearLengthT) {
+            // Do nothing
+          } else {
+          this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
+          }
+          console.log('Disc COE ', this.discountingFactorWACC)
+         
+        } else if (inputs.model === 'FCFF') {
+          // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
+          if (i === yearLengthT) {
+            // Do nothing
+          } else {
+          this.discountingFactorWACC = 1/ (1+this.calculatedWacc/100) ** (discountingPeriodValue)
+          }
+          console.log('Disc WACC ', this.discountingFactorWACC)
+        
+        } 
+        valuation = fcff;
+        // console.log('Disounting factor ',this.discountingFactorWACC,' ',fcff)
+        if  (i === yearLengthT){
+          if (inputs.model === 'FCFE') {
+            presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
+          } else {
+            presentFCFF = this.discountingFactorWACC * fcffValueAtTerminalRate
+          }
+        } else {
+          presentFCFF = this.discountingFactorWACC * fcff
+        }
+        sumOfCashFlows = presentFCFF + sumOfCashFlows;
+        console.log('Sum of cash flow ',sumOfCashFlows, 'Eq ',cashEquivalents, 'Surpla ', surplusAssets,'Other ', otherAdj);
+        if  (i === 0) {                     // To be run for first instance only
+          equityValue =
+          // sumOfCashFlows +
+          // debtAsOnDate +
           cashEquivalents +
           surplusAssets +
           otherAdj;
-        const valuePerShare = equityValue / outstandingShares;
-        const result = {
-          particulars: `${parseInt(year) - 1}-${year}`,
-          pat: pat,
-          depAndAmortisation: depAndAmortisation,
-          OtherNonCashItems: otherNonCashItems,
-          nca: changeInNCA,
-          defferedTaxAssets: deferredTaxAssets,
-          netCashFlow: netCashFlow,
-          fixedAssets: changeInFixedAssets,
-          fcff: fcff,
+        }
+        // equityValue = equityValue + sumOfCashFlows;
+        // const valuePerShare = equityValue / outstandingShares;
+
+        result = {
+          particulars: (i === yearLengthT) ?'Terminal Value':`${parseInt(year) - 1}-${year}`,
+          pat: (i === yearLengthT) ?'':pat,
+          depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
+          onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
+          nca: (i === yearLengthT) ?'':changeInNCA,
+          // InterestAdjchangeInBorrowings: inputs.model === 'FCFE' ? changeInBorrowingsVal:addInterestAdjTaxes,
+          defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
+          netCashFlow: (i === yearLengthT) ?'':netCashFlow,
+          fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
+          fcff: (i === yearLengthT) ?fcfeValueAtTerminalRate:fcff,
           discountingPeriod: discountingPeriodValue,
           discountingFactor: this.discountingFactorWACC,
           presentFCFF: presentFCFF,
-          sumOfCashFlows: sumOfCashFlows,
-          debtOnDate: debtAsOnDate,
-          cashEquivalents: cashEquivalents,
-          surplusAssets: surplusAssets,
-          otherAdj: otherAdj,
-          equityValue: equityValue,
-          noOfShares: outstandingShares,
-          valuePerShare: valuePerShare,
-        };
-        console.log('Iteration 1 ran');
-        console.log(result);
+          sumOfCashFlows: '',
+          debtOnDate: i> 0?'':debtAsOnDate,
+          cashEquivalents: i> 0?'':cashEquivalents,
+          surplusAssets: i> 0?'':surplusAssets,
+          otherAdj: i> 0?'':otherAdj,
+          equityValue: '',
+          noOfShares: i> 0?'':outstandingShares,
+          valuePerShare: '',
+          // totalFlow: this.discountingFactorWACC + i
+        }; 
+        discountingPeriodValue = discountingPeriodValue + 1;    
         return result;
       }),
     );
+    
+    // let lastElement = finalResult.slice(-1);
+    finalResult[0].sumOfCashFlows = sumOfCashFlows;
+    finalResult[0].equityValue = inputs.model === 'FCFE'? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows + debtAsOnDate;
+    finalResult[0].valuePerShare = ((equityValue +sumOfCashFlows )*100000)/outstandingShares;       // Applying mulitplier for figures
+    // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
+    // console.log(finalResult);
     return { result: finalResult, valuation: valuation, msg: 'Executed Successfully' };
   }
 
@@ -187,7 +244,7 @@ export class FCFEAndFCFFService {
   async getDiscountingPeriod(discountingPeriod: string): Promise<any> {
     let discountingPeriodValue = null;
     if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
+    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 2;
     return {
       result: discountingPeriodValue,
       msg: 'Discounting period get Successfully.',

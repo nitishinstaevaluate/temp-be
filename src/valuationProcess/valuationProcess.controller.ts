@@ -63,7 +63,7 @@ export class ValuationProcessController {
           const cell = worksheet1[cellAddress];
           if (cell && cell.t === 'n') {
             // Check if the cell contains a number
-            cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+            // cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
           }
         }
 
@@ -75,7 +75,7 @@ export class ValuationProcessController {
           const cell = worksheet2[cellAddress];
           if (cell && cell.t === 'n') {
             // Check if the cell contains a number
-            cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+            // cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
           }
         }
       }
@@ -83,6 +83,7 @@ export class ValuationProcessController {
 
     // Performe calculation by specific method
     if (model === 'FCFE') {
+      
       const valuationResponse = await this.valuationMethodsService.FCFEMethod(
         inputs,
         worksheet1,

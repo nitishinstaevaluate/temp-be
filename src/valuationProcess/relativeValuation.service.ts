@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import {
   netWorthOfCompany,
-  earningPerShare,
+  profitLossValues,
   ebitdaMethod,
   debtMethod,
   incomeFromOperation,
 } from 'src/excelFileServices/relativeValuation.methods';
+
+import {
+  getShareholderFunds,
+} from 'src/excelFileServices/fcfeAndFCFF.method';
 import {getYearsList ,findAverage, findMedian } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 
@@ -19,7 +23,7 @@ export class RelativeValuationService {
   ): Promise<any> {
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
-    
+    let multiplier = 100000;
     if (years === null)
       return {
         result: null,
@@ -30,6 +34,7 @@ export class RelativeValuationService {
     console.log(columnsList[columnIndex], columnIndex, year);
     
     const column = columnsList[columnIndex];
+    // const column = 1;
     const companies = inputs.companies;
     const industries = inputs.industries;
     const ratiotypebased = inputs.type;
@@ -38,6 +43,7 @@ export class RelativeValuationService {
     const ebitda = [];
     const sales = [];
     var companiesInfo: any;
+    let colNum =1;
     
     // const companiesInfo = {
     //   peRatioAvg: findAverage(peRatio),
@@ -84,30 +90,35 @@ export class RelativeValuationService {
         // Do nothing for now
       ;
 
-    const netWorth = await netWorthOfCompany(column, worksheet2);
-    const bookValue = netWorth / outstandingShares;
+    const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
+    let netWorth = 0;
+    netWorth = await getShareholderFunds(0, worksheet2);
+    netWorth = netWorth - prefShareCap;
+
+    const bookValue = netWorth * multiplier / outstandingShares;
     const pbMarketPriceAvg = bookValue * companiesInfo.pbRatioAvg;
     const pbMarketPriceMed = bookValue * companiesInfo.pbRatioMed;
 
-    const eps = await earningPerShare(column, worksheet1);
+    let resProfitLoss = await profitLossValues(colNum-1, worksheet1);
+    let eps = (resProfitLoss.profitLossForYear * multiplier) / outstandingShares;
     const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
     const peMarketPriceMed = eps * companiesInfo.peRatioMed;
 
-    const ebitdaValue = await ebitdaMethod(column, worksheet1);
+    const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
     const enterpriseAvg = ebitdaValue * companiesInfo.ebitdaAvg;
     const enterpriseMed = ebitdaValue * companiesInfo.ebitdaMed;
 
-    const debt = await debtMethod(column, worksheet2);
+    const debt = await debtMethod(colNum-1, worksheet2);
     const ebitdaEquityAvg = enterpriseAvg - debt;
     const ebitdaEquityMed = enterpriseMed - debt;
-    const ebitdaMarketPriceAvg = ebitdaEquityAvg / outstandingShares;
-    const ebitdaMarketPriceMed = ebitdaEquityMed / outstandingShares;
+    const ebitdaMarketPriceAvg = ebitdaEquityAvg * multiplier/ outstandingShares;
+    const ebitdaMarketPriceMed = ebitdaEquityMed* multiplier / outstandingShares;
 
-    const salesValue = await incomeFromOperation(column, worksheet1);
+    const salesValue = await incomeFromOperation(colNum-1, worksheet1);
     const salesEquityAvg = salesValue * companiesInfo.salesAvg;
     const salesEquityMed = salesValue * companiesInfo.salesMed;
-    const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
-    const salesMarketPriceMed = salesEquityMed / outstandingShares;
+    const salesMarketPriceAvg = salesEquityAvg * multiplier/ outstandingShares;
+    const salesMarketPriceMed = salesEquityMed * multiplier / outstandingShares;
 
     const avgPricePerShareAvg = findAverage([
       pbMarketPriceAvg,
@@ -122,8 +133,8 @@ export class RelativeValuationService {
       salesMarketPriceMed,
     ]);
 
-    const locAvg = avgPricePerShareAvg * discountRateValue;
-    const locMed = avgPricePerShareMed * discountRateValue;
+    const locAvg = avgPricePerShareAvg * discountRateValue/100;
+    const locMed = avgPricePerShareMed * discountRateValue/100;
     const finalPriceAvg = avgPricePerShareAvg - locAvg;
     const finalPriceMed = avgPricePerShareMed - locMed;
 

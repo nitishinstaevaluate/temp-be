@@ -15,6 +15,7 @@ export class ValuationMethodsService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
+    // console.log("Hello Counter");
     return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
       inputs,
       worksheet1,

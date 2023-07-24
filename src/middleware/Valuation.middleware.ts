@@ -143,10 +143,10 @@ export class MyMiddleware implements NestInterceptor {
       } = inputs;
       if (!taxRateType)
         throw new BadRequestException('taxRateType is required.');
-      else if (!copShareCapitalType)
-        throw new BadRequestException('copShareCapitalType is required.');
-      else if (!popShareCapitalType)
-        throw new BadRequestException('popShareCapitalType is required.');
+      // else if (!copShareCapitalType)
+      //   throw new BadRequestException('copShareCapitalType is required.');
+      // else if (!popShareCapitalType)
+      //   throw new BadRequestException('popShareCapitalType is required.');
       // else if (!costOfDebtType)
       //   throw new BadRequestException('costOfDebtType is required.');
       else if (!capitalStructureType)
@@ -159,17 +159,17 @@ export class MyMiddleware implements NestInterceptor {
       if (!isTaxRateTypeExist)
         throw new BadRequestException('Invalid taxRateType');
 
-      const isCopShareCapitalTypeExist =
-        await this.copShareCapitalService.isTypeExists(copShareCapitalType);
+      // const isCopShareCapitalTypeExist =
+      //   await this.copShareCapitalService.isTypeExists(copShareCapitalType);
 
-      if (!isCopShareCapitalTypeExist)
-        throw new BadRequestException('Invalid copShareCapitalType');
+      // if (!isCopShareCapitalTypeExist)
+      //   throw new BadRequestException('Invalid copShareCapitalType');
 
-      const isPopShareCapitalTypeExist =
-        await this.popShareCapitalService.isTypeExists(popShareCapitalType);
+      // const isPopShareCapitalTypeExist =
+      //   await this.popShareCapitalService.isTypeExists(popShareCapitalType);
 
-      if (!isPopShareCapitalTypeExist)
-        throw new BadRequestException('Invalid popShareCapitalType');
+      // if (!isPopShareCapitalTypeExist)
+      //   throw new BadRequestException('Invalid popShareCapitalType');
 
       // const isCostOfDebtTypeExist = await this.codService.isTypeExists(
       //   costOfDebtType,

@@ -124,6 +124,7 @@ export function generatePdf(valuation: any, res: any) {
         text: 'Valuation of a firm based on Profit loss and balance sheet statements.',
         style: 'subHeader',
       },
+      
       getPdfContent(valuation),
     ],
     styles: {
@@ -172,7 +173,8 @@ function getOrientation(model:string) {
 }
 export function getPdfContent(valuation: any) {
   const { model, valuationData } = valuation;
-  if (model === 'FCFE' || model === 'FCFF')
+  if (model === 'FCFE' || model === 'FCFF') {
+    console.log("PDF check")
     return {
       table: {
         headerRows: 1,
@@ -180,6 +182,8 @@ export function getPdfContent(valuation: any) {
         style: 'table',
       },
     };
+    console.log('done');
+  }
   else if (model === 'Relative_Valuation') {
     const tablesData = Relative_Valuation_Organized_Data(valuation);
     return [
@@ -227,11 +231,14 @@ export function getPdfContent(valuation: any) {
 }
 
 function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
+
+  // console.log(valuationData);
   const particulars = [],
     pat = [],
     depAndAmortisation = [],
     onCashItems = [],
     nca = [],
+    // InterestAdjchangeInBorrowings = [],
     defferedTaxAssets = [],
     netCashFlow = [],
     fixedAssets = [],
@@ -254,6 +261,7 @@ function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
   depAndAmortisation.push(fcfe_fcff_headingObj['depAndAmortisation']);
   onCashItems.push(fcfe_fcff_headingObj['onCashItems']);
   nca.push(fcfe_fcff_headingObj['nca']);
+  // InterestAdjchangeInBorrowings.push(fcfe_fcff_headingObj['InterestAdjchangeInBorrowings']);
   defferedTaxAssets.push(fcfe_fcff_headingObj['defferedTaxAssets']);
   netCashFlow.push(fcfe_fcff_headingObj['netCashFlow']);
   fixedAssets.push(fcfe_fcff_headingObj['fixedAssets']);
@@ -281,6 +289,7 @@ function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
       else if (key === 'depAndAmortisation') depAndAmortisation.push(value);
       else if (key === 'onCashItems') onCashItems.push(value);
       else if (key === 'nca') nca.push(value);
+      // else if (key === 'InterestAdjchangeInBorrowings') InterestAdjchangeInBorrowings.push(value);
       else if (key === 'defferedTaxAssets') defferedTaxAssets.push(value);
       else if (key === 'netCashFlow') netCashFlow.push(value);
       else if (key === 'fixedAssets') fixedAssets.push(value);
@@ -304,6 +313,7 @@ function FCFEAndFCFF_Organized_Data(valuationData: any[]) {
     depAndAmortisation,
     onCashItems,
     nca,
+    // InterestAdjchangeInBorrowings,
     defferedTaxAssets,
     netCashFlow,
     fixedAssets,

@@ -4,15 +4,33 @@ export const columnsList=['B','C','D','E','F','G','H','I','J','K','L','M','N','O
 export const sheet1_PLObj={
 
     incomeFromOperationRow:"7",
+    otherOperatingIncome:"8",
+    costofMaterialConsumedRow:"13",
+    purchaseOfStockInTrade:"14",
     changeInInventoryRow:"15",
+    employeeBenefitExpenses:"16",
+    powerAndFuel:"17",
+    labourCharges:"18",
+    sellingAndAdministration:"19",
+    sellingOver2:"20",
+    sellingOver3:"21",
+    sellingOver4:"22",
     ebitdaRow:"25",
     depAndAmortisationRow:"26",
     financeCostsRow:"28",
     otherIncomeRow:"29",
     exceptionalItemsRow:"31",
     extraordinaryItemsRow:"33",
+    currentTaxExpense:"36",
+    matCredit:"37",
+    currentTaxExpensePrior:"38",
+    netCurrentTaxExpense:"39",
+    deferredTax:"40",
     patRow:"42",
+    profitLossDiscontinuingOpsNetTax:"52",
     earningPerShareRow:"58",
+
+    // =+B36+B37+B38+B39+B40
 }
 
 export const sheet2_BSObj={
@@ -32,9 +50,6 @@ export const sheet2_BSObj={
     nonControllingInterestRow:"19",
     shareWarrantsRow:"21",
     shareApplicationRow:"22",
-
-
-
     deferredTaxLiabilityRow:"25",
     otherUnsecuredLoansRow:"26",
     longTermBorrowingsRow:"27",
