@@ -270,16 +270,30 @@ export async function ChangeInFixedAssets(i: number, worksheet2: any) {
 }
 
 export async function GetDebtAsOnDate(i: number, worksheet2: any) {
+
+  // =+BS!B26+BS!B27+BS!B36
+
+  const otherUnsecuredLoans = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+  );
+
   const longTermBorrowings = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
   );
-  return longTermBorrowings;
+
+  const shortTermBorrowings = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
+  );
+    console.log ('deb as on date ', longTermBorrowings, ' ', shortTermBorrowings ,' ', otherUnsecuredLoans)
+  return longTermBorrowings+shortTermBorrowings + otherUnsecuredLoans;
 }
 
 export async function fcfeTerminalValue(fcfe: number, terminalRate: number,adjCOE: number){
   // =F13*(1+Sheet2!C9)/(Sheet2!D22-Sheet2!C9)
-  const fcfeAtTerminalRate = fcfe * (1+terminalRate/100)/(adjCOE-terminalRate/100)
+  const fcfeAtTerminalRate = fcfe * (1+terminalRate/100)/(adjCOE/100-terminalRate/100)
 
   return fcfeAtTerminalRate;
 }
@@ -287,7 +301,8 @@ export async function fcfeTerminalValue(fcfe: number, terminalRate: number,adjCO
 export async function fcffTerminalValue(fcff: number, terminalRate: number,wacc: number){
   // =F13*(1+Sheet2!C9)/(Sheet2!C34-Sheet2!C9)
   const fcffAtTerminalRate = fcff * (1+terminalRate/100)/(wacc-terminalRate/100)
-
+  // console.log('calc term ', fcff, ' ', terminalRate, ' ', wacc);
+  // console.log('FCFF TER ', fcffAtTerminalRate);
   return fcffAtTerminalRate;
 }
 
@@ -422,7 +437,7 @@ export async function CapitalStructure(i: number, worksheet2: any) {
   return (longTermBorrowings + shortTermBorrowings) / shareholderFunds;
 }
 
-export async function CapitalStruc(i: number, worksheet2: any) {
+export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number) {
   //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
   // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
   // user may chose to enter values hence calculate as BS!D7:D22 sum)
@@ -431,17 +446,15 @@ export async function CapitalStruc(i: number, worksheet2: any) {
   // Total Debt = Other Unsecured Loans + Long Term Borrowings + Liability component of CCD's + Short Term Borrowings
   // Total Preference Share Capital = Preference Share Capital
   
-  const shareholderFunds = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.shareholderFundsRow}`,
-  );
+  // =+(BS!B27+BS!B26+BS!B36)/(BS!B6-BS!B8)
+  // (longTermBorrowingsRow + otherUnsecuredLoans + shortTermBorrowingsRow ) / (shareholderFunds - preferenceShareCapital)
+
+  // const shareholderFunds = await this.getShareholderFunds(i,worksheet2);
 
   const preferenceShareCapital = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
   );
-
-  const totalEquity = shareholderFunds -preferenceShareCapital;
 
   const otherUnsecuredLoans = await getCellValue(
     worksheet2,
@@ -460,13 +473,14 @@ export async function CapitalStruc(i: number, worksheet2: any) {
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
+  
+  const totalCapital = (longTermBorrowings + otherUnsecuredLoans + shortTermBorrowings ) / (shareHolderFunds - preferenceShareCapital);
+  // const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
 
-  const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
-
-  const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
-  const debtProp = totalDebt / totalCapital;
-  const equityProp = totalEquity / totalCapital
-  const prefProp = preferenceShareCapital / totalCapital
+  // const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
+  const debtProp = totalCapital / (1 + totalCapital);
+  const equityProp = 1 - debtProp;
+  const prefProp = 1 - debtProp -equityProp;
 
   let capitalStructure = {
     capitalStructureType : 'Company_Based',
@@ -475,6 +489,8 @@ export async function CapitalStruc(i: number, worksheet2: any) {
     prefProp: prefProp,
     totalCapital : totalCapital           // this is actual value and not a proporation.
   }
+
+  // console.log(capitalStructure);
   return capitalStructure;
 }
 
@@ -707,7 +723,7 @@ export async function getShareholderFunds(i:number, worksheet2: any){
           shareApplication;
 
 
-    
+
   return shareHolderFunds;
 
 }

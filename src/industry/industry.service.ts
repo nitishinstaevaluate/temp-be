@@ -50,9 +50,9 @@ export class IndustryService {
     //Cost of Equity Calculation, formula: =+C15+(C16-C15)*C17
     const COECalculation =
       riskFreeRate + (parseFloat(expMarketReturn) - riskFreeRate) * beta;
-
+    // console.log('COE bare ',COECalculation,riskFreeRate,parseFloat(expMarketReturn),beta,' ',riskPremium);
     //Adjusted Cost of Equity, formula: =+C18+C19
-    const adjustedCostOfEquity = COECalculation + riskPremium;
+    const adjustedCostOfEquity = COECalculation + parseFloat(riskPremium);
     return adjustedCostOfEquity;
   }
 
