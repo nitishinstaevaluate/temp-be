@@ -34,6 +34,8 @@ export async function netWorthOfCompany(column:number, worksheet2: any) {
   //   }
   // }
 
+
+  
   const preferenceShareCapital = await getCellValue(
     worksheet2,
     // `${column + sheet2_BSObj.equityShareCapitalRow}`,
@@ -41,6 +43,15 @@ export async function netWorthOfCompany(column:number, worksheet2: any) {
   );
   // sum = sum - preferenceShareCapital;
   return preferenceShareCapital;
+}
+
+export async function netWorthOfComp(column:string, worksheet2: any) {
+  const equityShareCapital = await getCellValue(
+    worksheet2,
+    `${column + sheet2_BSObj.equityShareCapitalRow}`,
+  );
+
+  return equityShareCapital
 }
 
 export async function profitLossValues(column:number, worksheet1: any) {

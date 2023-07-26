@@ -233,13 +233,41 @@ export class FCFEAndFCFFService {
         }
         // equityValue = equityValue + sumOfCashFlows;
         // const valuePerShare = equityValue / outstandingShares;
+        if (inputs.model === 'FCFE') {
+          console.log('Model ',"FCFE");
         result = {
           particulars: (i === yearLengthT) ?'Terminal Value':`${parseInt(year) - 1}-${year}`,
           pat: (i === yearLengthT) ?'':pat,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
           onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
           nca: (i === yearLengthT) ?'':changeInNCA,
-          // InterestAdjchangeInBorrowings: inputs.model === 'FCFE' ? changeInBorrowingsVal:addInterestAdjTaxes,
+          changeInBorrowings: (i === yearLengthT) ?'':changeInBorrowingsVal,
+          defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
+          netCashFlow: (i === yearLengthT) ?'':netCashFlow,
+          fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
+          fcff: (i === yearLengthT) ?fcfeValueAtTerminalRate:fcff,
+          discountingPeriod: discountingPeriodValue,
+          discountingFactor: this.discountingFactorWACC,
+          presentFCFF: presentFCFF,
+          sumOfCashFlows: '',
+          // debtOnDate: i> 0?'':finalDebt,
+          cashEquivalents: i> 0?'':cashEquivalents,
+          surplusAssets: i> 0?'':surplusAssets,
+          otherAdj: i> 0?'':otherAdj,
+          equityValue: '',
+          noOfShares: i> 0?'':outstandingShares,
+          valuePerShare: '',
+          // totalFlow: this.discountingFactorWACC + i
+        }; 
+      } else if (inputs.model === 'FCFF') {
+        console.log('Model ',"FCFF");
+        result = {
+          particulars: (i === yearLengthT) ?'Terminal Value':`${parseInt(year) - 1}-${year}`,
+          pat: (i === yearLengthT) ?'':pat,
+          addInterestAdjTaxes: (i === yearLengthT) ?'':addInterestAdjTaxes,
+          depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
+          onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
+          nca: (i === yearLengthT) ?'':changeInNCA,
           defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
           netCashFlow: (i === yearLengthT) ?'':netCashFlow,
           fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
@@ -255,10 +283,10 @@ export class FCFEAndFCFFService {
           equityValue: '',
           noOfShares: i> 0?'':outstandingShares,
           valuePerShare: '',
-          // totalFlow: this.discountingFactorWACC + i
         }; 
+      }
         discountingPeriodValue = discountingPeriodValue + 1;    
-        
+        // console.log(result);
         return result;
       }),
     );
@@ -268,7 +296,7 @@ export class FCFEAndFCFFService {
     finalResult[0].equityValue = inputs.model === 'FCFE'? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
-    // console.log(finalResult);
+    console.log(finalResult);
     
     return { result: finalResult, valuation: valuation, msg: 'Executed Successfully' };
   }

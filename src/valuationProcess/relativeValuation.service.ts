@@ -5,6 +5,7 @@ import {
   ebitdaMethod,
   debtMethod,
   incomeFromOperation,
+  netWorthOfComp,
 } from 'src/excelFileServices/relativeValuation.methods';
 
 import {
@@ -89,6 +90,10 @@ export class RelativeValuationService {
       else
         // Do nothing for now
       ;
+
+    // const abc= await netWorthOfComp(column, worksheet2);
+    // console.log('Hello Abc - ', abc);
+
 
     const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
     let netWorth = 0;

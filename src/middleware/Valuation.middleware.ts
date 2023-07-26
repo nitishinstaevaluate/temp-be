@@ -89,9 +89,9 @@ export class MyMiddleware implements NestInterceptor {
           riskPremium,
         } = inputs;
 
-        if (!riskFreeRateType)
-          throw new BadRequestException('riskFreeRateType is required.');
-        else if (!expMarketReturnType)
+        // if (!riskFreeRateType)
+        //   throw new BadRequestException('riskFreeRateType is required.');
+        if (!expMarketReturnType)
           throw new BadRequestException('expMarketReturnType is required.');
         else if (!betaType)
           throw new BadRequestException('betaType is required.');
@@ -141,23 +141,23 @@ export class MyMiddleware implements NestInterceptor {
         costOfDebt,
         capitalStructureType,
       } = inputs;
-      if (!taxRateType)
-        throw new BadRequestException('taxRateType is required.');
+      // if (!taxRateType)
+      //   throw new BadRequestException('taxRateType is required.');
       // else if (!copShareCapitalType)
       //   throw new BadRequestException('copShareCapitalType is required.');
       // else if (!popShareCapitalType)
       //   throw new BadRequestException('popShareCapitalType is required.');
       // else if (!costOfDebtType)
       //   throw new BadRequestException('costOfDebtType is required.');
-      else if (!capitalStructureType)
+      if (!capitalStructureType)
         throw new BadRequestException('capitalStructureType is required.');
 
       const isTaxRateTypeExist = await this.taxRatesService.isTypeExists(
         taxRateType,
       );
 
-      if (!isTaxRateTypeExist)
-        throw new BadRequestException('Invalid taxRateType');
+      // if (!isTaxRateTypeExist)
+      //   throw new BadRequestException('Invalid taxRateType');
 
       // const isCopShareCapitalTypeExist =
       //   await this.copShareCapitalService.isTypeExists(copShareCapitalType);
