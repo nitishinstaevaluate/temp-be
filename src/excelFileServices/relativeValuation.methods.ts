@@ -216,7 +216,7 @@ export async function ebitdaMethod(column:number, worksheet1: any) {
 }
 
 export async function debtMethod(column:number, worksheet2: any) {
-  //formula: =+BS!D27+BS!D36
+  //formula: ==+BS!B26+BS!B27+BS!B36
   const longTermBorrowings = await getCellValue(
     worksheet2,
     `${columnsList[column] + sheet2_BSObj.longTermBorrowingsRow}`,
@@ -225,7 +225,12 @@ export async function debtMethod(column:number, worksheet2: any) {
     worksheet2,
     `${columnsList[column] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
-  return longTermBorrowings + shortTermBorrowings;
+
+  const otherUnsecuredLoans = await getCellValue(
+    worksheet2,
+    `${columnsList[column] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+  );
+  return longTermBorrowings + shortTermBorrowings + otherUnsecuredLoans;
 }
 
 export async function incomeFromOperation(column:number, worksheet1: any) {

@@ -72,14 +72,19 @@ export const fcff_headingObj = {
 export const relative_valuation_headingObj = {
   pbRatioLabel: 'P/B Ratio',
   netWorth: 'Net Worth of Company',
-  pbShares: 'Number of Shares',
-  bookValue: 'Book Value per Share',
   pbRatio: 'P/B Ratio of Industry',
+  // pbRatioIndustry: 'P/B Ratio of Industry',
+  pbShares: 'Number of Shares',
+  fairValueEq: 'Fair Value of Equity',
+  bookValue: 'Book Value per Share',
   pbMarketPrice: 'Market Price',
+  
   peRatioLabel:"P/E Ratio",
+  pat:"Profit after Taxes",
   peRatio:"P/E Ratio of Industry",
-  eps:"EPS",
   peMarketPrice: 'Market Price',
+  eps:"EPS",
+
   ebitdaLabel:"EV/EBITDA",
   ebitda:"EBITDA",
   ev:"EV/EBITDA",
@@ -88,16 +93,20 @@ export const relative_valuation_headingObj = {
   ebitdaEquity:"Value of Equity",
   ebitdaShares:"Number of shares",
   ebitdaMarketPrice:"Market Price",
+
   salesLabel:"Price to Sales",
   sales:"Sales of company (INR)",
   salesRatio:"P/S Ratio",
   salesEquity:"Value of Equity",
+
   salesShares:"Number of shares",
   salesMarketPrice:"Market Price",
-  avgPricePerShare:"Average Price per Share",
+  
+  avgPricePerShare:"Average Price of Equity",
   average:"Average",
-  loc:"Less: Illiquidity Discount/size/lack of control",
-  finalPrice:"Final Price",
+  loc:"Less: Illiquidity",
+  noOfShares:"No. of Shares",
+  finalPrice:"Fair Value per Share",
   tentativeIssuePrice:"Tentative Issue Price (Average of above)",
 };
 export const footerInfo = {

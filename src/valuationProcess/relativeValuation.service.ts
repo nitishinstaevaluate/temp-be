@@ -94,54 +94,62 @@ export class RelativeValuationService {
     // const abc= await netWorthOfComp(column, worksheet2);
     // console.log('Hello Abc - ', abc);
 
-
+    // Valuation based on P/B Ratio
     const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
     let netWorth = 0;
-    netWorth = await getShareholderFunds(0, worksheet2);
+    netWorth = await getShareholderFunds(0, worksheet2);        // Always need the first column
     netWorth = netWorth - prefShareCap;
 
     const bookValue = netWorth * multiplier / outstandingShares;
-    const pbMarketPriceAvg = bookValue * companiesInfo.pbRatioAvg;
-    const pbMarketPriceMed = bookValue * companiesInfo.pbRatioMed;
+    const pbMarketPriceAvg = netWorth * companiesInfo.pbRatioAvg;
+    const pbMarketPriceMed = netWorth * companiesInfo.pbRatioMed;
 
+    // Valuation based on P/E Ratio
     let resProfitLoss = await profitLossValues(colNum-1, worksheet1);
     let eps = (resProfitLoss.profitLossForYear * multiplier) / outstandingShares;
-    const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
-    const peMarketPriceMed = eps * companiesInfo.peRatioMed;
+    const peMarketPriceAvg = resProfitLoss.profitLossForYear * companiesInfo.peRatioAvg;
+    const peMarketPriceMed = resProfitLoss.profitLossForYear * companiesInfo.peRatioMed;
 
+    // Valuation based on EV/EBITDA
     const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
     const enterpriseAvg = ebitdaValue * companiesInfo.ebitdaAvg;
     const enterpriseMed = ebitdaValue * companiesInfo.ebitdaMed;
 
     const debt = await debtMethod(colNum-1, worksheet2);
+
     const ebitdaEquityAvg = enterpriseAvg - debt;
     const ebitdaEquityMed = enterpriseMed - debt;
     const ebitdaMarketPriceAvg = ebitdaEquityAvg * multiplier/ outstandingShares;
     const ebitdaMarketPriceMed = ebitdaEquityMed* multiplier / outstandingShares;
 
+    // Valuation based on Price/Sales
     const salesValue = await incomeFromOperation(colNum-1, worksheet1);
     const salesEquityAvg = salesValue * companiesInfo.salesAvg;
     const salesEquityMed = salesValue * companiesInfo.salesMed;
-    const salesMarketPriceAvg = salesEquityAvg * multiplier/ outstandingShares;
-    const salesMarketPriceMed = salesEquityMed * multiplier / outstandingShares;
+    const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
+    const salesMarketPriceMed = salesEquityMed  / outstandingShares;
 
     const avgPricePerShareAvg = findAverage([
       pbMarketPriceAvg,
       peMarketPriceAvg,
-      ebitdaMarketPriceAvg,
-      salesMarketPriceAvg,
+      // ebitdaMarketPriceAvg,
+      ebitdaEquityAvg,
+      salesEquityAvg,
     ]);
     const avgPricePerShareMed = findAverage([
       pbMarketPriceMed,
       peMarketPriceMed,
-      ebitdaMarketPriceMed,
-      salesMarketPriceMed,
+      // ebitdaMarketPriceMed,
+      ebitdaEquityMed,
+      salesEquityMed,
     ]);
 
     const locAvg = avgPricePerShareAvg * discountRateValue/100;
     const locMed = avgPricePerShareMed * discountRateValue/100;
     const finalPriceAvg = avgPricePerShareAvg - locAvg;
     const finalPriceMed = avgPricePerShareMed - locMed;
+    const fairValuePerShareAvg = finalPriceAvg * multiplier / outstandingShares;
+    const fairValuePerShareMed = finalPriceMed * multiplier / outstandingShares
 
     const tentativeIssuePrice = Math.round(
       findAverage([finalPriceAvg, finalPriceMed]),
@@ -167,6 +175,7 @@ export class RelativeValuationService {
         },
         {
           particular: 'peRatio',
+          pat:resProfitLoss.profitLossForYear,
           epsAvg: eps,
           epsMed: eps,
           peRatioAvg: companiesInfo.peRatioAvg,
@@ -176,8 +185,9 @@ export class RelativeValuationService {
         },
         {
           particular: 'ebitda',
-          ebitdaAvg: ebitdaValue,
-          ebitdaMed: ebitdaValue,
+          ebitda: ebitdaValue,
+          // ebitdaAvg: companiesInfo.ebitdaAvg,
+          // ebitdaMed: companiesInfo.ebitdaAvg,
           evAvg: companiesInfo.ebitdaAvg,
           evMed: companiesInfo.ebitdaMed,
           enterpriseAvg: enterpriseAvg,
@@ -208,13 +218,18 @@ export class RelativeValuationService {
           particular: 'result',
           avgPricePerShareAvg: avgPricePerShareAvg,
           avgPricePerShareMed: avgPricePerShareMed,
-          averageAvg: avgPricePerShareAvg,
-          averageMed: avgPricePerShareMed,
+          // averageAvg: avgPricePerShareAvg,
+          // averageMed: avgPricePerShareMed,
           locAvg: locAvg,
           locMed: locMed,
           finalPriceAvg: finalPriceAvg,
           finalPriceMed: finalPriceMed,
-          tentativeIssuePrice: tentativeIssuePrice,
+          outstandingShares: outstandingShares,
+          // outstandingShares: outstandingShares,
+          fairValuePerShareAvg: fairValuePerShareAvg,
+          fairValuePerShareMed:fairValuePerShareMed,
+
+          // tentativeIssuePrice: tentativeIssuePrice,
         },
       ],
     };
