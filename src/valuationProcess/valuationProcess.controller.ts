@@ -12,7 +12,6 @@ import { ValuationMethodsService } from './valuation.methods.service';
 import { MyMiddleware } from '../middleware/Valuation.middleware';
 import {
   calculateDaysFromDate,
-  isLeapYear,
 } from '../excelFileServices/common.methods';
 import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 @Controller('valuationProcess')
@@ -44,16 +43,16 @@ export class ValuationProcessController {
     // const date = data[2];
     
     if (model === 'FCFE' || model === 'FCFF') {
-      const plDays = calculateDaysFromDate(valuationDate);
-      const date = new Date(valuationDate);
-      const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
-      if (plDays <totalDays) {
+      // const plDays = calculateDaysFromDate(new Date(valuationDate));
+      // const date = new Date(valuationDate);
+      // const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
+      // if (plDays <totalDays) {
         console.log(
           'Running Valuation ..............',
           'Date: ',
           valuationDate,
-          'Days:',
-          plDays,
+          // 'Days:',
+          // plDays.dateDiff,
         );
         // Change column B values for worksheet1
         const range = XLSX.utils.decode_range(worksheet1['!ref']);
@@ -78,7 +77,7 @@ export class ValuationProcessController {
             // cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
           }
         }
-      }
+      // }
     }
 
     // Performe calculation by specific method

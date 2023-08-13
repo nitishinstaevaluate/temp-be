@@ -5,17 +5,12 @@ import { getCellValue } from './common.methods';
 
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 
-export async function GetPAT(i: number, worksheet1: any) {
+export async function GetPAT(i: number, worksheet1:any) {
   //formula: =+'P&L'!B42
   // console.log(worksheet1);
   const pat = await getCellValue(
     worksheet1,
-    `${columnsList[i] + sheet1_PLObj.patRow}`,
-  );
-
-  const testVar = await getCellValue(
-    worksheet1,
-    `${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`,
+    `${columnsList[i] + sheet1_PLObj.patRow}`,              
   );
 
   // console.log(`${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`);
@@ -27,11 +22,27 @@ export async function DepAndAmortisation(i: number, worksheet1: any) {
   //formula: =+'P&L'!B26
   const depAndAmortisation = await getCellValue(
     worksheet1,
-    `${columnsList[i] + sheet1_PLObj.depAndAmortisationRow}`,
+    `${columnsList[i] + sheet1_PLObj.depAndAmortisationRow}`,   
   );
   return depAndAmortisation;
 }
 export async function OtherNonCashItemsMethod(i: number, worksheet1: any) {
+  //formula:  =+(-'P&L'!B29+'P&L'!B31+'P&L'!B33)
+  const otherIncome = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.otherIncomeRow}`,
+  );
+  const exceptionalItems = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.exceptionalItemsRow}`,
+  );
+  const extraordinaryItems = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.extraordinaryItemsRow}`,
+  );
+  return exceptionalItems + extraordinaryItems - otherIncome;
+}
+export async function OtherNonCashItemsMethodNext(i: number, worksheet1: any) {
   //formula:  =+(-'P&L'!B29+'P&L'!B31+'P&L'!B33)
   const otherIncome = await getCellValue(
     worksheet1,
@@ -287,7 +298,7 @@ export async function GetDebtAsOnDate(i: number, worksheet2: any) {
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
-    console.log ('deb as on date ', longTermBorrowings, ' ', shortTermBorrowings ,' ', otherUnsecuredLoans)
+    // console.log ('deb as on date ', longTermBorrowings, ' ', shortTermBorrowings ,' ', otherUnsecuredLoans)
   return longTermBorrowings+shortTermBorrowings + otherUnsecuredLoans;
 }
 
@@ -326,6 +337,25 @@ export async function interestAdjustedTaxes(i: number, worksheet1: any, taxRate:
     worksheet1,
     `${columnsList[i+1] + sheet1_PLObj.financeCostsRow}`,
   );
+
+  const addInterestAdjustedTaxes = financeCost * (1 - taxRate/100);
+  return addInterestAdjustedTaxes;
+
+}
+
+export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1: any, taxRate: number) {
+  // =+'P&L'!C28*(1-Sheet2!$D$7)
+  let financeCost = await getCellValue(
+    worksheet1,
+    `${columnsList[i+1] + sheet1_PLObj.financeCostsRow}`,
+  );
+
+  let financeCostOld = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.financeCostsRow}`,
+  );
+
+  financeCost = financeCost - financeCostOld;
 
   const addInterestAdjustedTaxes = financeCost * (1 - taxRate/100);
   return addInterestAdjustedTaxes;
@@ -490,7 +520,7 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
     totalCapital : totalCapital           // this is actual value and not a proporation.
   }
 
-  // console.log(capitalStructure);
+  console.log(capitalStructure);
   return capitalStructure;
 }
 

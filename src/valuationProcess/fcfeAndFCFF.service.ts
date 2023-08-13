@@ -4,6 +4,7 @@ import {
   GetPAT,
   DepAndAmortisation,
   OtherNonCashItemsMethod,
+  OtherNonCashItemsMethodNext,
   ChangeInNCA,
   DeferredTaxAssets,
   ChangeInFixedAssets,
@@ -22,8 +23,11 @@ import {
   interestAdjustedTaxes,
   fcfeTerminalValue,
   fcffTerminalValue,
+  interestAdjustedTaxesWithStubPeriod,
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue } from '../excelFileServices/common.methods';
+import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
+const date = require('date-and-time');
 
 @Injectable()
 export class FCFEAndFCFFService {
@@ -31,7 +35,8 @@ export class FCFEAndFCFFService {
   //Common Method for FCFE and FCFF Methods
   
   discountingPeriodObj : any;
-  discountingFactorWACC: any;
+  discountingFactorWACC : any;
+  stubAdjRequired:boolean = false;
   async FCFEAndFCFF_Common(
     inputs: any,
     worksheet1: any,
@@ -41,8 +46,9 @@ export class FCFEAndFCFFService {
       inputs;
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
-      let equityValue =0;
+      let equityValue = 0;
     const years = await getYearsList(worksheet1);
+    console.log('Net year ',years);
     if (years === null)
       return {
         result: null,
@@ -52,9 +58,27 @@ export class FCFEAndFCFFService {
       discountingPeriod
     );
     
-    var vdate = calculateDaysFromDate(inputs.valuationDate);
-    var vdayLeft = 365 - vdate;
-    vdayLeft = vdayLeft < 1 ? 365 : vdayLeft;
+      //c------ Start Sample ----------//
+    // const valuationDate = new Date(inputs.valuationDate);
+    // let updDate = date.addDays(valuationDate,1)
+    // console.log('Valuation Date ', updDate);
+
+    // const valuationMonth = updDate.getMonth();
+    // console.log('Month ',valuationMonth);
+
+    //c------ End Sample ----------//
+    var vdate = await calculateDaysFromDate(new Date(inputs.valuationDate));
+    // console.log('Days left ',vdate);
+    // var vdayLeft = 365 - vdate;
+    console.log('total days ',vdate.totalDays);
+    console.log('is leap ',vdate.isLeapYear);
+    if (vdate.dateDiff < vdate.totalDays) {
+      this.stubAdjRequired = true;
+    }
+    console.log('Which period STUB OK?',this.stubAdjRequired);
+    // vdayLeft = vdayLeft <= 1 ? 365 : vdayLeft;
+
+    console.log('Days left in financial year ', vdate.dateDiff);
     // if (vday <= 90) {
     //   vdayLeft = 90 - vday;
     // } else {
@@ -72,11 +96,13 @@ export class FCFEAndFCFFService {
     let discountingPeriodValue = 0;
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     discountingPeriodValue = discountingPeriodObj.result;
-    console.log('Discoun Val ',discountingPeriod,discountingPeriodValue );
+    // console.log('Discoun Val ',discountingPeriod,discountingPeriodValue );
 
-    // console.log(discountingPeriodValue);
-    const fractionOfYearLeft = vdayLeft/ 365;             // Adjust based on next fiscal year
-    const calcDiscountPeriod = fractionOfYearLeft / discountingPeriodValue;      // To be used as in WACC Calc next
+    console.log('Discoun Val ',discountingPeriodValue);
+    
+    let fractionOfYearLeft = this.stubAdjRequired == true ? (vdate.dateDiff-1)/ vdate.totalDays: vdate.dateDiff/vdate.totalDays;            // Adjust based on next fiscal year
+    console.log('Faction Year left ', fractionOfYearLeft);
+    discountingPeriodValue = fractionOfYearLeft * discountingPeriodValue;      // To be used as in WACC Calc next
     // console.log(calcDiscountPeriod);
     let valuation = null;
     let finalWacc = 0;
@@ -96,6 +122,7 @@ export class FCFEAndFCFFService {
         let deferredTaxAssets = null;
         let changeInBorrowingsVal = 0;
         let addInterestAdjTaxes = 0;
+        let addInterestAdjustedTaxesStub = 0;
         let result = {};
         // let fcff = 0;
         let fcfeValueAtTerminalRate = 0;
@@ -104,15 +131,36 @@ export class FCFEAndFCFFService {
         let presentFCFF = 0;
         // let capitalStruc = {};
         //Get PAT value
-        let pat = await GetPAT(i, worksheet1);
-        if (pat !== null) pat = pat;
+
+
+        // For mid year calculation need nextPAT,depAndAmortisationNext
+
+        // console.log("Value of i ",i);
+        const patNext = await getCellValue(
+          worksheet1,
+          `${columnsList[i+1] + sheet1_PLObj.patRow}`,
+        );
+        const depAndAmortisationNext = await getCellValue(
+          worksheet1,
+          `${columnsList[i+1] + sheet1_PLObj.depAndAmortisationRow}`,
+        );
+
+        let pat = await GetPAT(i+1, worksheet1);
+        let patOld = await GetPAT(i,worksheet1);
+        pat = i === 0 && this.stubAdjRequired == true  ? pat-patOld : pat;
+        // if (pat !== null) pat = pat;
+        // pat = i === 0 ? patNext - pat:pat;
+        console.log('PAT ',pat);
         //Get Depn and Amortisation value
-        let depAndAmortisation = await DepAndAmortisation(i, worksheet1);
-        if (depAndAmortisation !== null)
-          depAndAmortisation = depAndAmortisation;
+        let depAndAmortisation = await DepAndAmortisation(i+1, worksheet1);
+        let depAndAmortisationOld = await DepAndAmortisation(i, worksheet1);
+        
+        depAndAmortisation = i === 0 && this.stubAdjRequired == true  ? depAndAmortisation - depAndAmortisationOld:depAndAmortisation;
 
         //Get Oher Non Cash items Value
-        const otherNonCashItems = await OtherNonCashItemsMethod(i, worksheet1);
+        let otherNonCashItems = await OtherNonCashItemsMethod(i+1, worksheet1);
+        let otherNonCashItemsOld = await OtherNonCashItemsMethodNext(i, worksheet1);
+        otherNonCashItems = i === 0 && this.stubAdjRequired == true ? otherNonCashItems - otherNonCashItemsOld : otherNonCashItems;
         const changeInNCAValue = await ChangeInNCA(i, worksheet2);
         changeInNCA = changeInNCAValue;
 
@@ -143,6 +191,8 @@ export class FCFEAndFCFFService {
         changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
         // console.log('Borrowings, ',changeInBorrowingsVal);
         addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
+        addInterestAdjustedTaxesStub = await interestAdjustedTaxesWithStubPeriod(i,worksheet1,inputs.taxRate);
+        addInterestAdjTaxes = i === 0 && this.stubAdjRequired == true  ? addInterestAdjustedTaxesStub:addInterestAdjTaxes;
         // const shareholderFunds = await getShareholderFunds(i,worksheet2);
         
         const shareholderFunds = await getShareholderFunds(i,worksheet2);
@@ -152,7 +202,7 @@ export class FCFEAndFCFFService {
         // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
         calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
         
-        // console.log('WACC Calculat- ',i,' ',calculatedWacc);
+        console.log('WACC Calculat- ',i,' ',calculatedWacc);
         const otherAdj = parseFloat(inputs.otherAdj);                                                                // ValidateHere
         //formula: =+B16-B17+B18+B19+B20
         // console.log('out disc ', discountingPeriodValue);
@@ -183,13 +233,13 @@ export class FCFEAndFCFFService {
           fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
           discountingPeriodValue = discountingPeriodValue - 1;
         }
-        console.log('Term - ',fcffValueAtTerminalRate);
+        // console.log('Term - ',fcffValueAtTerminalRate);
         
         if (i === 0) {
           finalWacc = calculatedWacc;
           finalDebt = debtAsOnDate;
           }
-          console.log('Final Deb ',finalDebt);
+          // console.log('Final Deb ',finalDebt);
         if (inputs.model === 'FCFE') {
           // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
           if (i === yearLengthT) {
@@ -221,6 +271,7 @@ export class FCFEAndFCFFService {
         } else {
           presentFCFF = this.discountingFactorWACC * fcff
         }
+        console.log("Present FCFF ",presentFCFF);
         sumOfCashFlows = presentFCFF + sumOfCashFlows;
         console.log('Sum of cash flow ',i, ' ' ,sumOfCashFlows, 'Eq ',cashEquivalents, 'Surpla ', surplusAssets,'Other ', otherAdj);
         if  (i === 0) {                     // To be run for first instance only
@@ -234,9 +285,8 @@ export class FCFEAndFCFFService {
         // equityValue = equityValue + sumOfCashFlows;
         // const valuePerShare = equityValue / outstandingShares;
         if (inputs.model === 'FCFE') {
-          console.log('Model ',"FCFE");
         result = {
-          particulars: (i === yearLengthT) ?'Terminal Value':`${parseInt(year) - 1}-${year}`,
+          particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
           onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
@@ -260,9 +310,8 @@ export class FCFEAndFCFFService {
           // totalFlow: this.discountingFactorWACC + i
         }; 
       } else if (inputs.model === 'FCFF') {
-        console.log('Model ',"FCFF");
         result = {
-          particulars: (i === yearLengthT) ?'Terminal Value':`${parseInt(year) - 1}-${year}`,
+          particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
           addInterestAdjTaxes: (i === yearLengthT) ?'':addInterestAdjTaxes,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
@@ -296,8 +345,7 @@ export class FCFEAndFCFFService {
     finalResult[0].equityValue = inputs.model === 'FCFE'? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
-    console.log(finalResult);
-    
+    this.stubAdjRequired = false;                              // Resetting to default;
     return { result: finalResult, valuation: valuation, msg: 'Executed Successfully' };
   }
 
