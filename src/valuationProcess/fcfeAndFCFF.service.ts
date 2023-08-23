@@ -25,7 +25,7 @@ export class FCFEAndFCFFService {
     private readonly industryService: IndustryService,
     private readonly customLogger: CustomLogger,
   ) {}
-
+  // test ifin
   //Common Method for FCFE and FCFF Methods
   async FCFEAndFCFF_Common(
     inputs: any,
