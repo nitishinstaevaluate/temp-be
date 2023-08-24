@@ -5,6 +5,8 @@ import {
   UseInterceptors,
   Get,
   Param,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
@@ -158,9 +160,20 @@ export class ValuationProcessController {
 //Industries Controller
 @Controller('valuations')
 export class ValuationsController {
+  
   constructor(private valuationsService: ValuationsService) {}
+
   @Get(':userId')
   async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
     return this.valuationsService.getValuationsByUserId(userId);
+  }
+
+  @Get('paginate/:ids')
+  async getPaginatedValuations(
+    @Param('ids') ids: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('pageSize', ParseIntPipe) pageSize: number = 10,
+  ) :Promise<any>{
+    return this.valuationsService.paginateValuationByUserId(ids, page, pageSize);
   }
 }
