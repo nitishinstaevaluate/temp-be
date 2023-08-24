@@ -4,6 +4,7 @@ import {
     Post,
     Body,
     Delete,
+    Query,
     Param,
     Put,
     UploadedFile,
@@ -12,13 +13,17 @@ import {
 
   import {
     BetaIndustry,
-    IndustriesRatio
+    IndustriesRatio,
+    HistoricalReturns,
+    IndianTreasuryYield
   } from './schema/data-references.schema';
 
 
   import {
     BetaIndustriesService,
-    IndustriesRatioService
+    IndustriesRatioService,
+    HistoricalReturnsService,
+    IndianTreasuryYieldService
   } from './data-references.service';
 
 @Controller('data-references')
@@ -31,7 +36,7 @@ export class BetaIndustriesController {
 
   @Get()
   async findAll(
-    @Param('industryId') industryId: string,
+    // @Param('industryId') industryId: string,
   ): Promise<BetaIndustry[]> {
     return this.betaIndustriesService.getBetaIndustries();
   }
@@ -48,17 +53,58 @@ export class BetaIndustriesController {
 export class IndustriesRatioController {
   constructor(private industriesRatioService: IndustriesRatioService) { }
 
-//   @Get()
-//   async findAll(
-//     @Param('industryId') industryId: string,
-//   ): Promise<IndustryRatio[]> {
-//     return this.industriesRatioService.getIndustriesRatio();
-//   }
+  @Get()
+  async findAll(
+    @Param('industryId') industryId: string,
+    // @Query() query: { industryId: string }
+  ): Promise<IndustriesRatio[]> {
+    return this.industriesRatioService.getIndustriesRatio();
+  }
 
-//   @Get(':industryId')
-//   async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
-//     return this.industriesRatioService.getIndustriesRatioById(id);
-//   }
+  @Get(':industryId')
+  async findByID(@Param('industryId') id: string): Promise<IndustriesRatio[]> {
+    return this.industriesRatioService.getIndustriesRatioById(id);
+  }
+
+
+}
+
+// Historical Returns Controller
+@Controller('historicalreturns')
+export class HistoricalReturnsController {
+  constructor(private historicalReturnsService: HistoricalReturnsService) { }
+
+  @Get()
+  async findAll(
+    // @Param('') industryId: string,
+    ): Promise<HistoricalReturns[]> {
+    return this.historicalReturnsService.getHistoricalReturns();
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<HistoricalReturns[]> {
+    return this.historicalReturnsService.getHistoricalReturnsById(id);
+  }
+
+
+}
+
+// Indian Treasury Yield Controller
+@Controller('indiantreasuryyields')
+export class IndianTreasuryYieldController {
+  constructor(private indianTresuryYieldService: IndianTreasuryYieldService) { }
+
+  @Get()
+  async findAll(
+    // @Param('') industryId: string,
+    ): Promise<IndianTreasuryYield[]> {
+    return this.indianTresuryYieldService.getIndianTreasuryYield();
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<IndianTreasuryYield[]> {
+    return this.indianTresuryYieldService.getIndianTreasuryYieldById(id);
+  }
 
 
 }

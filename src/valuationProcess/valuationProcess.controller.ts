@@ -12,8 +12,8 @@ import { ValuationMethodsService } from './valuation.methods.service';
 import { MyMiddleware } from '../middleware/Valuation.middleware';
 import {
   calculateDaysFromDate,
-  isLeapYear,
 } from '../excelFileServices/common.methods';
+import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 import { CustomLogger } from 'src/loggerService/logger.service';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
@@ -26,6 +26,8 @@ export class ValuationProcessController {
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
+    console.log("Initiating Process");
+    console.log(inputs);
     this.customLogger.log({
       message: 'Request is entered into Valuation Process Controller.',
       userId: inputs.userId,
@@ -46,6 +48,10 @@ let workbook=null;
 }
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
+    let capitalStruc: any;
+
+    // capitalStruc = await CapitalStruc(i,worksheet2);
+    // console.log(capitalStruc.debtProp);
 
     //if we want to get date from excel sheet.
     // const B1Cell = worksheet1['B1'];
@@ -54,16 +60,16 @@ let workbook=null;
     // const date = data[2];
 
     if (model === 'FCFE' || model === 'FCFF') {
-      const plDays = calculateDaysFromDate(valuationDate);
-      const date = new Date(valuationDate);
-      const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
-      if (plDays < totalDays) {
+      // const plDays = calculateDaysFromDate(new Date(valuationDate));
+      // const date = new Date(valuationDate);
+      // const totalDays = isLeapYear(date.getFullYear()) ? 366 : 365;
+      // if (plDays <totalDays) {
         console.log(
-          'Testing....................',
+          'Running Valuation ..............',
           'Date: ',
           valuationDate,
-          'Days:',
-          plDays,
+          // 'Days:',
+          // plDays.dateDiff,
         );
         // Change column B values for worksheet1
         const range = XLSX.utils.decode_range(worksheet1['!ref']);
@@ -73,7 +79,7 @@ let workbook=null;
           const cell = worksheet1[cellAddress];
           if (cell && cell.t === 'n') {
             // Check if the cell contains a number
-            cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+            // cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
           }
         }
 
@@ -85,14 +91,15 @@ let workbook=null;
           const cell = worksheet2[cellAddress];
           if (cell && cell.t === 'n') {
             // Check if the cell contains a number
-            cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
+            // cell.v = (cell.v / plDays) * (365 - plDays) + cell.v;
           }
         }
-      }
+      // }
     }
 
     // Performe calculation by specific method
     if (model === 'FCFE') {
+      
       const valuationResponse = await this.valuationMethodsService.FCFEMethod(
         inputs,
         worksheet1,
@@ -110,6 +117,7 @@ let workbook=null;
         valuationData: valuationResult,
         userId: userId,
       };
+      // console.log(inputs);
       const reportId = await this.valuationsService.createValuation(data);
       this.customLogger.log({
         message:
@@ -124,6 +132,7 @@ let workbook=null;
         worksheet1,
         worksheet2,
       );
+      // console.log(inputs);
       if (valuationResponse.result === null) return valuationResponse.msg;
 
       const valuationResult = valuationResponse.result;

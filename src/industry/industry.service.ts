@@ -35,7 +35,7 @@ export class IndustryService {
     const adjustedCostOfEquity = res.result;
 
     const capitalStructure = inputObj.capitalStructure;
-    console.log('Testing capitalStructure:', capitalStructure);
+    // console.log('Testing capitalStructure:', capitalStructure);
     //WACC, formula: =+B19*B27+B23*(1-B6)*B26+B21*B28
     const wacc =
       adjustedCostOfEquity * inputObj.proportionOfEquity +
@@ -49,10 +49,10 @@ export class IndustryService {
 
     //Cost of Equity Calculation, formula: =+C15+(C16-C15)*C17
     const COECalculation =
-      riskFreeRate + (expMarketReturn - riskFreeRate) * beta;
-
+      riskFreeRate + (parseFloat(expMarketReturn) - riskFreeRate) * beta;
+    // console.log('COE bare ',COECalculation,' ',riskFreeRate,' ',parseFloat(expMarketReturn),' ',beta,' ',riskPremium);
     //Adjusted Cost of Equity, formula: =+C18+C19
-    const adjustedCostOfEquity = COECalculation + riskPremium;
+    const adjustedCostOfEquity = COECalculation + parseFloat(riskPremium);
     return adjustedCostOfEquity;
   }
 
@@ -63,6 +63,8 @@ export class IndustryService {
   async BYRP_Method(): Promise<number> {
     return 1;
   }
+
+
 
 
 }

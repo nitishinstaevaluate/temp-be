@@ -21,16 +21,16 @@ export class BetaIndustry {
   taxType: String;
 
   @Prop({ required: true })
-  deRatio: number;
+  deRatio: String;
 
   @Prop({ required: true })
-  effectiveTaxRate: number;
+  effectiveTaxRate: String;
 
   @Prop({ required: false })
   unleveredBeta: number;
 
   @Prop({ required: false })
-  cashFirmValue: number;
+  cashFirmValue: String;
 
   @Prop({ required: false })
   unleveredBetaCash: number;
@@ -40,10 +40,10 @@ export class BetaIndustry {
   hiloRisk: number;
 
   @Prop({ required: false })
-  stdEquity: number;
+  stdEquity: String;
 
   @Prop({ required: false })
-  stdOprIncome: number;
+  stdOprIncome: String;
 
   @Prop({ required: false })
   beta_2019: number;
@@ -69,7 +69,7 @@ export class BetaIndustry {
 export type BetaIndustryDocument = BetaIndustry & Document;
 export const BetaIndustrySchema = SchemaFactory.createForClass(BetaIndustry);
 
-//Industry Beta Schema
+//Industry Ratio Schema
 @Schema()
 export class IndustriesRatio {
   @Prop({ required: true })
@@ -89,14 +89,14 @@ export class IndustriesRatio {
   trailingPE: number;
   @Prop({ required: false })
   forwardPE: number;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  aggMktCapAll: any;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  aggMktCapAll: any ;
   @Prop({ required: false })
   aggMktCapOnlyMoneyMaking: number;
   @Prop({ required: false })
   expectedGrowthRate: number;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  pegRatio: any;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  pegRatio: any ;
   @Prop({ required: false })
   priceSales: number;
 
@@ -106,22 +106,22 @@ export class IndustriesRatio {
   evSales: number;
   @Prop({ required: false })
   preTaxOprMargin: string;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  pbv: any;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  pbv: any ;
   @Prop({ required: false })
   roe: string;
   @Prop({ required: false })
   evInvestedCapital: number;
   @Prop({ required: false })
   roic: string;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  evEBITDAR_D_PV: any;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  evEBITDA_PV: any;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  evEBIT_PV: any;
-  @Prop({required: false, type: mongoose.Schema.Types.Mixed})
-  evEBIT1t_PV: any;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  evEBITDAR_D_PV: any ;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  evEBITDA_PV: any ;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  evEBIT_PV: any ;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  evEBIT1t_PV: any ;
 
   @Prop({ default: () => new Date(), required: false })
   modifiedAt: Date;
@@ -131,3 +131,57 @@ export class IndustriesRatio {
 }
 export type IndustriesRatioDocument = IndustriesRatio & Document;
 export const IndustriesRatioSchema = SchemaFactory.createForClass(IndustriesRatio);
+
+
+//Historical Returns Schema
+@Schema()
+export class HistoricalReturns {
+  @Prop({ required: true })
+  year: number;
+
+  @Prop({ required: true })
+  index: string;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  yrs: any;
+  @Prop({ required: false })
+  high: number ;
+  @Prop({ required: false })
+  close: number;
+  @Prop({ required: false })
+  return: string;
+  @Prop({ required: false })
+  cagr: string;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  open: any ;
+  @Prop({required: false,type: mongoose.Schema.Types.Mixed})
+  low: any ;
+
+  @Prop({required: false})
+  isActive: boolean ;
+
+  @Prop({ default: () => new Date(), required: false })
+  modifiedAt: Date;
+
+  @Prop({ default: () => new Date(), required: false })
+  createdAt: Date;
+}
+export type HistoricalReturnsDocument = HistoricalReturns & Document;
+export const HistoricalReturnsSchema = SchemaFactory.createForClass(HistoricalReturns);
+
+//Industry Beta Schema
+@Schema()
+export class IndianTreasuryYield {
+  @Prop({ required: true })
+  maturityInYrs: number;
+
+  @Prop({ required: false })
+  latest: number;
+
+  @Prop({required: false })
+  modifiedAt: Date;
+
+  @Prop({ required: false })
+  createdAt: Date;
+}
+export type IndianTreasuryYieldDocument = IndianTreasuryYield & Document;
+export const IndianTreasuryYieldSchema = SchemaFactory.createForClass(IndianTreasuryYield);

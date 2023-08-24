@@ -49,6 +49,14 @@ import {
   POPShareCapitalService,
 } from './masters.service';
 
+// import {
+//   HistoricalReturnsService,
+// } from '../data-references/data-references.service';
+
+// import {
+//   HistoricalReturns
+// } from '../data-references/schema/data-references.schema'
+
 import {
   Industry,
   SubIndustry,
@@ -96,6 +104,7 @@ export class MastersController {
     private codService: CODService,
     private capitalStructureService: CapitalStructureService,
     private popShareCapitalService: POPShareCapitalService,
+    // private historicalReturnsService : HistoricalReturnsService
   ) { }
 
   @Get(':fieldName')
@@ -124,6 +133,8 @@ export class MastersController {
         await this.capitalStructureService.getCapitalStructure();
       dropDowns['popShareCapitals'] =
         await this.popShareCapitalService.getPOPShareCapitals();
+        // dropDowns['markdetHistoricalReturns'] =
+        // await this.historicalReturnsService.getHistoricalReturns();
 
       return dropDowns;
     } else if (fieldName.toLowerCase() === 'industries')
@@ -172,6 +183,8 @@ export class IndustriesController {
   async findAll(): Promise<Industry[]> {
     return this.industriesService.getIndustries();
   }
+
+  
   @Put(':id')
   async update(
     @Param('id') id: string,

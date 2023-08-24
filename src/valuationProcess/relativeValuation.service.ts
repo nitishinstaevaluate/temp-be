@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import {
   netWorthOfCompany,
-  earningPerShare,
+  profitLossValues,
   ebitdaMethod,
   debtMethod,
   incomeFromOperation,
+  netWorthOfComp,
 } from 'src/excelFileServices/relativeValuation.methods';
+
+import {
+  getShareholderFunds,
+} from 'src/excelFileServices/fcfeAndFCFF.method';
 import {
   getYearsList,
   findAverage,
@@ -20,6 +25,7 @@ export class RelativeValuationService {
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    // companiesInfo: any,
   ): Promise<any> {
     this.customLogger.log({
       message: 'Request is entered into Relative Valuation Service.',
@@ -27,6 +33,7 @@ export class RelativeValuationService {
     });
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
+    let multiplier = 100000;
     if (years === null)
       return {
         result: null,
@@ -35,70 +42,123 @@ export class RelativeValuationService {
     const year = new Date(valuationDate).getFullYear().toString();
     const columnIndex = years.indexOf(year);
     console.log(columnsList[columnIndex], columnIndex, year);
+    
     const column = columnsList[columnIndex];
+    // const column = 1;
     const companies = inputs.companies;
+    const industries = inputs.industries;
+    const ratiotypebased = inputs.type;
     const peRatio = [];
     const pbRatio = [];
     const ebitda = [];
     const sales = [];
-    companies.map((company) => {
-      peRatio.push(company.peRatio);
-      pbRatio.push(company.pbRatio);
-      ebitda.push(company.ebitda);
-      sales.push(company.sales);
-    });
-    const companiesInfo = {
-      peRatioAvg: findAverage(peRatio),
-      peRatioMed: findMedian(peRatio),
-      pbRatioAvg: findAverage(pbRatio),
-      pbRatioMed: findMedian(pbRatio),
-      ebitdaAvg: findAverage(ebitda),
-      ebitdaMed: findMedian(ebitda),
-      salesAvg: findAverage(sales),
-      salesMed: findMedian(sales),
-    };
-    const netWorth = await netWorthOfCompany(column, worksheet2);
-    const bookValue = netWorth / outstandingShares;
-    const pbMarketPriceAvg = bookValue * companiesInfo.pbRatioAvg;
-    const pbMarketPriceMed = bookValue * companiesInfo.pbRatioMed;
+    var companiesInfo: any;
+    let colNum =1;
+    
+    // const companiesInfo = {
+    //   peRatioAvg: findAverage(peRatio),
+    //   peRatioMed: findMedian(peRatio),
+    //   pbRatioAvg: findAverage(pbRatio),
+    //   pbRatioMed: findMedian(pbRatio),
+    //   ebitdaAvg: findAverage(ebitda),
+    //   ebitdaMed: findMedian(ebitda),
+    //   salesAvg: findAverage(sales),
+    //   salesMed: findMedian(sales),
+    // };
+    
+    if (inputs.type == 'manual') {                // Make it smarter in next release
+      companies.map((company) => {
+        peRatio.push(company.peRatio);
+        pbRatio.push(company.pbRatio);
+        ebitda.push(company.ebitda);
+        sales.push(company.sales);
+      });
 
-    const eps = await earningPerShare(column, worksheet1);
-    const peMarketPriceAvg = eps * companiesInfo.peRatioAvg;
-    const peMarketPriceMed = eps * companiesInfo.peRatioMed;
+       companiesInfo = {
+        peRatioAvg: findAverage(peRatio),
+        peRatioMed: findMedian(peRatio),
+        pbRatioAvg: findAverage(pbRatio),
+        pbRatioMed: findMedian(pbRatio),
+        ebitdaAvg: findAverage(ebitda),
+        ebitdaMed: findMedian(ebitda),
+        salesAvg: findAverage(sales),
+        salesMed: findMedian(sales),
+      };
+    } else if (inputs.type =='industry'){
+        companiesInfo = {
+        peRatioAvg: industries.currentPE,
+        peRatioMed: industries.currentPE,
+        pbRatioAvg: industries.pbv,
+        pbRatioMed: industries.pbv,
+        ebitdaAvg: industries.evEBITDA_PV,
+        ebitdaMed: industries.evEBITDA_PV,
+        salesAvg: industries.priceSales,
+        salesMed: industries.priceSales,
+      };
+    }
+      else
+        // Do nothing for now
+      ;
 
-    const ebitdaValue = await ebitdaMethod(column, worksheet1);
+    // const abc= await netWorthOfComp(column, worksheet2);
+    // console.log('Hello Abc - ', abc);
+
+    // Valuation based on P/B Ratio
+    const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
+    let netWorth = 0;
+    netWorth = await getShareholderFunds(0, worksheet2);        // Always need the first column
+    netWorth = netWorth - prefShareCap;
+
+    const bookValue = netWorth * multiplier / outstandingShares;
+    const pbMarketPriceAvg = netWorth * companiesInfo.pbRatioAvg;
+    const pbMarketPriceMed = netWorth * companiesInfo.pbRatioMed;
+
+    // Valuation based on P/E Ratio
+    let resProfitLoss = await profitLossValues(colNum-1, worksheet1);
+    let eps = (resProfitLoss.profitLossForYear * multiplier) / outstandingShares;
+    const peMarketPriceAvg = resProfitLoss.profitLossForYear * companiesInfo.peRatioAvg;
+    const peMarketPriceMed = resProfitLoss.profitLossForYear * companiesInfo.peRatioMed;
+
+    // Valuation based on EV/EBITDA
+    const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
     const enterpriseAvg = ebitdaValue * companiesInfo.ebitdaAvg;
     const enterpriseMed = ebitdaValue * companiesInfo.ebitdaMed;
 
-    const debt = await debtMethod(column, worksheet2);
+    const debt = await debtMethod(colNum-1, worksheet2);
+
     const ebitdaEquityAvg = enterpriseAvg - debt;
     const ebitdaEquityMed = enterpriseMed - debt;
-    const ebitdaMarketPriceAvg = ebitdaEquityAvg / outstandingShares;
-    const ebitdaMarketPriceMed = ebitdaEquityMed / outstandingShares;
+    const ebitdaMarketPriceAvg = ebitdaEquityAvg * multiplier/ outstandingShares;
+    const ebitdaMarketPriceMed = ebitdaEquityMed* multiplier / outstandingShares;
 
-    const salesValue = await incomeFromOperation(column, worksheet1);
+    // Valuation based on Price/Sales
+    const salesValue = await incomeFromOperation(colNum-1, worksheet1);
     const salesEquityAvg = salesValue * companiesInfo.salesAvg;
     const salesEquityMed = salesValue * companiesInfo.salesMed;
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
-    const salesMarketPriceMed = salesEquityMed / outstandingShares;
+    const salesMarketPriceMed = salesEquityMed  / outstandingShares;
 
     const avgPricePerShareAvg = findAverage([
       pbMarketPriceAvg,
       peMarketPriceAvg,
-      ebitdaMarketPriceAvg,
-      salesMarketPriceAvg,
+      // ebitdaMarketPriceAvg,
+      ebitdaEquityAvg,
+      salesEquityAvg,
     ]);
     const avgPricePerShareMed = findAverage([
       pbMarketPriceMed,
       peMarketPriceMed,
-      ebitdaMarketPriceMed,
-      salesMarketPriceMed,
+      // ebitdaMarketPriceMed,
+      ebitdaEquityMed,
+      salesEquityMed,
     ]);
 
-    const locAvg = avgPricePerShareAvg * discountRateValue;
-    const locMed = avgPricePerShareMed * discountRateValue;
+    const locAvg = avgPricePerShareAvg * discountRateValue/100;
+    const locMed = avgPricePerShareMed * discountRateValue/100;
     const finalPriceAvg = avgPricePerShareAvg - locAvg;
     const finalPriceMed = avgPricePerShareMed - locMed;
+    const fairValuePerShareAvg = finalPriceAvg * multiplier / outstandingShares;
+    const fairValuePerShareMed = finalPriceMed * multiplier / outstandingShares
 
     const tentativeIssuePrice = Math.round(
       findAverage([finalPriceAvg, finalPriceMed]),
@@ -106,6 +166,8 @@ export class RelativeValuationService {
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
+      industries : industries,
+      ratiotypebased : ratiotypebased,
       valuation: [
         {
           particular: 'pbRatio',
@@ -122,6 +184,7 @@ export class RelativeValuationService {
         },
         {
           particular: 'peRatio',
+          pat:resProfitLoss.profitLossForYear,
           epsAvg: eps,
           epsMed: eps,
           peRatioAvg: companiesInfo.peRatioAvg,
@@ -131,8 +194,9 @@ export class RelativeValuationService {
         },
         {
           particular: 'ebitda',
-          ebitdaAvg: ebitdaValue,
-          ebitdaMed: ebitdaValue,
+          ebitda: ebitdaValue,
+          // ebitdaAvg: companiesInfo.ebitdaAvg,
+          // ebitdaMed: companiesInfo.ebitdaAvg,
           evAvg: companiesInfo.ebitdaAvg,
           evMed: companiesInfo.ebitdaMed,
           enterpriseAvg: enterpriseAvg,
@@ -163,13 +227,18 @@ export class RelativeValuationService {
           particular: 'result',
           avgPricePerShareAvg: avgPricePerShareAvg,
           avgPricePerShareMed: avgPricePerShareMed,
-          averageAvg: avgPricePerShareAvg,
-          averageMed: avgPricePerShareMed,
+          // averageAvg: avgPricePerShareAvg,
+          // averageMed: avgPricePerShareMed,
           locAvg: locAvg,
           locMed: locMed,
           finalPriceAvg: finalPriceAvg,
           finalPriceMed: finalPriceMed,
-          tentativeIssuePrice: tentativeIssuePrice,
+          outstandingShares: outstandingShares,
+          // outstandingShares: outstandingShares,
+          fairValuePerShareAvg: fairValuePerShareAvg,
+          fairValuePerShareMed:fairValuePerShareMed,
+
+          // tentativeIssuePrice: tentativeIssuePrice,
         },
       ],
     };
