@@ -26,25 +26,4 @@ export class ValuationsService {
   async getValuationsByUserId(userId: string): Promise<Valuation[]> {
     return this.valuationModel.find({ userId: userId }).select('company model valuation createdAt').exec();
   }
-
-  async paginateValuationByUserId(userId: string, page: number, pageSize: number) {
-    try{
-      const skip = (page - 1) * pageSize;
-
-      const totalPage = await this.getValuationsByUserId(userId);
-  
-      const response = await this.valuationModel
-      .find({ userId: userId })
-      .skip(skip)
-      .limit(pageSize)
-      .sort({ createdAt: -1 }) 
-      .select('company model valuation createdAt')
-      .exec();
-  
-      return { response:response, totalPage:Math.ceil(totalPage.length/pageSize)};
-    }
-    catch (error){
-      throw new NotFoundException({error,message:'Something went wrong'})
-    }
-  }
 }

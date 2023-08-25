@@ -16,6 +16,7 @@ import {
   calculateDaysFromDate,
 } from '../excelFileServices/common.methods';
 import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
+import { utilsService } from 'src/utils/utils.service';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -161,7 +162,8 @@ export class ValuationProcessController {
 @Controller('valuations')
 export class ValuationsController {
   
-  constructor(private valuationsService: ValuationsService) {}
+  constructor(private valuationsService: ValuationsService,
+    private readonly utilsService: utilsService) {}
 
   @Get(':userId')
   async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
@@ -174,6 +176,6 @@ export class ValuationsController {
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('pageSize', ParseIntPipe) pageSize: number = 10,
   ) :Promise<any>{
-    return this.valuationsService.paginateValuationByUserId(ids, page, pageSize);
+    return this.utilsService.paginateValuationByUserId(ids,page,pageSize);
   }
 }
