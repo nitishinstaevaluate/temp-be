@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Valuation, ValuationDocument } from './schema/valuation.schema';
@@ -22,7 +22,8 @@ export class ValuationsService {
   async getValuationById(id: string): Promise<Valuation> {
     return this.valuationModel.findById(id);
   }
+
   async getValuationsByUserId(userId: string): Promise<Valuation[]> {
-    return this.valuationModel.find({ userId: userId }) .select('company model valuation createdAt').exec();
+    return this.valuationModel.find({ userId: userId }).select('company model valuation createdAt').exec();
   }
 }

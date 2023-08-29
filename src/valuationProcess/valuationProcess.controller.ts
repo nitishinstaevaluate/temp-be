@@ -5,6 +5,8 @@ import {
   UseInterceptors,
   Get,
   Param,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
@@ -14,6 +16,7 @@ import {
   calculateDaysFromDate,
 } from '../excelFileServices/common.methods';
 import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
+import { utilsService } from 'src/utils/utils.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
@@ -187,9 +190,21 @@ let workbook=null;
 //Industries Controller
 @Controller('valuations')
 export class ValuationsController {
-  constructor(private valuationsService: ValuationsService) {}
+  
+  constructor(private valuationsService: ValuationsService,
+    private readonly utilsService: utilsService) {}
+
   @Get(':userId')
   async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
     return this.valuationsService.getValuationsByUserId(userId);
+  }
+
+  @Get('paginate/:ids')
+  async getPaginatedValuations(
+    @Param('ids') ids: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('pageSize', ParseIntPipe) pageSize: number = 10,
+  ) :Promise<any>{
+    return this.utilsService.paginateValuationByUserId(ids,page,pageSize);
   }
 }
