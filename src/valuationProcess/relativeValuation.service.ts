@@ -11,17 +11,26 @@ import {
 import {
   getShareholderFunds,
 } from 'src/excelFileServices/fcfeAndFCFF.method';
-import {getYearsList ,findAverage, findMedian } from '../excelFileServices/common.methods';
+import {
+  getYearsList,
+  findAverage,
+  findMedian,
+} from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
-
+import { CustomLogger } from 'src/loggerService/logger.service';
 @Injectable()
 export class RelativeValuationService {
+  constructor(private readonly customLogger: CustomLogger) {}
   async Relative_Valuation(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
     // companiesInfo: any,
   ): Promise<any> {
+    this.customLogger.log({
+      message: 'Request is entered into Relative Valuation Service.',
+      userId: inputs.userId,
+    });
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
     let multiplier = 100000;
@@ -233,6 +242,10 @@ export class RelativeValuationService {
         },
       ],
     };
+    this.customLogger.log({
+      message: 'Request is sucessfully executed in Relative Valuation Service.',
+      userId: inputs.userId,
+    });
     return {
       result: finalResult,
       valuation: { finalPriceAvg: finalPriceAvg, finalPriceMed: finalPriceMed },

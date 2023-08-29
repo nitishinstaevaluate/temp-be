@@ -9,12 +9,13 @@ import { MastersModule } from 'src/masters/masters.module';
 import { RelativeValuationService } from './relativeValuation.service';
 import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 import { utilsService } from 'src/utils/utils.service';
-
+import {LoggerModule} from '../loggerService/logger.module'; 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
     IndustryModule,
     MastersModule,
+    LoggerModule
   ],
   controllers: [ValuationProcessController,ValuationsController], //ImportController
   providers: [

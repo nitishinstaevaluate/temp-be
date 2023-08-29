@@ -9,6 +9,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
+import { CustomLogger } from 'src/loggerService/logger.service';
 
 const storage = diskStorage({
   destination: './uploads',
@@ -20,9 +21,25 @@ const storage = diskStorage({
 
 @Controller('upload')
 export class UploadController {
+  constructor(
+    private readonly customLogger:CustomLogger,
+  ) {
+    this.createUploadsDirectoryIfNotExist();
+  }
+  private createUploadsDirectoryIfNotExist() {
+    const directory = './uploads';
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory);
+    }
+  }
+
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() file) {
+  
+    this.customLogger.log({
+      message: 'Upload Request is executed successfully into uploadExcel Controller.',
+     });
     return { excelSheetId: file.filename };
   }
 

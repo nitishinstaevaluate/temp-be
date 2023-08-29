@@ -27,11 +27,16 @@ import {
 } from '../excelFileServices/fcfeAndFCFF.method';
 import { getYearsList, calculateDaysFromDate,getCellValue } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
+import { CustomLogger } from 'src/loggerService/logger.service';
 const date = require('date-and-time');
 
 @Injectable()
 export class FCFEAndFCFFService {
-  constructor(private readonly industryService: IndustryService) { }
+  constructor(
+    private readonly industryService: IndustryService,
+    private readonly customLogger: CustomLogger,
+  ) {}
+
   //Common Method for FCFE and FCFF Methods
   
   discountingPeriodObj : any;
@@ -42,6 +47,10 @@ export class FCFEAndFCFFService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
+    this.customLogger.log({
+      message: 'Request is entered into FCFEAndFCFF Service.',
+      userId: inputs.userId,
+    });
     const { outstandingShares, discountingPeriod, popShareCapitalType } =
       inputs;
       // console.log(inputs);

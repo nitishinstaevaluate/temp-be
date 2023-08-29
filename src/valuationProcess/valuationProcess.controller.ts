@@ -17,21 +17,38 @@ import {
 } from '../excelFileServices/common.methods';
 import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 import { utilsService } from 'src/utils/utils.service';
+import { CustomLogger } from 'src/loggerService/logger.service';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
   constructor(
     private valuationsService: ValuationsService,
     private valuationMethodsService: ValuationMethodsService,
+    private customLogger: CustomLogger,
   ) {}
 
   @Post()
   async processExcelFile(@Body() inputs): Promise<any> {
     console.log("Initiating Process");
     console.log(inputs);
+    this.customLogger.log({
+      message: 'Request is entered into Valuation Process Controller.',
+      userId: inputs.userId,
+    });
     const { model, valuationDate, company, userId, excelSheetId } = inputs;
-
-    const workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+let workbook=null;
+    try{
+   workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+}catch{
+  this.customLogger.log({
+    message: `excelSheetId: ${excelSheetId} not available`,
+    userId: inputs.userId,
+  });
+  return {
+    result: null,
+    msg: `excelSheetId: ${excelSheetId} not available`,
+  };
+}
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
     let capitalStruc: any;
@@ -44,7 +61,7 @@ export class ValuationProcessController {
     // const B1Value = B1Cell.v;
     // const data = B1Value.split(',');
     // const date = data[2];
-    
+
     if (model === 'FCFE' || model === 'FCFF') {
       // const plDays = calculateDaysFromDate(new Date(valuationDate));
       // const date = new Date(valuationDate);
@@ -105,7 +122,11 @@ export class ValuationProcessController {
       };
       // console.log(inputs);
       const reportId = await this.valuationsService.createValuation(data);
-
+      this.customLogger.log({
+        message:
+          ' FCFE Request is sucessfully executed in Valuation Process Controller.',
+        userId: inputs.userId,
+      });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'FCFF') {
@@ -128,7 +149,11 @@ export class ValuationProcessController {
         userId: userId,
       };
       const reportId = await this.valuationsService.createValuation(data);
-
+      this.customLogger.log({
+        message:
+          'FCFF Request is sucessfully executed in Valuation Process Controller.',
+        userId: inputs.userId,
+      });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'Relative_Valuation') {
@@ -151,7 +176,11 @@ export class ValuationProcessController {
         userId: userId,
       };
       const reportId = await this.valuationsService.createValuation(data);
-
+      this.customLogger.log({
+        message:
+          'Relative Valuation Request is sucessfully executed in Valuation Process Controller.',
+        userId: inputs.userId,
+      });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     }
