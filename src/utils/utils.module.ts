@@ -8,4 +8,4 @@ import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.mo
   providers: [utilsService],
   exports: [utilsService],
 })
-export class IndustryModule {}
+export class UtilsModule {}
