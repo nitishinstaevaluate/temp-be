@@ -18,6 +18,7 @@ import {
 import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 import { utilsService } from 'src/utils/utils.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { MODEL } from 'src/constants/constants';
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -109,7 +110,7 @@ let workbook=null;
         worksheet2,
       );
       if (valuationResponse.result === null) return valuationResponse.msg;
-
+      
       const valuationResult = valuationResponse.result;
       // Store the result in Database
       const data = {
@@ -124,7 +125,7 @@ let workbook=null;
       const reportId = await this.valuationsService.createValuation(data);
       this.customLogger.log({
         message:
-          ' FCFE Request is sucessfully executed in Valuation Process Controller.',
+        ' FCFE Request is sucessfully executed in Valuation Process Controller.',
         userId: inputs.userId,
       });
       // Send Response.
@@ -134,7 +135,7 @@ let workbook=null;
         inputs,
         worksheet1,
         worksheet2,
-      );
+        );
       // console.log(inputs);
       if (valuationResponse.result === null) return valuationResponse.msg;
 
@@ -183,6 +184,102 @@ let workbook=null;
       });
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
+    }
+  }
+
+  @Post('v1')
+  async processValuationModel(@Body() inputs): Promise<any> {
+    console.log('Initiating Process');
+    this.customLogger.log({
+      message: 'Request is entered into Valuation Process Controller.',
+      userId: inputs.userId,
+    });
+
+    const { model, valuationDate, company, userId, excelSheetId } = inputs;
+    let workbook = null;
+
+    try {
+      workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+    } catch (error) {
+      this.customLogger.log({
+        message: `excelSheetId: ${excelSheetId} not available`,
+        userId: inputs.userId,
+      });
+      return {
+        result: null,
+        msg: `excelSheetId: ${excelSheetId} not available`,
+      };
+    }
+
+    const worksheet1 = workbook.Sheets['P&L'];
+    const worksheet2 = workbook.Sheets['BS'];
+
+    if (inputs.model) {
+      const valResult = [];
+      const models = [];
+      try{
+        for (let modelValue of inputs.model) {
+          switch (modelValue) {
+            case MODEL[0]:
+              const fcfeResponse = await this.valuationMethodsService
+                .FCFFMethod(inputs, worksheet1, worksheet2)
+                valResult.push({
+                  model: inputs.model,
+                  valuationData: fcfeResponse.result,
+                  valuation:fcfeResponse.valuation
+                  });
+                  
+              models.push(modelValue);
+              break;
+              
+              case MODEL[1]:
+                const fcffResponse = await this.valuationMethodsService
+                .FCFFMethod(inputs, worksheet1, worksheet2)
+                valResult.push({
+                  model: inputs.model,
+                  valuationData: fcffResponse.result,
+                  valuation:fcffResponse.valuation
+                  });
+                   models.push(modelValue);
+                    break;
+                    
+              case MODEL[2]:
+                const relativeValuationResponse = await this.valuationMethodsService
+                .Relative_Valuation_Method(inputs, worksheet1, worksheet2)
+                valResult.push({
+                  model: inputs.model,
+                  valuationData: relativeValuationResponse.result,
+                  valuation:relativeValuationResponse.valuation
+                  });
+                  models.push(modelValue);
+              break;  
+  
+            case MODEL[3]:  
+            case MODEL[4]: 
+            case MODEL[5]:  
+            case MODEL[6]:  
+
+            default:
+              console.log('Default case');
+              break;
+          }
+        }
+        inputs.model=models;
+        const data ={company:company,model:models,inputData:inputs,modelResults:valResult,userId:userId}
+        const reportId = await this.valuationsService.createValuation(data);
+        return  {
+          reportId:reportId,
+          valuationResult:valResult,
+          message:'Request Successful',
+          success:true
+        }
+      }catch(error)
+      {
+        return { 
+          message: 'Error occurred',
+          success: false
+         };
+      }
     }
   }
 }
