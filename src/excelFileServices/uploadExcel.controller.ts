@@ -4,12 +4,16 @@ import {
   Get,
   UploadedFile,
   UseInterceptors,
+  Param,
+  NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { Observable, catchError, from } from 'rxjs';
+import { ExcelSheetService } from './uploadExcel.service';
 
 const storage = diskStorage({
   destination: './uploads',
@@ -23,6 +27,7 @@ const storage = diskStorage({
 export class UploadController {
   constructor(
     private readonly customLogger:CustomLogger,
+    private excelSheetService: ExcelSheetService,
   ) {
     this.createUploadsDirectoryIfNotExist();
   }
@@ -56,5 +61,17 @@ export class UploadController {
       uploadDate: fs.statSync(path.join(uploadDir, file)).mtime,
     }));
     return fileDates;
+  }
+
+  @Get('sheet/:fileName/:sheetName')
+  getSheetData(
+    @Param('fileName') fileName: string,
+    @Param('sheetName') sheetName: string,
+  ): Observable<any> {
+    return from(this.excelSheetService.getSheetData(fileName, sheetName)).pipe(
+      catchError((error) => {
+        throw new NotFoundException(error.message);
+      })
+    );
   }
 }

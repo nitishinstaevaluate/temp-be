@@ -16,6 +16,7 @@ import {LoggerModule} from './loggerService/logger.module'
 import { ExceptionsFilter } from './middleware/exceptions.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { DataReferencesModule } from './data-references/data-references.module';
+import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
 require('dotenv').config();
 
 @Module({
@@ -28,7 +29,7 @@ require('dotenv').config();
   providers: [AppService, {
     provide: APP_FILTER,
     useClass: ExceptionsFilter,
-  }, ], //ImportService
+  },ExcelSheetService ], //ImportService
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
