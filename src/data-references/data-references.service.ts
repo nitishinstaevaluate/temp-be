@@ -13,6 +13,8 @@ import {
     IndianTreasuryYieldDocument
   } from './schema/data-references.schema';
 
+  const date = require('date-and-time');
+
 @Injectable()
 export class DataReferencesService {}
 
@@ -64,6 +66,30 @@ export class HistoricalReturnsService {
 
   async getHistoricalReturnsById(id: string): Promise<HistoricalReturns[]> {
     return await this.historicalReturnsModel.findById(id);
+  }
+
+  async getCAGR(baseYrs: number, endDt: Date): Promise<any> {
+
+    // Approach. This will be eiter inception, last 5 yrs, 10 yrs, 15 yrs. Latest date will always be valution date. Hence from that date
+    // the previous date will be calculated backwards.
+    var openVal = 0;
+    var previous_year;
+    const close =  await this.historicalReturnsModel.find({'Date': { "$lt": new Date(endDt) }}).sort({ "Date": -1 }).limit(1);
+    var valuationDate = new Date(endDt);
+    if (baseYrs === 0){
+      openVal = 1000;
+    } else {
+      const negativeBase = -baseYrs;
+      previous_year = date.addYears(valuationDate, negativeBase);
+      const open =  await this.historicalReturnsModel.find({'Date': { "$lt": new Date(previous_year) }}).sort({ "Date": -1 }).limit(1);
+    }
+    console.log(open);
+    const multiplier = date.subtract(valuationDate,previous_year).toDays()/365;
+    const factor = 1; //close/open
+    const cagr = factor**(1/multiplier);
+    return {
+        cagrPercentage: cagr
+    }
   }
 }
 
