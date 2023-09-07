@@ -120,7 +120,7 @@ export function generatePdf(valuation: any, res: any) {
                 style: 'header',
               },
               {
-                text: `\nCurrency- All figures in INR (in 1,00,000)`,
+                text: `\nCurrency- All figures in INR ( Lakhs )`,
                 style: 'header',
               },
             ],
