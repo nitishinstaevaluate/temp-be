@@ -15,6 +15,7 @@ import {
     BetaIndustry,
     IndustriesRatio,
     HistoricalReturns,
+    HistoricalBSE500Returns,
     IndianTreasuryYield
   } from './schema/data-references.schema';
 
@@ -25,7 +26,7 @@ import {
     HistoricalReturnsService,
     IndianTreasuryYieldService
   } from './data-references.service';
-
+  
 @Controller('data-references')
 export class DataReferencesController {}
 
@@ -71,6 +72,7 @@ export class IndustriesRatioController {
 
 // Historical Returns Controller
 @Controller('historicalreturns')
+
 export class HistoricalReturnsController {
   constructor(private historicalReturnsService: HistoricalReturnsService) { }
 
@@ -81,10 +83,20 @@ export class HistoricalReturnsController {
     return this.historicalReturnsService.getHistoricalReturns();
   }
 
+  @Get('bse500')
+  async find(
+    @Query('baseYrs') baseYrs: string,
+    @Query('asOnDate') asOnDate: string,
+  ): Promise<any> {
+      return this.historicalReturnsService.getBSE(parseInt(baseYrs),parseInt(asOnDate));
+  }
+
   @Get(':id')
   async findById(@Param('id') id: string): Promise<HistoricalReturns[]> {
     return this.historicalReturnsService.getHistoricalReturnsById(id);
   }
+
+  
 
 
 }
