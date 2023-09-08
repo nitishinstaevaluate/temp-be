@@ -224,7 +224,7 @@ let workbook=null;
               const fcfeResponse = await this.valuationMethodsService
                 .FCFEMethod(inputs, worksheet1, worksheet2)
                 valResult.push({
-                  model: inputs.model,
+                  model: MODEL[0],
                   valuationData: fcfeResponse.result,
                   valuation:fcfeResponse.valuation
                   });
@@ -236,7 +236,7 @@ let workbook=null;
                 const fcffResponse = await this.valuationMethodsService
                 .FCFFMethod(inputs, worksheet1, worksheet2)
                 valResult.push({
-                  model: inputs.model,
+                  model: MODEL[1],
                   valuationData: fcffResponse.result,
                   valuation:fcffResponse.valuation
                   });
@@ -247,7 +247,7 @@ let workbook=null;
                 const relativeValuationResponse = await this.valuationMethodsService
                 .Relative_Valuation_Method(inputs, worksheet1, worksheet2)
                 valResult.push({
-                  model: inputs.model,
+                  model: MODEL[2],
                   valuationData: relativeValuationResponse.result,
                   valuation:relativeValuationResponse.valuation
                   });
@@ -264,7 +264,6 @@ let workbook=null;
               break;
           }
         }
-        inputs.model=models;
         const data ={company:company,model:models,inputData:inputs,modelResults:valResult,userId:userId}
         const reportId = await this.valuationsService.createValuation(data);
         return  {
