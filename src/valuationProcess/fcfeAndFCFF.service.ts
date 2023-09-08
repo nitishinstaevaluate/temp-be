@@ -218,7 +218,7 @@ export class FCFEAndFCFFService {
 
         
         let netCashFlow =0 ;
-        if (inputs.model === 'FCFE') {
+        if (inputs.model.includes('FCFE')) {
           
           netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets + changeInBorrowingsVal;
         } else {
@@ -233,12 +233,12 @@ export class FCFEAndFCFFService {
 
         // this.calculatedWacc = adjustedCostOfEquity * capitalStruc.equityProp + (inputs.costOfDebt/100)*(1-inputs.taxRate/100)*capitalStruc.debtProp + inputs.copShareCapital/100 * capitalStruc.prefProp
 
-        if  (i === yearLengthT && inputs.model === 'FCFE') {                                // Valuation data
+        if  (i === yearLengthT && inputs.model.includes('FCFE')) {                                // Valuation data
         fcfeValueAtTerminalRate = await fcfeTerminalValue(valuation,inputs.terminalGrowthRate,adjustedCostOfEquity)
         console.log('ter val ',fcfeValueAtTerminalRate,' ', valuation);
         // console.log('fcfe ter ', fcfeValueAtTerminalRate)
         discountingPeriodValue = discountingPeriodValue - 1;
-        } else if (i === yearLengthT && inputs.model === 'FCFF') {  
+        } else if (i === yearLengthT && inputs.model.includes('FCFF')) {  
           fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
           discountingPeriodValue = discountingPeriodValue - 1;
         }
@@ -249,7 +249,7 @@ export class FCFEAndFCFFService {
           finalDebt = debtAsOnDate;
           }
           // console.log('Final Deb ',finalDebt);
-        if (inputs.model === 'FCFE') {
+        if (inputs.model.includes('FCFE')) {
           // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
           if (i === yearLengthT) {
             // Do nothing
@@ -258,7 +258,7 @@ export class FCFEAndFCFFService {
           }
           console.log('Disc COE ', this.discountingFactorWACC)
          
-        } else if (inputs.model === 'FCFF') {
+        } else if (inputs.model.includes('FCFF')) {
           // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
           if (i === yearLengthT) {
             // Do nothing
@@ -293,7 +293,7 @@ export class FCFEAndFCFFService {
         }
         // equityValue = equityValue + sumOfCashFlows;
         // const valuePerShare = equityValue / outstandingShares;
-        if (inputs.model === 'FCFE') {
+        if (inputs.model.includes('FCFE')) {
         result = {
           particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
@@ -318,7 +318,7 @@ export class FCFEAndFCFFService {
           valuePerShare: '',
           // totalFlow: this.discountingFactorWACC + i
         }; 
-      } else if (inputs.model === 'FCFF') {
+      } else if (inputs.model.includes('FCFF')) {
         result = {
           particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
@@ -351,7 +351,7 @@ export class FCFEAndFCFFService {
     
     // let lastElement = finalResult.slice(-1);
     finalResult[0].sumOfCashFlows = sumOfCashFlows;
-    finalResult[0].equityValue = inputs.model === 'FCFE'? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
+    finalResult[0].equityValue = inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     this.stubAdjRequired = false;                              // Resetting to default;
@@ -385,12 +385,12 @@ export class FCFEAndFCFFService {
     } = inputs;
     let discountingFactor = null;
     let capitalStruc: any;
-    if (model === 'FCFE') {
+    if (model.includes('FCFE')) {
       const res = await this.industryService.getFCFEDisFactor(inputs);
       if (res.result === null) return res;
 
       discountingFactor = res.result;             //ValidateHere
-    } else if (model === 'FCFF') {
+    } else if (model.includes('FCFF')) {
       let costOfDebtValue = null;
       if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
       else if (costOfDebtType === 'Finance_Cost')

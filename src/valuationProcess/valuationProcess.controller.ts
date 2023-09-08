@@ -222,7 +222,7 @@ let workbook=null;
           switch (modelValue) {
             case MODEL[0]:
               const fcfeResponse = await this.valuationMethodsService
-                .FCFFMethod(inputs, worksheet1, worksheet2)
+                .FCFEMethod(inputs, worksheet1, worksheet2)
                 valResult.push({
                   model: inputs.model,
                   valuationData: fcfeResponse.result,
