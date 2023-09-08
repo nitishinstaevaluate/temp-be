@@ -172,8 +172,7 @@ export const HistoricalReturnsSchema = SchemaFactory.createForClass(HistoricalRe
 @Schema()
 export class HistoricalBSE500Returns {
   @Prop({ required: true })
-  Date: number;
-
+  Date: Date;
   @Prop({ required: false })
   High: number ;
   @Prop({ required: true })
