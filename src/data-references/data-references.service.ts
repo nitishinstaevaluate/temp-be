@@ -73,20 +73,22 @@ export class HistoricalReturnsService {
   }
 
 async getBSE(baseYrs: number,asOnDate: number): Promise<any>{
-  
- // Approach. This will be eiter inception, last 5 yrs, 10 yrs, 15 yrs. Latest date will always be valution date. Hence from that date
+  try{
+   // Approach. This will be eiter inception, last 5 yrs, 10 yrs, 15 yrs. Latest date will always be valution date. Hence from that date
       // the previous date will be calculated backwards.
     
-      var previous_year;
-      var open;
-      var close;
-      
-      var valuationDate = new Date(asOnDate);
+      let previous_year;
+      let open;
+      let close;
+      let valuationDate = new Date(asOnDate);
+
       close = await this.historicalBSE500ReturnsModel.find({'Date': { "$lt": new Date(valuationDate) }}).sort({ "Date": -1 }).limit(1);
       if (baseYrs === 0){
-        open = [{
-                'Open':1000
-        }];
+        open = [
+          {
+            'Open':1000
+          }
+        ];
         previous_year = new Date('1999-08-09');
       } else {
         const negativeBase = -baseYrs;
@@ -100,9 +102,18 @@ async getBSE(baseYrs: number,asOnDate: number): Promise<any>{
           result: cagr,
           close: close[0],
           open : open[0],
-          message:'BSE 500 historical return'
+          message:'BSE 500 historical return',
+          status:true
+        }
+    }
+    catch(err){
+      return{
+        status:false,
+        msg:'BSE 500 Request Failed',
+        error:err.message
       }
-}
+    }
+  }
 }
 
 // Indian Treasury Yield Service
