@@ -74,6 +74,7 @@ export class HistoricalReturnsService {
 
   async getBSE(baseYrs: number, asOnDate: number): Promise<any> {
     try {
+
       // Approach. This will be eiter inception, last 5 yrs, 10 yrs, 15 yrs. Latest date will always be valution date. Hence from that date
       // the previous date will be calculated backwards.
 
@@ -82,6 +83,7 @@ export class HistoricalReturnsService {
       let close;
       let valuationDate = new Date(asOnDate);
 
+      // It is possible Market was closed on a give date hence we choose the most recent available data from DB/Service. If value is null choose the next best
       close = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lt": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
       if (baseYrs === 0) {
         open = [
@@ -90,7 +92,7 @@ export class HistoricalReturnsService {
             'Close': 1000,
           }
         ];
-        previous_year = new Date('1999-08-09');
+        previous_year = new Date('1999-08-09');                 // Move to config file later.
       } else {
         const negativeBase = -baseYrs;
         previous_year = date.addYears(valuationDate, negativeBase);
