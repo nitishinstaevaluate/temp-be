@@ -60,8 +60,8 @@ export class MyMiddleware implements NestInterceptor {
 
     //models Validation
     const developedModels = ['FCFE', 'FCFF', 'Relative_Valuation'];
-    if (!developedModels.includes(model))
-      throw new BadRequestException('Invalid Model: Input a valid model name.');
+    // if (!developedModels.includes(model))
+    //   throw new BadRequestException('Invalid Model: Input a valid model name.');
 
     if (!company) throw new BadRequestException('company is required.');
     if (model === 'FCFE' || model === 'FCFF') {
