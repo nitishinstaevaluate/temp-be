@@ -96,6 +96,16 @@ export async function calculateDaysFromDate(dateString: Date) {
   return daysParam;
 }
 
+export function getDiscountingPeriod(discountingPeriod: string) {
+  let discountingPeriodValue = 0;
+  if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
+  else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
+  return {
+    result: discountingPeriodValue,
+    msg: 'Discounting period get Successfully.',
+  };
+}
+
 // export function isLeapYear(year: number) {
 //   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 // }

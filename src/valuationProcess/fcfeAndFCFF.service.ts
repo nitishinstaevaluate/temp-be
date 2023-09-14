@@ -23,9 +23,9 @@ import {
   interestAdjustedTaxes,
   fcfeTerminalValue,
   fcffTerminalValue,
-  interestAdjustedTaxesWithStubPeriod,
+  interestAdjustedTaxesWithStubPeriod
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 const date = require('date-and-time');
@@ -63,7 +63,7 @@ export class FCFEAndFCFFService {
         result: null,
         msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
       };
-    const discountingPeriodObj = await this.getDiscountingPeriod(
+    const discountingPeriodObj = await getDiscountingPeriod(
       discountingPeriod
     );
     
@@ -383,7 +383,7 @@ export class FCFEAndFCFFService {
   }
 
   //Get Discounting Period.
-  async getDiscountingPeriod(discountingPeriod: string): Promise<any> {
+  async getDiscountingPeriod_old(discountingPeriod: string): Promise<any> {       // Moved to common methods
     let discountingPeriodValue = 0;
     if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
     else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
