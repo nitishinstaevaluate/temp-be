@@ -217,6 +217,7 @@ let workbook=null;
     if (inputs.model) {
       const valResult = [];
       const models = [];
+      const tableResult = [];
       try{
         for (let modelValue of inputs.model) {
           switch (modelValue) {
@@ -228,6 +229,11 @@ let workbook=null;
                   valuationData: fcfeResponse.result,
                   valuation:fcfeResponse.valuation
                   });
+                tableResult.push({
+                model: MODEL[0],
+                valuationData: fcfeResponse.tableData,
+                valuation:fcfeResponse.valuation
+                });
                   
               models.push(modelValue);
               break;
@@ -240,6 +246,11 @@ let workbook=null;
                   valuationData: fcffResponse.result,
                   valuation:fcffResponse.valuation
                   });
+                tableResult.push({
+                  model: MODEL[1],
+                  valuationData: fcffResponse.tableData,
+                  valuation:fcffResponse.valuation
+                  });
                    models.push(modelValue);
                     break;
                     
@@ -247,6 +258,11 @@ let workbook=null;
                 const relativeValuationResponse = await this.valuationMethodsService
                 .Relative_Valuation_Method(inputs, worksheet1, worksheet2)
                 valResult.push({
+                  model: MODEL[2],
+                  valuationData: relativeValuationResponse.result,
+                  valuation:relativeValuationResponse.valuation
+                  });
+                tableResult.push({
                   model: MODEL[2],
                   valuationData: relativeValuationResponse.result,
                   valuation:relativeValuationResponse.valuation
@@ -268,7 +284,7 @@ let workbook=null;
         const reportId = await this.valuationsService.createValuation(data);
         return  {
           reportId:reportId,
-          valuationResult:valResult,
+          valuationResult:tableResult,
           message:'Request Successful',
           success:true
         }
