@@ -86,14 +86,14 @@ export class RelativeValuationService {
       };
     } else if (inputs.type =='industry'){
         companiesInfo = {
-        peRatioAvg: industries.currentPE,
-        peRatioMed: industries.currentPE,
-        pbRatioAvg: industries.pbv,
-        pbRatioMed: industries.pbv,
-        ebitdaAvg: industries.evEBITDA_PV,
-        ebitdaMed: industries.evEBITDA_PV,
-        salesAvg: industries.priceSales,
-        salesMed: industries.priceSales,
+        peRatioAvg: industries[0].currentPE,
+        peRatioMed: industries[0].currentPE,
+        pbRatioAvg: industries[0].pbv,
+        pbRatioMed: industries[0].pbv,
+        ebitdaAvg: industries[0].evEBITDA_PV,
+        ebitdaMed: industries[0].evEBITDA_PV,
+        salesAvg: industries[0].priceSales,
+        salesMed: industries[0].priceSales,
       };
     }
       else

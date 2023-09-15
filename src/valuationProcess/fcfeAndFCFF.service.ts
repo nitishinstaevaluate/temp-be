@@ -355,7 +355,31 @@ export class FCFEAndFCFFService {
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     this.stubAdjRequired = false;                              // Resetting to default;
-    return { result: finalResult, valuation: valuation, msg: 'Executed Successfully' };
+    const data = await this.transformData(finalResult);
+    return { result: finalResult, tableData:data, valuation: valuation, msg: 'Executed Successfully' };
+  }
+
+  async transformData(data: any[]) { //only to render data on UI table
+    const transformedData = [];
+    const columnHeaders = data.length > 0 ? Object.keys(data[0]) : [];
+
+    const columnIndexToRemove = columnHeaders.indexOf('particulars');
+    if (columnIndexToRemove !== -1) {
+      columnHeaders.splice(columnIndexToRemove, 1);
+    }
+
+    columnHeaders.unshift('particulars');
+    transformedData.push(columnHeaders);
+
+    for (const item of data) {
+      const row = [];
+      row.push(item.particulars);
+      for (const key of columnHeaders.slice(1)) {
+        row.push(item[key]);
+      }
+      transformedData.push(row);
+    }
+  return transformedData
   }
 
   //Get Discounting Period.
