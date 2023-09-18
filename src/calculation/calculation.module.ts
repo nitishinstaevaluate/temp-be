@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CalculationController } from './calculation.controller';
+import { CalculationController,WaccController } from './calculation.controller';
 import { CalculationService } from './calculation.service';
 
 @Module({
-  controllers: [CalculationController],
+  controllers: [CalculationController,WaccController],
   providers: [CalculationService]
 })
 export class CalculationModule {}
