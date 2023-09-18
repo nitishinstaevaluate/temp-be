@@ -13,10 +13,10 @@ export class CalculationService {
 
   async calculateWACC(): Promise<any> {
     return {
-        result: 'cagr',
+        result: 13.54,
         valuationDate : 'valuationDate',
-        close: close[0],
-        open: open[0],
+        close: 1000,
+        open: 500,
         message: 'BSE 500 historical return CAGR in %',
         status: true
       }

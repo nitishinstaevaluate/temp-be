@@ -6,7 +6,7 @@ export class CalculationController {}
 
 //Beta Industries Controller
 @Controller('calculatedwacc')
-export class BetaIndustriesController {
+export class WaccController {
   constructor(private calculationService: CalculationService) { }
 
   @Get()
