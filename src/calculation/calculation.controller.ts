@@ -1,24 +1,43 @@
-import { Controller,Get,Put,Post } from '@nestjs/common';
+import { Controller,Get,Put,Post,Param, Query } from '@nestjs/common';
 import { CalculationService} from './calculation.service'; 
 
 @Controller('calculation')
 export class CalculationController {}
 
 //Beta Industries Controller
-@Controller('calculatedwacc')
+@Controller('coe')
 export class WaccController {
   constructor(private calculationService: CalculationService) { }
 
-  @Get()
-  async findAll(
-    // @Param('industryId') industryId: string,
+  @Get('/adjcoe')
+  async find(
+    @Query('riskFreeRate') riskFreeRate: string,
+    @Query('expMarketReturn') expMarketReturn: string,
+    @Query('beta') beta: string,
+    @Query('riskPremium') riskPremium: string,
+    @Query('coeMethod') coeMethod: string,
   ): Promise<any> {
-    return this.calculationService.calculateWACC();
+    return this.calculationService.adjCOE(parseFloat(riskFreeRate), parseFloat(expMarketReturn), parseFloat(beta), parseFloat(riskPremium),coeMethod);
   }
 
-//   @Get(':industryId')
-//   async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
-//     return this.betaIndustriesService.getBetaIndustriesById(id);
-//   }
+  @Get('/wacc')
+  async findByID(
+    @Query('adjustedCostOfEquity') adjustedCostOfEquity: string,
+    @Query('equityProp') equityProp: string,
+    @Query('costOfDebt') costOfDebt: string,
+    @Query('taxRate') taxRate: string,
+    @Query('debtProp') debtProp: string,
+    @Query('copShareCapital') copShareCapital: string,
+    @Query('prefProp') prefProp: string,
+    @Query('coeMethod') coeMethod: string,
+    ): Promise<any> {
+    return this.calculationService.getWACC(parseFloat(adjustedCostOfEquity),parseFloat(equityProp),
+    parseFloat(costOfDebt),
+    parseFloat(taxRate),
+    parseFloat(debtProp),
+    parseFloat(copShareCapital),
+    parseFloat(prefProp),
+    coeMethod)
+  }
 
 }
