@@ -271,6 +271,21 @@ let workbook=null;
               break;  
   
             case MODEL[3]:  
+            const excessEarningsResponse = await this.valuationMethodsService
+            .Excess_Earnings_method(inputs, worksheet1, worksheet2)
+            valResult.push({
+              model: MODEL[2],
+              valuationData: excessEarningsResponse.result,
+              valuation:excessEarningsResponse.valuation
+              });
+            tableResult.push({
+              model: MODEL[2],
+              valuationData: excessEarningsResponse.result,
+              valuation:excessEarningsResponse.valuation
+              });
+              models.push(modelValue);
+              
+          break; 
             case MODEL[4]: 
             case MODEL[5]:  
             case MODEL[6]:  

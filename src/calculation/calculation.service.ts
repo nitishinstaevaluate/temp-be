@@ -11,18 +11,39 @@ export class CalculationService {
     // private readonly indianTresauryYieldModel: Model<IndianTreasuryYieldDocument>
   ) { }
 
-  async calculateWACC(): Promise<any> {
+  async adjCOE(riskFreeRate, expMarketReturn, beta, riskPremium, coeMethod): Promise<any> {
+
+    //Cost of Equity Calculation based on CAPM Method
+    const COECalculation =
+      riskFreeRate + (expMarketReturn - riskFreeRate) * beta;
+
+    const adjustedCostOfEquity = COECalculation + riskPremium;
+
     return {
-        result: 13.54,
-        valuationDate : 'valuationDate',
-        close: 1000,
-        open: 500,
-        message: 'BSE 500 historical return CAGR in %',
-        status: true
-      }
+      result: {
+        coe: COECalculation ,
+        adjCOE: adjustedCostOfEquity ,
+        method: coeMethod
+      },
+      message: 'Cost of equity calculated',
+      status: true
+    }
   }
 
-//   async getIndianTreasuryYieldById(id: string): Promise<any> {
-//     return 1
-//   }
+    async getWACC(adjustedCostOfEquity,equityProp,
+      costOfDebt,taxRate,
+      debtProp,copShareCapital,prefProp,coeMethod): Promise<any> {
+      //WACC based on CAPM Method
+      const calculatedWacc = 
+          adjustedCostOfEquity/100 * equityProp + (costOfDebt/100)*(1-taxRate/100)*debtProp + copShareCapital/100 * prefProp;
+      return {
+        result: {
+          wacc: calculatedWacc ,
+          adjCOE: adjustedCostOfEquity ,
+          method: coeMethod
+        },
+        message: 'Calculated WACC',
+        status: true
+      }
+    }
 }
