@@ -10,6 +10,7 @@ import { RelativeValuationService } from './relativeValuation.service';
 import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 import { utilsService } from 'src/utils/utils.service';
 import {LoggerModule} from '../loggerService/logger.module'; 
+import { ExcessEarningsService } from './excessEarnings.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
@@ -23,7 +24,8 @@ import {LoggerModule} from '../loggerService/logger.module';
     FCFEAndFCFFService,
     RelativeValuationService,
     ValuationMethodsService,
-    utilsService
+    utilsService,
+    ExcessEarningsService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService],
 })

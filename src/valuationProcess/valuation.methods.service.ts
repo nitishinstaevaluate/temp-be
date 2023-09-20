@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RelativeValuationService } from './relativeValuation.service';
 import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
+import { ExcessEarningsService } from './excessEarnings.service';
 
 //Valuation Methods Service
 @Injectable()
@@ -8,6 +9,7 @@ export class ValuationMethodsService {
   constructor(
     private readonly relativeValuationService: RelativeValuationService,
     private readonly fcfeAndFCFFService: FCFEAndFCFFService,
+    private readonly excessEarningService: ExcessEarningsService
   ) {}
 
   async FCFEMethod(
@@ -40,6 +42,18 @@ export class ValuationMethodsService {
     worksheet2: any,
   ): Promise<any> {
     return await this.relativeValuationService.Relative_Valuation(
+      inputs,
+      worksheet1,
+      worksheet2,
+    );
+  }
+
+  async Excess_Earning_Method(
+    inputs: any,
+    worksheet1: any,
+    worksheet2: any,
+  ): Promise<any> {
+    return await this.excessEarningService.Excess_Earnings(
       inputs,
       worksheet1,
       worksheet2,
