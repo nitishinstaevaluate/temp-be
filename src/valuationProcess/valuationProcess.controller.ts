@@ -280,7 +280,7 @@ let workbook=null;
               });
             tableResult.push({
               model: MODEL[3],
-              valuationData: excessEarningsResponse.result,
+              valuationData: excessEarningsResponse.tableData,
               valuation:excessEarningsResponse.valuation
               });
               models.push(modelValue);

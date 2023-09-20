@@ -152,13 +152,39 @@ export class ExcessEarningsService {
     finalResult[0].sumOfCashFlows = sumOfCashFlows;
     finalResult[0].equityValue = bookValueAsOnDate + sumOfCashFlows;
     finalResult[0].valuePerShare = (finalResult[0].equityValue * 100000) / outstandingShares;       // Applying mulitplier for figures
-
+    
+    const data = await this.transformData(finalResult);
+    
     return {
       result: finalResult,
+      tableData:data,
       valuation: 1, //to be defined
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }
+  }
+
+  async transformData(data: any[]) { //only to render data on UI table
+    const transformedData = [];
+    const columnHeaders = data.length > 0 ? Object.keys(data[0]) : [];
+
+    const columnIndexToRemove = columnHeaders.indexOf('particulars');
+    if (columnIndexToRemove !== -1) {
+      columnHeaders.splice(columnIndexToRemove, 1);
+    }
+
+    columnHeaders.unshift('particulars');
+    transformedData.push(columnHeaders);
+
+    for (const item of data) {
+      const row = [];
+      row.push(item.particulars);
+      for (const key of columnHeaders.slice(1)) {
+        row.push(item[key]);
+      }
+      transformedData.push(row);
+    }
+  return transformedData
   }
 }
 
