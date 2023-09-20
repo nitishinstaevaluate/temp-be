@@ -520,7 +520,7 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
     totalCapital : totalCapital           // this is actual value and not a proporation.
   }
 
-  console.log(capitalStructure);
+  // console.log(capitalStructure);
   return capitalStructure;
 }
 

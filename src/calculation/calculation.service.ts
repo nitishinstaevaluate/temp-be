@@ -38,7 +38,7 @@ export class CalculationService {
           adjustedCostOfEquity/100 * equityProp + (costOfDebt/100)*(1-taxRate/100)*debtProp + copShareCapital/100 * prefProp;
       return {
         result: {
-          wacc: calculatedWacc ,
+          wacc: calculatedWacc * 100,
           adjCOE: adjustedCostOfEquity ,
           method: coeMethod
         },
