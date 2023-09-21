@@ -48,23 +48,41 @@ export class CalculationService {
     }
 
     async calculateWeightedVal(valuationInput) {
-      var weightedVal = 0;
-      // Logic here loop over and add
-      // weightedVal  = weightedVal + model * value/100;
-      // push to array for each element
-      const weightedResults = [{
-        model : 'modelNames',
-        indicatedValue : 'Initial Value',
-        weight : '',
-        weightedValue : '', 
-      }]
+      try{
+
+      let weightedVal = 0;
+      const weightedModel = [];
+      
+      valuationInput.results.map((resp) => {
+        if (resp.model){
+          weightedVal = weightedVal + (parseFloat(resp.value) * parseFloat(resp.weightage)/100);
+          weightedModel.push(
+            {
+              model : resp.model,
+              indicatedValue : resp.value,
+              weight : parseFloat(resp.weightage)/100,
+              weightedValue : parseFloat(resp.value) * parseFloat(resp.weightage)/100, 
+            }
+          )
+        }
+
+      })
+      
       return {
         result :{
-            weightedVal : '',
-            inputs : weightedResults 
+            weightedVal : weightedVal,
+            modelValue : weightedModel 
         },
         message: 'Weighted valuation results',
         status: true
+      }
+      }
+      catch(error){
+        return {
+          error: error.message,
+          message: 'Unable to calculate final value.',
+          status: false
+        }
       }
    }
 }

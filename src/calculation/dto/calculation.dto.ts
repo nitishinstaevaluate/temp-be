@@ -1,6 +1,6 @@
 class valuationWeightage {
     results: [];
-    weightage: [];
+    // weightage: [];
   }
   
   export { valuationWeightage };
