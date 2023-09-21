@@ -46,4 +46,25 @@ export class CalculationService {
         status: true
       }
     }
+
+    async calculateWeightedVal(valuationInput) {
+      var weightedVal = 0;
+      // Logic here loop over and add
+      // weightedVal  = weightedVal + model * value/100;
+      // push to array for each element
+      const weightedResults = [{
+        model : 'modelNames',
+        indicatedValue : 'Initial Value',
+        weight : '',
+        weightedValue : '', 
+      }]
+      return {
+        result :{
+            weightedVal : '',
+            inputs : weightedResults 
+        },
+        message: 'Weighted valuation results',
+        status: true
+      }
+   }
 }

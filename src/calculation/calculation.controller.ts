@@ -1,8 +1,19 @@
-import { Controller,Get,Put,Post,Param, Query } from '@nestjs/common';
-import { CalculationService} from './calculation.service'; 
+import { Controller,Get,Put,Post,Param, Query , Body} from '@nestjs/common';
+import { CalculationService} from './calculation.service';
+
+import { valuationWeightage } from "./dto/calculation.dto";
 
 @Controller('calculation')
-export class CalculationController {}
+export class CalculationController {
+  constructor(private calculationService: CalculationService) { }
+
+  @Post('/weightedvaluation')
+  createPost(@Body() body: valuationWeightage) {
+    return this.calculationService.calculateWeightedVal(body);
+  }
+}
+
+
 
 //Beta Industries Controller
 @Controller('coe')
@@ -38,6 +49,6 @@ export class WaccController {
     parseFloat(copShareCapital),
     parseFloat(prefProp),
     coeMethod)
-  }
+  } 
 
 }
