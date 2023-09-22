@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as xlsx from 'xlsx';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import * as puppeteer from 'puppeteer';
 
 @Injectable()
 export class ExcelSheetService {
@@ -57,5 +58,33 @@ export class ExcelSheetService {
           const workbook = xlsx.readFile(filePath);
           resolve(workbook);
         });
+      }
+
+      async generatePdfFromHtml() {
+        const htmlFilePath = path.join(process.cwd(), 'pdf', 'FCFF.html');
+        const pdfFilePath = path.join(process.cwd(), 'pdf', 'FCFF.pdf');
+    
+        try {
+          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+          await this.generatePdf(htmlContent, pdfFilePath);
+        } catch (error) {
+          console.error('Error reading HTML file:', error);
+        }
+      }
+    
+      async generatePdf(htmlContent: string, pdfFilePath: string) {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
+    
+        try {
+          // Set the HTML content
+          const contenread = await page.setContent(htmlContent);
+          console.log(contenread,"content from html")
+          await page.pdf({ path: pdfFilePath, format: 'A4', height: '20mm'});
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        } finally {
+          await browser.close();
+        }
       }
 }

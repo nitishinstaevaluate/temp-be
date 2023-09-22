@@ -74,4 +74,9 @@ export class UploadController {
       })
     );
   }
+
+  @Get('generate')
+  async generatePdf() {
+    await this.excelSheetService.generatePdfFromHtml();
+  }
 }
