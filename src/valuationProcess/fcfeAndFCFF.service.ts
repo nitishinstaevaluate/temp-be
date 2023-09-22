@@ -382,17 +382,6 @@ export class FCFEAndFCFFService {
   return transformedData
   }
 
-  //Get Discounting Period.
-  async getDiscountingPeriod_old(discountingPeriod: string): Promise<any> {       // Moved to common methods
-    let discountingPeriodValue = 0;
-    if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
-    return {
-      result: discountingPeriodValue,
-      msg: 'Discounting period get Successfully.',
-    };
-  }
-
   //Get DiscountingFactor based on Industry based Calculations.
   async getDiscountingFactor(
     inputs: any,
