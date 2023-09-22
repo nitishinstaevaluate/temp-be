@@ -95,10 +95,10 @@ export class ExcessEarningsService {
         const expectedProfitCOE = netWorth * adjustedCostOfEquity;
         const excessReturn = pat - expectedProfitCOE;
 
-        let capitalStruc = await CapitalStruc(i, worksheet2, netWorth);
-        // console.log(capitalStruc);
-        // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
-        calculatedWacc = adjustedCostOfEquity / 100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt) / 100) * (1 - parseFloat(inputs.taxRate) / 100) * capitalStruc.debtProp + parseFloat(inputs.copShareCapital) / 100 * capitalStruc.prefProp;
+        // let capitalStruc = await CapitalStruc(i, worksheet2, netWorth);
+        // // console.log(capitalStruc);
+        // // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
+        // calculatedWacc = adjustedCostOfEquity / 100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt) / 100) * (1 - parseFloat(inputs.taxRate) / 100) * capitalStruc.debtProp + parseFloat(inputs.copShareCapital) / 100 * capitalStruc.prefProp;
 
         if (i === yearLengthT && inputs.model.includes('Excess_Earnings')) {
           // fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
@@ -107,20 +107,33 @@ export class ExcessEarningsService {
 
         // console.log('Term - ',fcffValueAtTerminalRate);
 
-        if (i === 0) {
-          finalWacc = calculatedWacc;
-        }
+        // if (i === 0) {
+        //   finalWacc = calculatedWacc;
+        // }
         
         if (inputs.model.includes('Excess_Earnings')) {
           // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
           if (i === yearLengthT) {
             // Do nothing
           } else {
-            this.discountingFactorWACC = 1 / (1 + finalWacc) ** (discountingPeriodValue)
+            this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
           }
-          console.log('Disc WACC ', this.discountingFactorWACC)
+          // console.log('Disc WACC ', this.discountingFactorWACC)
 
         }
+
+        // valuation = fcff;
+        
+        // // console.log('Disounting factor ',this.discountingFactorWACC,' ',fcff)
+        // if  (i === yearLengthT){
+        //   // if (inputs.model === 'FCFE') {
+        //   //   presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
+        //   // } else {
+        //     presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
+          
+        // } else {
+        //   presentFCFF = this.discountingFactorWACC * fcff
+        // }
 
         presentValueOfExcessReturn = excessReturn * this.discountingFactorWACC;
         sumOfCashFlows = presentValueOfExcessReturn + sumOfCashFlows;
@@ -158,7 +171,7 @@ export class ExcessEarningsService {
     return {
       result: finalResult,
       tableData:data,
-      valuation: 1, //to be defined
+      valuation: finalResult[0].valuePerShare, //to be defined
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }

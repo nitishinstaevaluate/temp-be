@@ -81,10 +81,11 @@ export class HistoricalReturnsService {
       let previous_year;
       let open;
       let close;
-      let valuationDate = new Date(asOnDate);
+      const newAsOnDate = (asOnDate/1000 + 24*60*60) * 1000;
+      let valuationDate = new Date(newAsOnDate);
 
       // It is possible Market was closed on a give date hence we choose the most recent available data from DB/Service. If value is null choose the next best
-      close = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lt": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+      close = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
       if (baseYrs === 0) {
         open = [
           {
@@ -92,11 +93,11 @@ export class HistoricalReturnsService {
             'Close': 1000,
           }
         ];
-        previous_year = new Date('1999-08-09');                 // Move to config file later.
+        previous_year = new Date('1999-02-01');                 // Move to config file later.
       } else {
         const negativeBase = -baseYrs;
         previous_year = date.addYears(valuationDate, negativeBase);
-        open = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lt": new Date(previous_year)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+        open = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lte": new Date(previous_year)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
       }
       const multiplier = date.subtract(valuationDate, previous_year).toDays() / 365;
       console.log(multiplier);
