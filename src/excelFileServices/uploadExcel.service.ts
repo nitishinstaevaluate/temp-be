@@ -64,7 +64,17 @@ export class ExcelSheetService {
 
       async transformData(data: any[]) { //only for data table showcase on ui
 
-        const keysArray = Object.keys(data[0]);
+        let maxKeys = Object.keys(data[0]).length;
+        let maxKeysObject = data[0];
+
+        for (let i = 1; i < data.length; i++) {
+          const numKeys = Object.keys(data[i]).length;
+          if (numKeys > maxKeys) {
+            maxKeys = numKeys;
+            maxKeysObject = data[i];
+          }
+        }
+        const keysArray = Object.keys(maxKeysObject);
         data.unshift(keysArray)
       
         return data;
