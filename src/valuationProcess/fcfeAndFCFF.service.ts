@@ -379,7 +379,14 @@ export class FCFEAndFCFFService {
       }
       transformedData.push(row);
     }
-  return transformedData
+    const firstElements = [];
+    transformedData.map(innerArray => {
+      if (innerArray.length > 0) {
+          firstElements.push(innerArray[0]);
+      }
+      });
+      transformedData.unshift(firstElements)
+      return transformedData;
   }
 
   //Get DiscountingFactor based on Industry based Calculations.
