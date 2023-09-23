@@ -34,7 +34,7 @@ export class ExcessEarningsService {
       message: 'Request is entered into Excess Earnings Model Service.',
       userId: inputs.userId,
     });
-
+    console.log('Inside Excess Earnings');
     const { outstandingShares, discountRateValue, valuationDate, discountingPeriod } = inputs;
     const years = await getYearsList(worksheet1);
     let multiplier = 100000;
@@ -64,6 +64,12 @@ export class ExcessEarningsService {
 
     let discountingPeriodValue = 0;
     let calculatedWacc = 0;
+    let patAtPerpetuity = 0;
+        let expectedProfitCOEAtPerpetuity = 0;
+        let excessReturnAtPerpetuity = 0;
+        let pvExcessReturnAtPerpetuity = 0;
+        let netWorthAtPerpetuity = 0;
+    
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     discountingPeriodValue = discountingPeriodObj.result;
 
@@ -90,53 +96,36 @@ export class ExcessEarningsService {
 
         let netWorth = await getShareholderFunds(i + 1, worksheet2);          // This is shareholder funds
         let pat = await GetPAT(i + 1, worksheet1);
-
+        
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
         const expectedProfitCOE = netWorth * adjustedCostOfEquity;
         const excessReturn = pat - expectedProfitCOE;
 
-        // let capitalStruc = await CapitalStruc(i, worksheet2, netWorth);
-        // // console.log(capitalStruc);
-        // // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
-        // calculatedWacc = adjustedCostOfEquity / 100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt) / 100) * (1 - parseFloat(inputs.taxRate) / 100) * capitalStruc.debtProp + parseFloat(inputs.copShareCapital) / 100 * capitalStruc.prefProp;
-
         if (i === yearLengthT && inputs.model.includes('Excess_Earnings')) {
-          // fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
           discountingPeriodValue = discountingPeriodValue - 1;
         }
-
-        // console.log('Term - ',fcffValueAtTerminalRate);
-
-        // if (i === 0) {
-        //   finalWacc = calculatedWacc;
-        // }
         
         if (inputs.model.includes('Excess_Earnings')) {
-          // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
           if (i === yearLengthT) {
             // Do nothing
           } else {
             this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
           }
-          // console.log('Disc WACC ', this.discountingFactorWACC)
-
         }
-
-        // valuation = fcff;
         
-        // // console.log('Disounting factor ',this.discountingFactorWACC,' ',fcff)
-        // if  (i === yearLengthT){
-        //   // if (inputs.model === 'FCFE') {
-        //   //   presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
-        //   // } else {
-        //     presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
-          
-        // } else {
-        //   presentFCFF = this.discountingFactorWACC * fcff
-        // }
-
+        console.log('Excess years',i,"-",yearLengthT);
+        if  (i === yearLengthT && inputs.model.includes('Excess_Earnings')) {
+          console.log("i am inside",pat);
+          patAtPerpetuity = await this.patPP(pat, inputs.terminalGrowthRate);
+          console.log(patAtPerpetuity);
+          netWorthAtPerpetuity = netWorth + patAtPerpetuity;
+          expectedProfitCOEAtPerpetuity = netWorth * adjustedCostOfEquity;
+          excessReturnAtPerpetuity = (patAtPerpetuity - expectedProfitCOEAtPerpetuity)/(adjustedCostOfEquity - parseFloat(inputs.terminalGrowthRate));
+          pvExcessReturnAtPerpetuity = excessReturnAtPerpetuity * this.discountingFactorWACC;
+        }
+        console.log(patAtPerpetuity,"----",pat,'----',inputs.terminalGrowthRate) ;
         presentValueOfExcessReturn = excessReturn * this.discountingFactorWACC;
-        sumOfCashFlows = presentValueOfExcessReturn + sumOfCashFlows;
+        sumOfCashFlows = presentValueOfExcessReturn + sumOfCashFlows + pvExcessReturnAtPerpetuity;
 
         bookValueAsOnDate = await getShareholderFunds(i, worksheet2);
         
@@ -144,13 +133,13 @@ export class ExcessEarningsService {
 
         result = {
           particulars: (i === yearLengthT) ? 'Perpetuity' : `${year}-${parseInt(year) + 1}`,
-          netWorth: (i === yearLengthT) ? '' : netWorth,
-          pat: (i === yearLengthT) ? '' : pat,
-          expectedProfitCOE: (i === yearLengthT) ? '' : expectedProfitCOE,
-          excessReturn: (i === yearLengthT) ? '' : excessReturn,
+          netWorth: (i === yearLengthT) ? netWorthAtPerpetuity : netWorth,
+          pat: (i === yearLengthT) ? (pat * (1 + parseFloat(inputs.terminalGrowthRate)/100)) : pat,
+          expectedProfitCOE: (i === yearLengthT) ? expectedProfitCOEAtPerpetuity : expectedProfitCOE,
+          excessReturn: (i === yearLengthT) ? excessReturnAtPerpetuity : excessReturn,
           discountingPeriod: discountingPeriodValue,
           discountingFactor: this.discountingFactorWACC,
-          presentValueOfExcessReturn: presentValueOfExcessReturn,
+          presentValueOfExcessReturn: (i === yearLengthT) ?pvExcessReturnAtPerpetuity : presentValueOfExcessReturn,
           sumOfCashFlows: '',
           bookValue: i > 0 ? '' : bookValueAsOnDate,
           equityValue: '',
@@ -175,6 +164,11 @@ export class ExcessEarningsService {
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }
+  }
+
+  async patPP(an,bb){
+    console.log(an * (1 + parseFloat(bb)/100));
+    return an * (1 + parseFloat(bb)/100);
   }
 
   async transformData(data: any[]) { //only to render data on UI table
