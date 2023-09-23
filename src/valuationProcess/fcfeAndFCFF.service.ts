@@ -356,7 +356,7 @@ export class FCFEAndFCFFService {
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
-    return { result: finalResult, tableData:data, valuation: equityValue, msg: 'Executed Successfully' };
+    return { result: finalResult, tableData:data.transposedResult, valuation: equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
   }
 
   async transformData(data: any[]) { //only to render data on UI table
@@ -385,8 +385,7 @@ export class FCFEAndFCFFService {
           firstElements.push(innerArray[0]);
       }
       });
-      transformedData.unshift(firstElements)
-      return transformedData;
+      return {transposedResult : transformedData, columnHeader : firstElements};
   }
 
   //Get DiscountingFactor based on Industry based Calculations.

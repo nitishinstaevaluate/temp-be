@@ -161,8 +161,9 @@ export class ExcessEarningsService {
     discountingPeriodValue = 0;  
     return {
       result: finalResult,
-      tableData: data,
+      tableData: data.transposedResult,
       valuation: finalResult[0].equityValue, //to be defined
+      columnHeader:data.columnHeader,
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }
@@ -189,7 +190,13 @@ export class ExcessEarningsService {
       }
       transformedData.push(row);
     }
-    return transformedData
+    const firstElements = [];
+    transformedData.map(innerArray => {
+      if (innerArray.length > 0) {
+        firstElements.push(innerArray[0]);
+      }
+      });
+      return {transposedResult : transformedData, columnHeader : firstElements};
   }
 }
 
