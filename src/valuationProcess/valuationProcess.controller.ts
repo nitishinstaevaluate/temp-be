@@ -232,7 +232,8 @@ let workbook=null;
                 tableResult.push({
                 model: MODEL[0],
                 valuationData: fcfeResponse.tableData,
-                valuation:fcfeResponse.valuation
+                valuation:fcfeResponse.valuation,
+                columnHeader:fcfeResponse.columnHeader
                 });
                   
               models.push(modelValue);
@@ -249,7 +250,8 @@ let workbook=null;
                 tableResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.tableData,
-                  valuation:fcffResponse.valuation
+                  valuation:fcffResponse.valuation,
+                  columnHeader:fcffResponse.columnHeader
                   });
                    models.push(modelValue);
                     break;
@@ -281,7 +283,8 @@ let workbook=null;
             tableResult.push({
               model: MODEL[3],
               valuationData: excessEarningsResponse.tableData,
-              valuation:excessEarningsResponse.valuation
+              valuation:excessEarningsResponse.valuation,
+              columnHeader:excessEarningsResponse.columnHeader
               });
               models.push(modelValue);
 
