@@ -36,7 +36,10 @@ export class ExcessEarningsService {
     });
     console.log('Inside Excess Earnings');
     const { outstandingShares, discountRateValue, valuationDate, discountingPeriod } = inputs;
-    const years = await getYearsList(worksheet1);
+    const yearsActual = await getYearsList(worksheet1);
+    console.log('Checking years ', yearsActual);
+    const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
+    console.log('Checking years ', years);
     let multiplier = 100000;
     if (years === null)
       return {
@@ -46,13 +49,13 @@ export class ExcessEarningsService {
     const year = new Date(valuationDate).getFullYear().toString();
     const columnIndex = years.indexOf(year);
     console.log(columnsList[columnIndex], columnIndex, year);
-
+    let discountingPeriodValue = 0;
     const column = columnsList[columnIndex];
 
     const discountingPeriodObj = await getDiscountingPeriod(
       discountingPeriod
     );
-
+    console.log(discountingPeriodObj);
     var vdate = await calculateDaysFromDate(new Date(inputs.valuationDate));
     // console.log('Days left ',vdate);
     // var vdayLeft = 365 - vdate;
@@ -62,14 +65,14 @@ export class ExcessEarningsService {
       this.stubAdjRequired = true;
     }
 
-    let discountingPeriodValue = 0;
-    let calculatedWacc = 0;
+
+
     let patAtPerpetuity = 0;
-        let expectedProfitCOEAtPerpetuity = 0;
-        let excessReturnAtPerpetuity = 0;
-        let pvExcessReturnAtPerpetuity = 0;
-        let netWorthAtPerpetuity = 0;
-    
+    let expectedProfitCOEAtPerpetuity = 0;
+    let excessReturnAtPerpetuity = 0;
+    let pvExcessReturnAtPerpetuity = 0;
+    let netWorthAtPerpetuity = 0;
+
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     discountingPeriodValue = discountingPeriodObj.result;
 
@@ -81,9 +84,11 @@ export class ExcessEarningsService {
     const yearLengthT = yearsLength - 1;
     let sumOfCashFlows = 0;
     let presentValueOfExcessReturn = 0;
-    var bookValueAsOnDate;
+    var bookValueAsOnDate = 0;
 
-    console.log('Discoun Val ', discountingPeriodValue);
+    // if (i === 0) {
+      bookValueAsOnDate  = await getShareholderFunds(0, worksheet2);
+    // }
 
     let fractionOfYearLeft = this.stubAdjRequired == true ? (vdate.dateDiff - 1) / vdate.totalDays : vdate.dateDiff / vdate.totalDays;            // Adjust based on next fiscal year
     console.log('Faction Year left ', fractionOfYearLeft);
@@ -93,48 +98,40 @@ export class ExcessEarningsService {
       years.map(async (year: string, i: number) => {
 
         let result = {};
-        
         let netWorth = await getShareholderFunds(i + 1, worksheet2);          // This is shareholder funds
-        
         let pat = await GetPAT(i + 1, worksheet1);
         
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
-        const expectedProfitCOE = netWorth * adjustedCostOfEquity;
+        const expectedProfitCOE = netWorth * adjustedCostOfEquity/100;
         const excessReturn = pat - expectedProfitCOE;
-
+        // discountingPeriodValue = discountingPeriodValue * i;
         if (i === yearLengthT) {
-          discountingPeriodValue = discountingPeriodValue - 1;
+          discountingPeriodValue = discountingPeriodValue;
+        
+        } else if (i === 0) {
+          discountingPeriodValue = discountingPeriodValue;
+        } else {
+          discountingPeriodValue = discountingPeriodValue + 1;
         }
-        
-        // if (inputs.model.includes('Excess_Earnings')) {
-        //   if (i === yearLengthT) {
-        //     // Do nothing
-        //   } else {
-            
-        //   }
-        // }
-        
-        this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
-        
-        if  (i === yearLengthT) {
+
+        // console.log('Discoun Val ',i," ", discountingPeriodValue);
+        this.discountingFactorWACC = 1 / (1 + adjustedCostOfEquity / 100) ** (discountingPeriodValue)
+        // console.log(this.discountingFactorWACC, " ",  i)
+        if (i === yearLengthT) {
           const prevNetworth = await getShareholderFunds(i, worksheet2);
-          
           const prevPAT = await GetPAT(i, worksheet1);
-          
-          patAtPerpetuity = prevPAT * (1 + parseFloat(inputs.terminalGrowthRate)/100);
+          patAtPerpetuity = prevPAT * (1 + parseFloat(inputs.terminalGrowthRate) / 100);
           netWorthAtPerpetuity = prevNetworth + patAtPerpetuity;
-          expectedProfitCOEAtPerpetuity = netWorthAtPerpetuity * adjustedCostOfEquity/100;
-          excessReturnAtPerpetuity = (patAtPerpetuity - expectedProfitCOEAtPerpetuity)/(adjustedCostOfEquity/100 - parseFloat(inputs.terminalGrowthRate)/100);
+          expectedProfitCOEAtPerpetuity = netWorthAtPerpetuity * adjustedCostOfEquity / 100;
+          excessReturnAtPerpetuity = (patAtPerpetuity - expectedProfitCOEAtPerpetuity) / (adjustedCostOfEquity / 100 - parseFloat(inputs.terminalGrowthRate) / 100);
           pvExcessReturnAtPerpetuity = excessReturnAtPerpetuity * this.discountingFactorWACC;
         }
-        console.log(patAtPerpetuity,"----",pat,'----',inputs.terminalGrowthRate) ;
+
         presentValueOfExcessReturn = excessReturn * this.discountingFactorWACC;
         sumOfCashFlows = presentValueOfExcessReturn + sumOfCashFlows + pvExcessReturnAtPerpetuity;
 
-        bookValueAsOnDate = await getShareholderFunds(i, worksheet2);
         
-        // const netProfitAtPerpetuity = 1 * (1 + parseFloat(TerminalGrowthRate))     //=+F6*(1+Sheet2!C9)
-
+        // console.log('Discoun Val results ',i," ", discountingPeriodValue);
         result = {
           particulars: (i === yearLengthT) ? 'Perpetuity' : `${year}-${parseInt(year) + 1}`,
           netWorth: (i === yearLengthT) ? netWorthAtPerpetuity : netWorth,
@@ -143,28 +140,29 @@ export class ExcessEarningsService {
           excessReturn: (i === yearLengthT) ? excessReturnAtPerpetuity : excessReturn,
           discountingPeriod: discountingPeriodValue,
           discountingFactor: this.discountingFactorWACC,
-          presentValueOfExcessReturn: (i === yearLengthT) ?pvExcessReturnAtPerpetuity : presentValueOfExcessReturn,
+          presentValueOfExcessReturn: (i === yearLengthT) ? pvExcessReturnAtPerpetuity : presentValueOfExcessReturn,
           sumOfCashFlows: '',
           bookValue: i > 0 ? '' : bookValueAsOnDate,
           equityValue: '',
           noOfShares: i > 0 ? '' : outstandingShares,
           valuePerShare: ''
         };
+        // discountingPeriodValue = discountingPeriodValue + 1;
         
-        discountingPeriodValue = discountingPeriodValue + 1;
+        // console.log('Post results Discoun Val ', discountingPeriodValue);
         return result;
       })
     )
     finalResult[0].sumOfCashFlows = sumOfCashFlows;
     finalResult[0].equityValue = bookValueAsOnDate + sumOfCashFlows;
     finalResult[0].valuePerShare = (finalResult[0].equityValue * 100000) / outstandingShares;       // Applying mulitplier for figures
-    
+
     const data = await this.transformData(finalResult);
-    
+    discountingPeriodValue = 0;  
     return {
       result: finalResult,
-      tableData:data,
-      valuation: finalResult[0].valuePerShare, //to be defined
+      tableData: data,
+      valuation: finalResult[0].equityValue, //to be defined
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }
@@ -191,7 +189,7 @@ export class ExcessEarningsService {
       }
       transformedData.push(row);
     }
-  return transformedData
+    return transformedData
   }
 }
 
