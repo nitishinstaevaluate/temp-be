@@ -64,6 +64,10 @@ export class ExcelSheetService {
 
       async transformData(data: any[]) { //only for data table showcase on ui
 
+
+        // const keysArray = Object.keys(data[0]);
+        // data.unshift(keysArray)
+
         let maxKeys = Object.keys(data[0]).length;
         let maxKeysObject = data[0];
 
@@ -76,6 +80,7 @@ export class ExcelSheetService {
         }
         const keysArray = Object.keys(maxKeysObject);
         data.unshift(keysArray)
+
       
         return data;
       }
