@@ -93,34 +93,38 @@ export class ExcessEarningsService {
       years.map(async (year: string, i: number) => {
 
         let result = {};
-
+        
         let netWorth = await getShareholderFunds(i + 1, worksheet2);          // This is shareholder funds
+        
         let pat = await GetPAT(i + 1, worksheet1);
         
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
         const expectedProfitCOE = netWorth * adjustedCostOfEquity;
         const excessReturn = pat - expectedProfitCOE;
 
-        if (i === yearLengthT && inputs.model.includes('Excess_Earnings')) {
+        if (i === yearLengthT) {
           discountingPeriodValue = discountingPeriodValue - 1;
         }
         
-        if (inputs.model.includes('Excess_Earnings')) {
-          if (i === yearLengthT) {
-            // Do nothing
-          } else {
-            this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
-          }
-        }
+        // if (inputs.model.includes('Excess_Earnings')) {
+        //   if (i === yearLengthT) {
+        //     // Do nothing
+        //   } else {
+            
+        //   }
+        // }
         
-        console.log('Excess years',i,"-",yearLengthT);
-        if  (i === yearLengthT && inputs.model.includes('Excess_Earnings')) {
-          console.log("i am inside",pat);
-          patAtPerpetuity = await this.patPP(pat, inputs.terminalGrowthRate);
-          console.log(patAtPerpetuity);
-          netWorthAtPerpetuity = netWorth + patAtPerpetuity;
-          expectedProfitCOEAtPerpetuity = netWorth * adjustedCostOfEquity;
-          excessReturnAtPerpetuity = (patAtPerpetuity - expectedProfitCOEAtPerpetuity)/(adjustedCostOfEquity - parseFloat(inputs.terminalGrowthRate));
+        this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
+        
+        if  (i === yearLengthT) {
+          const prevNetworth = await getShareholderFunds(i, worksheet2);
+          
+          const prevPAT = await GetPAT(i, worksheet1);
+          
+          patAtPerpetuity = prevPAT * (1 + parseFloat(inputs.terminalGrowthRate)/100);
+          netWorthAtPerpetuity = prevNetworth + patAtPerpetuity;
+          expectedProfitCOEAtPerpetuity = netWorthAtPerpetuity * adjustedCostOfEquity/100;
+          excessReturnAtPerpetuity = (patAtPerpetuity - expectedProfitCOEAtPerpetuity)/(adjustedCostOfEquity/100 - parseFloat(inputs.terminalGrowthRate)/100);
           pvExcessReturnAtPerpetuity = excessReturnAtPerpetuity * this.discountingFactorWACC;
         }
         console.log(patAtPerpetuity,"----",pat,'----',inputs.terminalGrowthRate) ;
@@ -134,7 +138,7 @@ export class ExcessEarningsService {
         result = {
           particulars: (i === yearLengthT) ? 'Perpetuity' : `${year}-${parseInt(year) + 1}`,
           netWorth: (i === yearLengthT) ? netWorthAtPerpetuity : netWorth,
-          pat: (i === yearLengthT) ? (pat * (1 + parseFloat(inputs.terminalGrowthRate)/100)) : pat,
+          pat: (i === yearLengthT) ? patAtPerpetuity : pat,
           expectedProfitCOE: (i === yearLengthT) ? expectedProfitCOEAtPerpetuity : expectedProfitCOE,
           excessReturn: (i === yearLengthT) ? excessReturnAtPerpetuity : excessReturn,
           discountingPeriod: discountingPeriodValue,
@@ -166,10 +170,6 @@ export class ExcessEarningsService {
     }
   }
 
-  async patPP(an,bb){
-    console.log(an * (1 + parseFloat(bb)/100));
-    return an * (1 + parseFloat(bb)/100);
-  }
 
   async transformData(data: any[]) { //only to render data on UI table
     const transformedData = [];
