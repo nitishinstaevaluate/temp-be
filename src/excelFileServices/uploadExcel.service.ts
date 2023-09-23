@@ -39,7 +39,10 @@ export class ExcelSheetService {
                       }
                     }
                   });
-                return of(sheetData);
+                  return from(this.transformData(sheetData)).pipe(switchMap((excelData)=>{
+                    
+                    return of(excelData)
+                  }))
               }),
             catchError(() => {
                 throw new NotFoundException('File not found');
@@ -58,4 +61,13 @@ export class ExcelSheetService {
           resolve(workbook);
         });
       }
+
+      async transformData(data: any[]) { //only for data table showcase on ui
+
+        const keysArray = Object.keys(data[0]);
+        data.unshift(keysArray)
+      
+        return data;
+      }
+      
 }
