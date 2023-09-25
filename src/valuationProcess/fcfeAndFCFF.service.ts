@@ -56,7 +56,8 @@ export class FCFEAndFCFFService {
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
-    const years = await getYearsList(worksheet1);
+    const yearsActual = await getYearsList(worksheet1);
+    const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     if (years === null)
       return {
@@ -356,7 +357,7 @@ export class FCFEAndFCFFService {
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
-    return { result: finalResult, tableData:data, valuation: valuation, msg: 'Executed Successfully' };
+    return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
   }
 
   async transformData(data: any[]) { //only to render data on UI table
@@ -379,18 +380,13 @@ export class FCFEAndFCFFService {
       }
       transformedData.push(row);
     }
-  return transformedData
-  }
-
-  //Get Discounting Period.
-  async getDiscountingPeriod_old(discountingPeriod: string): Promise<any> {       // Moved to common methods
-    let discountingPeriodValue = 0;
-    if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
-    return {
-      result: discountingPeriodValue,
-      msg: 'Discounting period get Successfully.',
-    };
+    const firstElements = [];
+    transformedData.map(innerArray => {
+      if (innerArray.length > 0) {
+          firstElements.push(innerArray[0]);
+      }
+      });
+      return {transposedResult : transformedData, columnHeader : firstElements};
   }
 
   //Get DiscountingFactor based on Industry based Calculations.

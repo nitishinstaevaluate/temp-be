@@ -98,8 +98,8 @@ export async function calculateDaysFromDate(dateString: Date) {
 
 export function getDiscountingPeriod(discountingPeriod: string) {
   let discountingPeriodValue = 0;
-  if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-  else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
+  if (discountingPeriod === 'Full_Period' || discountingPeriod === 'Full Period') discountingPeriodValue = 1;
+  else if (discountingPeriod === 'Mid_Period' || discountingPeriod === 'Mid Period') discountingPeriodValue = 0.5;
   return {
     result: discountingPeriodValue,
     msg: 'Discounting period get Successfully.',

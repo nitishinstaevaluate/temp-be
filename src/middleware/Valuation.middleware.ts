@@ -49,8 +49,8 @@ export class MyMiddleware implements NestInterceptor {
     if (!excelSheetId)
       throw new BadRequestException('excelSheetId is required.');
 
-    if (!projectionYears)
-      throw new BadRequestException('projectionYears is required.');
+    // if (!projectionYears)
+    //   throw new BadRequestException('projectionYears is required.');
 
     if (!model) throw new BadRequestException('model is required.');
 
