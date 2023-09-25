@@ -56,7 +56,8 @@ export class FCFEAndFCFFService {
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
-    const years = await getYearsList(worksheet1);
+    const yearsActual = await getYearsList(worksheet1);
+    const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     if (years === null)
       return {
@@ -356,7 +357,7 @@ export class FCFEAndFCFFService {
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
-    return { result: finalResult, tableData:data.transposedResult, valuation: equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
+    return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
   }
 
   async transformData(data: any[]) { //only to render data on UI table
