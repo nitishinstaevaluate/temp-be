@@ -290,7 +290,23 @@ let workbook=null;
 
           break; 
             case MODEL[4]: 
-            case MODEL[5]:  
+            case MODEL[5]: 
+            const netAssetValueResponse = await this.valuationMethodsService
+            .Net_Asset_Value_method(inputs, worksheet1, worksheet2)
+            valResult.push({
+              model: MODEL[5],
+              valuationData: netAssetValueResponse.result,
+              valuation:netAssetValueResponse.valuation
+              });
+            tableResult.push({
+              model: MODEL[5],
+              valuationData: netAssetValueResponse.result,
+              valuation:netAssetValueResponse.valuation,
+              // columnHeader:netAssetValueResponse.columnHeader
+              });
+              models.push(modelValue);
+            break; 
+
             case MODEL[6]:  
 
             default:

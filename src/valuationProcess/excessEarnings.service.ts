@@ -37,9 +37,9 @@ export class ExcessEarningsService {
     console.log('Inside Excess Earnings');
     const { outstandingShares, discountRateValue, valuationDate, discountingPeriod } = inputs;
     const yearsActual = await getYearsList(worksheet1);
-    console.log('Checking years ', yearsActual);
+    // console.log('Checking years ', yearsActual);
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
-    console.log('Checking years ', years);
+    // console.log('Checking years ', years);
     let multiplier = 100000;
     if (years === null)
       return {
