@@ -36,69 +36,69 @@ export class NetAssetValueService {
     // ------------------------------- NAV --------------------------
       const fixedAsset = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.tangibleAssetsRow}`,
+        `${columnsList[0] + sheet2_BSObj.tangibleAssetsRow}`,
       );
         
       const longTermLoansAdvances = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
+        `${columnsList[0] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
       );
 
       const nonCurrentInvestment = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.nonCurrentInvestmentRow}`,
+        `${columnsList[0] + sheet2_BSObj.nonCurrentInvestmentRow}`,
       );
 
       const deferredTaxAsset = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.deferredTaxAssetsRow}`,
+        `${columnsList[0] + sheet2_BSObj.deferredTaxAssetsRow}`,
       );
       
       const totalNonCurrentAssets = fixedAsset + longTermLoansAdvances + nonCurrentInvestment + deferredTaxAsset;
 
       const inventories = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.inventoriesRow}`,
+        `${columnsList[0] + sheet2_BSObj.inventoriesRow}`,
       );
 
       const shortTermLoanAdvances =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.advancesRow}`,
+        `${columnsList[0] + sheet2_BSObj.advancesRow}`,
       );
 
       const tradeReceivables =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.tradeReceivablesRow}`,
+        `${columnsList[0] + sheet2_BSObj.tradeReceivablesRow}`,
       );
 
       const cash =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.cashEquivalentsRow}`,
+        `${columnsList[0] + sheet2_BSObj.cashEquivalentsRow}`,
       );
 
       const otherCurrentAssets =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.otherCurrentAssetsRow}`,
+        `${columnsList[0] + sheet2_BSObj.otherCurrentAssetsRow}`,
       );
 
       const shortTermProvisions =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.shortTermProvisionsRow}`,
+        `${columnsList[0] + sheet2_BSObj.shortTermProvisionsRow}`,
       );
 
       const shortTermBorrowings =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.shortTermBorrowingsRow}`,
+        `${columnsList[0] + sheet2_BSObj.shortTermBorrowingsRow}`,
       );
 
       const tradePayables =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.tradePayablesRow}`,
+        `${columnsList[0] + sheet2_BSObj.tradePayablesRow}`,
       );
 
       const otherCurrentLiabilities =  await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
+        `${columnsList[0] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
       );
       
       const netCurrentAsset = inventories + shortTermLoanAdvances + tradeReceivables + cash + otherCurrentAssets - 
@@ -108,24 +108,24 @@ export class NetAssetValueService {
 
       const longTermBorrowings = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.longTermBorrowingsRow}`,
+        `${columnsList[0] + sheet2_BSObj.longTermBorrowingsRow}`,
       );
 
       const otherUnsecuredLoans = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+        `${columnsList[0] + sheet2_BSObj.otherUnsecuredLoansRow}`,
       );
 
       const longTermBrrw = longTermBorrowings + otherUnsecuredLoans;
 
       const longTermProvision = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.longTermProvisionRow}`,
+        `${columnsList[0] + sheet2_BSObj.longTermProvisionRow}`,
       );
 
       const shareApplicationMoney = await getCellValue(
         worksheet2,
-        `${columnsList[1] + sheet2_BSObj.shareApplicationRow}`,
+        `${columnsList[0] + sheet2_BSObj.shareApplicationRow}`,
       );
 
       const equityValue = firmValue - longTermBrrw - longTermProvision - shareApplicationMoney;
@@ -135,9 +135,10 @@ export class NetAssetValueService {
 
 
     // ------------------------------- NAV --------------------------
-
+    const basisSelector = 'Book Value';     // Check how it varies between market and book value
     
     const finalResult = {
+      basis: basisSelector,
       nonCurrentAssets : '',
       fixedAsset : fixedAsset,
       longTermLoansAdvances : longTermLoansAdvances,
