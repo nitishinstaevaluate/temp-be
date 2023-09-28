@@ -123,27 +123,37 @@
                 </tr>
                 <tr>
                     {{#each (PAT data)}}
+                    {{#ifZero fcffPat}}
                     <td >{{fcffPat}}</th>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (depAndAmortisation data)}}
+                    {{#ifZero fcffDepAmortisation}}
                     <td>{{fcffDepAmortisation}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (InterestAdjTaxes data)}}
+                    {{#ifZero fcffAddInterestAdjTaxes}}
                     <td>{{fcffAddInterestAdjTaxes}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (nonCashItem data)}}
+                    {{#ifZero fcffOnCashItems}}
                     <td>{{fcffOnCashItems}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (NCA data)}}
+                    {{#ifZero fcffNca}}
                     <td>{{fcffNca}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
@@ -155,72 +165,100 @@
                 </tr>
                 <tr>
                     {{#each (netCshFlow data)}}
+                    {{#ifZero fcffNetCashFlow}}
                     <td>{{fcffNetCashFlow}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (fxdCshFlow data)}}
+                    {{#ifZero fcffFixedAssets}}
                     <td>{{fcffFixedAssets}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (FCFF data)}}
+                    {{#ifZero fcff}}
                     <td>{{fcff}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discPeriod data)}}
+                    {{#ifZero fcffDiscountingPeriod}}
                     <td>{{fcffDiscountingPeriod}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discFactor data)}}
+                    {{#ifZero fcffDiscountingFactor}}
                     <td>{{fcffDiscountingFactor}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (prsntFCFF data)}}
+                    {{#ifZero fcffPresentFCFF}}
                     <td>{{fcffPresentFCFF}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (sumCashFlow data)}}
+                    {{#ifZero fcffSumOfCashFlows}}
                     <td>{{fcffSumOfCashFlows}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (debtDate data)}}
+                    {{#ifZero fcffDebtOnDate}}
                     <td>{{fcffDebtOnDate}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (cashEquvlnt data)}}
+                    {{#ifZero fcffCashEquivalents}}
                     <td>{{fcffCashEquivalents}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (surplusAsset data)}}
+                    {{#ifZero fcffSurplusAssets}}
                     <td>{{fcffSurplusAssets}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (otherAdjustment data)}}
+                    {{#ifZero fcffOtherAdj}}
                     <td>{{fcffOtherAdj}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (eqtValue data)}}
+                    {{#ifZero fcffEquityValue}}
                     <td>{{fcffEquityValue}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (shares data)}}
+                    {{#ifZero fcffNoOfShares}}
                     <td>{{fcffNoOfShares}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr >
                     {{#each (valuePrShare data)}}
+                    {{#ifZero fcffValuePerShare}}
                     <td>{{fcffValuePerShare}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
             </table>

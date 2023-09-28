@@ -123,62 +123,86 @@
                 </tr>
                 <tr>
                     {{#each (NetWorth data)}}
+                    {{#ifZero netWorth}}
                     <td >{{netWorth}}</th>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (PAT data)}}
+                    {{#ifZero excessEarningPat}}
                     <td >{{excessEarningPat}}</th>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (expctProfitCOE data)}}
+                    {{#ifZero expectedProfitCOE}}
                     <td>{{expectedProfitCOE}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (excessRtrn data)}}
+                    {{#ifZero excessReturn}}
                     <td>{{excessReturn}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discPeriod data)}}
+                    {{#ifZero excessEarningDiscountingPeriod}}
                     <td>{{excessEarningDiscountingPeriod}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discFactor data)}}
+                    {{#ifZero excessEarningDiscountingFactor}}
                     <td>{{excessEarningDiscountingFactor}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (presentValOfExcessReturn data)}}
+                    {{#ifZero presentValueOfExcessReturn}}
                     <td>{{presentValueOfExcessReturn}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (sumCashFlow data)}}
+                    {{#ifZero excessEarningSumOfCashFlows}}
                     <td>{{excessEarningSumOfCashFlows}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (bkValue data)}}
+                    {{#ifZero bookValue}}
                     <td>{{bookValue}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (eqtValue data)}}
+                    {{#ifZero excessEarningEquityValue}}
                     <td>{{excessEarningEquityValue}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (shares data)}}
+                    {{#ifZero excessEarningNoOfShares}}
                     <td>{{excessEarningNoOfShares}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr >
                     {{#each (valuePrShare data)}}
+                    {{#ifZero excessEarningValuePerShare}}
                     <td>{{excessEarningValuePerShare}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
             </table>

@@ -130,22 +130,30 @@
                 </tr>
                 <tr>
                     {{#each (depAndAmortisation data)}}
+                    {{#ifZero fcfeDepAmortisation}}
                     <td>{{fcfeDepAmortisation}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (nonCashItem data)}}
+                    {{#ifZero fcfeOnCashItems}}
                     <td>{{fcfeOnCashItems}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (NCA data)}}
+                    {{#ifZero fcfeNca}}
                     <td>{{fcfeNca}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (changeInBorrowing data)}}
+                    {{#ifZero changeInBorrowings}}
                     <td>{{changeInBorrowings}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
@@ -157,67 +165,93 @@
                 </tr>
                 <tr>
                     {{#each (netCshFlow data)}}
+                    {{#ifZero fcfeNetCashFlow}}
                     <td>{{fcfeNetCashFlow}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (fxdCshFlow data)}}
+                    {{#ifZero fcfeFixedAssets}}
                     <td>{{fcfeFixedAssets}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (FCFE data)}}
+                    {{#ifZero fcff}}
                     <td>{{fcff}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discPeriod data)}}
+                    {{#ifZero fcfeDiscountingPeriod}}
                     <td>{{fcfeDiscountingPeriod}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discFactor data)}}
+                    {{#ifZero fcfeDiscountingFactor}}
                     <td>{{fcfeDiscountingFactor}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (prsntFCFF data)}}
+                    {{#ifZero fcfePresentFCFF}}
                     <td>{{fcfePresentFCFF}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (sumCashFlow data)}}
+                    {{#ifZero fcfeSumOfCashFlows}}
                     <td>{{fcfeSumOfCashFlows}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (cashEquvlnt data)}}
+                    {{#ifZero fcfeCashEquivalents}}
                     <td>{{fcfeCashEquivalents}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (surplusAsset data)}}
+                    {{#ifZero fcfeSurplusAssets}}
                     <td>{{fcfeSurplusAssets}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (otherAdjustment data)}}
+                    {{#ifZero fcfeOtherAdj}}
                     <td>{{fcfeOtherAdj}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (eqtValue data)}}
+                    {{#ifZero fcfeEquityValue}}
                     <td>{{fcfeEquityValue}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (shares data)}}
+                    {{#ifZero fcfeNoOfShares}}
                     <td>{{fcfeNoOfShares}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr >
                     {{#each (valuePrShare data)}}
+                    {{#ifZero fcfeValuePerShare}}
                     <td>{{fcfeValuePerShare}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
             </table>
