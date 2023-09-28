@@ -123,7 +123,9 @@
                 </tr>
                 <tr>
                     {{#each (PAT data)}}
-                    <td >{{fcfePat}}</th>
+                        {{#ifZero fcfePat}}
+                         <td >{{fcfePat}}</th>
+                        {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
@@ -148,7 +150,9 @@
                 </tr>
                 <tr>
                     {{#each (defferTaxAssets data)}}
+                    {{#ifZero fcfeDefferedTaxAssets}}
                     <td>{{fcfeDefferedTaxAssets}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>

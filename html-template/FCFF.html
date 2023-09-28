@@ -148,7 +148,9 @@
                 </tr>
                 <tr>
                     {{#each (defferTaxAssets data)}}
+                    {{#ifZero fcffDefferedTaxAssets}}
                     <td>{{fcffDefferedTaxAssets}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>

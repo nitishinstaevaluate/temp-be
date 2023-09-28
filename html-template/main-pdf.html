@@ -163,9 +163,9 @@
                 </tr>
                 <tr>
                     {{#each (defferTaxAssets data)}}
-                    {{#if fcfeDefferedTaxAssets}}
+                    {{#ifZero fcfeDefferedTaxAssets}}
                     <td>{{fcfeDefferedTaxAssets}}</td>
-                    {{/if}}
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
@@ -341,9 +341,9 @@
                 </tr>
                 <tr>
                     {{#each (defferTaxAssets data)}}
-                    {{#if fcffDefferedTaxAssets}}
+                    {{#ifZero fcffDefferedTaxAssets}}
                     <td>{{fcffDefferedTaxAssets}}</td>
-                    {{/if}}
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
