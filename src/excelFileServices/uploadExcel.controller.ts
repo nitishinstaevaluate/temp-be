@@ -75,8 +75,12 @@ export class UploadController {
     );
   }
 
-  @Get('generate')
-  async generatePdf() {
-    await this.excelSheetService.generatePdfFromHtml();
+  @Get('generate/:reportId/:model/:specificity')
+  async generatePdf(
+    @Param('reportId') reportId : string,
+    @Param('model') model : string = null,
+    @Param('specificity') specificity : boolean = false 
+  ) {
+    return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity);
   }
 }
