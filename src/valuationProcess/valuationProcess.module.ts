@@ -29,6 +29,6 @@ import {LoggerModule} from '../loggerService/logger.module';
     NetAssetValueService,
     utilsService
   ], //ImportService
-  exports: [ValuationsService, ValuationMethodsService],
+  exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService],
 })
 export class ValuationProcessModule {}
