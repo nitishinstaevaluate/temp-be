@@ -1,5 +1,6 @@
 import { read } from 'fs';
 import { columnsList } from './excelSheetConfig';
+import { GET_YEAR, MATCH_YEAR } from 'src/constants/constants';
 const date = require('date-and-time');
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
@@ -19,19 +20,64 @@ export async function getCellValue(worksheet: any, address: string) {
 }
 //Get Years List from Excel Sheet.
 export async function getYearsList(worksheet1: any): Promise<any> {
-  const firstYearCell = worksheet1['B1'];
-  const firstYear = firstYearCell.v.split(',')[1];
-  if (firstYear === undefined) return null;
+// only formats allowed (alphabets)2023/(alphabets)23/2023-2024/2023-24/2023/23 -- implement function to valiadate the excel before processing
+  try{
+    const yearSet = [];
+    for (const key in worksheet1) {
+      if (worksheet1.hasOwnProperty(key) && key !== '!ref') {
+        const object = worksheet1[key];
+        if (object.v && GET_YEAR.test(object.v)) {
+          if(object.v.includes('-')){
+            // console.log("if condoitiosn",object?.v.split('-')[1])
+            if(object?.v.split('-')[1].length <= 2){
+              yearSet.push(object?.v.split('-')[1]);
+              // console.log("year containing splits -",object?.v.split('-')[1] )
+            }
+            else{
+              const slicedYear = `${object?.v.split('-')[1][object?.v.split('-')[1].length - 2]}${object?.v.split('-')[1][object?.v.split('-')[1].length - 1]}`;
+              yearSet.push(slicedYear);
+              // console.log("year containing two numbers only splits -",slicedYear )
+            }
+          }
+          else{
+            // console.log('else condition')
+            const numbers = object.v.match(MATCH_YEAR).join('');
+            if(numbers.length <= 2){
+              yearSet.push(numbers);
+            }
+            else{
+              const slicedYear = `${numbers[numbers.length - 2]}${numbers[numbers.length - 1]}`;
+              // console.log(slicedYear);
+              yearSet.push(slicedYear);
+            }
+          }
+        }
+      }
+    }
+    return yearSet;
 
-  const years = [];
-  years.push(firstYear.trim().split('-')[1]);
-  for (let i = 1; i < 100; i++) {
-    const yearCell = await worksheet1[`${columnsList[i] + 1}`];
-    if (yearCell === undefined) break;
-    if (yearCell && yearCell !== undefined)
-      years.push(yearCell.v.split('-')[1]);
+  // earlier used function
+  // const firstYearCell = worksheet1['B1'];
+  // const firstYear = firstYearCell.v.split(',')[1];
+  // if (firstYear === undefined) return null;
+
+  // const years = [];
+  // years.push(firstYear.trim().split('-')[1]);
+  // for (let i = 1; i < 100; i++) {
+  //   const yearCell = await worksheet1[`${columnsList[i] + 1}`];
+  //   if (yearCell === undefined) break;
+  //   if (yearCell && yearCell !== undefined)
+  //     years.push(yearCell.v.split('-')[1]);
+  // }
+  // return years;
   }
-  return years;
+  catch(err){
+    return{
+      msg:'something went wrong',
+      error:err.message,
+      status:false
+    }
+  }
 }
 export function findMedian(numbers: number[]) {
   numbers.sort((a, b) => a - b);
@@ -51,6 +97,22 @@ export function findAverage(numbers: number[]) {
   );
   const average = sum / numbers.length;
   return average;
+}
+
+export function latestFindAverage(type:any,company:any){
+  const numbers = company.map((c: any) => {
+    if (c.company !== 'Median') {
+      return c[type];
+    } else {
+      return null; 
+    }
+  }).filter((value: any) => value !== null);
+  const sum = numbers.reduce(
+    (accumulator:any, currentValue:any) => accumulator + currentValue,
+    0
+  );
+  const average = sum / numbers.length;
+  return average
 }
 
 export async function calculateDaysFromDate(dateString: Date) {
