@@ -116,7 +116,7 @@
                     <p><strong>Currency:</strong> All figures in INR ( Lakhs )</p>
                 </div>
             </div>
-            <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p>
+            <!-- <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p> -->
            
             <table>
                
@@ -294,7 +294,7 @@
                     <p><strong>Currency:</strong> All figures in INR ( Lakhs )</p>
                 </div>
             </div>
-            <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p>
+            <!-- <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p> -->
            
             <table>
                
@@ -479,7 +479,7 @@
                     <p><strong>Currency:</strong> All figures in INR ( Lakhs )</p>
                 </div>
             </div>
-            <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p>
+            <!-- <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p> -->
            
             <table>
                 <tr>
@@ -490,62 +490,86 @@
               
                 <tr>
                     {{#each (NetWorth data)}}
+                    {{#ifZero netWorth}}
                     <td >{{netWorth}}</th>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (PAT data)}}
+                    {{#ifZero excessEarningPat}}
                     <td >{{excessEarningPat}}</th>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (expctProfitCOE data)}}
+                    {{#ifZero expectedProfitCOE}}
                     <td>{{expectedProfitCOE}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (excessRtrn data)}}
+                    {{#ifZero excessReturn}}
                     <td>{{excessReturn}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discPeriod data)}}
+                    {{#ifZero excessEarningDiscountingPeriod}}
                     <td>{{excessEarningDiscountingPeriod}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (discFactor data)}}
+                    {{#ifZero excessEarningDiscountingFactor}}
                     <td>{{excessEarningDiscountingFactor}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (presentValOfExcessReturn data)}}
+                    {{#ifZero presentValueOfExcessReturn}}
                     <td>{{presentValueOfExcessReturn}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (sumCashFlow data)}}
+                    {{#ifZero excessEarningSumOfCashFlows}}
                     <td>{{excessEarningSumOfCashFlows}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (bkValue data)}}
+                    {{#ifZero bookValue}}
                     <td>{{bookValue}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (eqtValue data)}}
+                    {{#ifZero excessEarningEquityValue}}
                     <td>{{excessEarningEquityValue}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr>
                     {{#each (shares data)}}
+                    {{#ifZero excessEarningNoOfShares}}
                     <td>{{excessEarningNoOfShares}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
                 <tr >
                     {{#each (valuePrShare data)}}
+                    {{#ifZero excessEarningValuePerShare}}
                     <td>{{excessEarningValuePerShare}}</td>
+                    {{/ifZero}}
                     {{/each}}
                 </tr>
             </table>
@@ -554,7 +578,7 @@
 
     <!-- relative valuation pdf -->
     {{#modelCheck "Relative_Valuation"}}
-    <div class="container" style="page-break-before:always;">
+    <div class="container">
         <h4>Valuation Report</h1>
 
             <!-- <div class="container-top">
@@ -583,7 +607,7 @@
                     <p><strong>Currency:</strong> All figures in INR ( Lakhs )</p>
                 </div>
             </div>
-            <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p>
+            <!-- <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p> -->
 
     <table>
         <thead>
@@ -616,29 +640,41 @@
                 <th  colspan="2" style="border-right: none;text-align: center;">
                   Valuation of <span style="font-size: 13xpx;font-weight: 600;text-transform: uppercase;color: #b8b8b8 !important;">{{companyName}}</span> 
                 </th>
+                {{#if (checkPreferenceRatio)}}
                 <th colspan="2" style="border-left: none;text-align: right !important;">
                   Amount in INR (Lakh)
                 </th>
+                {{else}}
+                <th colspan="1" style="border-left: none;text-align: right !important;">
+                    Amount in INR (Lakh)
+                  </th>
+                {{/if}}
               </tr>
             <tr>
                 <th style="color: #3d3d3d !important">Sr.No</th>
                 <th style="color: #3d3d3d !important">Particulars</th>
                 <th style="color: #3d3d3d !important">As on {{strdate}}</th>
+                {{#if (checkPreferenceRatio)}}
                 <th style="color: #3d3d3d !important">As on {{strdate}}</th>
+                {{/if}}
             </tr>
+            {{#if (checkPreferenceRatio)}}
             <tr >
                 <td></td>
                 <td></td>
                 <td>Average</td>
                 <td>Median</td>
             </tr>
+            {{/if}}
             {{#each (relativeVal data)}}
             {{#if (checkHead srNo "srNo")}}
             <tr style="font-weight: bold !important;">
                 <td>{{srNo}}</td>
                 <td>{{particular}}</td>
                 <td>{{avg}}</td>
+                {{#if (checkPreferenceRatio)}}
                 <td>{{med}}</td>
+                {{/if}}
             </tr>
             {{else}}
             {{#if (checkHead particular "particular")}}
@@ -646,14 +682,18 @@
                 <td>{{srNo}}</td>
                 <td>{{particular}}</td>
                 <td>{{avg}}</td>
+                {{#if (checkPreferenceRatio)}}
                 <td>{{med}}</td>
+                {{/if}}
             </tr>
             {{else}}
             <tr>
                 <td>{{srNo}}</td>
                 <td>{{particular}}</td>
                 <td>{{avg}}</td>
+                {{#if (checkPreferenceRatio)}}
                 <td>{{med}}</td>
+                {{/if}}
             </tr>
             {{/if}}
             {{/if}}

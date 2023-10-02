@@ -27,7 +27,7 @@ export class ExcelSheetService {
                 sheetData.forEach((row:any) => {
                     for (let columns in row) {
                       if (typeof row[columns] === 'string') {
-                        row[columns] = row[columns].replace(/\r\n/g, '');
+                        row[columns] = row[columns].replace(/\r\n/g, '').toLowerCase();;
                     }
                   
                       if (typeof row[columns] === 'number') {
@@ -46,7 +46,7 @@ export class ExcelSheetService {
                     }
                   });
                   return from(this.transformData(sheetData)).pipe(switchMap((excelData)=>{
-                    
+
                     return of(excelData)
                   }))
               }),
@@ -215,9 +215,15 @@ export class ExcelSheetService {
           }
         }
         const keysArray = Object.keys(maxKeysObject);
+        data.forEach(obj => {
+          keysArray.forEach(key => {
+            if (!(key in obj)) {
+              obj[key] = null;
+            }
+          });
+        });
+        // console.log(data,"new data")
         data.unshift(keysArray)
-
-      
         return data;
       }
 
@@ -967,6 +973,9 @@ export class ExcelSheetService {
             }
           
           })
+          if(valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[0]){
+            arrayPbRatio.forEach(item => delete item.med);   
+          }
           return arrayPbRatio;
         });
 
@@ -975,10 +984,17 @@ export class ExcelSheetService {
             return valuationResult.inputData[0].company;
           return '';
         })
+
         hbs.registerHelper('strdate',()=>{
           if(valuationResult.inputData[0].valuationDate)
             return this.formatDate(new Date(valuationResult.inputData[0].valuationDate));
           return '';
+        })
+
+        hbs.registerHelper('checkPreferenceRatio',()=>{
+          if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
+            return true;
+          return false;
         })
 
         hbs.registerHelper('checkHead',(txt,val)=>{

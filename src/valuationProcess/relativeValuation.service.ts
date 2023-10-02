@@ -18,6 +18,7 @@ import {
 } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { RELATIVE_PREFERENCE_RATIO } from 'src/constants/constants';
 @Injectable()
 export class RelativeValuationService {
   constructor(private readonly customLogger: CustomLogger) {}
@@ -84,7 +85,7 @@ export class RelativeValuationService {
         salesAvg: findAverage(sales),
         salesMed: findMedian(sales),
       };
-    } else if (inputs.type =='industry'){
+    } else if (inputs.preferenceRatioSelect == RELATIVE_PREFERENCE_RATIO[0]){
         companiesInfo = {
         peRatioAvg: industries[0].currentPE,
         peRatioMed: industries[0].currentPE,
@@ -95,6 +96,24 @@ export class RelativeValuationService {
         salesAvg: industries[0].priceSales,
         salesMed: industries[0].priceSales,
       };
+    }
+    else if (inputs.preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
+      companies.map((company) => {
+        peRatio.push(company.peRatio);
+        pbRatio.push(company.pbRatio);
+        ebitda.push(company.ebitda);
+        sales.push(company.sales);
+      });
+      companiesInfo = {
+        peRatioAvg: findAverage(peRatio),
+        peRatioMed: findMedian(peRatio),
+        pbRatioAvg: findAverage(pbRatio),
+        pbRatioMed: findMedian(pbRatio),
+        ebitdaAvg: findAverage(ebitda),
+        ebitdaMed: findMedian(ebitda),
+        salesAvg: findAverage(sales),
+        salesMed: findMedian(sales),
+      }
     }
       else
         // Do nothing for now
