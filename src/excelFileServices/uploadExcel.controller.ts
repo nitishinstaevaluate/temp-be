@@ -6,6 +6,8 @@ import {
   UseInterceptors,
   Param,
   NotFoundException,
+  Body,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -83,4 +85,9 @@ export class UploadController {
   ) {
     return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity);
   }
+
+  @Post('modifyExcel')
+  async modifyExcel(@Body() excelData){
+    return await this.excelSheetService.modifyExcelSheet(excelData);
+  } 
 }
