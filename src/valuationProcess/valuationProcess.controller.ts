@@ -290,6 +290,21 @@ let workbook=null;
 
           break; 
             case MODEL[4]: 
+            const comparableIndustries = await this.valuationMethodsService
+                .Relative_Valuation_Method(inputs, worksheet1, worksheet2)
+                valResult.push({
+                  model: MODEL[4],
+                  valuationData: comparableIndustries.result,
+                  valuation:comparableIndustries.valuation
+                  });
+                tableResult.push({
+                  model: MODEL[4],
+                  valuationData: comparableIndustries.result,
+                  valuation:comparableIndustries.valuation
+                  });
+                  models.push(modelValue);
+                break;
+
             case MODEL[5]: 
             const netAssetValueResponse = await this.valuationMethodsService
             .Net_Asset_Value_method(inputs, worksheet1, worksheet2)
