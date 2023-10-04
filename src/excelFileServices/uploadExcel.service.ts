@@ -1112,4 +1112,55 @@ export class ExcelSheetService {
           return numbers[middleIndex];
         }
       }
+
+  async modifyExcelSheet(data) {
+    try {
+      let originalWorkbook;
+      if(fs.existsSync(`./uploads/edited-${data?.excelSheetId}`)){
+        originalWorkbook = xlsx.readFile(`./uploads/edited-${data.excelSheetId}`);
+      }
+      else{
+        originalWorkbook = xlsx.readFile(`./uploads/${data.excelSheetId}`)
+      }
+      let jsonData: any[] = [];
+      const worksheet = originalWorkbook.Sheets[data.excelSheet];
+      jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+
+      const transformedData = await this.transformData(jsonData);
+      transformedData.map((workBookData)=>{
+        data.editedValues.map((dataToModify)=>{
+        if(workBookData[0]?.toLowerCase()?.trim() === dataToModify.subHeader.toLowerCase().trim()){
+          const colIndex = transformedData[1].findIndex(column => column.toLowerCase().trim() === dataToModify.columnName.toLowerCase().trim());
+          workBookData[colIndex] = +dataToModify.newValue;
+        }
+        })
+      })
+      transformedData.shift();
+
+      const modifiedWorksheet = xlsx.utils.aoa_to_sheet(transformedData);
+      const newWorkbook = xlsx.utils.book_new();
+      xlsx.utils.book_append_sheet(newWorkbook, modifiedWorksheet, `${data.excelSheet}`);
+
+      for (const sheetName in originalWorkbook.Sheets) {
+        if (sheetName !== `${data.excelSheet}`) {
+          xlsx.utils.book_append_sheet(newWorkbook, originalWorkbook.Sheets[sheetName], sheetName);
+        }
+      }
+
+      await xlsx.writeFile(newWorkbook, `./uploads/edited-${data?.excelSheetId}`);
+
+      return of({
+        originalFileName: `${data?.excelSheetId}`,
+        modifiedFileName: `edited-${data?.excelSheetId}`,
+        msg: 'Excel sheet updated successfully',
+        status: true,
+      });
+    } catch (error) {
+      return of({
+        msg: "Something went wrong",
+        error: error.message,
+        status: false,
+      });
+    }
+  }
 }
