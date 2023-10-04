@@ -75,14 +75,14 @@ export class ExcelSheetService {
           const modifiedDataSet = [];
           
           if (specificity === 'true' && model) {
-            const htmlFilePath = path.join(process.cwd(), 'html-template', `${model}.html`);
-            const pdfFilePath = path.join(process.cwd(), 'pdf', `${model}.pdf`);
+            const htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
+            const pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }.pdf`);
             // const htmlFilePath = path.join(process.cwd(), 'html-template', `Relative_Valuations.html`);
             // const pdfFilePath = path.join(process.cwd(), 'pdf', `Relative_Valuations.pdf`);
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model !== MODEL[2]){
+                if(data.model !== MODEL[2] && data.model !== MODEL[4]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -105,7 +105,7 @@ export class ExcelSheetService {
             const htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
             const pdfFilePath = path.join(process.cwd(), 'pdf', `valuation.pdf`);
             for await (let data of valuationResult.modelResults) {
-              if(data.model !== MODEL[2]){
+              if(data.model !== MODEL[2] && data.model !== MODEL[4]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
                 
@@ -780,7 +780,7 @@ export class ExcelSheetService {
             isCompany=true;
           }
           valuationResult.modelResults.forEach((result)=>{
-            if(result.model === MODEL[2]){
+            if(result.model === MODEL[2] || result.model === MODEL[4]){
               arrayCompany = this.createPrfnceRtio(isCompany ? result.valuationData?.companies : result.valuationData.industries,isCompany);
             }
           })
@@ -790,7 +790,7 @@ export class ExcelSheetService {
         hbs.registerHelper('relativeVal', () => {
           let arrayPbRatio = [];
           valuationResult.modelResults.forEach((result)=>{
-            if(result.model === MODEL[2]){
+            if(result.model === MODEL[2] || result.model === MODEL[4]){
               result.valuationData?.valuation.map((response)=>{
                 if(response?.particular === 'pbRatio'){
                   const pbRatioHead = {
@@ -1031,6 +1031,16 @@ export class ExcelSheetService {
           if(valuationResult.inputData[0].discountingPeriod)
             return valuationResult.inputData[0].discountingPeriod;
           return '';
+        })
+
+        hbs.registerHelper('isRelativeOrCTM',()=>{
+          let method = '';
+          valuationResult.modelResults.forEach((result)=>{
+            console.log(result.model)
+            if(result.model === MODEL[2]) return method = 'Comparable Companies';
+            if(result.model === MODEL[4]) return method = 'Comparable Industries';
+          })
+          return method;
         })
       }  
 
