@@ -168,6 +168,28 @@ export class HistoricalReturns {
 export type HistoricalReturnsDocument = HistoricalReturns & Document;
 export const HistoricalReturnsSchema = SchemaFactory.createForClass(HistoricalReturns);
 
+//Historical BSE500 Returns Schema
+@Schema()
+export class HistoricalBSE500Returns {
+  @Prop({ required: true })
+  Date: Date;
+  @Prop({ required: false })
+  High: number ;
+  @Prop({ required: true })
+  Close: number;
+  @Prop({ required: false })
+  Low: number;
+  @Prop({ required: false })
+  Open: number;
+  @Prop({ required: false })
+  'Adj Close': number;
+  @Prop({required: false})
+  Volume: number ;
+
+}
+export type HistoricalBSE500ReturnsDocument = HistoricalBSE500Returns & Document;
+export const HistoricalBSE500ReturnsSchema = SchemaFactory.createForClass(HistoricalBSE500Returns);
+
 //Industry Beta Schema
 @Schema()
 export class IndianTreasuryYield {

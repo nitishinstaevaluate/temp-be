@@ -23,9 +23,9 @@ import {
   interestAdjustedTaxes,
   fcfeTerminalValue,
   fcffTerminalValue,
-  interestAdjustedTaxesWithStubPeriod,
+  interestAdjustedTaxesWithStubPeriod
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 const date = require('date-and-time');
@@ -56,14 +56,15 @@ export class FCFEAndFCFFService {
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
-    const years = await getYearsList(worksheet1);
+    const yearsActual = await getYearsList(worksheet1);
+    const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     if (years === null)
       return {
         result: null,
         msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
       };
-    const discountingPeriodObj = await this.getDiscountingPeriod(
+    const discountingPeriodObj = await getDiscountingPeriod(
       discountingPeriod
     );
     
@@ -218,7 +219,7 @@ export class FCFEAndFCFFService {
 
         
         let netCashFlow =0 ;
-        if (inputs.model === 'FCFE') {
+        if (inputs.model.includes('FCFE')) {
           
           netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets + changeInBorrowingsVal;
         } else {
@@ -233,12 +234,12 @@ export class FCFEAndFCFFService {
 
         // this.calculatedWacc = adjustedCostOfEquity * capitalStruc.equityProp + (inputs.costOfDebt/100)*(1-inputs.taxRate/100)*capitalStruc.debtProp + inputs.copShareCapital/100 * capitalStruc.prefProp
 
-        if  (i === yearLengthT && inputs.model === 'FCFE') {                                // Valuation data
+        if  (i === yearLengthT && inputs.model.includes('FCFE')) {                                // Valuation data
         fcfeValueAtTerminalRate = await fcfeTerminalValue(valuation,inputs.terminalGrowthRate,adjustedCostOfEquity)
         console.log('ter val ',fcfeValueAtTerminalRate,' ', valuation);
         // console.log('fcfe ter ', fcfeValueAtTerminalRate)
         discountingPeriodValue = discountingPeriodValue - 1;
-        } else if (i === yearLengthT && inputs.model === 'FCFF') {  
+        } else if (i === yearLengthT && inputs.model.includes('FCFF')) {  
           fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
           discountingPeriodValue = discountingPeriodValue - 1;
         }
@@ -249,7 +250,7 @@ export class FCFEAndFCFFService {
           finalDebt = debtAsOnDate;
           }
           // console.log('Final Deb ',finalDebt);
-        if (inputs.model === 'FCFE') {
+        if (inputs.model.includes('FCFE')) {
           // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
           if (i === yearLengthT) {
             // Do nothing
@@ -258,7 +259,7 @@ export class FCFEAndFCFFService {
           }
           console.log('Disc COE ', this.discountingFactorWACC)
          
-        } else if (inputs.model === 'FCFF') {
+        } else if (inputs.model.includes('FCFF')) {
           // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
           if (i === yearLengthT) {
             // Do nothing
@@ -293,7 +294,7 @@ export class FCFEAndFCFFService {
         }
         // equityValue = equityValue + sumOfCashFlows;
         // const valuePerShare = equityValue / outstandingShares;
-        if (inputs.model === 'FCFE') {
+        if (inputs.model.includes('FCFE')) {
         result = {
           particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
@@ -318,7 +319,7 @@ export class FCFEAndFCFFService {
           valuePerShare: '',
           // totalFlow: this.discountingFactorWACC + i
         }; 
-      } else if (inputs.model === 'FCFF') {
+      } else if (inputs.model.includes('FCFF')) {
         result = {
           particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
@@ -351,22 +352,41 @@ export class FCFEAndFCFFService {
     
     // let lastElement = finalResult.slice(-1);
     finalResult[0].sumOfCashFlows = sumOfCashFlows;
-    finalResult[0].equityValue = inputs.model === 'FCFE'? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
+    finalResult[0].equityValue = inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     this.stubAdjRequired = false;                              // Resetting to default;
-    return { result: finalResult, valuation: valuation, msg: 'Executed Successfully' };
+    const data = await this.transformData(finalResult);
+    return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
   }
 
-  //Get Discounting Period.
-  async getDiscountingPeriod(discountingPeriod: string): Promise<any> {
-    let discountingPeriodValue = 0;
-    if (discountingPeriod === 'Full_Period') discountingPeriodValue = 1;
-    else if (discountingPeriod === 'Mid_Period') discountingPeriodValue = 0.5;
-    return {
-      result: discountingPeriodValue,
-      msg: 'Discounting period get Successfully.',
-    };
+  async transformData(data: any[]) { //only to render data on UI table
+    const transformedData = [];
+    const columnHeaders = data.length > 0 ? Object.keys(data[0]) : [];
+
+    const columnIndexToRemove = columnHeaders.indexOf('particulars');
+    if (columnIndexToRemove !== -1) {
+      columnHeaders.splice(columnIndexToRemove, 1);
+    }
+
+    columnHeaders.unshift('particulars');
+    transformedData.push(columnHeaders);
+
+    for (const item of data) {
+      const row = [];
+      row.push(item.particulars);
+      for (const key of columnHeaders.slice(1)) {
+        row.push(item[key]);
+      }
+      transformedData.push(row);
+    }
+    const firstElements = [];
+    transformedData.map(innerArray => {
+      if (innerArray.length > 0) {
+          firstElements.push(innerArray[0]);
+      }
+      });
+      return {transposedResult : transformedData, columnHeader : firstElements};
   }
 
   //Get DiscountingFactor based on Industry based Calculations.
@@ -385,12 +405,12 @@ export class FCFEAndFCFFService {
     } = inputs;
     let discountingFactor = null;
     let capitalStruc: any;
-    if (model === 'FCFE') {
+    if (model.includes('FCFE')) {
       const res = await this.industryService.getFCFEDisFactor(inputs);
       if (res.result === null) return res;
 
       discountingFactor = res.result;             //ValidateHere
-    } else if (model === 'FCFF') {
+    } else if (model.includes('FCFF')) {
       let costOfDebtValue = null;
       if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
       else if (costOfDebtType === 'Finance_Cost')

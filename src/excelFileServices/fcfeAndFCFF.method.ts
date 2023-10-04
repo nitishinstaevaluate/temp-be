@@ -331,14 +331,13 @@ export async function CashEquivalents(i: number, worksheet2: any) {
   return cashEquivalents + bankBalances;
 }
 
-export async function interestAdjustedTaxes(i: number, worksheet1: any, taxRate: number) {
+export async function interestAdjustedTaxes(i: number, worksheet1: any, taxRate: string) {
   // =+'P&L'!C28*(1-Sheet2!$D$7)
   const financeCost = await getCellValue(
     worksheet1,
     `${columnsList[i+1] + sheet1_PLObj.financeCostsRow}`,
   );
-
-  const addInterestAdjustedTaxes = financeCost * (1 - taxRate/100);
+  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate)/100);
   return addInterestAdjustedTaxes;
 
 }
@@ -520,7 +519,7 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
     totalCapital : totalCapital           // this is actual value and not a proporation.
   }
 
-  console.log(capitalStructure);
+  // console.log(capitalStructure);
   return capitalStructure;
 }
 

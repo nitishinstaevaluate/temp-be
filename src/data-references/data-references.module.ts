@@ -19,7 +19,8 @@ import {
     BetaIndustrySchema,
     IndustriesRatioSchema,
     HistoricalReturnsSchema,
-    IndianTreasuryYieldSchema
+    IndianTreasuryYieldSchema,
+    HistoricalBSE500ReturnsSchema
 } from './schema/data-references.schema';
 
 @Module({
@@ -28,7 +29,8 @@ import {
           { name: 'betaIndustry', schema: BetaIndustrySchema },
           { name: 'industriesRatio', schema: IndustriesRatioSchema },
           { name: 'historicalReturns', schema : HistoricalReturnsSchema},
-          { name: 'indianTreasuryYield', schema : IndianTreasuryYieldSchema}
+          { name: 'indianTreasuryYield', schema : IndianTreasuryYieldSchema},
+          { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
         ]),
       ],
       controllers: [

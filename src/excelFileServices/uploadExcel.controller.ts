@@ -4,12 +4,18 @@ import {
   Get,
   UploadedFile,
   UseInterceptors,
+  Param,
+  NotFoundException,
+  Body,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { Observable, catchError, from } from 'rxjs';
+import { ExcelSheetService } from './uploadExcel.service';
 
 const storage = diskStorage({
   destination: './uploads',
@@ -23,6 +29,7 @@ const storage = diskStorage({
 export class UploadController {
   constructor(
     private readonly customLogger:CustomLogger,
+    private excelSheetService: ExcelSheetService,
   ) {
     this.createUploadsDirectoryIfNotExist();
   }
@@ -57,4 +64,30 @@ export class UploadController {
     }));
     return fileDates;
   }
+
+  @Get('sheet/:fileName/:sheetName')
+  getSheetData(
+    @Param('fileName') fileName: string,
+    @Param('sheetName') sheetName: string,
+  ): Observable<any> {
+    return from(this.excelSheetService.getSheetData(fileName, sheetName)).pipe(
+      catchError((error) => {
+        throw new NotFoundException(error.message);
+      })
+    );
+  }
+
+  @Get('generate/:reportId/:model/:specificity')
+  async generatePdf(
+    @Param('reportId') reportId : string,
+    @Param('model') model : string = null,
+    @Param('specificity') specificity : boolean = false 
+  ) {
+    return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity);
+  }
+
+  @Post('modifyExcel')
+  async modifyExcel(@Body() excelData){
+    return await this.excelSheetService.modifyExcelSheet(excelData);
+  } 
 }

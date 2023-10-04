@@ -54,6 +54,7 @@ export const sheet2_BSObj={
     otherUnsecuredLoansRow:"26",
     longTermBorrowingsRow:"27",
     liabilityComponentofCCDRow:"28",
+    longTermProvisionRow:"29",
     deferredGovtGrantRow:"31",
     tradePayablesRow:"34",
     employeePayablesRow:"35",
@@ -73,6 +74,7 @@ export const sheet2_BSObj={
     capitalLiabilitiesRow:"53",
 
     nonCurrentInvestmentRow:"56",
+    otherNonCurrentAssetsRow:"58",
     deferredTaxAssetsRow:"59",
     cashEquivalentsRow:"62",
     bankBalancesRow:"63",

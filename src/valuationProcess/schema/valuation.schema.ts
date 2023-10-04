@@ -1,29 +1,39 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-//ValuationData (output Result) Schema
-class ValuationData {}
-class inputData {
-  companies: any;
+@Schema()
+export class Value {
+  @Prop()
+  finalPriceAvg: number | null;
+
+  @Prop()
+  finalPriceMed: number | null;
 }
-class valuation {};
-//Valuations Table Schema
+@Schema()
+export class CompanyModelResult {
+  @Prop({ required: true })
+  model: string;
+
+  @Prop({ required: true })
+  valuationData: Array<object>;
+
+  @Prop({ type: Number, default: null }) // Allow a single number or null
+  valuation: number | Value | null;
+}
+
 @Schema()
 export class Valuation {
   @Prop({ required: true })
   company: string;
 
-  @Prop({ required: true })
-  model: string;
+  @Prop({ type: [String], required: true })
+  model: string[];
 
   @Prop({ required: true })
-  valuation: valuation;
-  
-  @Prop({ required: true })
-  inputData: inputData;
+  inputData: Array<object>; 
 
-  @Prop({ required: true })
-  valuationData: ValuationData;
+  @Prop({ type: Array<object>, required: true })
+  modelResults: CompanyModelResult[];
 
   @Prop({ required: true })
   userId: string;
@@ -31,5 +41,6 @@ export class Valuation {
   @Prop({ default: () => new Date() })
   createdAt: Date;
 }
+
 export type ValuationDocument = Valuation & Document;
 export const ValuationSchema = SchemaFactory.createForClass(Valuation);
