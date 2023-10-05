@@ -27,6 +27,7 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 /uploads/
+/pdf/
 /loggerFiles/
 # IDE - VSCode
 .vscode/*
