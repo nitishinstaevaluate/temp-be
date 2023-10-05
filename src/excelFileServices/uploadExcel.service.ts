@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as xlsx from 'xlsx';
+import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
@@ -68,17 +69,16 @@ export class ExcelSheetService {
         });
       }
 
-      async generatePdfFromHtml(id,model,specificity) {
+      async generatePdfFromHtml(id,model,specificity,res) {
         try {
           const valuationResult = await this.valuationService.getValuationById(id);
           const transposedData = [];
           const modifiedDataSet = [];
-          
+          let htmlFilePath,pdfFilePath;
+          let dateStamp = `${new Date().toLocaleString('en-US', { weekday: 'short' })}-${new Date().toLocaleString('en-US', { month: 'short' })}-${new Date().toLocaleString('en-US', { year: 'numeric' })}_${new Date().toLocaleString('en-US', { hour: '2-digit', hour12: true })}`
           if (specificity === 'true' && model) {
-            const htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
-            const pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }.pdf`);
-            // const htmlFilePath = path.join(process.cwd(), 'html-template', `Relative_Valuations.html`);
-            // const pdfFilePath = path.join(process.cwd(), 'pdf', `Relative_Valuations.pdf`);
+             htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
+             pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
@@ -88,50 +88,41 @@ export class ExcelSheetService {
               }
             }
             valuationResult.modelResults = modifiedDataSet;
-            this.loadHelpers(transposedData, valuationResult);
-            
-            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-            const template = hbs.compile(htmlContent);
-            const html = template(valuationResult);
-          await this.generatePdf(html, pdfFilePath);
-              // res.setHeader('Content-Disposition', `filename=ValuationResult-${new Date().getTime()}.pdf`);
-              // res.setHeader('Content-Type', 'application/pdf');
-              // res.send(pdfContent);
-            return {
-              msg: "PDF download Success",
-              status: true
-            };
-          } else {
-            const htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
-            const pdfFilePath = path.join(process.cwd(), 'pdf', `valuation.pdf`);
+          } 
+          else {
+             htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
+             pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
               if(data.model !== MODEL[2] && data.model !== MODEL[4]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
-              }
-                
+              }  
             }
+          }
+
+          this.loadHelpers(transposedData, valuationResult);
         
-            this.loadHelpers(transposedData, valuationResult);
-        
-            if (valuationResult.modelResults.length > 0) {
-              const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-              const template = hbs.compile(htmlContent);
-              const html = template(valuationResult);
-        
-              // Generate PDF using the template
-              await this.generatePdf(html, pdfFilePath);
-        
-              return {
-                msg: "PDF download Success",
-                status: true,
-              };
-            } else {
-              console.log("Data not found");
-              return {
-                msg: "No data found for PDF generation",
-                status: false
-              };
-            }
+          if (valuationResult.modelResults.length > 0) {
+            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+            const template = hbs.compile(htmlContent);
+            const html = template(valuationResult);
+      
+            const pdf = await this.generatePdf(html, pdfFilePath);
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.pdf"`);
+            res.send(pdf);
+      
+            return {
+              msg: "PDF download Success",
+              status: true,
+            };
+          } 
+          else {
+            console.log("Data not found");
+            return {
+              msg: "No data found for PDF generation",
+              status: false
+            };
           }
         } catch (error) {
           console.error("Error:", error);
@@ -146,16 +137,13 @@ export class ExcelSheetService {
     
       async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
-          headless: "new"
+          headless:"new"
         });
         const page = await browser.newPage();
 
         try {
           const contenread = await page.setContent(htmlContent);
-          // await page.setExtraHTTPHeaders({
-          //   'Content-Disposition': `filename=ValuationResult-${new Date().getTime()}.pdf`,
-          // });
-          await page.pdf({
+          const pdf = await page.pdf({
             path: pdfFilePath,
             format: 'A4' as puppeteer.PaperFormat, // Cast 'A4' to PaperFormat
             displayHeaderFooter: true,
@@ -192,7 +180,8 @@ export class ExcelSheetService {
         <td  align="right" style="padding-right:1%;" height="10px"><img src="${mainLogo}" width="100" height="" /></td>
         </tr></table>`
           });
-          // return pdf;
+
+          return pdf;
         } catch (error) {
           console.error('Error generating PDF:', error);
         } finally {
@@ -235,6 +224,8 @@ export class ExcelSheetService {
             return ''; // Return an empty string if there are no results to check
           }
         const found = valuationResult.modelResults.some((response) => {
+          if(txt === 'isRelativeOrCTM')
+            return response.model === MODEL[4] || response.model === MODEL[2];
           return response.model === txt;
         });
         
