@@ -145,7 +145,9 @@ export class ExcelSheetService {
       }
     
       async generatePdf(htmlContent: any, pdfFilePath: string) {
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({
+          headless: "new"
+        });
         const page = await browser.newPage();
 
         try {
