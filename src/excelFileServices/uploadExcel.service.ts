@@ -75,7 +75,7 @@ export class ExcelSheetService {
           const transposedData = [];
           const modifiedDataSet = [];
           let htmlFilePath,pdfFilePath;
-          let dateStamp = `${new Date().toLocaleString('en-US', { weekday: 'short' })}-${new Date().toLocaleString('en-US', { month: 'short' })}-${new Date().toLocaleString('en-US', { year: 'numeric' })}_${new Date().toLocaleString('en-US', { hour: '2-digit', hour12: true })}`
+          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
           if (specificity === 'true' && model) {
              htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
              pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.pdf`);
@@ -1049,21 +1049,24 @@ export class ExcelSheetService {
             }
             arrayCompany.push(obj)
           })
-          const avgObj = {
-            'company':'Average',
-            'peRatio':this.findAverage(isCompany ? 'peRatio' : 'currentPE' ,data).toFixed(2),
-            'pbRatio':this.findAverage(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
-            'ebitda':this.findAverage(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
-            'sales': this.findAverage(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
+          if(isCompany){
+            const avgObj = {
+              'company':'Average',
+              'peRatio':this.findAverage(isCompany ? 'peRatio' : 'currentPE' ,data).toFixed(2),
+              'pbRatio':this.findAverage(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
+              'ebitda':this.findAverage(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
+              'sales': this.findAverage(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
+            }
+            const medObj = {
+              'company':'Median',
+              'peRatio':this.findMedian(isCompany ? 'peRatio' : 'currentPE',data).toFixed(2),
+              'pbRatio':this.findMedian(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
+              'ebitda':this.findMedian(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
+              'sales': this.findMedian(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
+            }
+            arrayCompany.push(avgObj,medObj);
           }
-          const medObj = {
-            'company':'Median',
-            'peRatio':this.findMedian(isCompany ? 'peRatio' : 'currentPE',data).toFixed(2),
-            'pbRatio':this.findMedian(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
-            'ebitda':this.findMedian(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
-            'sales': this.findMedian(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
-          }
-          arrayCompany.push(avgObj,medObj);
+          
         return arrayCompany;
       }
 
