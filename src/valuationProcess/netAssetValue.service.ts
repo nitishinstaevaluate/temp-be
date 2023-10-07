@@ -37,46 +37,22 @@ export class NetAssetValueService {
     let fixedAssetVal, longTermLoansAdvancesVal, nonCurrentInvestmentVal, deferredTaxAssetVal, inventoriesVal,
       shortTermLoanAdvancesVal, tradeReceivablesVal, cashVal, otherCurrentAssetsVal, shortTermProvisionsVal, shortTermBorrowingsVal,
       tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal;
-    let fixedAssetObj: {};
-    let longTermLoansAdvancesObj: {};
-    let nonCurrentInvestmentObj: {};
-    let deferredTaxAssetObj: {};
-    let inventoriesObj: {};
-    let shortTermLoanAdvancesObj: {};
-    let tradeReceivablesObj: {};
-    let cashObj: {};
-    let otherCurrentAssetsObj: {};
-    let shortTermProvisionsObj: {};
-    let shortTermBorrowingsObj: {};
-    let tradePayablesObj: {};
-    let otherCurrentLiabilitiesObj: {};
-    let lessLongTermBorrowingsObj: {};
-    let lessLongTermProvisionsObj: {};
-    let shareApplicationMoneyObj: {};
+    
+    let fixedAssetObj,longTermLoansAdvancesObj,nonCurrentInvestmentObj,deferredTaxAssetObj,inventoriesObj,
+    shortTermLoanAdvancesObj,tradeReceivablesObj,cashObj,otherCurrentAssetsObj,shortTermProvisionsObj,
+    shortTermBorrowingsObj,tradePayablesObj,otherCurrentLiabilitiesObj,lessLongTermBorrowingsObj,
+    lessLongTermProvisionsObj,shareApplicationMoneyObj;
 
-    inputs.navInputs.map(async (resp) => {
+    
+    for await(let resp of inputs.navInputs){ 
       
-      // if (resp.fieldName === 'fixedAsset' && resp.type === 'book_value') {
-      //   // const fixedAsset = await getCellValue(
-      //   //   worksheet2,
-      //   //   `${columnsList[0] + sheet2_BSObj.tangibleAssetsRow}`,
-      //   // );
-      //   console.log(true, resp.value);
-      // } else {
-      //   console.log(resp.fieldName);
-      // }
-      const aaa = await getCellValue(
-        worksheet2,
-        `${columnsList[0] + sheet2_BSObj.tradePayablesRow}`,
-      );
-      console.log('value of aaa ' , aaa);
       switch (resp.fieldName) {
         case ('fixedAsset'):
           fixedAssetVal = (resp.type === 'book_value') ? await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.tangibleAssetsRow}`,
           ) : resp.value
-
+            
           fixedAssetObj = {
             fieldName: "Fixed Assets",
             value: fixedAssetVal,
@@ -163,11 +139,11 @@ export class NetAssetValueService {
 
           break;
         case ('cash'):
-          let cashVal = (resp.type === 'book_value') ? await getCellValue(
+          cashVal = (resp.type === 'book_value') ? await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.cashEquivalentsRow}`,
           ) : resp.value
-
+            
           cashObj = {
             fieldName: "Cash",
             value: cashVal,
@@ -275,7 +251,7 @@ export class NetAssetValueService {
           }
 
         case ('shareApplicationMoney'):
-          let shareApplicationMoneyVal = (resp.type === 'book_value') ? await getCellValue(
+          shareApplicationMoneyVal = (resp.type === 'book_value') ? await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.shareApplicationRow}`,
           ) : resp.value
@@ -290,103 +266,14 @@ export class NetAssetValueService {
         default:
           console.log('Undefined fieldValue Traced')
       }
-    })
-    
-    // ------------------------------- NAV --------------------------
-    // const fixedAsset = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.tangibleAssetsRow}`,
-    // );
-
-    // const longTermLoansAdvances = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
-    // );
-
-    // const nonCurrentInvestment = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.nonCurrentInvestmentRow}`,
-    // );
-
-    // const deferredTaxAsset = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.deferredTaxAssetsRow}`,
-    // );
+    }
 
     const totalNonCurrentAssets = fixedAssetVal + longTermLoansAdvancesVal + nonCurrentInvestmentVal + deferredTaxAssetVal;
-
-    // const inventories = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.inventoriesRow}`,
-    // );
-
-    // const shortTermLoanAdvances =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.advancesRow}`,
-    // );
-
-    // const tradeReceivables =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.tradeReceivablesRow}`,
-    // );
-
-    // const cash =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.cashEquivalentsRow}`,
-    // );
-
-    // const otherCurrentAssets =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.otherCurrentAssetsRow}`,
-    // );
-
-    // const shortTermProvisions =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.shortTermProvisionsRow}`,
-    // );
-
-    // const shortTermBorrowings =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.shortTermBorrowingsRow}`,
-    // );
-
-    // const tradePayables =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.tradePayablesRow}`,
-    // );
-
-    // const otherCurrentLiabilities =  await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
-    // );
-
+    
     const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + otherCurrentAssetsVal -
       shortTermProvisionsVal - shortTermBorrowingsVal - tradePayablesVal - otherCurrentLiabilitiesVal;
 
     const firmValue = totalNonCurrentAssets + netCurrentAsset
-
-    // const longTermBorrowings = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.longTermBorrowingsRow}`,
-    // );
-
-    // const otherUnsecuredLoans = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.otherUnsecuredLoansRow}`,
-    // );
-
-    // const longTermBrrw = longTermBorrowings + otherUnsecuredLoans;
-
-    // const longTermProvision = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.longTermProvisionRow}`,
-    // );
-
-    // const shareApplicationMoney = await getCellValue(
-    //   worksheet2,
-    //   `${columnsList[0] + sheet2_BSObj.shareApplicationRow}`,
-    // );
-
     const equityValue = firmValue - lessLongTermBorrowingsVal - lessLongTermProvisionsVal - shareApplicationMoneyVal;
     const noOfShares = inputs.outstandingShares;
 
@@ -396,8 +283,8 @@ export class NetAssetValueService {
     // ------------------------------- NAV --------------------------
 
     const finalResult = {
-      nonCurrentAssets: {
-        fieldName: "Total Non Current Assets",
+      nonCurrentAssetsHeader: {
+        fieldName: "Non Current Assets",
         value: null,
         type: null
       },
@@ -464,4 +351,5 @@ export class NetAssetValueService {
       status: true
     };
   }
+
 }
