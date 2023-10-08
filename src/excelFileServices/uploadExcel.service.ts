@@ -82,7 +82,7 @@ export class ExcelSheetService {
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model !== MODEL[2] && data.model !== MODEL[4]){
+                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -93,7 +93,7 @@ export class ExcelSheetService {
              htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
              pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
-              if(data.model !== MODEL[2] && data.model !== MODEL[4]){
+              if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }  
             }
@@ -997,6 +997,10 @@ export class ExcelSheetService {
           if(txt === '' && val === 'particular'){
             return true;
           }
+          if(txt === 'Value per share' || txt === 'Equity Value' || txt === 'Firm Value'|| txt === 'Net Current Assets' || txt === 'Non Current Assets')
+          {
+            return true;
+          }
           return false
         })
 
@@ -1034,6 +1038,34 @@ export class ExcelSheetService {
             if(result.model === MODEL[4]) return method = 'Comparable Industries';
           })
           return method;
+        })
+
+        // Nav helpers
+        hbs.registerHelper('netAssetValue',()=>{
+          let navData = [];
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.model === MODEL[5]){
+              navData = Object.values(result.valuationData);
+             const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
+             const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
+             const emptyObj={ //push this empty object to have empty td between two td tags
+                fieldName:'',
+                type:'',
+                value:''
+              }
+             navData.splice(firmValueInd,0,emptyObj);
+             navData.splice(netCurrentAssetInd,0,emptyObj);
+
+             navData = navData.map((indNav)=>{
+              return {
+                fieldName:indNav.fieldName,
+                type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
+                value:indNav?.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.value
+              }
+             })
+            }
+          })
+          return navData;
         })
       }  
 
