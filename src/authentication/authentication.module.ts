@@ -20,7 +20,7 @@ require('dotenv').config();
       // JwtAuthStrategy,
       JwtModule.register({
         secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '15m' },
+        signOptions: { expiresIn: '24h' },
       })
     ],
        //.register({ defaultStrategy: 'jwt' })],
