@@ -1,12 +1,15 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as ExcelJS from 'exceljs';
 import { columnsList } from './excelSheetConfig';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('download')
 export class ExportTemplateController {
+
+  @UseGuards(AuthGuard('jwt'))
   @Get('/template/:projectionYears')
   async download(
     @Param('projectionYears') projectionYears: number,

@@ -1,12 +1,14 @@
-import { Controller,Get,Put,Post,Param, Query , Body} from '@nestjs/common';
+import { Controller,Get,Put,Post,Param, Query , Body, UseGuards} from '@nestjs/common';
 import { CalculationService} from './calculation.service';
 
 import { valuationWeightage } from "./dto/calculation.dto";
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('calculation')
 export class CalculationController {
   constructor(private calculationService: CalculationService) { }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('/weightedvaluation')
   createPost(@Body() body: valuationWeightage) {
     return this.calculationService.calculateWeightedVal(body);
@@ -20,6 +22,7 @@ export class CalculationController {
 export class WaccController {
   constructor(private calculationService: CalculationService) { }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/adjcoe')
   async find(
     @Query('riskFreeRate') riskFreeRate: string,
@@ -31,6 +34,7 @@ export class WaccController {
     return this.calculationService.adjCOE(parseFloat(riskFreeRate), parseFloat(expMarketReturn), parseFloat(beta), parseFloat(riskPremium),coeMethod);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('/wacc')
   async findByID(
     @Query('adjustedCostOfEquity') adjustedCostOfEquity: string,

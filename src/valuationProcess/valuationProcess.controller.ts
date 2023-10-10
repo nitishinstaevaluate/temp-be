@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
@@ -19,6 +20,9 @@ import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 import { utilsService } from 'src/utils/utils.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { MODEL } from 'src/constants/constants';
+import { AuthGuard } from '@nestjs/passport';
+
+@UseGuards(AuthGuard('jwt'))
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -187,6 +191,7 @@ let workbook=null;
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('v1')
   async processValuationModel(@Body() inputs): Promise<any> {
     console.log('Initiating Process');
@@ -355,11 +360,13 @@ export class ValuationsController {
   constructor(private valuationsService: ValuationsService,
     private readonly utilsService: utilsService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':userId')
   async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
     return this.valuationsService.getValuationsByUserId(userId);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('paginate/:ids')
   async getPaginatedValuations(
     @Param('ids') ids: string,
