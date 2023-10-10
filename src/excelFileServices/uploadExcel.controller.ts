@@ -8,6 +8,7 @@ import {
   NotFoundException,
   Body,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -16,6 +17,7 @@ import * as path from 'path';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { Observable, catchError, from } from 'rxjs';
 import { ExcelSheetService } from './uploadExcel.service';
+import { AuthGuard } from '@nestjs/passport';
 
 const storage = diskStorage({
   destination: './uploads',
@@ -40,6 +42,7 @@ export class UploadController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() file) {
@@ -52,6 +55,7 @@ export class UploadController {
 
   //For deleting the uploaded excel files based on uploaded Date.
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('dates')
   getUploadDates() {
     const uploadDir = path.join(__dirname, '../../uploads');
@@ -65,6 +69,7 @@ export class UploadController {
     return fileDates;
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('sheet/:fileName/:sheetName')
   getSheetData(
     @Param('fileName') fileName: string,
@@ -77,6 +82,7 @@ export class UploadController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('generate/:reportId/:model/:specificity')
   async generatePdf(
     @Param('reportId') reportId : string,
@@ -87,6 +93,7 @@ export class UploadController {
     return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('modifyExcel')
   async modifyExcel(@Body() excelData){
     return await this.excelSheetService.modifyExcelSheet(excelData);
