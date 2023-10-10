@@ -8,7 +8,8 @@ import {
     Param,
     Put,
     UploadedFile,
-    UseInterceptors
+    UseInterceptors,
+    UseGuards
   } from '@nestjs/common';
 
   import {
@@ -26,6 +27,7 @@ import {
     HistoricalReturnsService,
     IndianTreasuryYieldService
   } from './data-references.service';
+import { AuthGuard } from '@nestjs/passport';
   
 @Controller('data-references')
 export class DataReferencesController {}
@@ -35,6 +37,7 @@ export class DataReferencesController {}
 export class BetaIndustriesController {
   constructor(private betaIndustriesService: BetaIndustriesService) { }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(
     // @Param('industryId') industryId: string,
@@ -42,6 +45,7 @@ export class BetaIndustriesController {
     return this.betaIndustriesService.getBetaIndustries();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':industryId')
   async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
     return this.betaIndustriesService.getBetaIndustriesById(id);
@@ -54,6 +58,7 @@ export class BetaIndustriesController {
 export class IndustriesRatioController {
   constructor(private industriesRatioService: IndustriesRatioService) { }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(
     @Param('industryId') industryId: string,
@@ -61,7 +66,7 @@ export class IndustriesRatioController {
   ): Promise<IndustriesRatio[]> {
     return this.industriesRatioService.getIndustriesRatio();
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get(':industryId')
   async findByID(@Param('industryId') id: string): Promise<IndustriesRatio[]> {
     return this.industriesRatioService.getIndustriesRatioById(id);
@@ -76,6 +81,7 @@ export class IndustriesRatioController {
 export class HistoricalReturnsController {
   constructor(private historicalReturnsService: HistoricalReturnsService) { }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(
     // @Param('') industryId: string,
@@ -83,6 +89,7 @@ export class HistoricalReturnsController {
     return this.historicalReturnsService.getHistoricalReturns();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get('bse500')
   async find(
     @Query('baseYrs') baseYrs: string,
@@ -91,6 +98,7 @@ export class HistoricalReturnsController {
       return this.historicalReturnsService.getBSE(parseInt(baseYrs),parseInt(asOnDate));
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async findById(@Param('id') id: string): Promise<HistoricalReturns[]> {
     return this.historicalReturnsService.getHistoricalReturnsById(id);
@@ -106,6 +114,7 @@ export class HistoricalReturnsController {
 export class IndianTreasuryYieldController {
   constructor(private indianTresuryYieldService: IndianTreasuryYieldService) { }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll(
     // @Param('') industryId: string,
@@ -113,6 +122,7 @@ export class IndianTreasuryYieldController {
     return this.indianTresuryYieldService.getIndianTreasuryYield();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async findById(@Param('id') id: string): Promise<IndianTreasuryYield[]> {
     return this.indianTresuryYieldService.getIndianTreasuryYieldById(id);
