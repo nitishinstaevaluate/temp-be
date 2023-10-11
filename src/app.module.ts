@@ -18,6 +18,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { DataReferencesModule } from './data-references/data-references.module';
 import { CalculationModule } from './calculation//calculation.module';
 import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
+import { ReportModule } from './report/report/report.module';
 require('dotenv').config();
 
 @Module({
@@ -26,7 +27,7 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule],
+   CalculationModule,ReportModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,
