@@ -1,7 +1,9 @@
 import {
+  Body,
     Controller,
     Get,
     Param,
+    Post,
     Res,
     UseGuards,
   } from '@nestjs/common';
@@ -13,12 +15,20 @@ export class ReportController {
     constructor(private reportService:ReportService){}
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('generate/:reportId')
-  async generateReport(
+  @Get('getReport/:reportId')
+  async getReport(
     @Param('reportId') reportId : string,
     @Res() res
   ) {
-    const result = await this.reportService.createReport(reportId, res);
+    const result = await this.reportService.getReport(reportId, res);
+    return result;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('generateReport')
+  async generateReport(
+  @Body() data) {
+    const result = await this.reportService.createReport(data);
     return result;
   }
 }
