@@ -5,7 +5,7 @@ import * as puppeteer from 'puppeteer';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
 import { MODEL } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
@@ -56,6 +56,7 @@ export class ReportService {
                 status: false
               };
             }
+        
           
     }
 
@@ -106,14 +107,13 @@ export class ReportService {
 
     async createReport(data){
       let registerValuerPayload;
-      if(data.useExistingValuer){
+      if(!data.useExistingValuer){
        registerValuerPayload={
           registeredValuerName: 'Nitish Chaturvedi',
           registeredValuerEmailId: 'nitish@ifinworth.com',
           registeredValuerIbbiId: 'IBBI/LAD/35/2020',
           registeredValuerMobileNumber: '9878678776',
           registeredValuerGeneralAddress: 'Sterling Enterprises,Andheri (West)',
-          registeredValuerCorporateAddress: 'Sterling Enterprises,Andheri (West)',
           registeredvaluerDOIorConflict: 'No',
           registeredValuerQualifications: 'Government Valuation License Holder'
         }
@@ -125,7 +125,6 @@ export class ReportService {
           registeredValuerIbbiId: data?.registeredValuerIbbiId,
           registeredValuerMobileNumber: data?.registeredValuerMobileNumber,
           registeredValuerGeneralAddress: data?.registeredValuerGeneralAddress,
-          registeredValuerCorporateAddress: data?.registeredValuerCorporateAddress,
           registeredvaluerDOIorConflict: data?.registeredvaluerDOIorConflict,
           registeredValuerQualifications: data?.registeredValuerQualifications
         }
@@ -208,56 +207,111 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('riskFreeRate',()=>{
-        console.log(valuationResult.inputData[0],"data")
+        // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0].riskFreeRate;
         return '';
       })
       hbs.registerHelper('expMarketReturn',()=>{
-        console.log(valuationResult.inputData[0],"data")
+        // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].expMarketReturn.toFixed(3);
+            return valuationResult.inputData[0]?.expMarketReturn.toFixed(3);
         return '';
       })
       hbs.registerHelper('beta',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].beta;
+            return valuationResult.inputData[0]?.beta;
         return '';
       })
       hbs.registerHelper('companyRiskPremium',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].riskPremium;
+            return valuationResult.inputData[0]?.riskPremium;
         return '';
       })
       hbs.registerHelper('costOfEquity',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].costOfEquity.toFixed(3);
+            return valuationResult.inputData[0].costOfEquity?.toFixed(3);
         return '';
       })
       hbs.registerHelper('adjustedCostOfEquity',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].adjustedCostOfEquity.toFixed(3);
+            return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(3);
         return '';
       })
       hbs.registerHelper('wacc',()=>{
         if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-            return valuationResult.inputData[0]?.wacc.toFixed(3);
+            return valuationResult.inputData[0]?.wacc?.toFixed(3);
         return '0';
       })
       hbs.registerHelper('costOfDebt',()=>{
         if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-            return valuationResult.inputData[0]?.costOfDebt.toFixed(3);
+            return parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(3);
         return '0';
       })
       hbs.registerHelper('taxRate',()=>{
         if(valuationResult.inputData[0] ) 
             return valuationResult.inputData[0]?.taxRate;
-        return '';
+        return '0';
       })
       hbs.registerHelper('terminalGrowthRate',()=>{
-        if(valuationResult.inputData[0] ) 
+        if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0]?.terminalGrowthRate;
+        return '0';
+      })
+      hbs.registerHelper('valuePerShare',()=>{
+        if(transposedData[0].data.transposedResult[1])
+          return valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1])
+              return response?.valuationData[0]?.valuePerShare.toFixed(2);
+          });
+          return '';
+      })
+      hbs.registerHelper('equityPerShare',()=>{
+        if(transposedData[0].data.transposedResult[1])
+        return valuationResult.modelResults.map((response)=>{
+          if(response.model===MODEL[0] || response.model === MODEL[1])
+            return response?.valuationData[0]?.equityValue.toFixed(2);
+        });
         return '';
+      })
+      hbs.registerHelper('auditedYear',()=>{
+        if(transposedData)
+          return '2023';
+        return '';
+      })
+      hbs.registerHelper('projectedYear',()=>{
+        const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 2][0];
+        if(transposedData)
+          return `20${projYear.split('-')[1]}`;
+        return '2028';
+      })
+      hbs.registerHelper('bse500Value',()=>{
+        if(valuationResult.inputData[0])
+          return parseFloat(valuationResult.inputData[0]?.bse500Value).toFixed(2);
+        return '0';
+      })
+      hbs.registerHelper('freeCashFlow',()=>{
+        if(transposedData[0].data.transposedResult[1])
+          return valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1])
+              return response?.valuationData[0].presentFCFF.toFixed(2);
+          });
+          return '';
+      })
+      hbs.registerHelper('terminalValue',()=>{
+        let terminalVal='';
+        if(valuationResult.modelResults){
+          valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1])
+               response?.valuationData.map((perYearData)=>{
+                if(perYearData.particulars === 'Terminal Value'){
+                  terminalVal = perYearData?.fcff.toFixed(2);
+                }
+              });
+          });
+          return terminalVal;
+        }
+        return terminalVal
       })
     }
 
