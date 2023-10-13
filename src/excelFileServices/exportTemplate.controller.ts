@@ -9,7 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('download')
 export class ExportTemplateController {
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/template/:projectionYears')
   async download(
     @Param('projectionYears') projectionYears: number,
