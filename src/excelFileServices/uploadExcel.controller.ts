@@ -42,7 +42,7 @@ export class UploadController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() file) {
@@ -55,7 +55,7 @@ export class UploadController {
 
   //For deleting the uploaded excel files based on uploaded Date.
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('dates')
   getUploadDates() {
     const uploadDir = path.join(__dirname, '../../uploads');
@@ -82,7 +82,7 @@ export class UploadController {
     );
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('generate/:reportId/:model/:specificity')
   async generatePdf(
     @Param('reportId') reportId : string,

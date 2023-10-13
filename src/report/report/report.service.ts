@@ -1,22 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as puppeteer from 'puppeteer';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import hbs = require('handlebars');
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, model } from 'mongoose';
+import { ReportDocument } from './schema/report.schema';
+import { MODEL } from 'src/constants/constants';
+import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 
 @Injectable()
 export class ReportService {
-    constructor( private valuationService:ValuationsService){}
-     async createReport(id,res){
-        
-            const valuationResult = await this.valuationService.getValuationById(id);
+    constructor( private valuationService:ValuationsService,
+      @InjectModel('report')
+    private readonly reportModel: Model<ReportDocument>,
+    private fcfeService:FCFEAndFCFFService){}
+
+     async getReport(id,res){
+          const transposedData = [];
+          const getReportData = await this.reportModel.findById(id);
+            const valuationResult = await this.valuationService.getValuationById(getReportData.reportId);
             let htmlFilePath,pdfFilePath;
             let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
             htmlFilePath = path.join(process.cwd(), 'html-template', 'basic-report.html');
                pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
-  
-            // this.loadHelpers(transposedData, valuationResult);
+
+              for await (let data of valuationResult.modelResults) {
+                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+                  transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
+                }  
+              }
+            this.loadHelpers(transposedData, valuationResult,getReportData);
           
             if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -41,6 +56,7 @@ export class ReportService {
                 status: false
               };
             }
+        
           
     }
 
@@ -88,4 +104,227 @@ export class ReportService {
          
         }
       }
+
+    async createReport(data){
+      let registerValuerPayload;
+      if(!data.useExistingValuer){
+       registerValuerPayload={
+          registeredValuerName: 'Nitish Chaturvedi',
+          registeredValuerEmailId: 'nitish@ifinworth.com',
+          registeredValuerIbbiId: 'IBBI/LAD/35/2020',
+          registeredValuerMobileNumber: '9878678776',
+          registeredValuerGeneralAddress: 'Sterling Enterprises,Andheri (West)',
+          registeredvaluerDOIorConflict: 'No',
+          registeredValuerQualifications: 'Government Valuation License Holder'
+        }
+      }
+      else{
+        registerValuerPayload={
+          registeredValuerName: data?.registeredValuerName,
+          registeredValuerEmailId: data?.registeredValuerEmailId,
+          registeredValuerIbbiId: data?.registeredValuerIbbiId,
+          registeredValuerMobileNumber: data?.registeredValuerMobileNumber,
+          registeredValuerGeneralAddress: data?.registeredValuerGeneralAddress,
+          registeredvaluerDOIorConflict: data?.registeredvaluerDOIorConflict,
+          registeredValuerQualifications: data?.registeredValuerQualifications
+        }
+      }
+      const payload= {
+        clientName:data.clientName,
+        registeredValuerDetails:registerValuerPayload,
+        reportId:data?.reportId,
+        useExistingValuer:data?.useExistingValuer,
+        reportDate:data?.reportDate
+      }
+      try {
+        const createdFoo = await this.reportModel.create(payload);
+        return createdFoo._id;
+      } catch (e) {
+        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+   loadHelpers(transposedData,valuationResult,getReportData){
+      hbs.registerHelper('companyName',()=>{
+        if(valuationResult.inputData[0].company)
+          return valuationResult.inputData[0].company;
+        return '';
+      })
+
+      hbs.registerHelper('reportDate',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  this.formatDate(new Date(getReportData.reportDate));
+        return '';
+      })
+
+      hbs.registerHelper('strdate',()=>{
+        if(valuationResult.inputData[0].valuationDate)
+          return this.formatDate(new Date(valuationResult.inputData[0].valuationDate));
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerName',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.registeredValuerDetails[0].registeredValuerName
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerAddress',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.registeredValuerDetails[0].registeredValuerCorporateAddress ? getReportData.registeredValuerDetails[0].registeredValuerCorporateAddress : getReportData.registeredValuerDetails[0].registeredValuerGeneralAddress
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerEmailId',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.registeredValuerDetails[0].registeredValuerEmailId; 
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerMobileNumber',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.registeredValuerDetails[0].registeredValuerMobileNumber; 
+        return '';
+      })
+      hbs.registerHelper('registeredValuerIbbiId',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.registeredValuerDetails[0].registeredValuerIbbiId; 
+        return '';
+      })
+      hbs.registerHelper('registeredValuerQualifications',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.registeredValuerDetails[0].registeredValuerQualifications; 
+        return '';
+      })
+      hbs.registerHelper('clientName',()=>{
+        if(getReportData.registeredValuerDetails[0]) 
+            return  getReportData.clientName; 
+        return '';
+      })
+      hbs.registerHelper('location',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0].location; 
+        return '';
+      })
+      hbs.registerHelper('riskFreeRate',()=>{
+        // console.log(valuationResult.inputData[0],"data")
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0].riskFreeRate;
+        return '';
+      })
+      hbs.registerHelper('expMarketReturn',()=>{
+        // console.log(valuationResult.inputData[0],"data")
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0]?.expMarketReturn.toFixed(3);
+        return '';
+      })
+      hbs.registerHelper('beta',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0]?.beta;
+        return '';
+      })
+      hbs.registerHelper('companyRiskPremium',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0]?.riskPremium;
+        return '';
+      })
+      hbs.registerHelper('costOfEquity',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0].costOfEquity?.toFixed(3);
+        return '';
+      })
+      hbs.registerHelper('adjustedCostOfEquity',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(3);
+        return '';
+      })
+      hbs.registerHelper('wacc',()=>{
+        if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
+            return valuationResult.inputData[0]?.wacc?.toFixed(3);
+        return '0';
+      })
+      hbs.registerHelper('costOfDebt',()=>{
+        if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
+            return parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(3);
+        return '0';
+      })
+      hbs.registerHelper('taxRate',()=>{
+        if(valuationResult.inputData[0] ) 
+            return valuationResult.inputData[0]?.taxRate;
+        return '0';
+      })
+      hbs.registerHelper('terminalGrowthRate',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0]?.terminalGrowthRate;
+        return '0';
+      })
+      hbs.registerHelper('valuePerShare',()=>{
+        if(transposedData[0].data.transposedResult[1])
+          return valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1])
+              return response?.valuationData[0]?.valuePerShare.toFixed(2);
+          });
+          return '';
+      })
+      hbs.registerHelper('equityPerShare',()=>{
+        if(transposedData[0].data.transposedResult[1])
+        return valuationResult.modelResults.map((response)=>{
+          if(response.model===MODEL[0] || response.model === MODEL[1])
+            return response?.valuationData[0]?.equityValue.toFixed(2);
+        });
+        return '';
+      })
+      hbs.registerHelper('auditedYear',()=>{
+        if(transposedData)
+          return '2023';
+        return '';
+      })
+      hbs.registerHelper('projectedYear',()=>{
+        const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 2][0];
+        if(transposedData)
+          return `20${projYear.split('-')[1]}`;
+        return '2028';
+      })
+      hbs.registerHelper('bse500Value',()=>{
+        if(valuationResult.inputData[0])
+          return parseFloat(valuationResult.inputData[0]?.bse500Value).toFixed(2);
+        return '0';
+      })
+      hbs.registerHelper('freeCashFlow',()=>{
+        if(transposedData[0].data.transposedResult[1])
+          return valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1])
+              return response?.valuationData[0].presentFCFF.toFixed(2);
+          });
+          return '';
+      })
+      hbs.registerHelper('terminalValue',()=>{
+        let terminalVal='';
+        if(valuationResult.modelResults){
+          valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1])
+               response?.valuationData.map((perYearData)=>{
+                if(perYearData.particulars === 'Terminal Value'){
+                  terminalVal = perYearData?.fcff.toFixed(2);
+                }
+              });
+          });
+          return terminalVal;
+        }
+        return terminalVal
+      })
+    }
+
+    formatDate(date: Date): string {
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+  
+      const day = date.getDate();
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+  
+      return `${month} ${day}, ${year}`;
+    }
 }

@@ -355,6 +355,15 @@ export class FCFEAndFCFFService {
     finalResult[0].equityValue = inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
+    
+    if (this.stubAdjRequired === true) {
+      let keyValues = Object.entries(finalResult[0]);
+      keyValues.splice(-2,0, ["stubAdjValue",22002]);
+      keyValues.splice(-2,0, ["equityValueNew",10000]);
+      let newObj = Object.fromEntries(keyValues);
+      finalResult[0] = newObj;
+    }
+    
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
     return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
