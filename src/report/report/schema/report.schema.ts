@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 
 @Schema()
 export class Report {
-    @Prop({ required: true, type: String })
+    @Prop({ type: String })
     clientName: string;
   
     @Prop({ required: true, type: [] }) 
