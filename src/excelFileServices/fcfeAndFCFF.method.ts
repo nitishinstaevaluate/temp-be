@@ -342,7 +342,7 @@ export async function interestAdjustedTaxes(i: number, worksheet1: any, taxRate:
 
 }
 
-export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1: any, taxRate: number) {
+export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1: any, taxRate: string) {
   // =+'P&L'!C28*(1-Sheet2!$D$7)
   let financeCost = await getCellValue(
     worksheet1,
@@ -356,7 +356,7 @@ export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1:
 
   financeCost = financeCost - financeCostOld;
 
-  const addInterestAdjustedTaxes = financeCost * (1 - taxRate/100);
+  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate)/100);
   return addInterestAdjustedTaxes;
 
 }
