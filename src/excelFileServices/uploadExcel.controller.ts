@@ -42,7 +42,7 @@ export class UploadController {
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() file) {
