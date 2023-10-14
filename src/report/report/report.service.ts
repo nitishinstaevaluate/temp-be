@@ -269,8 +269,10 @@ export class ReportService {
       hbs.registerHelper('equityPerShare',()=>{
         if(transposedData[0].data.transposedResult[1])
         return valuationResult.modelResults.map((response)=>{
-          if(response.model===MODEL[0] || response.model === MODEL[1])
-            return response?.valuationData[0]?.equityValue.toFixed(2);
+          if(response.model===MODEL[0] || response.model === MODEL[1]){
+            const formattedNumber = Math.floor(response?.valuationData[0]?.equityValue * 100000).toLocaleString('en-IN');
+            return formattedNumber.replace(/,/g, ',');
+          }
         });
         return '';
       })

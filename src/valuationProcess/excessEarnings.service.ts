@@ -17,6 +17,7 @@ import {
 import { sheet1_PLObj, sheet2_BSObj, columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { TerminalGrowthRate } from 'src/masters/schema/masters.schema';
+import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
 @Injectable()
 export class ExcessEarningsService {
   constructor(
@@ -133,7 +134,7 @@ export class ExcessEarningsService {
         
         // console.log('Discoun Val results ',i," ", discountingPeriodValue);
         result = {
-          particulars: (i === yearLengthT) ? 'Perpetuity' : `${year}-${parseInt(year) + 1}`,
+          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ? 'Perpetuity' : `${year}-${parseInt(year) + 1}`,
           netWorth: (i === yearLengthT) ? netWorthAtPerpetuity : netWorth,
           pat: (i === yearLengthT) ? patAtPerpetuity : pat,
           expectedProfitCOE: (i === yearLengthT) ? expectedProfitCOEAtPerpetuity : expectedProfitCOE,
@@ -157,6 +158,15 @@ export class ExcessEarningsService {
     finalResult[0].equityValue = bookValueAsOnDate + sumOfCashFlows;
     finalResult[0].valuePerShare = (finalResult[0].equityValue * 100000) / outstandingShares;       // Applying mulitplier for figures
 
+    if (this.stubAdjRequired === true) {
+      let keyValues = Object.entries(finalResult[0]);
+      keyValues.splice(-2,0, ["stubAdjValue",22002]);
+      keyValues.splice(-2,0, ["equityValueNew",10000]);
+      let newObj = Object.fromEntries(keyValues);
+      finalResult[0] = newObj;
+    }
+    
+    this.stubAdjRequired = false;   
     const data = await this.transformData(finalResult);
     discountingPeriodValue = 0;  
     return {

@@ -7,4 +7,6 @@ export const RELATIVE_PREFERENCE_RATIO = ['Industry Based','Company Based'];
 // export const GET_YEAR = /\b2\d{3}(-\d{2})?\b/;
 export const GET_YEAR = /\b2\d{3}(-\d{2})?\b|\b[a-zA-Z]{1,10}\d{1,4}\b/;
 
+export const GET_DATE_MONTH_YEAR_FORMAT = /^(0[1-9]|[12][0-9]|3[01])[-/.](0[1-9]|1[0-2])[-/.](\d{4}|\d{2})$/;
+
 export const MATCH_YEAR = /\d+(?=\D|$)/g;
