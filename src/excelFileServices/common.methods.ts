@@ -1,6 +1,6 @@
 import { read } from 'fs';
 import { columnsList } from './excelSheetConfig';
-import { GET_YEAR, MATCH_YEAR } from 'src/constants/constants';
+import { GET_DATE_MONTH_YEAR_FORMAT, GET_YEAR, MATCH_YEAR } from 'src/constants/constants';
 const date = require('date-and-time');
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
@@ -20,13 +20,17 @@ export async function getCellValue(worksheet: any, address: string) {
 }
 //Get Years List from Excel Sheet.
 export async function getYearsList(worksheet1: any): Promise<any> {
-// only formats allowed (alphabets)2023/(alphabets)23/2023-2024/2023-24/2023/23 -- implement function to valiadate the excel before processing
+// only formats allowed (alphabets)2023/(alphabets)23/2023-2024/2023-24/2023/23 or 12-02-2023 / 12/02/2023 / 12.03.23 / 12.12.2023 / 03-12-23 / 12/12/23 -- implement function to valiadate the excel before processing
   try{
     const yearSet = [];
     for (const key in worksheet1) {
       if (worksheet1.hasOwnProperty(key) && key !== '!ref') {
         const object = worksheet1[key];
-        if (object.v && GET_YEAR.test(object.v)) {
+        if(object.v && GET_DATE_MONTH_YEAR_FORMAT.test(object.v)){
+          // console.log(object.v,"new date")
+          yearSet.push(object.v)
+        }
+        else if (object.v && GET_YEAR.test(object.v)) {
           if(object.v.includes('-')){
             // console.log("if condoitiosn",object?.v.split('-')[1])
             if(object?.v.split('-')[1].length <= 2){

@@ -28,6 +28,7 @@ import {
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
 const date = require('date-and-time');
 
 @Injectable()
@@ -296,7 +297,7 @@ export class FCFEAndFCFFService {
         // const valuePerShare = equityValue / outstandingShares;
         if (inputs.model.includes('FCFE')) {
         result = {
-          particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
+          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
           onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
@@ -321,7 +322,7 @@ export class FCFEAndFCFFService {
         }; 
       } else if (inputs.model.includes('FCFF')) {
         result = {
-          particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
+          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
           addInterestAdjTaxes: (i === yearLengthT) ?'':addInterestAdjTaxes,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
@@ -356,13 +357,13 @@ export class FCFEAndFCFFService {
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     
-    // if (this.stubAdjRequired === true) {
-    //   let keyValues = Object.entries(finalResult[0]);
-    //   keyValues.splice(-2,0, ["stubAdjValue",22002]);
-    //   keyValues.splice(-2,0, ["equityValueNew",10000]);
-    //   let newObj = Object.fromEntries(keyValues);
-    //   finalResult[0] = newObj;
-    // }
+    if (this.stubAdjRequired === true) {
+      let keyValues = Object.entries(finalResult[0]);
+      keyValues.splice(-2,0, ["stubAdjValue",22002]);
+      keyValues.splice(-2,0, ["equityValueNew",10000]);
+      let newObj = Object.fromEntries(keyValues);
+      finalResult[0] = newObj;
+    }
     
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
