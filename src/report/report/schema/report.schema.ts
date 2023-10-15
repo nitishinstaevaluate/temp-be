@@ -9,6 +9,9 @@ export class Report {
   
     @Prop({ required: true, type: [] }) 
     registeredValuerDetails: [];
+
+    @Prop({ required: false, type: [] }) 
+    appointeeDetails: [];
   
     @Prop({ required: true, type: String })
     reportId: string;

@@ -34,7 +34,7 @@ export class ExportTemplateController {
     // Add new columns with headers
     let count = 0;
     for (let i = 1; i < projectionYears; i++) {
-      worksheet.getColumn(columnsList[i]).header = `${currentYear + count}-${
+      worksheet.getColumn(columnsList[i]).header = `${+currentYear + count}-${
         currentYear + i
       }`;
       count++;

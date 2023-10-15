@@ -194,7 +194,7 @@ let workbook=null;
   @UseGuards(AuthGuard('jwt'))
   @Post('v1')
   async processValuationModel(@Body() inputs): Promise<any> {
-    console.log('Initiating Process');
+    console.log('Initiating Process v1');
     this.customLogger.log({
       message: 'Request is entered into Valuation Process Controller.',
       userId: inputs.userId,
@@ -218,7 +218,7 @@ let workbook=null;
 
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
-
+    console.log('Choosing Model Run:');
     if (inputs.model) {
       const valResult = [];
       const models = [];
