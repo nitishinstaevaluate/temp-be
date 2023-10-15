@@ -24,6 +24,7 @@ export async function getYearsList(worksheet1: any): Promise<any> {
 // only formats allowed (alphabets)2023/(alphabets)23/2023-2024/2023-24/2023/23 or 12-02-2023 / 12/02/2023 / 12.03.23 / 12.12.2023 / 03-12-23 / 12/12/23 -- implement function to valiadate the excel before processing
   try{
     const yearSet = [];
+    let i=0;
     for (const key in worksheet1) {
       if (worksheet1.hasOwnProperty(key) && key !== '!ref') {
         const object = worksheet1[key];
@@ -35,29 +36,40 @@ export async function getYearsList(worksheet1: any): Promise<any> {
         else if (object.v && GET_YEAR.test(object.v)) {
           if(object.v.includes('-')){
             // console.log("if condoitiosn",object?.v.split('-')[1])
-            // console.log("if condoitiosn",object.v)
+            console.log("if condoitiosn",object.v)
             if(object?.v.split('-')[1].length <= 2){
+              console.log("if sector",object.v)
+              if (i===0){
+                const baseDate = object.v.trim().slice(-2);
+                yearSet.push(baseDate);
+                i++;
+              } else {
               yearSet.push(object?.v.split('-')[1]);
+              }
               // console.log("year containing splits -",object?.v.split('-')[1] )
             }
-            else{
-              const slicedYear = `${object?.v.split('-')[1][object?.v.split('-')[1].length - 2]}${object?.v.split('-')[1][object?.v.split('-')[1].length - 1]}`;
-              yearSet.push(slicedYear);
-              // console.log("year containing two numbers only splits -",slicedYear )
-            }
+            // else{
+            //   console.log("if condoitios 2",object.v)
+            //   const slicedYear = `${object?.v.split('-')[1][object?.v.split('-')[1].length - 2]}${object?.v.split('-')[1][object?.v.split('-')[1].length - 1]}`;
+            //   yearSet.push(slicedYear);
+            //   // console.log("year containing two numbers only splits -",slicedYear )
+            // }
           }
-          else{
-            // console.log('else condition')
-            const numbers = object.v.match(MATCH_YEAR).join('');
-            if(numbers.length <= 2){
-              yearSet.push(numbers);
-            }
-            else{
-              const slicedYear = `${numbers[numbers.length - 2]}${numbers[numbers.length - 1]}`;
-              // console.log(slicedYear);
-              yearSet.push(slicedYear);
-            }
-          }
+          // else{
+          //   // console.log('else condition')
+          //   console.log("if condoitios 3",object.v)
+          //   const numbers = object.v.match(MATCH_YEAR).join('');
+          //   if(numbers.length <= 2){
+          //     yearSet.push(numbers);
+          //     console.log("if sector NN",object.v)
+          //   }
+          //   else{
+          //     console.log("if condoitios - X ",object.v)
+          //     const slicedYear = `${numbers[numbers.length - 2]}${numbers[numbers.length - 1]}`;
+          //     // console.log(slicedYear);
+          //     yearSet.push(slicedYear);
+          //   }
+          // }
         }
       }
       

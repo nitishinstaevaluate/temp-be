@@ -58,11 +58,19 @@ export class FCFEAndFCFFService {
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
+      let adjCOE;
       
     const yearsActual = await getYearsList(worksheet1);
     
     let provisionalDates = worksheet1['B1'].v
-    console.log('Provisional Date ', provisionalDates);
+    // console.log(' Valuation Date ', inputs.valuationDate)
+    // console.log('Provisional Date ', provisionalDates);
+    // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
+    // console.log(typeof('02-01-2015'));
+    let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+    console.log(provDtRef);
+    let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
+    console.log('Difference in days between provisional and valuation date',diffValProv);
 
     // const provStr = provisionalDates.split(",");
     
@@ -194,6 +202,7 @@ export class FCFEAndFCFFService {
         var changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
         // if (i==0) {}
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
+        adjCOE = adjustedCostOfEquity;        // To be used outside block;
         console.log("Adjusted COE ",adjustedCostOfEquity );
         // console.log('Change in Net Fixed Assets ', changeInFixedAssets);
         
@@ -370,13 +379,21 @@ export class FCFEAndFCFFService {
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     
-    if (this.stubAdjRequired === true) {
+    if (this.stubAdjRequired === true && diffValProv > 1) {
+      // console.log("gar ",diffValProv);
+      let stubFactor = (1 + diffValProv/365) ** (adjCOE/100)-1;
+
+      // console.log(stubFactor);
+      let equityValueToAdj = stubFactor * finalResult[0].equityValue;
+      console.log('Stub Factor ',stubFactor);
       let keyValues = Object.entries(finalResult[0]);
-      keyValues.splice(-2,0, ["stubAdjValue",22002]);
-      keyValues.splice(-2,0, ["equityValueNew",10000]);
+      keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
+      keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
       let newObj = Object.fromEntries(keyValues);
       finalResult[0] = newObj;
     }
+
+    console.log(finalResult[0]);
     
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
