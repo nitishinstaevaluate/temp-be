@@ -68,7 +68,7 @@ export class FCFEAndFCFFService {
     // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
     // console.log(typeof('02-01-2015'));
     let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
-    // console.log(provDtRef);
+    console.log(provDtRef);
     let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
     console.log('Difference in days between provisional and valuation date',diffValProv);
 
