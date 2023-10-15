@@ -333,7 +333,7 @@ export class NetAssetValueService {
         value : noOfShares,
       },
       valuePerShare: {
-        fieldName : 'Value per share',
+        fieldName : 'Value per share (INR)',
         value : valuePerShare,
       }
     };

@@ -962,7 +962,7 @@ export class ExcelSheetService {
                   }
                   const valPrShareObj = {
                     srNo:'',
-                    particular:'Fair Value per Share',
+                    particular:'Fair Value per Share (INR)',
                     avg:response.fairValuePerShareAvg?.toFixed(2),
                     med:response.fairValuePerShareMed?.toFixed(2)
                   }

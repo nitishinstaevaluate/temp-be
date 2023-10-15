@@ -391,9 +391,11 @@ export class FCFEAndFCFFService {
       keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
       let newObj = Object.fromEntries(keyValues);
       finalResult[0] = newObj;
+      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares;       // Applying mulitplier for figures
+      // console.log('new EPV ',((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares);
     }
 
-    console.log(finalResult[0]);
+    console.log(finalResult);
     
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
