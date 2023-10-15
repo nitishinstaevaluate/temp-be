@@ -4,6 +4,7 @@ import { GET_DATE_MONTH_YEAR_FORMAT, GET_YEAR, MATCH_YEAR } from 'src/constants/
 const date = require('date-and-time');
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
+  // console.log(Cell);
   let value = null;
   if (Cell && Cell.t === 'n') {
     value = Cell.v;
@@ -26,6 +27,7 @@ export async function getYearsList(worksheet1: any): Promise<any> {
     for (const key in worksheet1) {
       if (worksheet1.hasOwnProperty(key) && key !== '!ref') {
         const object = worksheet1[key];
+        // console.log('First Object ', object.v);
         if(object.v && GET_DATE_MONTH_YEAR_FORMAT.test(object.v)){
           // console.log(object.v,"new date")
           yearSet.push(object.v)
@@ -33,6 +35,7 @@ export async function getYearsList(worksheet1: any): Promise<any> {
         else if (object.v && GET_YEAR.test(object.v)) {
           if(object.v.includes('-')){
             // console.log("if condoitiosn",object?.v.split('-')[1])
+            // console.log("if condoitiosn",object.v)
             if(object?.v.split('-')[1].length <= 2){
               yearSet.push(object?.v.split('-')[1]);
               // console.log("year containing splits -",object?.v.split('-')[1] )
@@ -57,8 +60,18 @@ export async function getYearsList(worksheet1: any): Promise<any> {
           }
         }
       }
-    }
+      
+  }
     return yearSet;
+
+  }
+  catch(err){
+    return{
+      msg:'something went wrong',
+      error:err.message,
+      status:false
+    }
+  }
 
   // earlier used function
   // const firstYearCell = worksheet1['B1'];
@@ -74,14 +87,8 @@ export async function getYearsList(worksheet1: any): Promise<any> {
   //     years.push(yearCell.v.split('-')[1]);
   // }
   // return years;
-  }
-  catch(err){
-    return{
-      msg:'something went wrong',
-      error:err.message,
-      status:false
-    }
-  }
+
+  
 }
 export function findMedian(numbers: number[]) {
   numbers.sort((a, b) => a - b);
@@ -172,6 +179,20 @@ export function getDiscountingPeriod(discountingPeriod: string) {
   };
 }
 
+export function searchDate(string) {
+  // Create a regular expression to match a date.
+  let dateRegex = /\d{2}-\d{2}-\d{4}/;
+
+  // Search for the date in the string.
+  let match = dateRegex.exec(string);
+
+  // Return the date if it is found, or null otherwise.
+  if (match) {
+    return match[0];
+  } else {
+    return null;
+  }
+}
 // export function isLeapYear(year: number) {
 //   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 // }

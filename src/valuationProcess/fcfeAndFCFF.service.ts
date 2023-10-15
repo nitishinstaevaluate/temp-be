@@ -25,10 +25,11 @@ import {
   fcffTerminalValue,
   interestAdjustedTaxesWithStubPeriod
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
+import { type } from 'os';
 const date = require('date-and-time');
 
 @Injectable()
@@ -57,7 +58,19 @@ export class FCFEAndFCFFService {
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
+      
     const yearsActual = await getYearsList(worksheet1);
+    
+    let provisionalDates = worksheet1['B1'].v
+    console.log('Provisional Date ', provisionalDates);
+
+    // const provStr = provisionalDates.split(",");
+    
+    // let provDtRef = new date(provisionalDates);
+    // console.log('Provisional Dates ', provDtRef);
+    // console.log(provStr.slice(-1).trim());
+    
+    console.log(yearsActual);
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     if (years === null)
