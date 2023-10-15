@@ -1,9 +1,10 @@
 import { read } from 'fs';
 import { columnsList } from './excelSheetConfig';
-import { GET_YEAR, MATCH_YEAR } from 'src/constants/constants';
+import { GET_DATE_MONTH_YEAR_FORMAT, GET_YEAR, MATCH_YEAR } from 'src/constants/constants';
 const date = require('date-and-time');
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
+  // console.log(Cell);
   let value = null;
   if (Cell && Cell.t === 'n') {
     value = Cell.v;
@@ -20,41 +21,69 @@ export async function getCellValue(worksheet: any, address: string) {
 }
 //Get Years List from Excel Sheet.
 export async function getYearsList(worksheet1: any): Promise<any> {
-// only formats allowed (alphabets)2023/(alphabets)23/2023-2024/2023-24/2023/23 -- implement function to valiadate the excel before processing
+// only formats allowed (alphabets)2023/(alphabets)23/2023-2024/2023-24/2023/23 or 12-02-2023 / 12/02/2023 / 12.03.23 / 12.12.2023 / 03-12-23 / 12/12/23 -- implement function to valiadate the excel before processing
   try{
     const yearSet = [];
+    let i=0;
     for (const key in worksheet1) {
       if (worksheet1.hasOwnProperty(key) && key !== '!ref') {
         const object = worksheet1[key];
-        if (object.v && GET_YEAR.test(object.v)) {
+        // console.log('First Object ', object.v);
+        if(object.v && GET_DATE_MONTH_YEAR_FORMAT.test(object.v)){
+          // console.log(object.v,"new date")
+          yearSet.push(object.v)
+        }
+        else if (object.v && GET_YEAR.test(object.v)) {
           if(object.v.includes('-')){
             // console.log("if condoitiosn",object?.v.split('-')[1])
+            console.log("if condoitiosn",object.v)
             if(object?.v.split('-')[1].length <= 2){
+              console.log("if sector",object.v)
+              if (i===0){
+                const baseDate = object.v.trim().slice(-2);
+                yearSet.push(baseDate);
+                i++;
+              } else {
               yearSet.push(object?.v.split('-')[1]);
+              }
               // console.log("year containing splits -",object?.v.split('-')[1] )
             }
-            else{
-              const slicedYear = `${object?.v.split('-')[1][object?.v.split('-')[1].length - 2]}${object?.v.split('-')[1][object?.v.split('-')[1].length - 1]}`;
-              yearSet.push(slicedYear);
-              // console.log("year containing two numbers only splits -",slicedYear )
-            }
+            // else{
+            //   console.log("if condoitios 2",object.v)
+            //   const slicedYear = `${object?.v.split('-')[1][object?.v.split('-')[1].length - 2]}${object?.v.split('-')[1][object?.v.split('-')[1].length - 1]}`;
+            //   yearSet.push(slicedYear);
+            //   // console.log("year containing two numbers only splits -",slicedYear )
+            // }
           }
-          else{
-            // console.log('else condition')
-            const numbers = object.v.match(MATCH_YEAR).join('');
-            if(numbers.length <= 2){
-              yearSet.push(numbers);
-            }
-            else{
-              const slicedYear = `${numbers[numbers.length - 2]}${numbers[numbers.length - 1]}`;
-              // console.log(slicedYear);
-              yearSet.push(slicedYear);
-            }
-          }
+          // else{
+          //   // console.log('else condition')
+          //   console.log("if condoitios 3",object.v)
+          //   const numbers = object.v.match(MATCH_YEAR).join('');
+          //   if(numbers.length <= 2){
+          //     yearSet.push(numbers);
+          //     console.log("if sector NN",object.v)
+          //   }
+          //   else{
+          //     console.log("if condoitios - X ",object.v)
+          //     const slicedYear = `${numbers[numbers.length - 2]}${numbers[numbers.length - 1]}`;
+          //     // console.log(slicedYear);
+          //     yearSet.push(slicedYear);
+          //   }
+          // }
         }
       }
-    }
+      
+  }
     return yearSet;
+
+  }
+  catch(err){
+    return{
+      msg:'something went wrong',
+      error:err.message,
+      status:false
+    }
+  }
 
   // earlier used function
   // const firstYearCell = worksheet1['B1'];
@@ -70,14 +99,8 @@ export async function getYearsList(worksheet1: any): Promise<any> {
   //     years.push(yearCell.v.split('-')[1]);
   // }
   // return years;
-  }
-  catch(err){
-    return{
-      msg:'something went wrong',
-      error:err.message,
-      status:false
-    }
-  }
+
+  
 }
 export function findMedian(numbers: number[]) {
   numbers.sort((a, b) => a - b);
@@ -168,6 +191,20 @@ export function getDiscountingPeriod(discountingPeriod: string) {
   };
 }
 
+export function searchDate(string) {
+  // Create a regular expression to match a date.
+  let dateRegex = /\d{2}-\d{2}-\d{4}/;
+
+  // Search for the date in the string.
+  let match = dateRegex.exec(string);
+
+  // Return the date if it is found, or null otherwise.
+  if (match) {
+    return match[0];
+  } else {
+    return null;
+  }
+}
 // export function isLeapYear(year: number) {
 //   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 // }

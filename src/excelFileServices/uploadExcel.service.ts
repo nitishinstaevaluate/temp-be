@@ -24,7 +24,7 @@ export class ExcelSheetService {
                   return throwError(new NotFoundException('Sheet not found'));
                 }
         
-                const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                 const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
                 sheetData.forEach((row:any) => {
                     for (let columns in row) {
                       if (typeof row[columns] === 'string') {
@@ -40,14 +40,14 @@ export class ExcelSheetService {
                         // console.log(cleanedColumn)
                         if (columns !== cleanedColumn) {
                           row[cleanedColumn] = row[columns];
-                        //   console.log(row[cleanedColumn])
+                          //   console.log(row[cleanedColumn])
                           delete row[columns];
                         }
                       }
                     }
                   });
                   return from(this.transformData(sheetData)).pipe(switchMap((excelData)=>{
-
+                    
                     return of(excelData)
                   }))
               }),
@@ -213,7 +213,13 @@ export class ExcelSheetService {
             }
           });
         });
-        // console.log(data,"new data")
+        let splicedEle;
+        keysArray.map((value:any,index:number)=>{
+          if(value === 'Particulars'){
+            splicedEle = keysArray.splice(index,1);
+          }
+        })
+        keysArray.unshift(splicedEle[0])
         data.unshift(keysArray)
         return data;
       }
@@ -655,19 +661,19 @@ export class ExcelSheetService {
               result.valuationData.map((response:any)=>{
                 arrayValuePerShare.push({fcfeValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
               })
-              arrayValuePerShare.unshift({fcfeValuePerShare:"Value per Share"});
+              arrayValuePerShare.unshift({fcfeValuePerShare:"Value per Share (INR)"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
                 arrayValuePerShare.push({fcffValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
               })
-              arrayValuePerShare.unshift({fcffValuePerShare:"Value per Share"});
+              arrayValuePerShare.unshift({fcffValuePerShare:"Value per Share (INR)"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
                 arrayValuePerShare.push({excessEarningValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
               })
-              arrayValuePerShare.unshift({excessEarningValuePerShare:"Value per Share"});
+              arrayValuePerShare.unshift({excessEarningValuePerShare:"Value per Share (INR)"});
             }
           })
           return arrayValuePerShare;

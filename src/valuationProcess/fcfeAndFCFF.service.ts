@@ -25,9 +25,11 @@ import {
   fcffTerminalValue,
   interestAdjustedTaxesWithStubPeriod
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
+import { type } from 'os';
 const date = require('date-and-time');
 
 @Injectable()
@@ -56,7 +58,27 @@ export class FCFEAndFCFFService {
       // console.log(inputs);
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
+      let adjCOE;
+      
     const yearsActual = await getYearsList(worksheet1);
+    
+    let provisionalDates = worksheet1['B1'].v
+    // console.log(' Valuation Date ', inputs.valuationDate)
+    // console.log('Provisional Date ', provisionalDates);
+    // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
+    // console.log(typeof('02-01-2015'));
+    let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+    console.log(provDtRef);
+    let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
+    console.log('Difference in days between provisional and valuation date',diffValProv);
+
+    // const provStr = provisionalDates.split(",");
+    
+    // let provDtRef = new date(provisionalDates);
+    // console.log('Provisional Dates ', provDtRef);
+    // console.log(provStr.slice(-1).trim());
+    
+    console.log(yearsActual);
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     if (years === null)
@@ -180,6 +202,7 @@ export class FCFEAndFCFFService {
         var changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
         // if (i==0) {}
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
+        adjCOE = adjustedCostOfEquity;        // To be used outside block;
         console.log("Adjusted COE ",adjustedCostOfEquity );
         // console.log('Change in Net Fixed Assets ', changeInFixedAssets);
         
@@ -296,7 +319,7 @@ export class FCFEAndFCFFService {
         // const valuePerShare = equityValue / outstandingShares;
         if (inputs.model.includes('FCFE')) {
         result = {
-          particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
+          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
           onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
@@ -321,7 +344,7 @@ export class FCFEAndFCFFService {
         }; 
       } else if (inputs.model.includes('FCFF')) {
         result = {
-          particulars: (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
+          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
           pat: (i === yearLengthT) ?'':pat,
           addInterestAdjTaxes: (i === yearLengthT) ?'':addInterestAdjTaxes,
           depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
@@ -356,13 +379,21 @@ export class FCFEAndFCFFService {
     finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     
-    // if (this.stubAdjRequired === true) {
-    //   let keyValues = Object.entries(finalResult[0]);
-    //   keyValues.splice(-2,0, ["stubAdjValue",22002]);
-    //   keyValues.splice(-2,0, ["equityValueNew",10000]);
-    //   let newObj = Object.fromEntries(keyValues);
-    //   finalResult[0] = newObj;
-    // }
+    if (this.stubAdjRequired === true && diffValProv > 1) {
+      // console.log("gar ",diffValProv);
+      let stubFactor = (1 + diffValProv/365) ** (adjCOE/100)-1;
+
+      // console.log(stubFactor);
+      let equityValueToAdj = stubFactor * finalResult[0].equityValue;
+      console.log('Stub Factor ',stubFactor);
+      let keyValues = Object.entries(finalResult[0]);
+      keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
+      keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
+      let newObj = Object.fromEntries(keyValues);
+      finalResult[0] = newObj;
+    }
+
+    console.log(finalResult[0]);
     
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);

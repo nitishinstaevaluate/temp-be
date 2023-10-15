@@ -129,9 +129,17 @@ export class ReportService {
           registeredValuerQualifications: data?.registeredValuerQualifications
         }
       }
+      let appointeeDetailsPayload:{};
+      if(!data.appointeeDetails){
+        appointeeDetailsPayload={
+            appointingAuthorityName: data?.appointingAuthorityName,
+            dateOfAppointment: data?.dateOfAppointment
+        }
+      } 
       const payload= {
         clientName:data.clientName,
         registeredValuerDetails:registerValuerPayload,
+        appointeeDetails:appointeeDetailsPayload,
         reportId:data?.reportId,
         useExistingValuer:data?.useExistingValuer,
         reportDate:data?.reportDate
@@ -194,6 +202,16 @@ export class ReportService {
       hbs.registerHelper('registeredValuerQualifications',()=>{
         if(getReportData.registeredValuerDetails[0]) 
             return  getReportData.registeredValuerDetails[0].registeredValuerQualifications; 
+        return '';
+      })
+      hbs.registerHelper('appointingAuthorityName',()=>{
+        if(getReportData.appointeeDetails[0]) 
+            return  getReportData.appointeeDetails[0].appointingAuthorityName; 
+        return '';
+      })
+      hbs.registerHelper('dateOfAppointment',()=>{
+        if(getReportData.appointeeDetails[0]) 
+            return  getReportData.appointeeDetails[0].dateOfAppointment; 
         return '';
       })
       hbs.registerHelper('clientName',()=>{
@@ -269,8 +287,10 @@ export class ReportService {
       hbs.registerHelper('equityPerShare',()=>{
         if(transposedData[0].data.transposedResult[1])
         return valuationResult.modelResults.map((response)=>{
-          if(response.model===MODEL[0] || response.model === MODEL[1])
-            return response?.valuationData[0]?.equityValue.toFixed(2);
+          if(response.model===MODEL[0] || response.model === MODEL[1]){
+            const formattedNumber = Math.floor(response?.valuationData[0]?.equityValue * 100000).toLocaleString('en-IN');
+            return formattedNumber.replace(/,/g, ',');
+          }
         });
         return '';
       })
