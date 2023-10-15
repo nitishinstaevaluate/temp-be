@@ -106,7 +106,7 @@ export const relative_valuation_headingObj = {
   average:"Average",
   loc:"Less: Illiquidity",
   noOfShares:"No. of Shares",
-  finalPrice:"Fair Value per Share",
+  finalPrice:"Fair Value per Share (INR)",
   tentativeIssuePrice:"Tentative Issue Price (Average of above)",
 };
 export const footerInfo = {
