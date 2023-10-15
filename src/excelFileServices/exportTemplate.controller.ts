@@ -28,7 +28,7 @@ export class ExportTemplateController {
     const currentYear = new Date().getFullYear();
     worksheet.getColumn(
       'B',
-    ).header = `{{Add provisional financial date in DD-MM-YYYY}}`
+    ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
     let count = 0;
@@ -42,7 +42,7 @@ export class ExportTemplateController {
     const worksheet2 = workbook.getWorksheet(2);
     worksheet2.getColumn(
       'B',
-    ).header = `{{Add provisional financial date in DD-MM-YYYY}}`
+    ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
     let count2 = 0;
