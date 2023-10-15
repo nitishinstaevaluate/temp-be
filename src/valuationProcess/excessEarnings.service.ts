@@ -18,6 +18,7 @@ import { sheet1_PLObj, sheet2_BSObj, columnsList } from '../excelFileServices/ex
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { TerminalGrowthRate } from 'src/masters/schema/masters.schema';
 import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
+const date = require('date-and-time');
 @Injectable()
 export class ExcessEarningsService {
   constructor(
@@ -36,8 +37,19 @@ export class ExcessEarningsService {
       userId: inputs.userId,
     });
     console.log('Inside Excess Earnings');
+    let adjCOE;
     const { outstandingShares, discountRateValue, valuationDate, discountingPeriod } = inputs;
     const yearsActual = await getYearsList(worksheet1);
+    let provisionalDates = worksheet1['B1'].v
+    // console.log(' Valuation Date ', inputs.valuationDate)
+    // console.log('Provisional Date ', provisionalDates);
+    // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
+    // console.log(typeof('02-01-2015'));
+    let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+    // console.log(provDtRef);
+    let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
+    console.log('Difference in days between provisional and valuation date',diffValProv);
+
     // console.log('Checking years ', yearsActual);
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     // console.log('Checking years ', years);
@@ -103,6 +115,7 @@ export class ExcessEarningsService {
         let pat = await GetPAT(i + 1, worksheet1);
         
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
+        adjCOE = adjustedCostOfEquity;
         const expectedProfitCOE = netWorth * adjustedCostOfEquity/100;
         const excessReturn = pat - expectedProfitCOE;
         // discountingPeriodValue = discountingPeriodValue * i;
@@ -158,10 +171,12 @@ export class ExcessEarningsService {
     finalResult[0].equityValue = bookValueAsOnDate + sumOfCashFlows;
     finalResult[0].valuePerShare = (finalResult[0].equityValue * 100000) / outstandingShares;       // Applying mulitplier for figures
 
-    if (this.stubAdjRequired === true) {
+    if (this.stubAdjRequired === true && diffValProv > 1) {
+      let stubFactor = (1 + diffValProv/365) ** (adjCOE/100)-1;
+      let equityValueToAdj = stubFactor * finalResult[0].equityValue;
       let keyValues = Object.entries(finalResult[0]);
-      keyValues.splice(-2,0, ["stubAdjValue",22002]);
-      keyValues.splice(-2,0, ["equityValueNew",10000]);
+      keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
+      keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
       let newObj = Object.fromEntries(keyValues);
       finalResult[0] = newObj;
     }
