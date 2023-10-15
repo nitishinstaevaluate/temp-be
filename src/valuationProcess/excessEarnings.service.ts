@@ -40,18 +40,15 @@ export class ExcessEarningsService {
     let adjCOE;
     const { outstandingShares, discountRateValue, valuationDate, discountingPeriod } = inputs;
     const yearsActual = await getYearsList(worksheet1);
+    
     let provisionalDates = worksheet1['B1'].v
-    // console.log(' Valuation Date ', inputs.valuationDate)
-    // console.log('Provisional Date ', provisionalDates);
-    // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
-    // console.log(typeof('02-01-2015'));
     let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
-    // console.log(provDtRef);
     let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
     console.log('Difference in days between provisional and valuation date',diffValProv);
 
     // console.log('Checking years ', yearsActual);
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
+    console.log('Net year ',years);
     // console.log('Checking years ', years);
     let multiplier = 100000;
     if (years === null)
@@ -115,7 +112,9 @@ export class ExcessEarningsService {
         let pat = await GetPAT(i + 1, worksheet1);
         
         const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
+        console.log('Net Worth',netWorth);
         adjCOE = adjustedCostOfEquity;
+        console.log('adhjcoe,', adjustedCostOfEquity);
         const expectedProfitCOE = netWorth * adjustedCostOfEquity/100;
         const excessReturn = pat - expectedProfitCOE;
         // discountingPeriodValue = discountingPeriodValue * i;
@@ -179,6 +178,7 @@ export class ExcessEarningsService {
       keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
       let newObj = Object.fromEntries(keyValues);
       finalResult[0] = newObj;
+      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares;       // Applying mulitplier for figures
     }
     
     this.stubAdjRequired = false;   
