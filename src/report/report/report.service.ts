@@ -211,7 +211,9 @@ export class ReportService {
       })
       hbs.registerHelper('dateOfAppointment',()=>{
         if(getReportData.appointeeDetails[0]) 
-            return  getReportData.appointeeDetails[0].dateOfAppointment; 
+            // return  getReportData.appointeeDetails[0].dateOfAppointment; 
+            // let apptDate = await getReportData.appointeeDetails[0].dateOfAppointment; 
+            return this.formatDate(new Date(getReportData.appointeeDetails[0].dateOfAppointment));
         return '';
       })
       hbs.registerHelper('clientName',()=>{

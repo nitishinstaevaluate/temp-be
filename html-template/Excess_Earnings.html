@@ -191,6 +191,26 @@
                     {{/ifZero}}
                     {{/each}}
                 </tr>
+
+                {{#ifStub}}
+                <tr>
+                    {{#each (stubValue data)}}
+                    {{#ifZero excessEarnStubAdjValue}}
+                    <td>{{excessEarnStubAdjValue}}</td>
+                    {{/ifZero}}
+                    {{/each}}
+                </tr>
+                {{/ifStub}}
+
+                {{#ifEquityValProvisional}}
+                <tr>
+                    {{#each (provisionalEquityValue data)}}
+                    {{#ifZero excessEarnequityValueNew}}
+                    <td>{{excessEarnequityValueNew}}</td>
+                    {{/ifZero}}
+                    {{/each}}
+                </tr>
+                {{/ifEquityValProvisional}}
                 <tr>
                     {{#each (shares data)}}
                     {{#ifZero excessEarningNoOfShares}}
