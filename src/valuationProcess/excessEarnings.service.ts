@@ -17,7 +17,7 @@ import {
 import { sheet1_PLObj, sheet2_BSObj, columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { TerminalGrowthRate } from 'src/masters/schema/masters.schema';
-import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
+import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS } from 'src/constants/constants';
 const date = require('date-and-time');
 @Injectable()
 export class ExcessEarningsService {
@@ -50,7 +50,7 @@ export class ExcessEarningsService {
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     // console.log('Checking years ', years);
-    let multiplier = 100000;
+    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
     if (years === null)
       return {
         result: null,
@@ -168,7 +168,7 @@ export class ExcessEarningsService {
     )
     finalResult[0].sumOfCashFlows = sumOfCashFlows;
     finalResult[0].equityValue = bookValueAsOnDate + sumOfCashFlows;
-    finalResult[0].valuePerShare = (finalResult[0].equityValue * 100000) / outstandingShares;       // Applying mulitplier for figures
+    finalResult[0].valuePerShare = (finalResult[0].equityValue * multiplier) / outstandingShares;       // Applying mulitplier for figures
 
     if (this.stubAdjRequired === true && diffValProv > 1) {
       let stubFactor = (1 + diffValProv/365) ** (adjCOE/100)-1;
@@ -178,7 +178,7 @@ export class ExcessEarningsService {
       keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
       let newObj = Object.fromEntries(keyValues);
       finalResult[0] = newObj;
-      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares;       // Applying mulitplier for figures
+      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*multiplier)/outstandingShares;       // Applying mulitplier for figures
     }
     
     this.stubAdjRequired = false;   

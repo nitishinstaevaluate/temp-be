@@ -612,7 +612,6 @@ export class ExcelSheetService {
             if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
               checkiIfStub=true;
             }
-            console.log(result.valuationData[0].particulars,"stub value",checkiIfStub)
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
                 arrayEquityValue.push({fcfeEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})

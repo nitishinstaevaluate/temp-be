@@ -333,6 +333,12 @@ export class ReportService {
         }
         return terminalVal
       })
+      hbs.registerHelper('currencyUnit',()=>{
+        console.log(valuationResult.inputData[0].currencyUnit,"currency")
+        if(valuationResult.inputData[0].currencyUnit)
+          return valuationResult.inputData[0].currencyUnit;
+        return 'INR';
+      })
     }
 
     formatDate(date: Date): string {
