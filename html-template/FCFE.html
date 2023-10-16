@@ -240,6 +240,25 @@
                     {{/ifZero}}
                     {{/each}}
                 </tr>
+                {{#ifStub}}
+                <tr>
+                    {{#each (stubValue data)}}
+                    {{#ifZero fcfeStubAdjValue}}
+                    <td>{{fcfeStubAdjValue}}</td>
+                    {{/ifZero}}
+                    {{/each}}
+                </tr>
+                {{/ifStub}}
+
+                {{#ifEquityValProvisional}}
+                <tr>
+                    {{#each (provisionalEquityValue data)}}
+                    {{#ifZero fcfeequityValueNew}}
+                    <td>{{fcfeequityValueNew}}</td>
+                    {{/ifZero}}
+                    {{/each}}
+                </tr>
+                {{/ifEquityValProvisional}}
                 <tr>
                     {{#each (shares data)}}
                     {{#ifZero fcfeNoOfShares}}

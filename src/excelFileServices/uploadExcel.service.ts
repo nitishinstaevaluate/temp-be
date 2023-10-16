@@ -605,29 +605,100 @@ export class ExcelSheetService {
         });
 
         hbs.registerHelper('eqtValue', () => {
+          let checkiIfStub = false;
+          
           let arrayEquityValue = [];
           valuationResult.modelResults.forEach((result)=>{
+            if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+              checkiIfStub=true;
+            }
+            console.log(result.valuationData[0].particulars,"stub value",checkiIfStub)
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
                 arrayEquityValue.push({fcfeEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
               })
-              arrayEquityValue.unshift({fcfeEquityValue:"Equity Value"});
+              if(checkiIfStub){
+                arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
+              }
+              else{
+                arrayEquityValue.unshift({fcfeEquityValue:`Equity Value ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+              }
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
                 arrayEquityValue.push({fcffEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
               })
-              arrayEquityValue.unshift({fcffEquityValue:"Equity Value"});
+              if(checkiIfStub){
+                arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
+              }
+              else{
+                arrayEquityValue.unshift({fcffEquityValue:`Equity Value ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+              }
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
                 arrayEquityValue.push({excessEarningEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
               })
-              arrayEquityValue.unshift({excessEarningEquityValue:"Equity Value"});
+              if(checkiIfStub){
+                arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
+              }
+              else{
+                arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+              }
             }
           })
           return arrayEquityValue;
         });
+
+        hbs.registerHelper('stubValue',()=>{
+          console.log("stub working")
+          let arrayStubValue = [];
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.model === MODEL[0]){
+              result.valuationData.map((response:any)=>{
+                arrayStubValue.push({fcfeStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+              })
+              arrayStubValue.unshift({fcfeStubAdjValue:"Add:Stub Period Adjustment"});
+            }
+            else if (result.model === MODEL[1]){
+              result.valuationData.map((response:any)=>{
+                arrayStubValue.push({fcffStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+              })
+              arrayStubValue.unshift({fcffStubAdjValue:"Add:Stub Period Adjustment"});
+            }
+            else if (result.model ===MODEL[3]){
+              result.valuationData.map((response:any)=>{
+                arrayStubValue.push({excessEarnStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+              })
+              arrayStubValue.unshift({excessEarnStubAdjValue:"Add:Stub Period Adjustment"});
+            }
+          })
+          return arrayStubValue;
+        })
+        hbs.registerHelper('provisionalEquityValue',()=>{
+          let arrayProvisionalVal = [];
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.model === MODEL[0]){
+              result.valuationData.map((response:any)=>{
+                arrayProvisionalVal.push({fcfeequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+              })
+              arrayProvisionalVal.unshift({fcfeequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+            }
+            else if (result.model === MODEL[1]){
+              result.valuationData.map((response:any)=>{
+                arrayProvisionalVal.push({fcffequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+              })
+              arrayProvisionalVal.unshift({fcffequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+            }
+            else if (result.model ===MODEL[3]){
+              result.valuationData.map((response:any)=>{
+                arrayProvisionalVal.push({excessEarnequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+              })
+              arrayProvisionalVal.unshift({excessEarnequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+            }
+          })
+          return arrayProvisionalVal;
+        })
 
         hbs.registerHelper('shares', () => {
           let arrayNoOfShares = [];
@@ -1045,6 +1116,38 @@ export class ExcelSheetService {
           })
           return method;
         })
+
+        hbs.registerHelper('ifStub',(options)=>{
+          let checkiIfStub = false;
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+              checkiIfStub = true;
+            }
+          })
+              if(checkiIfStub){
+                return options.fn(this)
+              }
+              else{
+                return options.inverse(this);
+              }
+            
+          })
+        hbs.registerHelper('ifEquityValProvisional',(options)=>{
+          let checkiIfprovisional = false;
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.valuationData.some(obj => obj.hasOwnProperty('equityValueNew'))){
+              checkiIfprovisional = true;
+            }
+          })
+              if(checkiIfprovisional){
+                return options.fn(this)
+              }
+              else{
+                return options.inverse(this);
+              }
+            
+          })
+     
 
         // Nav helpers
         hbs.registerHelper('netAssetValue',()=>{
