@@ -336,10 +336,23 @@ export class ReportService {
         return terminalVal
       })
       hbs.registerHelper('currencyUnit',()=>{
-        console.log(valuationResult.inputData[0].currencyUnit,"currency")
         if(valuationResult.inputData[0].currencyUnit)
           return valuationResult.inputData[0].currencyUnit;
         return 'INR';
+      })
+      hbs.registerHelper('betaName',()=>{
+        if(valuationResult.inputData[0].betaType)
+          return valuationResult.inputData[0].betaType;
+        return '';
+      })
+      hbs.registerHelper('postCostOfDebt',()=>{
+        let costOfDebt,taxRate;
+        if(valuationResult.inputData[0].model.includes(MODEL[1])){
+          costOfDebt =  parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(3);
+          taxRate = valuationResult.inputData[0]?.taxRate.split('%')[0];
+          return (((costOfDebt/100)*(1-parseFloat(taxRate)/100))*100).toFixed(2);
+        } 
+        return '0';
       })
     }
 
