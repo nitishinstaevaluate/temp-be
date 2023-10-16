@@ -28,7 +28,7 @@ import {
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { GET_DATE_MONTH_YEAR_FORMAT } from 'src/constants/constants';
+import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS } from 'src/constants/constants';
 import { type } from 'os';
 const date = require('date-and-time');
 
@@ -59,6 +59,7 @@ export class FCFEAndFCFFService {
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
       let adjCOE;
+      let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
       
     const yearsActual = await getYearsList(worksheet1);
     
@@ -376,7 +377,7 @@ export class FCFEAndFCFFService {
     // let lastElement = finalResult.slice(-1);
     finalResult[0].sumOfCashFlows = sumOfCashFlows;
     finalResult[0].equityValue = inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
-    finalResult[0].valuePerShare = (finalResult[0].equityValue*100000)/outstandingShares;       // Applying mulitplier for figures
+    finalResult[0].valuePerShare = (finalResult[0].equityValue*multiplier)/outstandingShares;       // Applying mulitplier for figures
     // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     
     if (this.stubAdjRequired === true && diffValProv > 1) {
@@ -391,7 +392,7 @@ export class FCFEAndFCFFService {
       keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
       let newObj = Object.fromEntries(keyValues);
       finalResult[0] = newObj;
-      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares;       // Applying mulitplier for figures
+      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*multiplier)/outstandingShares;       // Applying mulitplier for figures
       // console.log('new EPV ',((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares);
     }
 

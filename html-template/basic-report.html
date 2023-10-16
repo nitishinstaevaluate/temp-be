@@ -640,13 +640,12 @@
         shares/CCPS</span><span class="h1"> of </span><span class="s1" ><span style=" font-weight: bold;">{{companyName}}</span>, as of
         {{reportDate}}</span><span class="h1">:-</span></p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
-<p style="text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">Fair Value of <span style="font-weight: bold;">{{companyName}}</span> Private
-        Limited </span><span class="h1"> </span><span class="s1" style=" font-weight: bold;"></span></p>
-<p style="text-indent: 0pt;text-align: center;">{{equityPerShare}} INR</p>
+<p style="text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">Fair Value of <span style="font-weight: bold;">{{companyName}}</span></span><span class="h1"> </span><span class="s1" style=" font-weight: bold;"></span></p>
+<p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}}</p>
 <p><br></p>
 <p style="text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">Fair Value per Equity Share
         (Rounded) </span><span class="h1"> </span><span class="s1" style=""></span></p>
-<p style="text-indent: 0pt;text-align: center;">{{valuePerShare}} INR</p>
+<p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} &nbsp;&nbsp;{{valuePerShare}}</p>
 <p><br></p>
 <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;padding-top: 2%;"><span class="p">We have no
         present or contemplated financial interest in </span><span class="s2" style=""><span style="font-weight: bold;">{{companyName}}</span>
@@ -668,7 +667,7 @@
         style="">Date: </span><span class="s2"
         style="">{{reportDate}}</span></p>
 <p style="padding-left: 33pt;text-indent: 0pt;text-align: left;"><span class="s1"
-        style="">Place: {{location}}</span></p>
+        style="">Place:______________</span></p>
 </div>
 
 <!-- page 4 html -->
@@ -1012,60 +1011,71 @@
             <li data-list-text="3.0" style="page-break-before: always;padding-top: 6%;">
                 <h1 style="padding-top: 3pt;padding-left: 60pt;text-indent: -32pt;text-align: left;">
                     Identity of the Valuer and Any other experts involved in the Valuation</h1>
-                    <table style="border-collapse:collapse;margin-left:30pt;margin-top:3%;" cellspacing="0">
-                        <tr style="height:30pt">
-                            <td style="width:30%">
+                    <table style="border-collapse:collapse;margin-left:30pt;margin-top:3%;width: 80% !important;" cellspacing="0">
+                        <tr style="height:30pt;width:100% !important;">
+                            <td style="width:40%">
                                 <p class="s5"
                                     style="text-indent: 0pt;line-height: 11pt;text-align: left;">Name
                                     of the Valuer: </p>
                             </td>
-                            <td style="">
+                            <td style="width:60% !important;">
                                 <p class="s5"
                                     style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">: {{registeredValuerName}}
                                 </p>
                             </td> 
                         </tr>
-                        <tr style="height:30pt">
-                            <td style="width:50%">
+                        <tr style="height:30pt;width:100% !important;">
+                            <td style="width:40%">
                                 <p class="s5"
                                     style="text-indent: 0pt;line-height: 11pt;text-align: left;">Corporate Address of the Valuer </p>
                             </td>
-                            <td style="">
+                            <td style="width:60% !important;">
                                 <p class="s5"
                                     style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:  {{registeredValuerAddress}}
                                 </p>
                             </td> 
                         </tr>
-                        <tr style="height:30pt">
-                            <td style="width:50%">
+                        <tr style="height:30pt;width:100% !important;">
+                            <td style="width:40%;">
                                 <p class="s5"
-                                    style="text-indent: 0pt;line-height: 11pt;text-align: left;">Registered Address of the Valuer Contact Detail</p>
+                                    style="text-indent: 0pt;line-height: 11pt;text-align: left;">Registered Address of the Valuer</p>
                             </td>
-                            <td style="">
+                            <td style="width: 60%;">
                                 <p class="s5"
                                     style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:  {{registeredValuerAddress}}
                                 </p>
                             </td> 
                         </tr>
-                        <tr style="height:30pt">
-                            <td style="width:50%">
+                        <tr style="height:30pt;width:100% !important;">
+                            <td style="width:40%;">
+                                <p class="s5"
+                                    style="text-indent: 0pt;line-height: 11pt;text-align: left;"> Contact Detail</p>
+                            </td>
+                            <td style="width:60% !important;">
+                                <p class="s5"
+                                    style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:
+                                </p>
+                            </td> 
+                        </tr>
+                        <tr style="height:30pt;width:100% !important;">
+                            <td style="width:40%">
                                 <p class="s5"
                                     style="text-indent: 0pt;line-height: 11pt;text-align: left;">Email Address</p>
                             </td>
-                            <td style="">
+                            <td style="width:60% !important;">
                                 <p class="s5"
                                     style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:  {{registeredValuerEmailId}}
                                 </p>
                             </td> 
                         </tr>
-                        <tr style="height:30pt">
-                            <td style="width:50%">
+                        <tr style="height:30pt;">
+                            <td style="width:40%">
                                 <p class="s5"
                                     style="text-indent: 0pt;line-height: 11pt;text-align: left;">Qualifications</p>
                             </td>
-                            <td style="">
+                            <td style="width:60% !important;">
                                 <p class="s5"
-                                    style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:  {{registeredValuerQualifications}}
+                                    style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:
                                 </p>
                             </td> 
                         </tr>
@@ -1161,16 +1171,16 @@
                     <li data-list-text="i.">
                         <p style="padding-top: 4pt;padding-left: 45pt;text-indent: -24pt;text-align: left;padding-top: 1%;"><span
                                 class="p">Audited Financial statements of the Company for the year ended March 31,
-                            </span><span class="s2" style=" ">{{auditedYear}}</span></p>
+                            </span><span class="s2" style=" ">________________</span></p>
                     </li>
                     <li data-list-text="ii.">
                         <p style="padding-left: 45pt;text-indent: -27pt;text-align: left;padding-top: 1%;"><span
                                 class="p">Management Certificated Provisional Financials for the period ended
-                            </span><span class="s2" style=" ">31st Mar 2023</span></p>
+                            </span><span class="s2" style=" ">________________</span></p>
                     </li>
                     <li data-list-text="iii.">
                         <p style="padding-left: 45pt;text-indent: -31pt;text-align: left;padding-top: 1%;"><span class="p">Projected
-                                Financial Statements of all the divisions for the years ending March 31,
+                                Financial Statements for the years ending March 31,
                             </span><span class="s2" style=" ">2023</span><span class="p">
                                 through March 31, </span><span class="s2"
                                 style=" ">{{projectedYear}}</span><span class="p">.</span></p>
@@ -1230,7 +1240,9 @@
                                         Valuation Approaches</h1>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <p style="padding-left: 28pt;text-indent: 0pt;line-height: 200%;text-align: left;">A brief
-                                        explanation of each valuation approach is provided below. <u>Income Approach</u></p>
+                                        explanation of each valuation approach is provided below. <u></u></p>
+                                        <p><br></p>
+                                        <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Income Approach</p>
                                     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">The income approach
                                         provides an estimate of the present value of the monetary benefits expected to flow to
                                         the owners of the business. It requires the projection of the cash flows that the
@@ -1629,7 +1641,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{riskFreeRate}}</p>
+                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{riskFreeRate}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1641,7 +1653,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{expMarketReturn}}</p>
+                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{expMarketReturn}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1665,7 +1677,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{costOfEquity}}</p>
+                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{costOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1677,7 +1689,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{companyRiskPremium}}</p>
+                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{companyRiskPremium}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1689,7 +1701,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{adjustedCostOfEquity}}</p>
+                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{adjustedCostOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -1699,7 +1711,7 @@
                                             <ol id="l17">
                                                 <li data-list-text="1.">
                                                     <p style="padding-left: 150pt;text-indent: -18pt;text-align: left;">Yield of
-                                                        10- Year Government Bonds as on 31st Mar 2023.</p>
+                                                        10- Year Government Bonds as on {{strdate}}</p>
                                                 </li>
                                                 <li data-list-text="2.">
                                                     <p style="padding-left: 150pt;text-indent: -18pt;text-align: left;">Market
@@ -1717,13 +1729,13 @@
                                                                 bgcolor="#001F5F">
                                                                 <p class="s11"
                                                                     style="padding-left: 15pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
-                                                                    01-02-1999</p>
+                                                                    1st Feb 1999</p>
                                                             </td>
                                                             <td style="width:86pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                                             bgcolor="#001F5F">
                                                                 <p class="s11"
                                                                     style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
-                                                                    31st Mar 2023</p>
+                                                                    {{strdate}}</p>
                                                             </td>
                                                         </tr>
                                                         <tr style="height:14pt">
@@ -1768,7 +1780,7 @@
                                                 <li data-list-text="3." style="page-break-before: always;padding-top: 10%;">
                                                     <p
                                                         style="padding-left: 150pt;text-indent: -18pt;line-height: 115%;text-align: left;">
-                                                        The beta is arrived using average beta of the comparable companies in
+                                                        The beta is arrived using {{betaName}} beta of the comparable companies in
                                                         the similar sector.</p>
                                                 </li>
                                                 <li data-list-text="4.">
@@ -1791,7 +1803,7 @@
                                     is </span><span class="s2" style="">{{taxRate}}%.</span></p>
                             <p style="padding-left: 80pt;text-indent: 0pt;text-align: center;"><span class="p">Accordingly,
                                     post tax cost of debt is arrived at </span><span class="s2"
-                                    style=" ">0%</span></p>
+                                    style=" ">{{postCostOfDebt}}%</span></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p
                                 style="padding-top: 3%;text-align: center;">
@@ -1842,7 +1854,7 @@
                                     </td>
                                     <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                         >
-                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt">{{terminalGrowthRate}}</p>
+                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt">{{terminalGrowthRate}}%</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -1854,7 +1866,7 @@
                                     </td>
                                     <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                         >
-                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt">{{costOfEquity}}</p>
+                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt">{{costOfEquity}}%</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -2342,14 +2354,14 @@
             style="">{{reportDate}}</span><span class="h1">:</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 2%;text-align: center;"><span class="s3">Fair Value of
-        </span><span class="s17" style=" ">{{companyName}} Private </span><span
-            class="s3">Limited </span><span class="h1"> </span><span class="s1"
+        </span><span class="s17" style=" ">{{companyName}} </span><span
+            class="s3"></span><span class="h1"> </span><span class="s1"
             style=" "></span></p>
-    <p style="text-indent: 0pt;text-align: center;">{{equityPerShare}} INR</p>
+    <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}}</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top:3%;text-align: center;"><span class="s3">Fair Value per Equity Share
             (Rounded)</span><span class="h1"> </span><span class="s1" style=" "></span></p>
-    <p style="text-indent: 0pt;text-align: center;">{{valuePerShare}} INR</p>
+    <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{valuePerShare}}</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 3%;">Please note, this Report is to be read in its
         entirety.</p>
@@ -2381,7 +2393,7 @@
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 14pt;text-align: left;">Date: <span style="font-weight: 400;">{{reportDate}}</span></p>
                 <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Place:
-                    <span class="s5" style="font-weight: 400;">{{location}}</span></p>
+                    <span class="s5" style="font-weight: 400;">__________</span></p>
             </td>
         </tr>
     </table>
