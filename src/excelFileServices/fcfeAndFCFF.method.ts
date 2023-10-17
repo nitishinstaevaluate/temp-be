@@ -5,12 +5,12 @@ import { getCellValue } from './common.methods';
 
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 
-export async function GetPAT(i: number, worksheet1:any) {
+export async function GetPAT(i: number, worksheet1: any) {
   //formula: =+'P&L'!B42
   // console.log(worksheet1);
   const pat = await getCellValue(
     worksheet1,
-    `${columnsList[i] + sheet1_PLObj.patRow}`,              
+    `${columnsList[i] + sheet1_PLObj.patRow}`,
   );
 
   // console.log(`${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`);
@@ -22,7 +22,7 @@ export async function DepAndAmortisation(i: number, worksheet1: any) {
   //formula: =+'P&L'!B26
   const depAndAmortisation = await getCellValue(
     worksheet1,
-    `${columnsList[i] + sheet1_PLObj.depAndAmortisationRow}`,   
+    `${columnsList[i] + sheet1_PLObj.depAndAmortisationRow}`,
   );
   return depAndAmortisation;
 }
@@ -129,59 +129,59 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
     shortTermProvisions +
     interCo;
 
-    const currentSum = sum1 - sum2;
+  const currentSum = sum1 - sum2;
 
-    // For next year
-    // Current Column
+  // For next year
+  // Current Column
   const nextTradeReceivables = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.tradeReceivablesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.tradeReceivablesRow}`,
   );
   const nextUnbilledRevenues = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.unbilledRevenuesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.unbilledRevenuesRow}`,
   );
   const nextInventories = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.inventoriesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.inventoriesRow}`,
   );
   const nextAdvances = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.advancesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.advancesRow}`,
   );
   const nextOtherCurrentAssets = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.otherCurrentAssetsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.otherCurrentAssetsRow}`,
   );
 
   // b variables
   const nextTradePayables = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.tradePayablesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.tradePayablesRow}`,
   );
   const nextEmployeePayables = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.employeePayablesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.employeePayablesRow}`,
   );
   const nextShortTermBorrowings = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.shortTermBorrowingsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
   const nextLcPayablesRow = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.lcPayablesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.lcPayablesRow}`,
   );
   const nextOtherCurrentLiabilities = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
   );
   const nextShortTermProvisions = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.shortTermProvisionsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.shortTermProvisionsRow}`,
   );
   const nextInterCo = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.interCoRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.interCoRow}`,
   );
 
   const nextSum1 = nextTradeReceivables + nextUnbilledRevenues + nextInventories + nextAdvances + nextOtherCurrentAssets
@@ -206,14 +206,14 @@ export async function DeferredTaxAssets(i: number, worksheet2: any) {
   // Get Next year data
   const nextDeferredTaxAssets = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.deferredTaxAssetsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.deferredTaxAssetsRow}`,
   );
   const nextDeferredTaxLiability = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.deferredTaxLiabilityRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.deferredTaxLiabilityRow}`,
   );
   // console.log('Deferred ' ,' ' , currentDeferredTaxAssets, ' ', currentDeferredTaxLiability ,' ' , nextDeferredTaxAssets, ' ', nextDeferredTaxLiability);
-  return (currentDeferredTaxAssets - currentDeferredTaxLiability)-(nextDeferredTaxAssets - nextDeferredTaxLiability);
+  return (currentDeferredTaxAssets - currentDeferredTaxLiability) - (nextDeferredTaxAssets - nextDeferredTaxLiability);
 }
 
 export async function ChangeInFixedAssets(i: number, worksheet2: any) {
@@ -243,39 +243,39 @@ export async function ChangeInFixedAssets(i: number, worksheet2: any) {
   );
 
   const netFixedAsset = tangibleAssets + intangibleAssets + capitalWorkInProgress + preOperativeExpenses + capitalAdvances + capitalLiabilities
-    // console.log('Net Fixed Asset - ', netFixedAsset );
+  // console.log('Net Fixed Asset - ', netFixedAsset );
   const nextTangibleAssets = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.tangibleAssetsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.tangibleAssetsRow}`,
   );
   const nextIntangibleAssets = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.intangibleAssetsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.intangibleAssetsRow}`,
   );
   const nextCapitalWorkInProgress = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.capitalWorkInProgressRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.capitalWorkInProgressRow}`,
   );
   const nextPreOperativeExpenses = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.preOperativeExpensesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.preOperativeExpensesRow}`,
   );
   const nextCapitalAdvances = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.capitalAdvancesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.capitalAdvancesRow}`,
   );
   const nextCapitalLiabilities = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.capitalLiabilitiesRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.capitalLiabilitiesRow}`,
   );
 
   // const nextCapitalLiabilities = await getCellValue(
   //   worksheet2,
   //   `${columnsList[i] + sheet2_BSObj.capitalLiabilitiesRow}`,
   // );
-  
-  const nextNetFixedAsset = nextTangibleAssets + nextIntangibleAssets + nextCapitalWorkInProgress + 
-  nextPreOperativeExpenses + nextCapitalAdvances + nextCapitalLiabilities
+
+  const nextNetFixedAsset = nextTangibleAssets + nextIntangibleAssets + nextCapitalWorkInProgress +
+    nextPreOperativeExpenses + nextCapitalAdvances + nextCapitalLiabilities
   // console.log('Net Next Fixed Asset - ', nextNetFixedAsset );
   return netFixedAsset - nextNetFixedAsset;
 }
@@ -298,20 +298,20 @@ export async function GetDebtAsOnDate(i: number, worksheet2: any) {
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
-    // console.log ('deb as on date ', longTermBorrowings, ' ', shortTermBorrowings ,' ', otherUnsecuredLoans)
-  return longTermBorrowings+shortTermBorrowings + otherUnsecuredLoans;
+  // console.log ('deb as on date ', longTermBorrowings, ' ', shortTermBorrowings ,' ', otherUnsecuredLoans)
+  return longTermBorrowings + shortTermBorrowings + otherUnsecuredLoans;
 }
 
-export async function fcfeTerminalValue(fcfe: number, terminalRate: number,adjCOE: number){
+export async function fcfeTerminalValue(fcfe: number, terminalRate: number, adjCOE: number) {
   // =F13*(1+Sheet2!C9)/(Sheet2!D22-Sheet2!C9)
-  const fcfeAtTerminalRate = fcfe * (1+terminalRate/100)/(adjCOE/100-terminalRate/100)
+  const fcfeAtTerminalRate = fcfe * (1 + terminalRate / 100) / (adjCOE / 100 - terminalRate / 100)
 
   return fcfeAtTerminalRate;
 }
 
-export async function fcffTerminalValue(fcff: number, terminalRate: number,wacc: number){
+export async function fcffTerminalValue(fcff: number, terminalRate: number, wacc: number) {
   // =F13*(1+Sheet2!C9)/(Sheet2!C34-Sheet2!C9)
-  const fcffAtTerminalRate = fcff * (1+terminalRate/100)/(wacc-terminalRate/100)
+  const fcffAtTerminalRate = fcff * (1 + terminalRate / 100) / (wacc - terminalRate / 100)
   // console.log('calc term ', fcff, ' ', terminalRate, ' ', wacc);
   // console.log('FCFF TER ', fcffAtTerminalRate);
   return fcffAtTerminalRate;
@@ -335,9 +335,9 @@ export async function interestAdjustedTaxes(i: number, worksheet1: any, taxRate:
   // =+'P&L'!C28*(1-Sheet2!$D$7)
   const financeCost = await getCellValue(
     worksheet1,
-    `${columnsList[i+1] + sheet1_PLObj.financeCostsRow}`,
+    `${columnsList[i + 1] + sheet1_PLObj.financeCostsRow}`,
   );
-  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate)/100);
+  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate) / 100);
   return addInterestAdjustedTaxes;
 
 }
@@ -346,7 +346,7 @@ export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1:
   // =+'P&L'!C28*(1-Sheet2!$D$7)
   let financeCost = await getCellValue(
     worksheet1,
-    `${columnsList[i+1] + sheet1_PLObj.financeCostsRow}`,
+    `${columnsList[i + 1] + sheet1_PLObj.financeCostsRow}`,
   );
 
   let financeCostOld = await getCellValue(
@@ -356,7 +356,7 @@ export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1:
 
   financeCost = financeCost - financeCostOld;
 
-  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate)/100);
+  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate) / 100);
   return addInterestAdjustedTaxes;
 
 }
@@ -365,17 +365,17 @@ export async function changeInBorrowings(i: number, worksheet2: any) {
   // =+BS!C26+BS!C36+BS!C27-BS!B26-BS!B27-BS!B36
   const nextOtherUnsecuredLoans = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.otherUnsecuredLoansRow}`,
   );
 
   const nextShortTermBorrowingsRow = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.shortTermBorrowingsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
 
   const nextNetLongTermBorrowings = await getCellValue(
     worksheet2,
-    `${columnsList[i+1] + sheet2_BSObj.longTermBorrowingsRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.longTermBorrowingsRow}`,
   );
 
 
@@ -466,7 +466,7 @@ export async function CapitalStructure(i: number, worksheet2: any) {
   return (longTermBorrowings + shortTermBorrowings) / shareholderFunds;
 }
 
-export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number,structureType: string,capStructure: any) {
+export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number, inputs: any) {
   //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
   // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
   // user may chose to enter values hence calculate as BS!D7:D22 sum)
@@ -474,88 +474,86 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
   // Total Equity = Shareholders' Funds - Preference Share Capital
   // Total Debt = Other Unsecured Loans + Long Term Borrowings + Liability component of CCD's + Short Term Borrowings
   // Total Preference Share Capital = Preference Share Capital
-  
+
   // =+(BS!B27+BS!B26+BS!B36)/(BS!B6-BS!B8)
   // (longTermBorrowingsRow + otherUnsecuredLoans + shortTermBorrowingsRow ) / (shareholderFunds - preferenceShareCapital)
 
   // const shareholderFunds = await this.getShareholderFunds(i,worksheet2);
   let capitalStructure;
-  if (structureType === 'Company_Based'){
-  const preferenceShareCapital = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
-  );
 
-  const otherUnsecuredLoans = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.otherUnsecuredLoansRow}`,
-  );
 
-  const liabilityComponentofCCD = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.liabilityComponentofCCDRow}`,
-  );
-  const longTermBorrowings = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
-  );
-  const shortTermBorrowings = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
-  );
-  
-  const totalCapital = (longTermBorrowings + otherUnsecuredLoans + shortTermBorrowings ) / (shareHolderFunds - preferenceShareCapital);
-  // const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
+    if (!inputs.capitalStructureType || inputs.capitalStructureType === 'Company_Based') {
+    
+      const preferenceShareCapital = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
+      );
 
-  // const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
-  const debtProp = totalCapital / (1 + totalCapital);
-  const equityProp = 1 - debtProp;
-  const prefProp = 1 - debtProp -equityProp;
+      const otherUnsecuredLoans = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+      );
 
-  capitalStructure = {
-    capitalStructureType : 'Company_Based',
-    debtProp : debtProp,
-    equityProp : equityProp,
-    prefProp: prefProp,
-    totalCapital : totalCapital           // this is actual value and not a proporation.
-  } 
-} else if (structureType === 'Industry_based') {
-    const debtRatio = parseFloat(capStructure.deRatio)/100;
-    const totalCapital = 1 + debtRatio;
-    const debtProp = debtRatio/totalCapital;
-    const equityProp = 1 - debtProp;
-    const prefProp = 0 // By default this is 0 for Industry
-    // console.log(this.debtRatio + " " + this.equityProp);
+      const liabilityComponentofCCD = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.liabilityComponentofCCDRow}`,
+      );
+      const longTermBorrowings = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
+      );
+      const shortTermBorrowings = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
+      );
 
-    capitalStructure = {
-      capitalStructureType : 'Industry_based',
-      debtProp : debtProp,
-      equityProp : equityProp,
-      prefProp: prefProp,
-      totalCapital : totalCapital           // this is actual value and not a proporation.
+      const totalCapital = (longTermBorrowings + otherUnsecuredLoans + shortTermBorrowings) / (shareHolderFunds - preferenceShareCapital);
+      // const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
+
+      // const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
+      const debtProp = totalCapital / (1 + totalCapital);
+      const equityProp = 1 - debtProp;
+      const prefProp = 1 - debtProp - equityProp;
+
+      capitalStructure = {
+        capitalStructureType: 'Company_Based',
+        debtProp: debtProp,
+        equityProp: equityProp,
+        prefProp: prefProp,
+        totalCapital: totalCapital           // this is actual value and not a proporation.
+      }
+    } else if (inputs.capitalStructureType === 'Industry_Based') {
+      const debtRatio = parseFloat(inputs.capitalStructure.deRatio) / 100;
+      const totalCapital = 1 + debtRatio;
+      const debtProp = debtRatio / totalCapital;
+      const equityProp = 1 - debtProp;
+      const prefProp = 0 // By default this is 0 for Industry
+
+      capitalStructure = {
+        capitalStructureType: 'Industry_Based',
+        debtProp: debtProp,
+        equityProp: equityProp,
+        prefProp: prefProp,
+        totalCapital: totalCapital           // this is actual value and not a proporation.
+      }
+
+    } else if (inputs.capitalStructureType === 'Target_Based') {
+      const totalCapital = 1;                 // total is always 1
+      const debtProp = parseFloat(inputs.capitalStructure.debtProp) / 100;
+      const equityProp = parseFloat(inputs.capitalStructure.equityProp) / 100;
+      const prefProp = parseFloat(inputs.capitalStructure.prefProp) / 100;
+
+      capitalStructure = {
+        capitalStructureType: 'Target_Based',
+        debtProp: debtProp,
+        equityProp: equityProp,
+        prefProp: prefProp,
+        totalCapital: totalCapital           // this is actual value and not a proporation.
+      }
+
     }
-
-  } else if (structureType === 'Target_Based') {
-    const debtRatio = parseFloat(capStructure.debtRatio)/100;
-    const totalCapital = 1;                 // total is always 1
-    const debtProp = parseFloat(capStructure.debtRatio)/100;
-    const equityProp = parseFloat(capStructure.equityProp)/100;
-    const prefProp = parseFloat(capStructure.prefProp)/100;
-    // console.log(this.debtRatio + " " + this.equityProp);
-
-    capitalStructure = {
-      capitalStructureType : 'Target_Based',
-      debtProp : debtProp,
-      equityProp : equityProp,
-      prefProp: prefProp,
-      totalCapital : totalCapital           // this is actual value and not a proporation.
-    }
-
+    return capitalStructure;
   }
-
-  // console.log(capitalStructure);
-  return capitalStructure;
-}
 
 export async function ProportionOfDebt(i: number, worksheet2: any) {
   //formula: sum(BS!SUM(D25:D31) + SUM(D32:D40))/BS!D41
@@ -664,7 +662,7 @@ export async function POPShareCapitalLabelPer(i: number, worksheet2: any) {
   return isNaN(preferenceShareCapitalPer) ? null : preferenceShareCapitalPer;
 }
 
-export async function getWACCInputValues(i:number, worksheet2: any){
+export async function getWACCInputValues(i: number, worksheet2: any) {
 
   const reserverAndSurplus = await getCellValue(
     worksheet2,
@@ -692,18 +690,18 @@ export async function getWACCInputValues(i:number, worksheet2: any){
     `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
   );
 
-    let waccCalInputs = {
-      equityCapital: equityCap,
-      preferenceShareCapital: preferenceShareCapital,
-      longTermBorrowings: longTermBorrowings,
-      shortTermBorrowings: shortTermBorrowings
-    }
+  let waccCalInputs = {
+    equityCapital: equityCap,
+    preferenceShareCapital: preferenceShareCapital,
+    longTermBorrowings: longTermBorrowings,
+    shortTermBorrowings: shortTermBorrowings
+  }
 
-    return waccCalInputs;
+  return waccCalInputs;
 }
 
 
-export async function getShareholderFunds(i:number, worksheet2: any){
+export async function getShareholderFunds(i: number, worksheet2: any) {
   const equityShareCapital = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.equityShareCapitalRow}`,
@@ -779,11 +777,11 @@ export async function getShareholderFunds(i:number, worksheet2: any){
     `${columnsList[i] + sheet2_BSObj.shareApplicationRow}`,
   );
 
-  const shareHolderFunds = equityShareCapital + preferenceShareCapital + otherEquity +sharePremium + reserveAndSurplus +
-          revaluationReserve + capitalReserve +capitalRedemptionReserve + debentureRedemptionReserve +shareBasedPaymentReserve +
-          definedBenefitObligationReserve +
-          otherComprehensiveIncome + shareWarrants + nonControllingInterest + 
-          shareApplication;
+  const shareHolderFunds = equityShareCapital + preferenceShareCapital + otherEquity + sharePremium + reserveAndSurplus +
+    revaluationReserve + capitalReserve + capitalRedemptionReserve + debentureRedemptionReserve + shareBasedPaymentReserve +
+    definedBenefitObligationReserve +
+    otherComprehensiveIncome + shareWarrants + nonControllingInterest +
+    shareApplication;
 
 
 
