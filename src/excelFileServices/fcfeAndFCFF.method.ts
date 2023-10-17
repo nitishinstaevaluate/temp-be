@@ -466,7 +466,7 @@ export async function CapitalStructure(i: number, worksheet2: any) {
   return (longTermBorrowings + shortTermBorrowings) / shareholderFunds;
 }
 
-export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number) {
+export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number,structureType: string,capStructure: any) {
   //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
   // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
   // user may chose to enter values hence calculate as BS!D7:D22 sum)
@@ -479,7 +479,8 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
   // (longTermBorrowingsRow + otherUnsecuredLoans + shortTermBorrowingsRow ) / (shareholderFunds - preferenceShareCapital)
 
   // const shareholderFunds = await this.getShareholderFunds(i,worksheet2);
-
+  let capitalStructure;
+  if (structureType === 'Company_Based'){
   const preferenceShareCapital = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
@@ -511,12 +512,45 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
   const equityProp = 1 - debtProp;
   const prefProp = 1 - debtProp -equityProp;
 
-  let capitalStructure = {
+  capitalStructure = {
     capitalStructureType : 'Company_Based',
     debtProp : debtProp,
     equityProp : equityProp,
     prefProp: prefProp,
     totalCapital : totalCapital           // this is actual value and not a proporation.
+  } 
+} else if (structureType === 'Industry_based') {
+    const debtRatio = parseFloat(capStructure.deRatio)/100;
+    const totalCapital = 1 + debtRatio;
+    const debtProp = debtRatio/totalCapital;
+    const equityProp = 1 - debtProp;
+    const prefProp = 0 // By default this is 0 for Industry
+    // console.log(this.debtRatio + " " + this.equityProp);
+
+    capitalStructure = {
+      capitalStructureType : 'Industry_based',
+      debtProp : debtProp,
+      equityProp : equityProp,
+      prefProp: prefProp,
+      totalCapital : totalCapital           // this is actual value and not a proporation.
+    }
+
+  } else if (structureType === 'Target_Based') {
+    const debtRatio = parseFloat(capStructure.debtRatio)/100;
+    const totalCapital = 1;                 // total is always 1
+    const debtProp = parseFloat(capStructure.debtRatio)/100;
+    const equityProp = parseFloat(capStructure.equityProp)/100;
+    const prefProp = parseFloat(capStructure.prefProp)/100;
+    // console.log(this.debtRatio + " " + this.equityProp);
+
+    capitalStructure = {
+      capitalStructureType : 'Target_Based',
+      debtProp : debtProp,
+      equityProp : equityProp,
+      prefProp: prefProp,
+      totalCapital : totalCapital           // this is actual value and not a proporation.
+    }
+
   }
 
   // console.log(capitalStructure);
