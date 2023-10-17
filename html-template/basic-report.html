@@ -585,15 +585,15 @@
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;"><span class="s1"
             style=" ">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <h1 style="padding-top: 8%;padding-left: 28pt;text-indent: 0pt;text-align: left;">Prepared by: {{registeredValuerName}}</h1>
+    <h1 style="padding-top: 8%;padding-left: 28pt;text-indent: 0pt;text-align: left;">Prepared by</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 2%;font-weight: bold;">Name of RV: <span style="font-weight: 400;">{{registeredValuerName}}</span></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 2%;font-weight: bold;">Registered Valuer- <span style="font-weight: 400;">Securities or Financial Assets</span>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 600;">{{registeredValuerName}}</span></p>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 600;">Securities or Financial Assets</span>
         </p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 2%;font-weight: bold;">Address: <span style="font-weight: 400;">{{registeredValuerAddress}}</span>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerAddress}}</span>
         </p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 2%;font-weight: bold;">Email: <span style="font-weight: 400;">{{registeredValuerEmailId}}</span></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 2%;font-weight: bold;">Mob: <span style="font-weight: 400;">{{registeredValuerMobileNumber}}</span></p>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerEmailId}}</span></p>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerMobileNumber}}</span></p>
        </div>
     </div>
   <!-- page 2 html -->
@@ -604,7 +604,7 @@
     <p style="text-indent: 0pt;text-align: left;" />
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;">Board of Directors,</p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;"><span class="s1"
-            style="">{{companyName}}</span><span class="h1"> </span></p>
+            style="text-transform: capitalize;">{{companyName}}</span><span class="h1"> </span></p>
             <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;"><span>Add:</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 11pt;padding-left: 28pt;text-indent: 0pt;text-align: left;">Dear Sir,</p>
@@ -618,7 +618,7 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;"><span class="p">The purpose of
             valuation is solely to provide an independent opinion to the management of </span><span class="s2"
-            style="font-weight: bold;">{{companyName}}</span><span class="p"> (hereinafter the “Management”) on
+            style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span class="p"> (hereinafter the “Management”) on
             the fair value of equity shares of the Company.</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">In rendering the aforementioned advisory
@@ -656,11 +656,11 @@
         of me.</span></p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <p style="padding-top: 4pt;padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 2%;"><span
-        class="s1" style=""> Name of Valuer: {{registeredValuerName}}</span></p>
-<p style="padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 1%;"><span class="s2"
+        class="s1" style="">{{registeredValuerName}}</span></p>
+<p style="padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 0%;"><span class="s2"
         style="">Registered Valuer- Securities and Financial Assets</span></p>
 <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
-<p style="padding-left: 300pt;text-indent: 0pt;text-align: left;padding-top: 1%;"><span class="s2"
+<p style="padding-left: 300pt;text-indent: 0pt;text-align: left;padding-top: 0%;"><span class="s2"
         style=""> IBBI Registration No.: {{registeredValuerIbbiId}}</span></p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <p style="padding-top: 4pt;padding-left: 33pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s1"
@@ -713,12 +713,12 @@
                     </li>
                 </ol>
             </li>
-            <li data-list-text="II.">
+            <!-- <li data-list-text="II.">
                 <p class="s4" style="padding-top: 14pt;padding-left: 48pt;text-indent: -20pt;text-align: left;"> 
                     <a href="#bookmark255"
                     class="h2">INDUSTRY OVERVIEW</a>
             <span href="#bookmark255" style="padding-left: 250pt;width: 5%;float: right;">9</span>
-        </p>
+        </p> -->
             </li>
             <li data-list-text="III.">
                 <p style="padding-top: 15pt;padding-left: 45pt;text-indent: -17pt;text-align: left;"><a href="#bookmark14"
@@ -787,7 +787,7 @@
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 15pt;text-indent: 0pt;text-align: justify;"><span class="p">This valuation
                                 advisory report (hereinafter referred to “the Report”) is being furnished at the request of
-                                the Management of </span><span class="s2" style="font-weight: bold;">{{companyName}}</span><span
+                                the Management of </span><span class="s2" style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span
                                 class="p"> for determining the fair value of </span><span class="s2"
                                 style="">equity shares/CCPS</span><span class="p"> of the Company.
                                 We understand that the fair value of equity shares of the Company is required to comply with
@@ -887,7 +887,7 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;"><span
                                     class="p">The purpose of valuation is to determine the fair value of equity shares of
-                                </span><span class="s2" style=""><span style="font-weight: bold;">{{companyName}}</span> as of {{strdate}}</span><span
+                                </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as of {{strdate}}</span><span
                                     class="p"> to comply with the relevant provisions in relation to provisions of Companies
                                     Act, 2013.</span></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -920,7 +920,7 @@
                             style="width:277pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p
                                 style="text-align: center;padding-top: 2.5%;padding-bottom: 2.5%;">
-                                <span class="s5">{{ appointingAuthorityName }}</span><span class="s6"
+                                <span class="s5" style="text-transform: capitalize;">{{ appointingAuthorityName }}</span><span class="s6"
                                     style=" "></span></p>
                         </td>
                     </tr>
@@ -1843,7 +1843,7 @@
                                     </td>
                                     <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                         >
-                                        <p style="text-indent: 0pt;text-align: left;">{{freeCashFlow}}</p>
+                                        <p style="text-indent: 0pt;text-align: left;padding-left: 30pt;">{{freeCashFlow}}</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -1855,7 +1855,7 @@
                                     </td>
                                     <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                         >
-                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt">{{terminalGrowthRate}}%</p>
+                                        <p style="text-indent: 0pt;text-align: left;padding-left: 30pt">{{terminalGrowthRate}}%</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -1867,7 +1867,7 @@
                                     </td>
                                     <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                         >
-                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt">{{costOfEquity}}%</p>
+                                        <p style="text-indent: 0pt;text-align: left;padding-left: 30pt">{{costOfEquity}}%</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -1879,7 +1879,7 @@
                                     </td>
                                     <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
                                         >
-                                        <p style="text-indent: 0pt;text-align: left;">{{terminalValue}}</p>
+                                        <p style="text-indent: 0pt;text-align: left;padding-left: 30pt;">{{terminalValue}}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -2375,16 +2375,16 @@
             <td style="width:422pt">
                 <p class="s12"
                     style="padding-left: 14%;text-align: left;font-weight: bold;">
-                    Name of RV: <span style="font-weight: 400;">{{registeredValuerName}}</span></p>
+                    <span style="font-weight: 600;">{{registeredValuerName}}</span></p>
                     
             </td>
         </tr>
         <tr style="height:41pt">
             <td></td>
             <td style="width:422pt">
-                <p class="s5" style="padding-left: 14%;text-align:left;font-weight: bold;">Registered Valuer-
+                <p class="s5" style="padding-left: 14%;text-align:left;font-weight: 400;">Registered Valuer-
                     <span style="font-weight: 400;">Securities and Financial Assets</span> </p>
-                <p class="s5" style="padding-left: 14%;text-align:left;font-weight: bold;">IBBI Registration No.: <span style="font-weight: 400;">{{registeredValuerIbbiId}}</span></p>
+                <p class="s5" style="padding-left: 14%;text-align:left;font-weight: 400;">IBBI Registration No.: <span style="font-weight: 400;">{{registeredValuerIbbiId}}</span></p>
 
             </td>
             
