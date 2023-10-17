@@ -340,6 +340,32 @@ export class ReportService {
           return valuationResult.inputData[0].currencyUnit;
         return 'INR';
       })
+      hbs.registerHelper('alpha',()=>{
+        let outputObject = {};
+        const stringAlpha={
+          companySize:'Company Size',
+          marketPosition:'Market Position',
+          liquidityFactor:'Liquidity Factor',
+          competition:'Competition',
+          qualitativeFactor:'Qualitative Factor'
+        }
+        let letterIndex = 97; // this is the ascii code start
+        for (const key in valuationResult.inputData[0].alpha) {
+          if (valuationResult.inputData[0].alpha[key] !== '' && valuationResult.inputData[0].alpha[key] !== '0') {
+            let element;
+            let letter = String.fromCharCode(letterIndex);
+            if (letterIndex > 97) {
+              element = `<br/><span style="text-align: center;text-transform:capitalize">${letter}. ${stringAlpha[`${key}`]}</span>`;
+            } else {
+              element = `<span style="text-align: center;text-transform:capitalize">${letter}. ${stringAlpha[`${key}`]}</span>`;
+            }
+            outputObject[element] = valuationResult.inputData[0].alpha[key];
+            letterIndex++;
+          }
+        }
+        return `<p style="text-align:center">${Object.keys(outputObject)}</p>`;
+      })
+
       hbs.registerHelper('betaName',()=>{
         if(valuationResult.inputData[0].betaType)
           return valuationResult.inputData[0].betaType;
