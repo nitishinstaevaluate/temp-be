@@ -146,6 +146,7 @@ export class FCFEAndFCFFService {
     let sumOfCashFlows = 0;
     // let debtAsOnDate = 0;
     let calculatedWacc = 0;
+    let capitalStruc;
     
     // console.log(yearsLength);
     const finalResult = await Promise.all(
@@ -231,11 +232,14 @@ export class FCFEAndFCFFService {
         
         const shareholderFunds = await getShareholderFunds(i,worksheet2);
         
-        let capitalStruc = await CapitalStruc(i,worksheet2,shareholderFunds,inputs.capitalStructureType,inputs.capitalStructure);
+        // if (i === 0){      // optimize code not to run this block multiple times
+          capitalStruc = await CapitalStruc(i,worksheet2,shareholderFunds,inputs);
+        
+        console.log(capitalStruc);
         // console.log(capitalStruc);
         // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
         calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
-        
+        // }
         console.log('WACC Calculat- ',i,' ',calculatedWacc);
         const otherAdj = parseFloat(inputs.otherAdj);                                                                // ValidateHere
         //formula: =+B16-B17+B18+B19+B20
