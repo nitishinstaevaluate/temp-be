@@ -538,9 +538,9 @@ export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds:
   } else if (structureType === 'Target_Based') {
     const debtRatio = parseFloat(capStructure.debtRatio)/100;
     const totalCapital = 1;                 // total is always 1
-    const debtProp = capStructure.debtRatio;
-    const equityProp = capStructure.equityProp
-    const prefProp = capStructure.prefProp
+    const debtProp = parseFloat(capStructure.debtRatio)/100;
+    const equityProp = parseFloat(capStructure.equityProp)/100;
+    const prefProp = parseFloat(capStructure.prefProp)/100;
     // console.log(this.debtRatio + " " + this.equityProp);
 
     capitalStructure = {
