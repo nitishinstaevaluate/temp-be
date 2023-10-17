@@ -231,7 +231,7 @@ export class FCFEAndFCFFService {
         
         const shareholderFunds = await getShareholderFunds(i,worksheet2);
         
-        let capitalStruc = await CapitalStruc(i,worksheet2,shareholderFunds);
+        let capitalStruc = await CapitalStruc(i,worksheet2,shareholderFunds,inputs.capitalStructureType,inputs.capitalStructure);
         // console.log(capitalStruc);
         // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
         calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
@@ -433,60 +433,60 @@ export class FCFEAndFCFFService {
   }
 
   //Get DiscountingFactor based on Industry based Calculations.
-  async getDiscountingFactor(
-    inputs: any,
-    i: number,
-    worksheet1: any,
-    worksheet2: any,
-  ): Promise<any> {
-    const {
-      model,
-      popShareCapitalType,
-      costOfDebtType,
-      costOfDebt,
-      capitalStructureType,
-    } = inputs;
-    let discountingFactor = null;
-    let capitalStruc: any;
-    if (model.includes('FCFE')) {
-      const res = await this.industryService.getFCFEDisFactor(inputs);
-      if (res.result === null) return res;
+  // async getDiscountingFactor(
+  //   inputs: any,
+  //   i: number,
+  //   worksheet1: any,
+  //   worksheet2: any,
+  // ): Promise<any> {
+  //   const {
+  //     model,
+  //     popShareCapitalType,
+  //     costOfDebtType,
+  //     costOfDebt,
+  //     capitalStructureType,
+  //   } = inputs;
+  //   let discountingFactor = null;
+  //   let capitalStruc: any;
+  //   if (model.includes('FCFE')) {
+  //     const res = await this.industryService.getFCFEDisFactor(inputs);
+  //     if (res.result === null) return res;
 
-      discountingFactor = res.result;             //ValidateHere
-    } else if (model.includes('FCFF')) {
-      let costOfDebtValue = null;
-      if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
-      else if (costOfDebtType === 'Finance_Cost')
-        costOfDebtValue = await CostOfDebt(i, worksheet1, worksheet2); //We need to use formula
-      let capitalStructure = 0;
-      if (capitalStructureType === 'Company_Based')
-        capitalStructure = await CapitalStructure(i, worksheet2);
-        capitalStruc = await CapitalStruc(i,worksheet2,0);
-        console.log(capitalStruc.debtProp);
-      const proportionOfDebt = await ProportionOfDebt(i, worksheet2); //We need to use formula
-      const proportionOfEquity = await ProportionOfEquity(i, worksheet2); // We need to use fomula
-      let popShareCapitalValue = null;
-      if (popShareCapitalType === 'CFBS')
-        popShareCapitalValue = await POPShareCapital(i, worksheet2);
-      //We need to use formula
-      else if (popShareCapitalType === 'DFBS_PC')
-        popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2); //We need to get label % value.
+  //     discountingFactor = res.result;             //ValidateHere
+  //   } else if (model.includes('FCFF')) {
+  //     let costOfDebtValue = null;
+  //     if (costOfDebtType === 'Use_Interest_Rate') costOfDebtValue = costOfDebt;
+  //     else if (costOfDebtType === 'Finance_Cost')
+  //       costOfDebtValue = await CostOfDebt(i, worksheet1, worksheet2); //We need to use formula
+  //     let capitalStructure = 0;
+  //     if (capitalStructureType === 'Company_Based')
+  //       capitalStructure = await CapitalStructure(i, worksheet2);
+  //       capitalStruc = await CapitalStruc(i,worksheet2,0);
+  //       console.log(capitalStruc.debtProp);
+  //     const proportionOfDebt = await ProportionOfDebt(i, worksheet2); //We need to use formula
+  //     const proportionOfEquity = await ProportionOfEquity(i, worksheet2); // We need to use fomula
+  //     let popShareCapitalValue = null;
+  //     if (popShareCapitalType === 'CFBS')
+  //       popShareCapitalValue = await POPShareCapital(i, worksheet2);
+  //     //We need to use formula
+  //     else if (popShareCapitalType === 'DFBS_PC')
+  //       popShareCapitalValue = await POPShareCapitalLabelPer(i, worksheet2); //We need to get label % value.
 
-      const res = await this.industryService.getFCFFDisFactor(inputs, {
-        costOfDebt: costOfDebtValue,
-        capitalStructure: capitalStructure,
-        proportionOfDebt: proportionOfDebt,
-        proportionOfEquity: proportionOfEquity,
-        popShareCapital: popShareCapitalValue,
-      });
-      if (res.result === null) return res;
+  //     const res = await this.industryService.getFCFFDisFactor(inputs, {
+  //       costOfDebt: costOfDebtValue,
+  //       capitalStructure: capitalStructure,
+  //       proportionOfDebt: proportionOfDebt,
+  //       proportionOfEquity: proportionOfEquity,
+  //       popShareCapital: popShareCapitalValue,
+  //     });
+  //     if (res.result === null) return res;
 
-      discountingFactor = res.result;
-      // discountingFactorWACC =  1/(1+ res.result) ^ discountingPeriodObj.result;
-    }
-    return {
-      result: discountingFactor,
-      msg: 'discountingFactor get Successfully.',
-    };
-  }
+  //     discountingFactor = res.result;
+  //     // discountingFactorWACC =  1/(1+ res.result) ^ discountingPeriodObj.result;
+  //   }
+  //   return {
+  //     result: discountingFactor,
+  //     msg: 'discountingFactor get Successfully.',
+  //   };
+  // }
 }
