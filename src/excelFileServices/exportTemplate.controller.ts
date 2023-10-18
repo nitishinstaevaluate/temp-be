@@ -32,7 +32,7 @@ export class ExportTemplateController {
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
     let count = 0;
-    for (let i = 1; i < projectionYears; i++) {
+    for (let i = 1; i <= projectionYears; i++) {
       worksheet.getColumn(columnsList[i]).header = `${+currentYear + count}-${
         currentYear + i
       }`;
@@ -46,7 +46,7 @@ export class ExportTemplateController {
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
     let count2 = 0;
-    for (let i = 1; i < projectionYears; i++) {
+    for (let i = 1; i <= projectionYears; i++) {
       worksheet2.getColumn(columnsList[i]).header = `${currentYear + count2}-${
         currentYear + i
       }`;

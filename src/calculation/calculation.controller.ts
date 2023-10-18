@@ -54,5 +54,25 @@ export class WaccController {
     parseFloat(prefProp),
     coeMethod)
   } 
+  
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/industryOrCompanyBasedWacc')
+  async calculateWacc(
+    @Query('adjCoe') adjCoe: string,
+    @Query('costOfDebt') costOfDebt: string,
+    @Query('copShareCapital') copShareCapital: string,
+    @Query('deRatio') deRatio: string,
+    @Query('type') type: string,
+    @Query('taxRate') taxRate: string,
+    @Query('excelSheetId') excelSheetId: string
+    ): Promise<any> {
+    return this.calculationService.getWaccExcptTargetCapStrc(parseFloat(adjCoe),
+    excelSheetId,
+    parseFloat(costOfDebt),
+    parseFloat(copShareCapital),
+    parseFloat(deRatio),
+    type,
+    taxRate)
+  } 
 
 }
