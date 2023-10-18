@@ -1,4 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { CapitalStruc, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
+import { CustomLogger } from 'src/loggerService/logger.service';
+import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
+import * as XLSX from 'xlsx';
 
 // @Injectable()
 // export class CalculationService {}
@@ -9,6 +13,7 @@ export class CalculationService {
   constructor(
     // @InjectModel('indianTreasuryYield')
     // private readonly indianTresauryYieldModel: Model<IndianTreasuryYieldDocument>
+    private customLogger: CustomLogger
   ) { }
 
   async adjCOE(riskFreeRate, expMarketReturn, beta, riskPremium, coeMethod): Promise<any> {
@@ -41,6 +46,43 @@ export class CalculationService {
           wacc: calculatedWacc * 100,
           adjCOE: adjustedCostOfEquity ,
           method: coeMethod
+        },
+        message: 'Calculated WACC',
+        status: true
+      }
+    }
+    async getWaccExcptTargetCapStrc(adjCoe,excelSheetId,costOfDebt,copShareCapital,deRatio,type,taxRate): Promise<any> {
+      let workbook = null;
+      console.log(deRatio,"type")
+      try {
+        workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+      } catch (error) {
+        this.customLogger.log({
+          message: `excelSheetId: ${excelSheetId} not available for wacc calculations`,
+        });
+        return {
+          result: null,
+          msg: `excelSheetId: ${excelSheetId} not available`,
+        };
+      }
+      const worksheet2 = workbook.Sheets['BS'];
+      let capitalStructure={
+        deRatio :deRatio
+      }
+      const payload = {
+        capitalStructureType:type,
+        capitalStructure
+      }
+      const shareholderFunds = await getShareholderFunds(0,worksheet2);
+        
+      let capitalStruc = await CapitalStruc(0,worksheet2,shareholderFunds,payload);
+
+      let calculatedWacc = adjCoe/100 * capitalStruc.equityProp + (parseFloat(costOfDebt)/100)*(1-parseFloat(taxRate)/100)*capitalStruc.debtProp + parseFloat(copShareCapital)/100 * capitalStruc.prefProp;
+
+   return {
+        result: {
+          wacc: calculatedWacc*100,
+          adjCOE: adjCoe
         },
         message: 'Calculated WACC',
         status: true
