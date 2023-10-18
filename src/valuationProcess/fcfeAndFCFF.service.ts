@@ -163,7 +163,7 @@ export class FCFEAndFCFFService {
         let fcffValueAtTerminalRate = 0;
         // let equityValue =0;
         let presentFCFF = 0;
-        // let capitalStruc = {};
+        
         //Get PAT value
 
 
@@ -232,14 +232,14 @@ export class FCFEAndFCFFService {
         
         const shareholderFunds = await getShareholderFunds(i,worksheet2);
         
-        // if (i === 0){      // optimize code not to run this block multiple times
+        if (i === 0 && inputs.model.includes('FCFF')){      // optimize code not to run this block multiple times
           capitalStruc = await CapitalStruc(i,worksheet2,shareholderFunds,inputs);
         
         console.log(capitalStruc);
-        // console.log(capitalStruc);
-        // console.log('More Values ',parseFloat(inputs.costOfDebt),parseFloat(inputs.taxRate),' ', parseFloat(inputs.copShareCapital));
         calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
-        // }
+        finalWacc = calculatedWacc;  
+        finalDebt = debtAsOnDate;
+      }
         console.log('WACC Calculat- ',i,' ',calculatedWacc);
         const otherAdj = parseFloat(inputs.otherAdj);                                                                // ValidateHere
         //formula: =+B16-B17+B18+B19+B20
@@ -273,10 +273,10 @@ export class FCFEAndFCFFService {
         }
         // console.log('Term - ',fcffValueAtTerminalRate);
         
-        if (i === 0) {
-          finalWacc = calculatedWacc;
-          finalDebt = debtAsOnDate;
-          }
+        // if (i === 0) {                      // 
+          
+          
+        //   }
           // console.log('Final Deb ',finalDebt);
         if (inputs.model.includes('FCFE')) {
           // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
