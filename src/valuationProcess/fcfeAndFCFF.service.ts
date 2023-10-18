@@ -59,7 +59,9 @@ export class FCFEAndFCFFService {
       // discountingPeriodValue:number: 0;
       let equityValue = 0;
       let adjCOE;
+      let adjustedCostOfEquity;
       let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
+      let discountingPeriodValue = 0;
       
     const yearsActual = await getYearsList(worksheet1);
     
@@ -126,7 +128,7 @@ export class FCFEAndFCFFService {
           msg: 'Invalid: Preference Share Capital % value.',
         };
     }
-    let discountingPeriodValue = 0;
+    
     if (discountingPeriodObj.result == null) return discountingPeriodObj;
     discountingPeriodValue = discountingPeriodObj.result;
     // console.log('Discoun Val ',discountingPeriod,discountingPeriodValue );
@@ -136,7 +138,7 @@ export class FCFEAndFCFFService {
     let fractionOfYearLeft = this.stubAdjRequired == true ? (vdate.dateDiff-1)/ vdate.totalDays: vdate.dateDiff/vdate.totalDays;            // Adjust based on next fiscal year
     console.log('Faction Year left ', fractionOfYearLeft);
     discountingPeriodValue = fractionOfYearLeft * discountingPeriodValue;      // To be used as in WACC Calc next
-    // console.log(calcDiscountPeriod);
+    console.log('discountingPeriodValue ',discountingPeriodValue);
     let valuation = null;
     let finalWacc = 0;
     let finalDebt = 0;
@@ -166,7 +168,7 @@ export class FCFEAndFCFFService {
         
         //Get PAT value
 
-
+        // console.log('discountingPeriodValue ',discountingPeriodValue);
         // For mid year calculation need nextPAT,depAndAmortisationNext
 
         // console.log("Value of i ",i);
@@ -202,10 +204,11 @@ export class FCFEAndFCFFService {
         deferredTaxAssets =  deferredTaxAssetsValue;
         
         var changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
-        // if (i==0) {}
-        const adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
+        // if (i===0) {
+        adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
         adjCOE = adjustedCostOfEquity;        // To be used outside block;
         console.log("Adjusted COE ",adjustedCostOfEquity );
+        // }
         // console.log('Change in Net Fixed Assets ', changeInFixedAssets);
         
         // console.log('disc ', discountingPeriodValue);
@@ -228,18 +231,20 @@ export class FCFEAndFCFFService {
         addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
         addInterestAdjustedTaxesStub = await interestAdjustedTaxesWithStubPeriod(i,worksheet1,inputs.taxRate);
         addInterestAdjTaxes = i === 0 && this.stubAdjRequired == true  ? addInterestAdjustedTaxesStub:addInterestAdjTaxes;
-        // const shareholderFunds = await getShareholderFunds(i,worksheet2);
         
-        const shareholderFunds = await getShareholderFunds(i,worksheet2);
+      
+        // if (i === 0 && inputs.model.includes('FCFF')){      // optimize code not to run this block multiple times
+        // Adding i = 0 check is causing discounting period to work incorrectly in first column
         
-        if (i === 0 && inputs.model.includes('FCFF')){      // optimize code not to run this block multiple times
-          capitalStruc = await CapitalStruc(i,worksheet2,shareholderFunds,inputs);
+        const shareholderFunds = await getShareholderFunds(0,worksheet2);
+        
+          capitalStruc = await CapitalStruc(0,worksheet2,shareholderFunds,inputs);
         
         console.log(capitalStruc);
         calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
         finalWacc = calculatedWacc;  
         finalDebt = debtAsOnDate;
-      }
+      // }
         console.log('WACC Calculat- ',i,' ',calculatedWacc);
         const otherAdj = parseFloat(inputs.otherAdj);                                                                // ValidateHere
         //formula: =+B16-B17+B18+B19+B20
@@ -277,6 +282,8 @@ export class FCFEAndFCFFService {
           
           
         //   }
+
+        // console.log('discountingPeriodValue ',discountingPeriodValue);
           // console.log('Final Deb ',finalDebt);
         if (inputs.model.includes('FCFE')) {
           // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
