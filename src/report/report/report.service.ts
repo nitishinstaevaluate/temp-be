@@ -387,7 +387,7 @@ export class ReportService {
       hbs.registerHelper('projectionResultTableHeader',()=>{
         let headers=[];
         valuationResult.modelResults.map((response)=>{
-          if(response.model === MODEL[1]){
+          if(response.model === MODEL[0] || response.model === MODEL[1]){
             
             // map all the column headers for pdf
              headers = response?.valuationData.map((columnHeader)=>{
@@ -815,6 +815,19 @@ export class ReportService {
         })
         return arrayEquityValue;
       });
+
+      hbs.registerHelper('checkIfFcff',()=>{
+        let isFcff = false;
+        if(valuationResult.modelResults){
+          valuationResult.modelResults.map((result)=>{
+
+            if(result.model === MODEL[1]){
+              isFcff = true;
+            }
+          })
+        }
+        return isFcff;
+      })
 
       hbs.registerHelper('stubValue',()=>{
         let arrayStubValue = [];
