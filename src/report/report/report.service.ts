@@ -57,6 +57,7 @@ export class ReportService {
               };
             }
         
+        
           
     }
 
@@ -424,6 +425,19 @@ export class ReportService {
         return arrayPAT;
       });
 
+      hbs.registerHelper('FCFF', () => {
+        let arrayfcff = [];
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFF'){
+            result.valuationData.map((response:any)=>{
+              arrayfcff.push({fcff:response?.fcff ? parseFloat(response?.fcff).toFixed(2) : response.fcff === 0 ? 0 : ''})
+            })
+            arrayfcff.unshift({fcff:"FCFF"});
+          }
+        })
+        return arrayfcff;
+      });
+
       hbs.registerHelper('depAndAmortisation', () => {
         let arraydepAndAmortisation = [];
         valuationResult.modelResults.forEach((result)=>{
@@ -656,6 +670,25 @@ export class ReportService {
         return arrayPresentFCFF;
       });
 
+      hbs.registerHelper('debtDate', () => {
+        let arrayDebtOnDate = [];
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFE'){
+            result.valuationData.map((response:any)=>{
+              arrayDebtOnDate.push({fcfeDebtOnDate:response?.debtOnDate ? parseFloat(response?.debtOnDate).toFixed(2) : response.debtOnDate === 0 ? 0 : ''})
+            })
+            arrayDebtOnDate.unshift({fcfeDebtOnDate:"Less: Debt as on Date"});
+          }
+          else if(result.model === 'FCFF'){
+            result.valuationData.map((response:any)=>{
+              arrayDebtOnDate.push({fcffDebtOnDate:response?.debtOnDate ? parseFloat(response?.debtOnDate).toFixed(2) : response.debtOnDate === 0 ? 0 : ''})
+            })
+            arrayDebtOnDate.unshift({fcffDebtOnDate:"Less: Debt as on Date"});
+          }
+        })
+        return arrayDebtOnDate;
+      });
+
       hbs.registerHelper('sumCashFlow', () => {
         let arraySumOfCashFlows = [];
         valuationResult.modelResults.forEach((result)=>{
@@ -784,7 +817,6 @@ export class ReportService {
       });
 
       hbs.registerHelper('stubValue',()=>{
-        console.log("stub working")
         let arrayStubValue = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === MODEL[0]){
