@@ -20,8 +20,21 @@ export class ReportController {
     @Param('reportId') reportId : string,
     @Res() res
   ) {
-    const result = await this.reportService.getReport(reportId, res);
-    return result;
+    try {
+      const result = await this.reportService.getReport(reportId, res);
+      if (result.status) {
+         return result;
+      } else {
+          res.status(500).json(result); 
+      }
+  } catch (error) {
+      console.error("Controller Error:", error);
+      res.status(500).json({
+          msg: "Internal Server Error",
+          status: false,
+          error: error.message
+      });
+  }
   }
 
   @UseGuards(AuthGuard('jwt'))

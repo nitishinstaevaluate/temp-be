@@ -9,6 +9,8 @@ import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
 import { MODEL } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
+import * as XLSX from 'xlsx';
+import { GetDebtAsOnDate, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
 
 @Injectable()
 export class ReportService {
@@ -17,49 +19,62 @@ export class ReportService {
     private readonly reportModel: Model<ReportDocument>,
     private fcfeService:FCFEAndFCFFService){}
 
-     async getReport(id,res){
+    async getReport(id,res){
+      try {
           const transposedData = [];
+          let otherDetails=[];
           const getReportData = await this.reportModel.findById(id);
-            const valuationResult = await this.valuationService.getValuationById(getReportData.reportId);
-            let htmlFilePath,pdfFilePath;
-            let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
-            htmlFilePath = path.join(process.cwd(), 'html-template', 'basic-report.html');
-               pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
 
-              for await (let data of valuationResult.modelResults) {
-                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+          const valuationResult:any = await this.valuationService.getValuationById(getReportData.reportId);
+
+          const excelData = XLSX.readFile(`./uploads/${valuationResult.inputData[0].excelSheetId}`); // add this in util service file
+          const balanceSheetData = excelData.Sheets['BS'];
+          otherDetails.push({shareHolderFunds: await getShareholderFunds(0,balanceSheetData)});
+
+          let htmlFilePath, pdfFilePath;
+          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
+          htmlFilePath = path.join(process.cwd(), 'html-template', 'basic-report.html');
+          pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
+  
+          for await (let data of valuationResult.modelResults) {
+              if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
-                }  
               }
-            this.loadHelpers(transposedData, valuationResult,getReportData);
-          
-            if (valuationResult.modelResults.length > 0) {
+          }
+          this.loadHelpers(transposedData, valuationResult, getReportData,otherDetails);
+  
+          if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
               const template = hbs.compile(htmlContent);
               const html = template(valuationResult);
-        
+  
               const pdf = await this.generatePdf(html, pdfFilePath);
   
               res.setHeader('Content-Type', 'application/pdf');
               res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.pdf"`);
               res.send(pdf);
-        
+  
               return {
-                msg: "PDF download Success",
-                status: true,
+                  msg: "PDF download Success",
+                  status: true,
               };
-            } 
-            else {
+          } else {
               console.log("Data not found");
               return {
-                msg: "No data found for PDF generation",
-                status: false
+                  msg: "No data found for PDF generation",
+                  status: false
               };
-            }
-        
-        
-          
-    }
+          }
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        return {
+            msg: "Error generating PDF",
+            status: false,
+            error: error.message
+        };
+      }
+  }
+  
 
     async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
@@ -76,25 +91,8 @@ export class ReportService {
             printBackground: true,
             footerTemplate: `<div style="width:100%">
             <hr style="border:1px solid #bbccbb">
-        <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
-        </div>`,
-        //   headerTemplate: `
-        //   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        //   <tr>
-        //   <td style="width:86.2%;">
-          
-        //     <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:2%;">
-        //       <tr>
-        //         <td style="border-bottom: solid 2px #03002f !important; font-size: 13px; height: 5px;width:100% !important;">Ifinworth Advisors Private Ltd.</td>
-        //       </tr>
-
-        //       <tr>
-        //         <td style="font-size: 11px">&nbsp;</td>
-        //       </tr>
-        //     </table>
-        //   </td>
-        // <td  align="right" style="padding-right:1%;" height="10px"><img src="${mainLogo}" width="100" height="" /></td>
-        // </tr></table>`
+            <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
+            </div>`,
           });
 
           return pdf;
@@ -136,7 +134,7 @@ export class ReportService {
             appointingAuthorityName: data?.appointingAuthorityName,
             dateOfAppointment: data?.dateOfAppointment
         }
-      } 
+      }
       const payload= {
         clientName:data.clientName,
         registeredValuerDetails:registerValuerPayload,
@@ -153,7 +151,8 @@ export class ReportService {
       }
     }
 
-   loadHelpers(transposedData,valuationResult,getReportData){
+   loadHelpers(transposedData,valuationResult,getReportData,otherDetails){
+     try{
       hbs.registerHelper('companyName',()=>{
         if(valuationResult.inputData[0].company)
           return valuationResult.inputData[0].company;
@@ -399,6 +398,26 @@ export class ReportService {
           }
         })
         return headers;
+      })
+
+      hbs.registerHelper('capitalStructureRatio', ()=>{
+        let totalDebt;
+        const [shareHoldersFund] = otherDetails.map((result)=> result.shareHolderFunds);
+        if(valuationResult.modelResults){
+          [totalDebt] = valuationResult.modelResults
+          .flatMap((response) => {
+            return response.valuationData.map((data) => {
+              if (data.debtOnDate) {
+                return data.debtOnDate;
+              } 
+            });
+          })
+        }
+        if(shareHoldersFund && totalDebt){
+          const capCalculation:any = (parseFloat(totalDebt)/(parseFloat(shareHoldersFund)+parseFloat(totalDebt))).toFixed(2);
+          return `${capCalculation}:${1-capCalculation}`
+        }
+        return '';
       })
       hbs.registerHelper('PAT', () => {
         let arrayPAT = [];
@@ -963,6 +982,14 @@ export class ReportService {
           return true;
         return false;
       })
+     }
+     catch(error){
+      return {
+        msg:'error in helper',
+        error:error.message,
+        status:false
+      }
+     }
     }
 
     formatDate(date: Date): string {

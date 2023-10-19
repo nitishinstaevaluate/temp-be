@@ -242,11 +242,12 @@ export class FCFEAndFCFFService {
         
         console.log(capitalStruc);
         calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
-        finalWacc = calculatedWacc;  
-        finalDebt = debtAsOnDate;
+        // finalWacc = calculatedWacc;
+        // console.log(debtAsOnDate,"debt as on date fcff")  
+        // finalDebt = debtAsOnDate;
       // }
         console.log('WACC Calculat- ',i,' ',calculatedWacc);
-        const otherAdj = parseFloat(inputs.otherAdj);                                                                // ValidateHere
+        const otherAdj = parseFloat(inputs.otherAdj);                                                       // ValidateHere
         //formula: =+B16-B17+B18+B19+B20
         // console.log('out disc ', discountingPeriodValue);
 
@@ -278,10 +279,10 @@ export class FCFEAndFCFFService {
         }
         // console.log('Term - ',fcffValueAtTerminalRate);
         
-        // if (i === 0) {                      // 
-          
-          
-        //   }
+        if (i === 0) {                      // 
+        finalWacc = calculatedWacc;
+        finalDebt = debtAsOnDate;
+        }
 
         // console.log('discountingPeriodValue ',discountingPeriodValue);
           // console.log('Final Deb ',finalDebt);
