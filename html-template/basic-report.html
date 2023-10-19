@@ -2080,23 +2080,6 @@
                                             Amount (INR Cr)</p>
                                     </td>
                                 </tr>
-                                <tr>
-                                    {{#each (sumCashFlow data)}}
-                                    {{#ifZero fcfeSumOfCashFlows}}
-                                    {{#if (isNumber fcfeSumOfCashFlows)}}
-                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 1%;padding-bottom: 1%">  {{fcfeSumOfCashFlows}}
-                                        </p>
-                                    </td>
-                                    {{else}}
-                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%">  {{fcfeSumOfCashFlows}}
-                                        </p>
-                                    </td>
-                                    {{/if}}
-                                    {{/ifZero}}
-                                    {{/each}}
-                                </tr>
                                
 
                                 <tr>

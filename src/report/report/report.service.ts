@@ -386,7 +386,7 @@ export class ReportService {
       hbs.registerHelper('projectionResultTableHeader',()=>{
         let headers=[];
         valuationResult.modelResults.map((response)=>{
-          if(response.model === MODEL[0]){
+          if(response.model === MODEL[1]){
             
             // map all the column headers for pdf
              headers = response?.valuationData.map((columnHeader)=>{
@@ -442,6 +442,26 @@ export class ReportService {
           }
         })
         return arraydepAndAmortisation;
+      });
+
+      hbs.registerHelper('InterestAdjTaxes', () => {
+        let arrayaddInterestAdjTaxes = [];
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFE'){
+            result.valuationData.map((response:any)=>{
+              arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:response.addInterestAdjTaxes ? parseFloat(response?.addInterestAdjTaxes).toFixed(2)  : response?.addInterestAdjTaxes === 0 ? 0 : ''})
+            })
+            arrayaddInterestAdjTaxes.unshift({fcfeAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
+          }
+          else if(result.model === 'FCFF'){
+            result.valuationData.map((response:any)=>{
+              arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:response.addInterestAdjTaxes ? parseFloat(response?.addInterestAdjTaxes).toFixed(2)  : response?.addInterestAdjTaxes === 0 ? 0 : ''})
+            })
+            arrayaddInterestAdjTaxes.unshift({fcffAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
+            
+          }
+        })
+        return arrayaddInterestAdjTaxes;
       });
 
       hbs.registerHelper('nonCashItem', () => {
