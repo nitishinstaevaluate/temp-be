@@ -795,7 +795,7 @@ export class ReportService {
         
         let arrayEquityValue = [];
         valuationResult.modelResults.forEach((result)=>{
-          if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+          if(result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
             checkiIfStub=true;
           }
           if(result.model === 'FCFE'){
@@ -950,7 +950,7 @@ export class ReportService {
       hbs.registerHelper('ifEquityValProvisional',(options)=>{
         let checkiIfprovisional = false;
         valuationResult.modelResults.forEach((result)=>{
-          if(result.valuationData.some(obj => obj.hasOwnProperty('equityValueNew'))){
+          if(result.valuationData?.some(obj => obj.hasOwnProperty('equityValueNew'))){
             checkiIfprovisional = true;
           }
         })
