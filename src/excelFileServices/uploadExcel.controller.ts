@@ -93,7 +93,6 @@ export class UploadController {
     return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('modifyExcel')
   async modifyExcel(@Body() excelData){
     return await this.excelSheetService.modifyExcelSheet(excelData);
