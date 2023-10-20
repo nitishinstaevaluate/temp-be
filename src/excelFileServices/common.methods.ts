@@ -210,16 +210,14 @@ export function searchDate(string) {
 //   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 // }
 
-export async function  parseDate(provisionalDates) {
-  const dateFormatStrings = ['DD-MM-YYYY', 'DD.MM.YYYY', 'DD/MM/YYYY'];
-
-  for (const format of dateFormatStrings) {
-    try {
-      const parsedDate = date.parse(provisionalDates, format);
+export function  parseDate(provisionalDates){
+  const dateFormat = /^(0[1-9]|[12][0-9]|3[01])[./-](0[1-9]|1[0-2])[./-]\d{4}$/;
+  if(provisionalDates){
+    if(dateFormat.test(provisionalDates)){
+      const [day, month, year] = provisionalDates.split(/[-./]/).map(Number);
+      const parsedDate = new Date(year, month - 1, day);
       return parsedDate;
-    } catch (error) {
     }
   }
-
   return null;
 }
