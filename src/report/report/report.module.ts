@@ -5,11 +5,14 @@ import { ValuationsService } from 'src/valuationProcess/valuationProcess.service
 import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ReportSchema } from './schema/report.schema';
+import { CalculationService } from 'src/calculation/calculation.service';
+import { LoggerModule } from 'src/loggerService/logger.module';
+import { CustomLogger } from 'src/loggerService/logger.service';
 
 @Module({
-  providers: [ReportService],
+  providers: [ReportService,CalculationService,CustomLogger],
   controllers: [ReportController],
-  imports:[ValuationProcessModule,
+  imports:[ValuationProcessModule,LoggerModule,
     MongooseModule.forFeature([{ name: 'report', schema: ReportSchema }]),
   ]
 })

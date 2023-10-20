@@ -51,9 +51,9 @@ export class CalculationService {
         status: true
       }
     }
-    async getWaccExcptTargetCapStrc(adjCoe,excelSheetId,costOfDebt,copShareCapital,deRatio,type,taxRate): Promise<any> {
+    async getWaccExcptTargetCapStrc(adjCoe,excelSheetId,costOfDebt,copShareCapital,deRatio,type,taxRate,capitalStructure): Promise<any> {
       let workbook = null;
-      console.log(deRatio,"type")
+      let modifiedCapitalStructure;
       try {
         workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
       } catch (error) {
@@ -66,12 +66,16 @@ export class CalculationService {
         };
       }
       const worksheet2 = workbook.Sheets['BS'];
-      let capitalStructure={
-        deRatio :deRatio
+      if(type === 'Target_Based'){
+        modifiedCapitalStructure = capitalStructure;
+      }else{
+        modifiedCapitalStructure = {
+          deRatio:deRatio
+        }
       }
       const payload = {
         capitalStructureType:type,
-        capitalStructure
+        capitalStructure:modifiedCapitalStructure
       }
       const shareholderFunds = await getShareholderFunds(0,worksheet2);
         
@@ -82,7 +86,8 @@ export class CalculationService {
    return {
         result: {
           wacc: calculatedWacc*100,
-          adjCOE: adjCoe
+          adjCOE: adjCoe,
+          capitalStructure:capitalStruc
         },
         message: 'Calculated WACC',
         status: true

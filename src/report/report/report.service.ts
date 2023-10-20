@@ -10,28 +10,35 @@ import { ReportDocument } from './schema/report.schema';
 import { MODEL } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
-import { GetDebtAsOnDate, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
+import { CalculationService } from 'src/calculation/calculation.service';
 
 @Injectable()
 export class ReportService {
     constructor( private valuationService:ValuationsService,
       @InjectModel('report')
     private readonly reportModel: Model<ReportDocument>,
-    private fcfeService:FCFEAndFCFFService){}
+    private fcfeService:FCFEAndFCFFService,
+    private calculationService:CalculationService){}
 
     async getReport(id,res){
       try {
           const transposedData = [];
-          let otherDetails=[];
+          let  getCapitalStructure;
           const getReportData = await this.reportModel.findById(id);
 
           const valuationResult:any = await this.valuationService.getValuationById(getReportData.reportId);
 
-          const excelData = XLSX.readFile(`./uploads/${valuationResult.inputData[0].excelSheetId}`); // add this in util service file
-          const balanceSheetData = excelData.Sheets['BS'];
-          otherDetails.push({shareHolderFunds: await getShareholderFunds(0,balanceSheetData)});
+          if(valuationResult.inputData[0].model.includes(MODEL[1])){
+            const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
+             getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(
+              +valuationResult.inputData[0].adjustedCostOfEquity,
+              valuationResult.inputData[0].excelSheetId,+valuationResult.inputData[0].costOfDebt,
+              +valuationResult.inputData[0].copShareCapital,+valuationResult.inputData[0].capitalStructure.deRatio,
+              valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
+              );
+          }
 
-          let htmlFilePath, pdfFilePath;
+        let htmlFilePath, pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
           htmlFilePath = path.join(process.cwd(), 'html-template', 'basic-report.html');
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
@@ -41,7 +48,7 @@ export class ReportService {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
-          this.loadHelpers(transposedData, valuationResult, getReportData,otherDetails);
+          this.loadHelpers(transposedData, valuationResult, getReportData,getCapitalStructure);
   
           if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -151,7 +158,7 @@ export class ReportService {
       }
     }
 
-   loadHelpers(transposedData,valuationResult,getReportData,otherDetails){
+   loadHelpers(transposedData,valuationResult,getReportData,getCapitalStructure){
      try{
       hbs.registerHelper('companyName',()=>{
         if(valuationResult.inputData[0].company)
@@ -265,7 +272,7 @@ export class ReportService {
       })
       hbs.registerHelper('costOfDebt',()=>{
         if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-            return parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(3);
+            return parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(2);
         return '0';
       })
       hbs.registerHelper('taxRate',()=>{
@@ -340,6 +347,11 @@ export class ReportService {
           return valuationResult.inputData[0].currencyUnit;
         return 'INR';
       })
+      hbs.registerHelper('reportingUnit',()=>{
+        if(valuationResult.inputData[0].reportingUnit)
+          return valuationResult.inputData[0].reportingUnit;
+        return 'Lakhs';
+      })
       hbs.registerHelper('alpha',()=>{
         let outputObject = {};
         const stringAlpha={
@@ -401,21 +413,10 @@ export class ReportService {
       })
 
       hbs.registerHelper('capitalStructureRatio', ()=>{
-        let totalDebt;
-        const [shareHoldersFund] = otherDetails.map((result)=> result.shareHolderFunds);
-        if(valuationResult.modelResults){
-          [totalDebt] = valuationResult.modelResults
-          .flatMap((response) => {
-            return response.valuationData.map((data) => {
-              if (data.debtOnDate) {
-                return data.debtOnDate;
-              } 
-            });
-          })
-        }
-        if(shareHoldersFund && totalDebt){
-          const capCalculation:any = (parseFloat(totalDebt)/(parseFloat(shareHoldersFund)+parseFloat(totalDebt))).toFixed(2);
-          return `${capCalculation}:${1-capCalculation}`
+        const debtRate = getCapitalStructure.result.capitalStructure.debtProp.toFixed(2)
+        const equityProp = getCapitalStructure.result.capitalStructure.equityProp.toFixed(2)
+        if(debtRate && equityProp){
+          return `${debtRate}:${equityProp}`;
         }
         return '';
       })
@@ -929,19 +930,19 @@ export class ReportService {
             result.valuationData.map((response:any)=>{
               arrayValuePerShare.push({fcfeValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
             })
-            arrayValuePerShare.unshift({fcfeValuePerShare:"Value per Share (INR)"});
+            arrayValuePerShare.unshift({fcfeValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               arrayValuePerShare.push({fcffValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
             })
-            arrayValuePerShare.unshift({fcffValuePerShare:"Value per Share (INR)"});
+            arrayValuePerShare.unshift({fcffValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
               arrayValuePerShare.push({excessEarningValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
             })
-            arrayValuePerShare.unshift({excessEarningValuePerShare:"Value per Share (INR)"});
+            arrayValuePerShare.unshift({excessEarningValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
         })
         return arrayValuePerShare;
