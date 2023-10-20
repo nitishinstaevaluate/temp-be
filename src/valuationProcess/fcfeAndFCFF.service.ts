@@ -25,7 +25,7 @@ import {
   fcffTerminalValue,
   interestAdjustedTaxesWithStubPeriod
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS } from 'src/constants/constants';
@@ -49,6 +49,7 @@ export class FCFEAndFCFFService {
     worksheet1: any,
     worksheet2: any,
   ): Promise<any> {
+    try{
     this.customLogger.log({
       message: 'Request is entered into FCFEAndFCFF Service.',
       userId: inputs.userId,
@@ -70,7 +71,8 @@ export class FCFEAndFCFFService {
     // console.log('Provisional Date ', provisionalDates);
     // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
     // console.log(typeof('02-01-2015'));
-    let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+    // let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+    let  provDtRef = await parseDate(provisionalDates.trim());
     console.log(provDtRef);
     let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
     console.log('Difference in days between provisional and valuation date',diffValProv);
@@ -413,9 +415,19 @@ export class FCFEAndFCFFService {
     this.stubAdjRequired = false;                              // Resetting to default;
     const data = await this.transformData(finalResult);
     return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
+  }catch(error){
+    console.log(error)
+    // return {
+    //   msg:"Valuation Failed",
+    //   status:false,
+    //   error:error
+    // } 
+    throw  error;
+  }
   }
 
   async transformData(data: any[]) { //only to render data on UI table
+   try{
     const transformedData = [];
     const columnHeaders = data.length > 0 ? Object.keys(data[0]) : [];
 
@@ -442,6 +454,14 @@ export class FCFEAndFCFFService {
       }
       });
       return {transposedResult : transformedData, columnHeader : firstElements};
+   }
+   catch(error){
+    return {
+      msg:'Failed to transform',
+      status:false,
+      error:error.message
+    }
+   }
   }
 
   //Get DiscountingFactor based on Industry based Calculations.
