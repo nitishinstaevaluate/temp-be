@@ -12,7 +12,7 @@ import {
   findMedian,
   getDiscountingPeriod,
   calculateDaysFromDate,
-  getCellValue
+  parseDate
 } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj, columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -32,7 +32,8 @@ export class ExcessEarningsService {
     worksheet2: any,
     // companiesInfo: any,
   ): Promise<any> {
-    this.customLogger.log({
+ try{
+     this.customLogger.log({
       message: 'Request is entered into Excess Earnings Model Service.',
       userId: inputs.userId,
     });
@@ -42,7 +43,7 @@ export class ExcessEarningsService {
     const yearsActual = await getYearsList(worksheet1);
     
     let provisionalDates = worksheet1['B1'].v
-    let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+    let provDtRef = await parseDate(provisionalDates.trim());
     let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
     console.log('Difference in days between provisional and valuation date',diffValProv);
 
@@ -192,6 +193,10 @@ export class ExcessEarningsService {
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }
+ }catch(error){
+  console.log("Excess Earning error:" , error)
+  throw error;
+ }
   }
 
 
