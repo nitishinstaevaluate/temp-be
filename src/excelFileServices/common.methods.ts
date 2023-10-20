@@ -211,9 +211,10 @@ export function searchDate(string) {
 // }
 
 export function  parseDate(provisionalDates){
-  const dateFormat = /^(0[1-9]|[12][0-9]|3[01])[./-](0[1-9]|1[0-2])[./-]\d{4}$/;
+  const dateRegex = /^(0?[1-9]|1[0-9]|2[0-9]|3[01])[./\-](0?[1-9]|1[0-2])[./\-]\d{4}$/;
+
   if(provisionalDates){
-    if(dateFormat.test(provisionalDates)){
+    if(dateRegex.test(provisionalDates)){
       const [day, month, year] = provisionalDates.split(/[-./]/).map(Number);
       const parsedDate = new Date(year, month - 1, day);
       return parsedDate;
