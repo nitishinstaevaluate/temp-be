@@ -15,6 +15,7 @@ export class NetAssetValueService {
     worksheet2: any,
     // companiesInfo: any,
   ): Promise<any> {
+  try{
     this.customLogger.log({
       message: 'Request is entered into Net Asset Value Service.',
       userId: inputs.userId,
@@ -350,6 +351,11 @@ export class NetAssetValueService {
       msg: 'Net Asset Value Calculated Successfully',
       status: true
     };
+  }
+  catch(error){
+    console.log("Net Asset Error:",error);
+    throw error;
+  }
   }
 
 }

@@ -32,7 +32,8 @@ export class ExcessEarningsService {
     worksheet2: any,
     // companiesInfo: any,
   ): Promise<any> {
-    this.customLogger.log({
+ try{
+     this.customLogger.log({
       message: 'Request is entered into Excess Earnings Model Service.',
       userId: inputs.userId,
     });
@@ -192,6 +193,10 @@ export class ExcessEarningsService {
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }
+ }catch(error){
+  console.log("Excess Earning error:" , error)
+  throw error;
+ }
   }
 
 
