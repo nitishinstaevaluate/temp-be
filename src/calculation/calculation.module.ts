@@ -6,6 +6,7 @@ import { LoggerModule } from 'src/loggerService/logger.module';
 @Module({
   imports:[LoggerModule],
   controllers: [CalculationController,WaccController],
-  providers: [CalculationService]
+  providers: [CalculationService],
+  exports:[CalculationService]
 })
 export class CalculationModule {}

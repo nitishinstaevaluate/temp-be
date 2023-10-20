@@ -346,7 +346,8 @@ let workbook=null;
       {
         return { 
           message: 'Error occurred',
-          success: false
+          success: false,
+          error:error.message
          };
       }
     }

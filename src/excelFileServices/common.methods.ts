@@ -210,3 +210,16 @@ export function searchDate(string) {
 //   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 // }
 
+export async function  parseDate(provisionalDates) {
+  const dateFormatStrings = ['DD-MM-YYYY', 'DD.MM.YYYY', 'DD/MM/YYYY'];
+
+  for (const format of dateFormatStrings) {
+    try {
+      const parsedDate = date.parse(provisionalDates, format);
+      return parsedDate;
+    } catch (error) {
+    }
+  }
+
+  return null;
+}

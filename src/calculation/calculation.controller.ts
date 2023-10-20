@@ -64,7 +64,8 @@ export class WaccController {
     @Query('deRatio') deRatio: string,
     @Query('type') type: string,
     @Query('taxRate') taxRate: string,
-    @Query('excelSheetId') excelSheetId: string
+    @Query('excelSheetId') excelSheetId: string,
+    @Query('capitalStructure') capitalStructure: any = null
     ): Promise<any> {
     return this.calculationService.getWaccExcptTargetCapStrc(parseFloat(adjCoe),
     excelSheetId,
@@ -72,7 +73,8 @@ export class WaccController {
     parseFloat(copShareCapital),
     parseFloat(deRatio),
     type,
-    taxRate)
+    taxRate,
+    capitalStructure)
   } 
 
 }

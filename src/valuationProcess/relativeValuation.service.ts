@@ -28,7 +28,8 @@ export class RelativeValuationService {
     worksheet2: any,
     // companiesInfo: any,
   ): Promise<any> {
-    this.customLogger.log({
+ try{
+     this.customLogger.log({
       message: 'Request is entered into Relative Valuation Service.',
       userId: inputs.userId,
     });
@@ -270,5 +271,10 @@ export class RelativeValuationService {
       valuation: { finalPriceAvg: finalPriceAvg, finalPriceMed: finalPriceMed },
       msg: 'Executed Successfully',
     };
+ }
+ catch(error){
+  console.log("Relative Valuation Error:",error);
+  throw error;
+ }
   }
 }
