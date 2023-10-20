@@ -72,8 +72,8 @@ export class FCFEAndFCFFService {
     // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
     // console.log(typeof('02-01-2015'));
     // let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
-    let  provDtRef = await parseDate(provisionalDates.trim());
-    console.log(provDtRef);
+    let  provDtRef = parseDate(provisionalDates.trim());
+    // console.log(provDtRef,"prov date",typeof provDtRef);
     let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
     console.log('Difference in days between provisional and valuation date',diffValProv);
 
@@ -417,11 +417,6 @@ export class FCFEAndFCFFService {
     return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
   }catch(error){
     console.log(error)
-    // return {
-    //   msg:"Valuation Failed",
-    //   status:false,
-    //   error:error
-    // } 
     throw  error;
   }
   }
