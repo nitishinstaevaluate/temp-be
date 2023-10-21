@@ -352,7 +352,7 @@ export class NetAssetValueService {
     });
 
     console.log(finalResult);
-    let provisionalDate = await getFormattedProvisionalDate(new Date(provDtRef));
+    let provisionalDate = provDtRef;
     return {
       result: finalResult,
       valuation: equityValue,
