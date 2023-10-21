@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import {
   getYearsList,
-  getCellValue
+  getCellValue,
+  parseDate,
+  getFormattedProvisionalDate
 } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj, sheet1_PLObj } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
+const date = require('date-and-time');
 @Injectable()
 export class NetAssetValueService {
   constructor(private readonly customLogger: CustomLogger) { }
@@ -22,6 +25,11 @@ export class NetAssetValueService {
     });
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
+
+    let provisionalDates = worksheet1['B1'].v
+    let provDtRef = await parseDate(provisionalDates.trim());
+    let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
+    
     let multiplier = 100000;
     if (years === null)
       return {
@@ -344,10 +352,11 @@ export class NetAssetValueService {
     });
 
     console.log(finalResult);
-
+    let provisionalDate = provDtRef;
     return {
       result: finalResult,
       valuation: equityValue,
+      provisionalDate: provisionalDate,
       msg: 'Net Asset Value Calculated Successfully',
       status: true
     };

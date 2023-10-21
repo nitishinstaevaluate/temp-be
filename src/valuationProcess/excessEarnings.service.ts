@@ -185,8 +185,8 @@ export class ExcessEarningsService {
     
     this.stubAdjRequired = false;   
     let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
-    const provisionalDate = equityValueDate;
-    
+    const provisionalDate = provDtRef;
+
     const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
     const data = await this.transformData(finalResult);
     discountingPeriodValue = 0;  

@@ -284,7 +284,7 @@
 
             <div class="container-top">
                 <div class="column">
-                    <p><strong>Ifinworth Advisors Pvt Ltd</strong></p>
+                    <p><strong>Company: {{companyName}}</strong></p>
                     <p><strong>Valuation Date:</strong> {{strdate}}</p>
                     <p><strong>Method:</strong> FCFF at {{checkPeriod}}</p>
                 </div>
@@ -469,7 +469,7 @@
 
             <div class="container-top">
                 <div class="column">
-                    <p><strong>Ifinworth Advisors Pvt Ltd</strong></p>
+                    <p><strong>Company: {{company}}</strong></p>
                     <p><strong>Valuation Date:</strong> {{strdate}}</p>
                     <p><strong>Method:</strong> Excess-Earnings at {{checkPeriod}}</p>
                 </div>
@@ -597,7 +597,7 @@
 
             <div class="container-top">
                 <div class="column">
-                    <p><strong>Ifinworth Advisors Pvt Ltd</strong></p>
+                    <p><strong>Company: {{company}}</strong></p>
                     <p><strong>Valuation Date:</strong> {{strdate}}</p>
                     <p><strong>Method:</strong> {{isRelativeOrCTM}}</p>
                 </div>
@@ -642,11 +642,11 @@
                 </th>
                 {{#if (checkPreferenceRatio)}}
                 <th colspan="2" style="border-left: none;text-align: right !important;">
-                  Amount in INR (Lakh)
+                  Amount in {{Currency}} (Lakh)
                 </th>
                 {{else}}
                 <th colspan="1" style="border-left: none;text-align: right !important;">
-                    Amount in INR (Lakh)
+                    Amount in {{ Currency}} (Lakh)
                   </th>
                 {{/if}}
               </tr>
@@ -709,7 +709,7 @@
 
             <div class="container-top">
                 <div class="column">
-                    <p><strong>Ifinworth Advisors Pvt Ltd</strong></p>
+                    <p><strong>Company: {{company}}</strong></p>
                     <p><strong>Valuation Date:</strong> {{strdate}}</p>
                     <p><strong>Method:</strong> Net Asset Value</p>
                 </div>

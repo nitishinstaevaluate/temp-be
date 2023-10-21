@@ -272,7 +272,7 @@ let workbook=null;
                   model: MODEL[2],
                   valuationData: relativeValuationResponse.result,
                   valuation:relativeValuationResponse.valuation,
-                  provisionalDate:fcfeResponse.provisionalDate
+                  provisionalDate:relativeValuationResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[2],
@@ -289,7 +289,7 @@ let workbook=null;
               model: MODEL[3],
               valuationData: excessEarningsResponse.result,
               valuation:excessEarningsResponse.valuation,
-              provisionalDate:fcfeResponse.provisionalDate
+              provisionalDate:excessEarningsResponse.provisionalDate
               });
             tableResult.push({
               model: MODEL[3],
@@ -308,7 +308,7 @@ let workbook=null;
                   model: MODEL[4],
                   valuationData: comparableIndustries.result,
                   valuation:comparableIndustries.valuation,
-                  provisionalDate:fcfeResponse.provisionalDate
+                  provisionalDate:comparableIndustries.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[4],
@@ -325,7 +325,7 @@ let workbook=null;
               model: MODEL[5],
               valuationData: netAssetValueResponse.result,
               valuation:netAssetValueResponse.valuation,
-              provisionalDate:fcfeResponse.provisionalDate
+              provisionalDate:netAssetValueResponse.provisionalDate
               });
             tableResult.push({
               model: MODEL[5],
