@@ -30,7 +30,7 @@ export class Valuation {
   model: string[];
 
   @Prop({ required: false })
-  provisionalDate: string;
+  provisionalDate: Date;
 
   @Prop({ required: true })
   inputData: Array<object>; 

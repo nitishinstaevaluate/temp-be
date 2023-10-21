@@ -411,7 +411,7 @@ export class FCFEAndFCFFService {
     }
 
     let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
-    const provisionalDate = equityValueDate;
+    const provisionalDate = provDtRef;
     
     this.stubAdjRequired = false;                              // Resetting to default;
     const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
