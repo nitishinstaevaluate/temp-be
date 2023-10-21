@@ -12,7 +12,8 @@ import {
   findMedian,
   getDiscountingPeriod,
   calculateDaysFromDate,
-  parseDate
+  parseDate,
+  getFormattedProvisionalDate
 } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj, columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -183,13 +184,19 @@ export class ExcessEarningsService {
     }
     
     this.stubAdjRequired = false;   
+    let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
+    const provisionalDate = equityValueDate;
+    
+    const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
     const data = await this.transformData(finalResult);
     discountingPeriodValue = 0;  
     return {
       result: finalResult,
       tableData: data.transposedResult,
-      valuation: finalResult[0].equityValue, //to be defined
+      valuation:checkIfStub ? finalResult[0].equityValueNew : finalResult[0].equityValue, //to be defined
       columnHeader:data.columnHeader,
+      equityValueDate,
+      provisionalDate : provisionalDate,
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }

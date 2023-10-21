@@ -207,3 +207,29 @@ export class IndianTreasuryYield {
 }
 export type IndianTreasuryYieldDocument = IndianTreasuryYield & Document;
 export const IndianTreasuryYieldSchema = SchemaFactory.createForClass(IndianTreasuryYield);
+
+// Purpose Of Report
+@Schema()
+export class reportDetails {
+  @Prop({ required: true })
+  srNo: number;
+
+  @Prop({ required: true })
+  section: string;
+
+  @Prop({required: false })
+  Description: string;
+}
+@Schema()
+export class PurposeOfReport {
+  @Prop({ type: String, required: true })
+  reportObjective:string;
+
+  @Prop({ type: Array<object>, required: true })
+  reportPurpose: reportDetails[];
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+}
+export type PurposeOfReportDocument = PurposeOfReport & Document;
+export const PurposeOfReportSchema = SchemaFactory.createForClass(PurposeOfReport);

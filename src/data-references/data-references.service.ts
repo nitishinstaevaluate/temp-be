@@ -12,7 +12,8 @@ import {
   HistoricalBSE500Returns,
   HistoricalBSE500ReturnsDocument,
   IndianTreasuryYield,
-  IndianTreasuryYieldDocument
+  IndianTreasuryYieldDocument,
+  PurposeOfReportDocument
 } from './schema/data-references.schema';
 
 const date = require('date-and-time');
@@ -136,5 +137,21 @@ export class IndianTreasuryYieldService {
 
   async getIndianTreasuryYieldById(id: string): Promise<IndianTreasuryYield[]> {
     return await this.indianTresauryYieldModel.findById(id);
+  }
+}
+
+@Injectable()
+export class PurposeOfReportService {
+  constructor(
+    @InjectModel('purposeOfReport')
+    private readonly reportPurpose: Model<PurposeOfReportDocument>
+  ) { }
+
+  async addPurposeOfReport(purpose) {
+    return await this.reportPurpose.create(purpose);
+  }
+
+  async getPurposeOfReport(reportPurpose) {
+    return await this.reportPurpose.findOne({ reportObjective: reportPurpose }).exec();
   }
 }
