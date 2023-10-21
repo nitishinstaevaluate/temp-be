@@ -222,3 +222,15 @@ export function  parseDate(provisionalDates){
   }
   return null;
 }
+
+export async function getFormattedProvisionalDate(provDate:Date) {
+  const utcDate = provDate
+  const istDate = new Date(utcDate.getTime() + 5 * 60 * 60 * 1000 + 30 * 60 * 1000);
+  
+  const formattedDay = istDate.getDate().toString().padStart(2, '0');
+  const formattedMonth = (istDate.getMonth() + 1).toString().padStart(2, '0');
+  const formattedYear = istDate.getFullYear();
+
+  const formattedProvisionalDate = `${formattedDay}-${formattedMonth}-${formattedYear}`;
+  return formattedProvisionalDate;
+}

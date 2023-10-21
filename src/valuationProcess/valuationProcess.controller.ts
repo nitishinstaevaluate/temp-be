@@ -232,7 +232,8 @@ let workbook=null;
                 valResult.push({
                   model: MODEL[0],
                   valuationData: fcfeResponse.result,
-                  valuation:fcfeResponse.valuation
+                  valuation:fcfeResponse.valuation,
+                  provisionalDate:fcfeResponse.provisionalDate
                   });
                 tableResult.push({
                 model: MODEL[0],
@@ -251,7 +252,8 @@ let workbook=null;
                 valResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.result,
-                  valuation:fcffResponse.valuation
+                  valuation:fcffResponse.valuation,
+                  provisionalDate:fcffResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[1],
@@ -269,7 +271,8 @@ let workbook=null;
                 valResult.push({
                   model: MODEL[2],
                   valuationData: relativeValuationResponse.result,
-                  valuation:relativeValuationResponse.valuation
+                  valuation:relativeValuationResponse.valuation,
+                  provisionalDate:fcfeResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[2],
@@ -285,7 +288,8 @@ let workbook=null;
             valResult.push({
               model: MODEL[3],
               valuationData: excessEarningsResponse.result,
-              valuation:excessEarningsResponse.valuation
+              valuation:excessEarningsResponse.valuation,
+              provisionalDate:fcfeResponse.provisionalDate
               });
             tableResult.push({
               model: MODEL[3],
@@ -303,7 +307,8 @@ let workbook=null;
                 valResult.push({
                   model: MODEL[4],
                   valuationData: comparableIndustries.result,
-                  valuation:comparableIndustries.valuation
+                  valuation:comparableIndustries.valuation,
+                  provisionalDate:fcfeResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[4],
@@ -319,7 +324,8 @@ let workbook=null;
             valResult.push({
               model: MODEL[5],
               valuationData: netAssetValueResponse.result,
-              valuation:netAssetValueResponse.valuation
+              valuation:netAssetValueResponse.valuation,
+              provisionalDate:fcfeResponse.provisionalDate
               });
             tableResult.push({
               model: MODEL[5],
@@ -337,7 +343,7 @@ let workbook=null;
               break;
           }
         }
-        const data ={company:company,model:models,inputData:inputs,modelResults:valResult,userId:userId}
+        const data ={company:company,model:models,provisionalDate:valResult[0].provisionalDate,inputData:inputs,modelResults:valResult,userId:userId}
         const reportId = await this.valuationsService.createValuation(data);
         return  {
           reportId:reportId,
