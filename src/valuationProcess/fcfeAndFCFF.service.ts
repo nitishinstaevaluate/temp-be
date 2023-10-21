@@ -410,11 +410,19 @@ export class FCFEAndFCFFService {
       // console.log('new EPV ',((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares);
     }
 
-    console.log(finalResult);
+      const utcDate = new Date(provDtRef);
+      const istDate = new Date(utcDate.getTime() + 5 * 60 * 60 * 1000 + 30 * 60 * 1000);
+      
+      const formattedDay = istDate.getDate().toString().padStart(2, '0');
+      const formattedMonth = (istDate.getMonth() + 1).toString().padStart(2, '0');
+      const formattedYear = istDate.getFullYear();
+
+      const equityValueDate = `${formattedDay}-${formattedMonth}-${formattedYear}`;
     
     this.stubAdjRequired = false;                              // Resetting to default;
+    const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
     const data = await this.transformData(finalResult);
-    return { result: finalResult, tableData:data.transposedResult, valuation: finalResult[0].equityValue,columnHeader:data.columnHeader, msg: 'Executed Successfully' };
+    return { result: finalResult, tableData:data.transposedResult, valuation:checkIfStub? finalResult[0].equityValueNew :finalResult[0].equityValue,columnHeader:data.columnHeader,equityValueDate, msg: 'Executed Successfully' };
   }catch(error){
     console.log(error)
     throw  error;

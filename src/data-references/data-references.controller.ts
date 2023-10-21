@@ -9,7 +9,7 @@ import {
     Put,
     UploadedFile,
     UseInterceptors,
-    UseGuards
+    UseGuards,
   } from '@nestjs/common';
 
   import {
@@ -25,9 +25,11 @@ import {
     BetaIndustriesService,
     IndustriesRatioService,
     HistoricalReturnsService,
-    IndianTreasuryYieldService
+    IndianTreasuryYieldService,
+    PurposeOfReportService
   } from './data-references.service';
 import { AuthGuard } from '@nestjs/passport';
+import { PurposeOfReportDto } from './dto/data-references.dto';
   
 @Controller('data-references')
 export class DataReferencesController {}
@@ -129,4 +131,20 @@ export class IndianTreasuryYieldController {
   }
 
 
+}
+
+// Purpose Of Report Controller
+@Controller('reportPurpose')
+export class PurposeOfReportController{
+  constructor(private PurposeOfReportService:PurposeOfReportService){}
+
+  @Post('create')
+  async addPurpose(@Body() purposeData: PurposeOfReportDto){
+    return await this.PurposeOfReportService.addPurposeOfReport(purposeData);
+  }
+
+  @Get('get')
+  async getPurpose(@Query('reportObjective') reportObjective:string | null){
+    return await this.PurposeOfReportService.getPurposeOfReport(reportObjective);
+  }
 }
