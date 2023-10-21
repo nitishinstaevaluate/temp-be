@@ -1,7 +1,7 @@
 export class ValuationDto {
   company: string;
   model: string;
-  provisionalDate: string;
+  provisionalDate: Date;
   valuation:any;
   inputData:object;
   valuationData: object;

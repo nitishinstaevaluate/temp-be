@@ -800,13 +800,12 @@ export class ReportService {
             checkiIfStub=true;
           }
           if(result.model === 'FCFE'){
-            console.log(valuationResult);
             result.valuationData.map((response:any)=>{
               arrayEquityValue.push({fcfeEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
             })
             if(checkiIfStub){
               // arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
-              arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${valuationResult.provisionalDate}`});
+              arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.provisionalDate))}`});
             }
             else{
               arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
@@ -818,7 +817,7 @@ export class ReportService {
             })
             if(checkiIfStub){
               // arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
-              arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${valuationResult.provisionalDate}`});
+              arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.provisionalDate))}`});
             }
             else{
               arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
@@ -829,13 +828,15 @@ export class ReportService {
               arrayEquityValue.push({excessEarningEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
             })
             if(checkiIfStub){
-              arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
+              // arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
+              arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.provisionalDate))}`});
             }
             else{
-              arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+              arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
             }
           }
         })
+        console.log(arrayEquityValue);
         return arrayEquityValue;
       });
 
