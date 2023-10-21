@@ -183,13 +183,23 @@ export class ExcessEarningsService {
     }
     
     this.stubAdjRequired = false;   
+    const utcDate = new Date(provDtRef);
+    const istDate = new Date(utcDate.getTime() + 5 * 60 * 60 * 1000 + 30 * 60 * 1000);
+    
+    const formattedDay = istDate.getDate().toString().padStart(2, '0');
+    const formattedMonth = (istDate.getMonth() + 1).toString().padStart(2, '0');
+    const formattedYear = istDate.getFullYear();
+
+    const equityValueDate = `${formattedDay}-${formattedMonth}-${formattedYear}`;
+    const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
     const data = await this.transformData(finalResult);
     discountingPeriodValue = 0;  
     return {
       result: finalResult,
       tableData: data.transposedResult,
-      valuation: finalResult[0].equityValue, //to be defined
+      valuation:checkIfStub ? finalResult[0].equityValueNew : finalResult[0].equityValue, //to be defined
       columnHeader:data.columnHeader,
+      equityValueDate,
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }

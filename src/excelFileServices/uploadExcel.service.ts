@@ -190,11 +190,7 @@ export class ExcelSheetService {
         }
       }
       async transformData(data: any[]) { //only for data table showcase on ui
-
-
-        // const keysArray = Object.keys(data[0]);
-        // data.unshift(keysArray)
-
+        try{
         let maxKeys = Object.keys(data[0]).length;
         let maxKeysObject = data[0];
 
@@ -205,6 +201,7 @@ export class ExcelSheetService {
             maxKeysObject = data[i];
           }
         }
+        const atLeastOneArray = data.some(item => Array.isArray(item));
         const keysArray = Object.keys(maxKeysObject);
         data.forEach(obj => {
           keysArray.forEach(key => {
@@ -219,9 +216,17 @@ export class ExcelSheetService {
             splicedEle = keysArray.splice(index,1);
           }
         })
-        keysArray.unshift(splicedEle[0])
+        if(!atLeastOneArray){
+          keysArray.unshift(splicedEle[0])
+        }
         data.unshift(keysArray)
         return data;
+      }
+        catch(error){
+          console.log(error);
+          throw error;
+        }
+      
       }
 
       async loadHelpers(transposedData,valuationResult){
@@ -328,7 +333,6 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                // console.log(response.onCashItems,"cash items", typeof response.onCashItems)
                 arrayonCashItems.push({fcfeOnCashItems:response.onCashItems ? parseFloat(response?.onCashItems).toFixed(2) : response.onCashItems === 0 ? 0 : ''})
               })
               arrayonCashItems.unshift({fcfeOnCashItems:"Other Non Cash items"});
@@ -340,7 +344,6 @@ export class ExcelSheetService {
               arrayonCashItems.unshift({fcffOnCashItems:"Other Non Cash items"});
             }
           })
-          // console.log(arrayonCashItems,"array values")
           return arrayonCashItems;
         });
 
@@ -650,7 +653,6 @@ export class ExcelSheetService {
         });
 
         hbs.registerHelper('stubValue',()=>{
-          console.log("stub working")
           let arrayStubValue = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === MODEL[0]){
@@ -1109,7 +1111,6 @@ export class ExcelSheetService {
         hbs.registerHelper('isRelativeOrCTM',()=>{
           let method = '';
           valuationResult.modelResults.forEach((result)=>{
-            console.log(result.model)
             if(result.model === MODEL[2]) return method = 'Comparable Companies';
             if(result.model === MODEL[4]) return method = 'Comparable Industries';
           })

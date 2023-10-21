@@ -5,14 +5,16 @@ import {
     BetaIndustriesController,
     HistoricalReturnsController,
     IndustriesRatioController,
-    IndianTreasuryYieldController
+    IndianTreasuryYieldController,
+    PurposeOfReportController
 } from './data-references.controller';
 
 import {
     BetaIndustriesService,
     HistoricalReturnsService,
     IndustriesRatioService,
-    IndianTreasuryYieldService
+    IndianTreasuryYieldService,
+    PurposeOfReportService
 } from './data-references.service';
 
 import {
@@ -20,7 +22,8 @@ import {
     IndustriesRatioSchema,
     HistoricalReturnsSchema,
     IndianTreasuryYieldSchema,
-    HistoricalBSE500ReturnsSchema
+    HistoricalBSE500ReturnsSchema,
+    PurposeOfReportSchema
 } from './schema/data-references.schema';
 
 @Module({
@@ -31,20 +34,23 @@ import {
           { name: 'historicalReturns', schema : HistoricalReturnsSchema},
           { name: 'indianTreasuryYield', schema : IndianTreasuryYieldSchema},
           { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
+          { name: 'purposeOfReport', schema : PurposeOfReportSchema}
         ]),
       ],
       controllers: [
         BetaIndustriesController,
         IndustriesRatioController,
         HistoricalReturnsController,
-        IndianTreasuryYieldController
+        IndianTreasuryYieldController,
+        PurposeOfReportController
       ],
     
       providers: [
         BetaIndustriesService,
         IndustriesRatioService,
         HistoricalReturnsService,
-        IndianTreasuryYieldService
+        IndianTreasuryYieldService,
+        PurposeOfReportService
       ],
       exports: [
 
