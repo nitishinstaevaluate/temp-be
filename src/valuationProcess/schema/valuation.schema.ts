@@ -29,6 +29,9 @@ export class Valuation {
   @Prop({ type: [String], required: true })
   model: string[];
 
+  @Prop({ required: false })
+  provisionalDate: string;
+
   @Prop({ required: true })
   inputData: Array<object>; 
 
