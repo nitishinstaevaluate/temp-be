@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { MODEL } from 'src/constants/constants';
+import { CAPITAL_STRUCTURE_TYPE, MODEL, NATURE_OF_INSTRUMENT } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
@@ -148,7 +148,9 @@ export class ReportService {
         appointeeDetails:appointeeDetailsPayload,
         reportId:data?.reportId,
         useExistingValuer:data?.useExistingValuer,
-        reportDate:data?.reportDate
+        reportDate:data?.reportDate,
+        natureOfInstrument:data?.natureOfInstrument,
+        reportSection:data?.reportSection
       }
       try {
         const createdFoo = await this.reportModel.create(payload);
@@ -288,8 +290,10 @@ export class ReportService {
       hbs.registerHelper('valuePerShare',()=>{
         if(transposedData[0].data.transposedResult[1])
           return valuationResult.modelResults.map((response)=>{
-            if(response.model===MODEL[0] || response.model === MODEL[1])
-              return response?.valuationData[0]?.valuePerShare.toFixed(2);
+            if(response.model===MODEL[0] || response.model === MODEL[1]){
+              const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
+              return `${formattedNumber.replace(/,/g, ',')}/-`;
+            }
           });
           return '';
       })
@@ -298,7 +302,7 @@ export class ReportService {
         return valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
             const formattedNumber = Math.floor(response?.valuationData[0]?.equityValue * 100000).toLocaleString('en-IN');
-            return formattedNumber.replace(/,/g, ',');
+            return `${formattedNumber.replace(/,/g, ',')}/-`;
           }
         });
         return '';
@@ -420,6 +424,32 @@ export class ReportService {
         }
         return '';
       })
+
+      hbs.registerHelper('capitalStructureType', ()=>{
+        const capitalStructureType = getCapitalStructure.result.capitalStructure.capitalStructureType;
+        if(capitalStructureType){
+          return CAPITAL_STRUCTURE_TYPE[`${capitalStructureType}`];
+        }
+        return '';
+      })
+
+      hbs.registerHelper('explicitYear',()=>{
+        let explicitYear='';
+        let index;
+        if(valuationResult.modelResults){
+          valuationResult.modelResults.map((result)=>{
+            result.valuationData.map((response,i)=>{
+              if(response.particulars === 'Terminal Value'){
+                index = i
+              }
+            })
+            explicitYear = result.valuationData[index-1]['particulars'];
+          })
+          explicitYear = `20${explicitYear.split('-')[1]}`
+        }
+        return explicitYear
+      })
+
       hbs.registerHelper('PAT', () => {
         let arrayPAT = [];
         valuationResult.modelResults.forEach((result)=>{
@@ -465,13 +495,13 @@ export class ReportService {
             result.valuationData.map((response:any)=>{
               arraydepAndAmortisation.push({fcfeDepAmortisation:response.depAndAmortisation ? parseFloat(response?.depAndAmortisation).toFixed(2) : ''})
             })
-            arraydepAndAmortisation.unshift({fcfeDepAmortisation:"Dept And Amortisation"});
+            arraydepAndAmortisation.unshift({fcfeDepAmortisation:"Depn. and Amortn."});
           }
           else if (result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               arraydepAndAmortisation.push({fcffDepAmortisation:response.depAndAmortisation ? parseFloat(response?.depAndAmortisation).toFixed(2) : ''})
             })
-            arraydepAndAmortisation.unshift({fcffDepAmortisation:"Dept And Amortisation"});
+            arraydepAndAmortisation.unshift({fcffDepAmortisation:"Depn. and Amortn."});
             
           }
         })
@@ -951,6 +981,12 @@ export class ReportService {
         })
         return arrayValuePerShare;
       });
+
+      hbs.registerHelper('natureOfInstrument',()=>{
+        if(getReportData)
+          return NATURE_OF_INSTRUMENT[`${getReportData.natureOfInstrument}`];
+        return '';
+      })
 
       hbs.registerHelper('ifEquityValProvisional',(options)=>{
         let checkiIfprovisional = false;

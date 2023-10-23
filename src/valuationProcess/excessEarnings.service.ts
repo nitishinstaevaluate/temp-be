@@ -184,7 +184,7 @@ export class ExcessEarningsService {
     }
     
     this.stubAdjRequired = false;   
-    let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
+    // let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
     const provisionalDate = provDtRef;
 
     const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
@@ -194,9 +194,7 @@ export class ExcessEarningsService {
       result: finalResult,
       tableData: data.transposedResult,
       valuation:checkIfStub ? finalResult[0].equityValueNew : finalResult[0].equityValue, //to be defined
-      columnHeader:data.columnHeader,
-      equityValueDate,
-      provisionalDate : provisionalDate,
+      columnHeader:data.columnHeader, provisionalDate,
       message: 'Valuation calcuated using excess earnings model',
       status: true
     }

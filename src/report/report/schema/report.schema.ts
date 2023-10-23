@@ -21,6 +21,12 @@ export class Report {
 
     @Prop({ required: true, type: Date, default: Date.now })
     reportDate: Date;
+
+    @Prop({ required: true, type: String })
+    natureOfInstrument: string;
+
+    @Prop({ required: true, type: [] }) 
+    reportSection: [];
 }
 
 export type ReportDocument = Report & Document;
