@@ -19,3 +19,20 @@ export const GET_MULTIPLIER_UNITS = {
     Millions:1000000,
     Crores:10000000
 }
+
+export const NATURE_OF_INSTRUMENT = {
+    equityShares:"Equity Shares",
+    equitySharesAndCcps:"Equity Shares & CCPS",
+    ccps:"Compulsorily Convertible Preference Shares",
+    ccds:"Compulsorily Convertible Dimentures",
+    ocds:"Optionally Convertible Dimentures",
+    ocrps:"Optionally Convertible Redeemable Preference Shares",
+    rps:"Redeemable Preference Shares",
+    safe:"Simple Agreement for Future Equity",
+    convertibleNotes:"Convertible Notes",
+}
+export const CAPITAL_STRUCTURE_TYPE = {
+    Industry_Based:"Industry Based",
+    Company_Based:"Company Based",
+    Target_Based:"Target Based"
+}
