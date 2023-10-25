@@ -26,7 +26,7 @@ export async function getYearsList(worksheet1: any): Promise<any> {
     const yearSet = [];
     let i=0;
     for (const key in worksheet1) {
-      if (worksheet1.hasOwnProperty(key) && key !== '!ref') {
+      if (worksheet1.hasOwnProperty(key) && key !== '!ref' && typeof worksheet1[key]?.v === 'string' ) {
         const object = worksheet1[key];
         // console.log('First Object ', object.v);
         if(object.v && GET_DATE_MONTH_YEAR_FORMAT.test(object.v)){
@@ -34,7 +34,7 @@ export async function getYearsList(worksheet1: any): Promise<any> {
           yearSet.push(object.v.trim().slice(-2))
         }
         else if (object.v && GET_YEAR.test(object.v)) {
-          if(object.v.includes('-')){
+          if(object?.v?.includes('-')){
             // console.log("if condoitiosn",object?.v.split('-')[1])
             
             if(object?.v.split('-')[1].length <= 2){
@@ -45,12 +45,10 @@ export async function getYearsList(worksheet1: any): Promise<any> {
                 yearSet.push(baseDate);
                 i++;
               } else {
-              yearSet.push(object?.v.split('-')[1]);
+                yearSet.push(object?.v.split('-')[1]);
               }
-              // console.log("year containing splits -",object?.v.split('-')[1] )
             }
             else{
-              // console.log("if condoitios 2",object.v)
               const slicedYear = `${object?.v.split('-')[1][object?.v.split('-')[1].length - 2]}${object?.v.split('-')[1][object?.v.split('-')[1].length - 1]}`;
               yearSet.push(slicedYear);
               // console.log("year containing two numbers only splits -",slicedYear )
@@ -73,8 +71,8 @@ export async function getYearsList(worksheet1: any): Promise<any> {
           }
         }
       }
-      
-  }
+
+    }
     return yearSet;
 
   }
