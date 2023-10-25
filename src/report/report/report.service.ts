@@ -40,7 +40,7 @@ export class ReportService {
 
         let htmlFilePath, pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-          htmlFilePath = path.join(process.cwd(), 'html-template', 'nav-report.html');
+          htmlFilePath = path.join(process.cwd(), 'html-template', 'basic-report.html');
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
   
           for await (let data of valuationResult.modelResults) {
