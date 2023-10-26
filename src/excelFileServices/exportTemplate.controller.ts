@@ -80,20 +80,20 @@ export class ExportTemplateController {
 
   async getFirstRowIndexName(worksheet){
    try{
-    let  BSfirstRowName=[]
-   let bsLetterIndex = 65; //starting capital letter in ascii format
-   let letter;
-   worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-        row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-          if (rowNumber === 1 && cell.text) {
-            letter = String.fromCharCode(bsLetterIndex);
-            BSfirstRowName.push(letter);
-          }
-          bsLetterIndex++;
-        });
-    });
+    let  firstRowName=[]
+    let letterIndex = 65; //starting capital letter in ascii format
+    let letter;
+    worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+          row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+            if (rowNumber === 1 && cell.text) {
+              letter = String.fromCharCode(letterIndex);
+              firstRowName.push(letter);
+            }
+            letterIndex++;
+          });
+      });
 
-    return BSfirstRowName;
+    return firstRowName;
    }
    catch(error){
     throw error;
@@ -101,6 +101,7 @@ export class ExportTemplateController {
   }
  
   async updateExcelFormulas(worksheet,firsRowName){
+   try{
     worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
         if (cell.formula) {
@@ -130,5 +131,9 @@ export class ExportTemplateController {
         }
       });
     });
+   }
+   catch(error){
+    throw error;
+   }
   }
 }
