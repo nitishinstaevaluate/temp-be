@@ -240,7 +240,7 @@ let workbook=null;
                 valuationData: fcfeResponse.tableData,
                 valuation:fcfeResponse.valuation,
                 columnHeader:fcfeResponse.columnHeader,
-                provisionalDate:fcfeResponse.equityValueDate
+                provisionalDate:fcfeResponse.provisionalDate
                 });
                   
               models.push(modelValue);
@@ -260,7 +260,7 @@ let workbook=null;
                   valuationData: fcffResponse.tableData,
                   valuation:fcffResponse.valuation,
                   columnHeader:fcffResponse.columnHeader,
-                  provisionalDate:fcffResponse.equityValueDate
+                  provisionalDate:fcffResponse.provisionalDate
                   });
                    models.push(modelValue);
                     break;
@@ -272,7 +272,7 @@ let workbook=null;
                   model: MODEL[2],
                   valuationData: relativeValuationResponse.result,
                   valuation:relativeValuationResponse.valuation,
-                  provisionalDate:relativeValuationResponse.provisionalDate
+                  // provisionalDate:relativeValuationResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[2],
@@ -296,7 +296,7 @@ let workbook=null;
               valuationData: excessEarningsResponse.tableData,
               valuation:excessEarningsResponse.valuation,
               columnHeader:excessEarningsResponse.columnHeader,
-              provisionalDate:excessEarningsResponse.equityValueDate
+              provisionalDate:excessEarningsResponse.provisionalDate
               });
               models.push(modelValue);
 

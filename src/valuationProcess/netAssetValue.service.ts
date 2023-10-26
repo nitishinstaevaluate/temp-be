@@ -356,7 +356,7 @@ export class NetAssetValueService {
     return {
       result: finalResult,
       valuation: equityValue,
-      provisionalDate: provisionalDate,
+      provisionalDate,
       msg: 'Net Asset Value Calculated Successfully',
       status: true
     };

@@ -410,14 +410,13 @@ export class FCFEAndFCFFService {
       // console.log('new EPV ',((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares);
     }
 
-    let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
+    // let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
     const provisionalDate = provDtRef;
     
     this.stubAdjRequired = false;                              // Resetting to default;
     const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
     const data = await this.transformData(finalResult);
-    return { result: finalResult, tableData:data.transposedResult, valuation:checkIfStub? finalResult[0].equityValueNew :finalResult[0].equityValue,columnHeader:data.columnHeader,equityValueDate,
-      provisionalDate : provisionalDate,
+    return { result: finalResult, tableData:data.transposedResult, valuation:checkIfStub? finalResult[0].equityValueNew :finalResult[0].equityValue,columnHeader:data.columnHeader,provisionalDate,
       msg: 'Executed Successfully' };
   }catch(error){
     console.log(error)
