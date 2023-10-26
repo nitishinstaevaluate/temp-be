@@ -297,6 +297,28 @@ export class ReportService {
           });
           return '';
       })
+      hbs.registerHelper('modelValuePerShare',(modelName)=>{
+        modelName = modelName.split(',')
+        let formattedValues;
+        if (valuationResult) {
+          formattedValues = modelName.flatMap((models) => {
+              return valuationResult.modelResults.flatMap((response) => {
+                  if (response.model === models && models !== 'NAV') {
+                      const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
+                      return `${formattedNumber.replace(/,/g, ',')}/-`;
+                  }
+                  if (response.model === models && models === 'NAV') {
+                      const formattedNumber = Math.floor(response?.valuationData?.valuePerShare.value).toLocaleString('en-IN');
+                      return `${formattedNumber.replace(/,/g, ',')}/-`;
+                  }
+                  return [];
+              });
+          });
+          return formattedValues[0];
+      }
+      // console.log(formattedValues,"formatted value")
+        return '';
+      })
       hbs.registerHelper('equityPerShare',()=>{
         if(transposedData[0].data.transposedResult[1])
         return valuationResult.modelResults.map((response)=>{

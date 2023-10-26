@@ -15,7 +15,8 @@ export class ExportTemplateController {
     @Param('projectionYears') projectionYears: number,
     @Res() res: Response,
   ) {
-    const filePath = `template/Template.xlsx`;
+   try{
+    const filePath = `template/test-template.xlsx`;
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).send('File not found');
@@ -24,11 +25,11 @@ export class ExportTemplateController {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filePath);
 
-    const worksheet = workbook.getWorksheet(1);
+    const worksheet:any = workbook.getWorksheet(1);
     const currentYear = new Date().getFullYear();
     worksheet.getColumn(
       'B',
-    ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`
+    ).header = `{{Add provisional financial date in DD-MM-YYYY}}`
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
     let count = 0;
@@ -39,7 +40,10 @@ export class ExportTemplateController {
       count++;
     }
 
-    const worksheet2 = workbook.getWorksheet(2);
+    const getProfitLossFirstRow = await this.getFirstRowIndexName(worksheet);
+    await this.updateExcelFormulas(worksheet,getProfitLossFirstRow);
+
+    const worksheet2:any = workbook.getWorksheet(2);
     worksheet2.getColumn(
       'B',
     ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`
@@ -52,6 +56,9 @@ export class ExportTemplateController {
       }`;
       count2++;
     }
+  
+    const getBalanceSheetFirstRow = await this.getFirstRowIndexName(worksheet2)
+    await this.updateExcelFormulas(worksheet2,getBalanceSheetFirstRow)
 
     const buffer = await workbook.xlsx.writeBuffer();
     const fileStream = new stream.PassThrough();
@@ -64,5 +71,64 @@ export class ExportTemplateController {
     );
 
     fileStream.pipe(res);
+   }
+   catch(error){
+    console.log(error);
+    throw error;
+   }
+  }
+
+  async getFirstRowIndexName(worksheet){
+   try{
+    let  BSfirstRowName=[]
+   let bsLetterIndex = 65; //starting capital letter in ascii format
+   let letter;
+   worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+        row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+          if (rowNumber === 1 && cell.text) {
+            letter = String.fromCharCode(bsLetterIndex);
+            BSfirstRowName.push(letter);
+          }
+          bsLetterIndex++;
+        });
+    });
+
+    return BSfirstRowName;
+   }
+   catch(error){
+    throw error;
+   }
+  }
+ 
+  async updateExcelFormulas(worksheet,firsRowName){
+    worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        if (cell.formula) {
+          for (let i = 0; i < firsRowName.length; i++) {
+            if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B'){
+              const columnLetter = String.fromCharCode(65 + colNumber - 1);
+              const cellAddress = columnLetter + rowNumber;
+              const newCellAddress = firsRowName[i] + rowNumber;
+              worksheet.getCell(`${newCellAddress}`).value = { sharedFormula: `${cellAddress}`, result: 0 };
+            }
+            // if(firsRowName[i]==='B'){   //Add date validation in excel 
+            //   const dateValidationOptions = {
+            //     type: 'date',
+            //     operator: 'between',
+            //     allowBlank: false,
+            //     showInputMessage: true,
+            //     formula1: '01-01-2000', // Start date in dd-mm-yyyy format
+            //     formula2: '31-12-2022', // End date in dd-mm-yyyy format
+            //     promptTitle: 'Date Validation',
+            //     prompt: 'The date must be between 01-01-2022 and 31-12-2022',
+            // };
+            
+            // // Set date validation for cell A1
+            // worksheet.getCell('B1').dataValidation = dateValidationOptions;
+            // }
+          }
+        }
+      });
+    });
   }
 }
