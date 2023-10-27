@@ -347,6 +347,18 @@
             padding-left: 0pt;
             counter-reset: f1 3;
         }
+        #l91 {
+            padding-left: 0pt;
+            counter-reset: f1 6;
+        }
+        #l92 {
+            padding-left: 0pt;
+            counter-reset: f1 7;
+        }
+        #l90 {
+            padding-left: 0pt;
+            counter-reset: f1 5;
+        }
 
         #l8>li>*:first-child:before {
             counter-increment: f1;
@@ -358,8 +370,47 @@
             text-decoration: none;
             font-size: 11pt;
         }
+        #l91>li>*:first-child:before {
+            counter-increment: f1;
+            content: counter(f1, decimal)".0 ";
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+        #l92>li>*:first-child:before {
+            counter-increment: f1;
+            content: counter(f1, decimal)".0 ";
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+        #l90>li>*:first-child:before {
+            counter-increment: f1;
+            content: counter(f1, decimal)".0 ";
+            color: black;
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+        }
 
         #l8>li:first-child>*:first-child:before {
+            counter-increment: f1 0;
+        }
+        #l91>li:first-child>*:first-child:before {
+            counter-increment: f1 0;
+        }
+        #l92>li:first-child>*:first-child:before {
+            counter-increment: f1 0;
+        }
+        #l90>li:first-child>*:first-child:before {
             counter-increment: f1 0;
         }
 
@@ -575,30 +626,30 @@
     <p class="s1" style="padding-bottom: 3pt;text-indent: 0pt;text-align: center;padding-top: 3%;">of</p>
     <p class="s1" style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 3%;">Fair Value of Equity Shares</p>
     <p class="s1" style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 3%;">of</p>
-    <p style="text-indent: 0pt;line-height: 27pt;text-align: center;padding-top: 4%;"><span style="font-weight: bold;font-size: 19px;text-transform: capitalize;">Ifinworth Advisors Private Limited</span></p>
+    <p style="text-indent: 0pt;line-height: 27pt;text-align: center;padding-top: 4%;"><span style="font-weight: bold;font-size: 19px;text-transform: capitalize;">{{companyName}}</span></p>
     <h2 style="padding-left: 1pt;text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 20%;">Prepared By<span
             class="p">:</span></h2>
 
-    <p style="padding-top: 7pt;text-indent: 0pt;text-align: center;padding-top: 3%;"><span class="s3" style="text-transform: capitalize;font-weight: 500;">Nitish Chaturvedi</span></p>
+    <p style="padding-top: 7pt;text-indent: 0pt;text-align: center;padding-top: 3%;"><span class="s3" style="text-transform: capitalize;font-weight: 500;">{{registeredValuerName}}</span></p>
     <p style="padding-top: 2%;text-indent: 0pt;text-align: center;">
         <span style=" color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;">Registered
             Valuer- Securities or Financial Assets </span></p>
-    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3" style="text-transform: capitalize;">,Sterling Enterprises, Andheri (West)</span></p>
-    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3">nitish@ifinworth.com</span></p>
-    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">9898789664</span></p>
+    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3" style="text-transform: capitalize;">{{registeredValuerAddress}}</span></p>
+    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3">{{registeredValuerEmailId}}</span></p>
+    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">{{registeredValuerMobileNumber}}</span></p>
 </div>
 
     <!-- page 2 html -->
   <div style="page-break-before: always;padding-top: 5%;padding-left: 6%;padding-right:6%">
     <p style="padding-top: 6pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">To,</p>
     <p style="padding-top: 6pt;padding-left: 13pt;text-indent: 0pt;line-height: 120%;text-align: left;"><a
-            name="bookmark0"><span class="h2">Board of Directors </span></a>
+            name="bookmark0"><span class="h2">{{appointingAuthorityName}}</span></a>
            
             <a name="bookmark1">&zwnj;</a></p>
     <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;"><a name="bookmark2">
          
-            <span class="s2" style="font-weight: 600;text-transform: capitalize;padding-top: 1%;">Ifinworth Advisors Private Limited</span></a></p>
-    <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;"><a name="bookmark2"><span class="s3">Sterling Enterprises, Andheri(West)</span></a></p>
+            <span class="s2" style="font-weight: 600;text-transform: capitalize;padding-top: 1%;">{{companyName}}</span></a></p>
+    <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;"><a name="bookmark2"><span class="s3">Add:</span></a></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h2 style="padding-left: 12pt;text-indent: 0pt;text-align: left;padding-top: 2%;padding-bottom: 2%;">Context and Purpose</h2>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -610,15 +661,15 @@
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">The report has been prepared
         exclusively for specified purpose as mentioned above and hence should not be used for any other purpose, without
         obtaining the prior written consent from me. This opinion should not be considered, in whole or in part, as
-        invest ment advice by anyone.</p>
+        investment advice by anyone.</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;">Summary of Findings</h2>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;"><span class="p">Based on my
             Valuation Analysis, in my assessment, the Fair Value of Equity shares of the Company as on </span><span
-            class="s2" >31st March, 2023</span><span class="h2"> is
-        </span><span class="s2" style=" background-color: #FF0;">INR (Rupees)</span><span class="h2">. </span><span
-            class="s4">Refer </span><span class="h2">Annexure </span><span class="p">of the report of even date.</span>
+            class="s2" >{{reportDate}}</span><span class="h2"> is
+        </span><span class="s2">{{currencyUnit}}. {{modelValuePerShare 'NAV'}}</span><span class="h2">. </span><span
+            class="s4">Refer </span><span><a class="h2" href="#bookmark10">Annexure </a></span><span class="p">of the report of even date.</span>
     </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p class="s5" style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">I have based this
@@ -645,8 +696,7 @@
                             style="width:303pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                             <p
                                 style="padding-top: 6pt;padding-left: 72pt;padding-right: 64pt;text-indent: 0pt;text-align: center;">
-                                <span class="s7">Board of Directors of </span><span class="s8"
-                                    style=" background-color: #FF0;">ABC Pvt Ltd</span></p>
+                                <span class="s7">{{appointingAuthorityName}}</span></p>
                         </td>
                     </tr>
                     <tr style="height:27pt">
@@ -660,7 +710,7 @@
                             style="width:303pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                             <p
                                 style="padding-top: 6pt;padding-left: 72pt;padding-right: 64pt;text-indent: 0pt;text-align: center;">
-                                <span class="s8" style="">31st March, 2023</span></p>
+                                <span class="s8" style="">{{ dateOfAppointment }}</span></p>
                         </td>
                     </tr>
                     <tr style="height:27pt">
@@ -674,7 +724,7 @@
                             style="width:303pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                             <p
                                 style="padding-top: 6pt;padding-left: 72pt;padding-right: 64pt;text-indent: 0pt;text-align: center;">
-                                <span class="s8" style="">31st March, 2023</span></p>
+                                <span class="s8" style="">{{strdate}}</span></p>
                         </td>
                     </tr>
                     <tr style="height:27pt">
@@ -688,7 +738,7 @@
                             style="width:303pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                             <p
                                 style="padding-top: 6pt;padding-left: 72pt;padding-right: 64pt;text-indent: 0pt;text-align: center;">
-                                <span class="s8" style="">29th September, 2023</span></p>
+                                <span class="s8">{{reportDate}}</span></p>
                         </td>
                     </tr>
                 </table>
@@ -696,7 +746,7 @@
                     <li data-list-text="(i)">
                         <p style="padding-top: 3%;padding-left: 47pt;text-indent: -36pt;text-align: left;padding-bottom: 2%;"><a
                                 name="bookmark3"><span class="h2">Particulars of the Subject Company –</span></a><span
-                                class="s2" style="text-transform: capitalize;font-weight: bold;"> Ifinworth Private Limited</span></p>
+                                class="s2" style="text-transform: capitalize;font-weight: bold;"> {{companyName}}</span></p>
                     </li>
                 </ol>
             </li>
@@ -950,7 +1000,7 @@
                 </table>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <p style="padding-top: 10pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"><a name="bookmark4"><span
-                            class="h2">Documents /Information of </span></a><span class="s2" style="font-weight: bold;text-transform: capitalize;">Ifinworth Advisors Private Limited</span><span class="h2"> used or relied
+                            class="h2">Documents /Information of </span></a><span class="s2" style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span class="h2"> used or relied
                         upon:</span></p>
                 <p style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">.</p>
                 <ol id="l9">
@@ -985,7 +1035,7 @@
        
     <!-- page 5 html -->
     <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
-        <ol id="l8">
+        <ol id="l90">
             <li data-list-text="5.0">
                 <h2 style="padding-left: 37pt;text-indent: -28pt;text-align: left;padding-top: 1%;padding-bottom: 1%;">LIMITATIONS, CAVEATS AND DISCLAIMER</h2>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1067,7 +1117,7 @@
 
         <!-- page 6 html -->
         <div style="page-break-before: always;padding-top: 6%;padding-left: 5%;padding-right: 6%;">
-            <ol id="l8">
+            <ol id="l91">
                 <li data-list-text="6.0" style="padding-right: 1%;">
                     <h2 style="padding-left: 46pt;text-indent: -28pt;text-align: left;">VALUATION APPROACH AND MEHODOLOGY</h2>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1371,7 +1421,7 @@
         </div>
         
        <div style="padding-left: 3%;padding-right: 5%;">
-        <ol id="l8">
+        <ol id="l92">
             <li data-list-text="7.0">
                 <h2 style="padding-top: 9pt;padding-left: 43pt;text-indent: -28pt;text-align: left;">VALUATION
                     RECOMMENDATION</h2>
@@ -1382,8 +1432,8 @@
                         <p style="padding-left: 43pt;text-indent: 0pt;line-height: 150%;text-align: justify;"><span
                                 class="p">Based on my Valuation Analysis as per the information provided by the management
                                 of Company, in my assessment, the Net Asset Value of Equity shares of the Company as on
-                            </span><span class="s9" style=" background-color: #FF0;">XX.XX.XXXX</span><span class="p"> is
-                            </span><span class="s2" style=" background-color: #FF0;">INR. (Rupees)</span><span
+                            </span><span class="s9" >{{strdate}}</span><span class="p"> is
+                            </span><span class="s2" >{{currencyUnit}}. {{modelValuePerShare 'NAV'}}</span><span
                                 class="h2">.</span></p>
                     </li>
                     <li data-list-text="7.2">
@@ -1418,17 +1468,16 @@
                     </li>
                 </ol>
             </li>
-            <h2 style="padding-left: 44pt;text-indent: 0pt;text-align: left;padding-top: 6%;">Date: <span style="float: right;padding-right: 29%;">Nitish Chaturvedi</span></h2>
+            <h2 style="padding-left: 44pt;text-indent: 0pt;text-align: left;padding-top: 6%;">Date: {{reportDate}} <span style="float: right;padding-right: 29%;">{{registeredValuerName}}</span></h2>
             <p style="padding-top: 3pt;text-indent: 0pt;text-align: right;">Registered Valuer- Securities or
                 Financial Assets</p>
-            <h2 style="padding-top: 2pt;padding-left: 44pt;text-indent: 0pt;text-align: left;">Place: <span style="float: right;padding-right: 24.5%;">IBBI
-                    Registration No.:</span></h2>
+            <h2 style="padding-top: 2pt;padding-left: 44pt;text-indent: 0pt;text-align: left;">Place: ________________ <span style="float: right;padding-right: 29%;">{{registeredValuerIbbiId}}</span></h2>
        </div>
     </ol>
 
     <!-- page 9 html -->
     <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
-        <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;font-size: 20px;"><a name="bookmark8">Annexure</a></h2>
+        <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;font-size: 20px;"><a name="bookmark10">Annexure</a></h2>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h2 style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><a name="bookmark9">Net Asset Valuation of Cromlux
                 Electronics Private Limited</a></h2>
