@@ -36,3 +36,179 @@ export const CAPITAL_STRUCTURE_TYPE = {
     Company_Based:"Company Based",
     Target_Based:"Target Based"
 }
+
+export const ASSESSMENT_DATA = [
+    {
+    "lineEntry": {
+        particulars : "Operating Assets",
+        sysCode:3001,
+        },		
+    "2022-23": null,
+    "2023-24": null,
+    "2024-25":null
+    },
+    {
+      "lineEntry": {
+          particulars : "Trade Recievables",
+          sysCode:3002,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Unbilled Revenues",
+          sysCode:3003,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Inventories",
+          sysCode:3004,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Advances",
+          sysCode:3005,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Short Term Investments",
+          sysCode:3006,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Other Current Assets",
+          sysCode:3007
+          },		
+      "2022-23": '',
+      "2023-24": '',
+      "2024-25":''
+    },
+    {
+      "lineEntry": {
+          particulars : "Non Current Assets",
+          sysCode:3008,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Other Operating Assets",
+          sysCode:3009,
+          editable:true
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Total",
+          sysCode:3010,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Operating Liabilities",
+          sysCode:3011,
+          },		
+      "2022-23": null,
+      "2023-24": null,
+      "2024-25":null
+    },
+    {
+      "lineEntry": {
+          particulars : "Trade Payables",
+          sysCode:3012,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Employee Payables",
+          sysCode:3013,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "LC Payables",
+          sysCode:3014,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Other Current Liablities",
+          sysCode:3015
+          },		
+      "2022-23": '',
+      "2023-24": '',
+      "2024-25":''
+    },
+    {
+      "lineEntry": {
+          particulars : "Short Term Provisions",
+          sysCode:3016,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Long Term Provisions",
+          sysCode:3017,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Other Operating Liabilities",
+          sysCode:3018,
+          editable:true
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    },
+    {
+      "lineEntry": {
+          particulars : "Total",
+          sysCode:3019,
+          },		
+      "2022-23": 61.3,
+      "2023-24": 103,
+      "2024-25":40
+    }
+  ]
