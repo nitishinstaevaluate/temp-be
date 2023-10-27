@@ -6,7 +6,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -20,38 +20,47 @@ export class ExcelSheetService {
     
         return from(this.readFile(filePath)).pipe(
             switchMap((workbook) => {
-                if (!workbook.SheetNames.includes(sheetName)) {
-                  return throwError(new NotFoundException('Sheet not found'));
+                if(sheetName !== 'assessmentSheet'){
+                  if (!workbook.SheetNames.includes(sheetName)) {
+                    return throwError(new NotFoundException('Sheet not found'));
+                  }
+                  const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                  sheetData.forEach((row:any) => {
+                     for (let columns in row) {
+                       if (typeof row[columns] === 'string') {
+                         row[columns] = row[columns].replace(/\r\n/g, '').toLowerCase();;
+                     }
+                   
+                       if (typeof row[columns] === 'number') {
+                         row[columns] = parseFloat(row[columns].toFixed(3));
+                       }
+                       if (typeof columns === 'string') {
+                         const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+                         // const cleanedColumn = columns.replace(/^\s+/g, '');
+                         // console.log(cleanedColumn)
+                         if (columns !== cleanedColumn) {
+                           row[cleanedColumn] = row[columns];
+                           //   console.log(row[cleanedColumn])
+                           delete row[columns];
+                         }
+                       }
+                     }
+                   });
+                   return from(this.transformData(sheetData)).pipe(switchMap((excelData)=>{
+                     
+                     return of(excelData)
+                   }))
                 }
-        
-                 const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                sheetData.forEach((row:any) => {
-                    for (let columns in row) {
-                      if (typeof row[columns] === 'string') {
-                        row[columns] = row[columns].replace(/\r\n/g, '').toLowerCase();;
-                    }
-                  
-                      if (typeof row[columns] === 'number') {
-                        row[columns] = parseFloat(row[columns].toFixed(3));
-                      }
-                      if (typeof columns === 'string') {
-                        const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-                        // const cleanedColumn = columns.replace(/^\s+/g, '');
-                        // console.log(cleanedColumn)
-                        if (columns !== cleanedColumn) {
-                          row[cleanedColumn] = row[columns];
-                          //   console.log(row[cleanedColumn])
-                          delete row[columns];
-                        }
-                      }
-                    }
-                  });
-                  return from(this.transformData(sheetData)).pipe(switchMap((excelData)=>{
-                    
-                    return of(excelData)
-                  }))
+                else{
+
+                  // add assessment calculations
+
+                  return of(ASSESSMENT_DATA);
+                 
+                }
               }),
-            catchError(() => {
+            catchError((error) => {
+              console.log(error,"error")
                 throw new NotFoundException('File not found');
             })
         );
