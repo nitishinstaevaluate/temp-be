@@ -20,10 +20,10 @@ export class ExcelSheetService {
     
         return from(this.readFile(filePath)).pipe(
             switchMap((workbook) => {
-                // if (!workbook.SheetNames.includes(sheetName)) {
-                //   return throwError(new NotFoundException('Sheet not found'));
-                // }
                 if(sheetName !== 'assessmentSheet'){
+                  if (!workbook.SheetNames.includes(sheetName)) {
+                    return throwError(new NotFoundException('Sheet not found'));
+                  }
                   const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
                   sheetData.forEach((row:any) => {
                      for (let columns in row) {
