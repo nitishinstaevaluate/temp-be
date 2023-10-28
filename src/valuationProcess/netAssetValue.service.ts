@@ -47,6 +47,10 @@ export class NetAssetValueService {
       shortTermLoanAdvancesVal, tradeReceivablesVal, cashVal, otherCurrentAssetsVal, shortTermProvisionsVal, shortTermBorrowingsVal,
       tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal;
     
+    let fixedAssetValAtBook, longTermLoansAdvancesValAtBook, nonCurrentInvestmentValAtBook, deferredTaxAssetValAtBook, inventoriesValAtBook,
+      shortTermLoanAdvancesValAtBook, tradeReceivablesValAtBook, cashValAtBook, otherCurrentAssetsValAtBook, shortTermProvisionsValAtBook, shortTermBorrowingsValAtBook,
+      tradePayablesValAtBook, otherCurrentLiabilitiesValAtBook, lessLongTermBorrowingsValAtBook, lessLongTermProvisionsValAtBook, shareApplicationMoneyValAtBook;
+    
     let fixedAssetObj,longTermLoansAdvancesObj,nonCurrentInvestmentObj,deferredTaxAssetObj,inventoriesObj,
     shortTermLoanAdvancesObj,tradeReceivablesObj,cashObj,otherCurrentAssetsObj,shortTermProvisionsObj,
     shortTermBorrowingsObj,tradePayablesObj,otherCurrentLiabilitiesObj,lessLongTermBorrowingsObj,
@@ -57,170 +61,196 @@ export class NetAssetValueService {
       
       switch (resp.fieldName) {
         case ('fixedAsset'):
-          fixedAssetVal = (resp.type === 'book_value') ? await getCellValue(
+          fixedAssetValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.tangibleAssetsRow}`,
-          ) : resp.value
+          )
+          fixedAssetVal = (resp.type === 'book_value') ? fixedAssetValAtBook : resp.value
             
           fixedAssetObj = {
             fieldName: "Fixed Assets",
-            value: fixedAssetVal,
+            bookValue: fixedAssetValAtBook,
+            fairValue: fixedAssetVal,
             type: resp.type
           }
 
           break;
         case ('longTermLoansAdvances'):
-          longTermLoansAdvancesVal = (resp.type === 'book_value') ? await getCellValue(
+          longTermLoansAdvancesValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
-          ) : resp.value
+          )
+          longTermLoansAdvancesVal = (resp.type === 'book_value') ? longTermLoansAdvancesValAtBook : resp.value
 
           longTermLoansAdvancesObj = {
             fieldName: "Long-term loans and advances",
-            value: longTermLoansAdvancesVal,
+            bookValue: longTermLoansAdvancesValAtBook,
+            fairValue: longTermLoansAdvancesVal,
             type: resp.type
           }
 
           break;
         case ('nonCurrentInvestment'):
-          nonCurrentInvestmentVal = (resp.type === 'book_value') ? await getCellValue(
+          nonCurrentInvestmentValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.nonCurrentInvestmentRow}`,
-          ) : resp.value
+          )
+          nonCurrentInvestmentVal = (resp.type === 'book_value') ? nonCurrentInvestmentValAtBook : resp.value
 
           nonCurrentInvestmentObj = {
             fieldName: "Non Current Investments",
-            value: nonCurrentInvestmentVal,
+            bookValue: nonCurrentInvestmentValAtBook,
+            fairValue: nonCurrentInvestmentVal,
             type: resp.type
           }
 
           break;
         case ('deferredTaxAsset'):
-          deferredTaxAssetVal = (resp.type === 'book_value') ? await getCellValue(
+          deferredTaxAssetValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.deferredTaxAssetsRow}`,
-          ) : resp.value
+          )
+          deferredTaxAssetVal = (resp.type === 'book_value') ?  deferredTaxAssetValAtBook: resp.value
 
           deferredTaxAssetObj = {
             fieldName: "Deffered Tax Assets",
-            value: deferredTaxAssetVal,
+            bookValue : deferredTaxAssetValAtBook,
+            fairValue: deferredTaxAssetVal,
             type: resp.type
           }
 
           break;
         case ('inventories'):
-          inventoriesVal = (resp.type === 'book_value') ? await getCellValue(
+          inventoriesValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.inventoriesRow}`,
-          ) : resp.value
+          )
+          inventoriesVal = (resp.type === 'book_value') ? inventoriesValAtBook : resp.value
 
           inventoriesObj = {
             fieldName: "Inventories",
-            value: inventoriesVal,
+            bookValue: inventoriesValAtBook,
+            fairValue : inventoriesVal,
             type: resp.type
           }
 
           break;
         case ('shortTermLoanAdvances'):
-          shortTermLoanAdvancesVal = (resp.type === 'book_value') ? await getCellValue(
+          shortTermBorrowingsValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.advancesRow}`,
-          ) : resp.value
+          )
+          shortTermLoanAdvancesVal = (resp.type === 'book_value') ? shortTermBorrowingsValAtBook : resp.value
 
           shortTermLoanAdvancesObj = {
             fieldName: "Short Term Loans and Advances",
-            value: shortTermLoanAdvancesVal,
+            bookValue : shortTermBorrowingsValAtBook,
+            fairValue: shortTermLoanAdvancesVal,
             type: resp.type
           }
 
           break;
         case ('tradeReceivables'):
-          tradeReceivablesVal = (resp.type === 'book_value') ? await getCellValue(
+          tradePayablesValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.tradeReceivablesRow}`,
-          ) : resp.value
+          )
+          tradeReceivablesVal = (resp.type === 'book_value') ? tradePayablesValAtBook : resp.value
 
           tradeReceivablesObj = {
             fieldName: "Trade Receivables",
-            value: tradeReceivablesVal,
+            bookValue : tradePayablesValAtBook,
+            fairValue: tradeReceivablesVal,
             type: resp.type
           }
 
           break;
         case ('cash'):
-          cashVal = (resp.type === 'book_value') ? await getCellValue(
+          cashValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.cashEquivalentsRow}`,
-          ) : resp.value
+          )
+          cashVal = (resp.type === 'book_value') ? cashValAtBook : resp.value
             
           cashObj = {
             fieldName: "Cash",
-            value: cashVal,
+            bookValue : cashValAtBook,
+            fairValue: cashVal,
             type: resp.type
           }
 
           break;
         case ('otherCurrentAssets'):
-          otherCurrentAssetsVal = (resp.type === 'book_value') ? await getCellValue(
+          otherCurrentAssetsValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.otherCurrentAssetsRow}`,
-          ) : resp.value
+          )
+          otherCurrentAssetsVal = (resp.type === 'book_value') ? otherCurrentAssetsValAtBook : resp.value
 
           otherCurrentAssetsObj = {
             fieldName: "Other Current Assets",
-            value: otherCurrentAssetsVal,
+            bookValue : otherCurrentAssetsValAtBook,
+            fairValue: otherCurrentAssetsVal,
             type: resp.type
           }
 
           break;
         case ('shortTermProvisions'):
-          shortTermProvisionsVal = (resp.type === 'book_value') ? await getCellValue(
+          shortTermBorrowingsValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.shortTermProvisionsRow}`,
-          ) : resp.value
+          )
+          shortTermProvisionsVal = (resp.type === 'book_value') ? shortTermBorrowingsValAtBook : resp.value
 
           shortTermProvisionsObj = {
             fieldName: "Less: Short Term Provisions",
-            value: shortTermProvisionsVal,
+            bookValue : shortTermBorrowingsValAtBook,
+            fairValue: shortTermProvisionsVal,
             type: resp.type
           }
 
           break;
         case ('shortTermBorrowings'):
-          shortTermBorrowingsVal = (resp.type === 'book_value') ? await getCellValue(
+          shortTermBorrowingsValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.shortTermBorrowingsRow}`,
-          ) : resp.value
+          )
+          shortTermBorrowingsVal = (resp.type === 'book_value') ? shortTermBorrowingsValAtBook : resp.value
 
           shortTermBorrowingsObj = {
             fieldName: "Short term Borrowings",
-            value: shortTermBorrowingsVal,
+            bookValue: shortTermBorrowingsValAtBook,
+            fairValue: shortTermBorrowingsVal,
             type: resp.type
           }
 
           break;
         case ('tradePayables'):
-          tradePayablesVal = (resp.type === 'book_value') ? await getCellValue(
+          tradePayablesValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.tradePayablesRow}`,
-          ) : resp.value
+          )
+          tradePayablesVal = (resp.type === 'book_value') ? tradePayablesValAtBook : resp.value
 
           tradePayablesObj = {
             fieldName: "Trade Payables",
-            value: tradePayablesVal,
+            bookValue: tradePayablesValAtBook,
+            fairValue: tradePayablesVal,
             type: resp.type
           }
 
           break;
         case ('otherCurrentLiabilities'):
-          otherCurrentLiabilitiesVal = (resp.type === 'book_value') ? await getCellValue(
+          otherCurrentAssetsValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
-          ) : resp.value
+          )
+          otherCurrentLiabilitiesVal = (resp.type === 'book_value') ? otherCurrentAssetsValAtBook : resp.value
 
           otherCurrentLiabilitiesObj = {
             fieldName: "Other current liabilities ",
-            value: otherCurrentLiabilitiesVal,
+            bookValue : otherCurrentAssetsValAtBook,
+            fairValue: otherCurrentLiabilitiesVal,
             type: resp.type
           }
 
@@ -238,36 +268,44 @@ export class NetAssetValueService {
           );
 
           const longTermBrrw = longTermBorrowings + otherUnsecuredLoans;
+          
+          lessLongTermBorrowingsValAtBook = longTermBorrowings + otherUnsecuredLoans;
+
           lessLongTermBorrowingsVal = (resp.type === 'book_value') ? longTermBrrw : resp.value;
 
           lessLongTermBorrowingsObj = {
             fieldName: "Less: Long Term Borrowings",
-            value: lessLongTermBorrowingsVal,
+            bookValue: lessLongTermBorrowingsValAtBook,
+            fairValue: lessLongTermBorrowingsVal,
             type: resp.type
           }
 
           break;
         case ('lessLongTermProvisions'):
-          lessLongTermProvisionsVal = (resp.type === 'book_value') ? await getCellValue(
+          lessLongTermBorrowingsValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.longTermProvisionRow}`,
-          ) : resp.value
+          )
+          lessLongTermProvisionsVal = (resp.type === 'book_value') ? lessLongTermBorrowingsValAtBook : resp.value
 
           lessLongTermProvisionsObj = {
             fieldName: "Less: Long Term Provisions",
-            value: lessLongTermProvisionsVal,
+            bookValue : lessLongTermBorrowingsValAtBook,
+            fairValue: lessLongTermProvisionsVal,
             type: resp.type
           }
 
         case ('shareApplicationMoney'):
-          shareApplicationMoneyVal = (resp.type === 'book_value') ? await getCellValue(
+          shareApplicationMoneyValAtBook = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.shareApplicationRow}`,
-          ) : resp.value
+          )
+          shareApplicationMoneyVal = (resp.type === 'book_value') ? shareApplicationMoneyValAtBook : resp.value
 
           shareApplicationMoneyObj = {
             fieldName: "Less: Share Application Money",
-            value: shareApplicationMoneyVal,
+            bookValue : shareApplicationMoneyValAtBook,
+            fairValue: shareApplicationMoneyVal,
             type: resp.type
           }
 
@@ -278,15 +316,25 @@ export class NetAssetValueService {
     }
 
     const totalNonCurrentAssets = fixedAssetVal + longTermLoansAdvancesVal + nonCurrentInvestmentVal + deferredTaxAssetVal;
-    
+    const totalNonCurrentAssetsAtBook = fixedAssetValAtBook + longTermLoansAdvancesValAtBook + nonCurrentInvestmentValAtBook + deferredTaxAssetValAtBook;
+
     const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + otherCurrentAssetsVal -
       shortTermProvisionsVal - shortTermBorrowingsVal - tradePayablesVal - otherCurrentLiabilitiesVal;
 
+    const netCurrentAssetAtBook = inventoriesValAtBook + shortTermLoanAdvancesValAtBook + tradeReceivablesValAtBook + cashValAtBook + otherCurrentAssetsValAtBook -
+      shortTermProvisionsValAtBook - shortTermBorrowingsValAtBook - tradePayablesValAtBook - otherCurrentLiabilitiesValAtBook;  
+    
     const firmValue = totalNonCurrentAssets + netCurrentAsset
+    const firmValueAtBook = totalNonCurrentAssetsAtBook + netCurrentAssetAtBook
+    
     const equityValue = firmValue - lessLongTermBorrowingsVal - lessLongTermProvisionsVal - shareApplicationMoneyVal;
+
+    const equityValueAtBook = firmValueAtBook - lessLongTermBorrowingsValAtBook - lessLongTermProvisionsValAtBook - shareApplicationMoneyValAtBook;
+
     const noOfShares = inputs.outstandingShares;
 
     const valuePerShare = (equityValue * multiplier) / noOfShares;
+    const valuePerShareAtBook = (equityValueAtBook * multiplier) / noOfShares;
 
 
     // ------------------------------- NAV --------------------------
@@ -303,7 +351,8 @@ export class NetAssetValueService {
       deferredTaxAsset: deferredTaxAssetObj,
       totalNonCurrentAssets: {
         fieldName: "Total Non Current Assets",
-        value: totalNonCurrentAssets,
+        bookValue: totalNonCurrentAssetsAtBook,
+        fairValue: totalNonCurrentAssets,
         type: "-"
       },
       netCurrentAssetHeader: {
@@ -322,7 +371,8 @@ export class NetAssetValueService {
       otherCurrentLiabilities: otherCurrentLiabilitiesObj,
       netCurrentAsset: {
         fieldName: "Net Current Assets",
-        value: netCurrentAsset,
+        bookValue : netCurrentAssetAtBook,
+        fairValue: netCurrentAsset,
         type: ""
       },
       firmValue: {
@@ -335,7 +385,8 @@ export class NetAssetValueService {
       shareApplicationMoney: shareApplicationMoneyObj,
       equityValue: {
         fieldName:'Equity Value',
-        value: equityValue,
+        bookValue : equityValueAtBook,
+        fairValue: equityValue,
       },
       noOfShares: {
         fieldName: 'No. of Shares',
@@ -343,7 +394,8 @@ export class NetAssetValueService {
       },
       valuePerShare: {
         fieldName : 'Value per share (INR)',
-        value : valuePerShare,
+        bookValue : valuePerShareAtBook, 
+        fairValue : valuePerShare,
       }
     };
     this.customLogger.log({
