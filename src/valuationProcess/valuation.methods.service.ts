@@ -18,24 +18,28 @@ export class ValuationMethodsService {
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    worksheet3: any,
   ): Promise<any> {
     console.log("Hello Counter zFCFE");
     return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
       inputs,
       worksheet1,
       worksheet2,
+      worksheet3,
     );
   }
   async FCFFMethod(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    worksheet3: any,
   ): Promise<any> {
     console.log("Hello Counter FCFF");
     return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
       inputs,
       worksheet1,
       worksheet2,
+      worksheet3,
     );
   }
 
@@ -55,11 +59,13 @@ export class ValuationMethodsService {
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    worksheet3: any,
   ): Promise<any> {
     return await this.excessEarningsService.Excess_Earnings(
       inputs,
       worksheet1,
       worksheet2,
+      worksheet3,
     );
   }
 

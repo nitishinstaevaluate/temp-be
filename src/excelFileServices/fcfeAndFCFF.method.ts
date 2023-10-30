@@ -1,4 +1,4 @@
-import { sheet1_PLObj, sheet2_BSObj } from './excelSheetConfig';
+import { sheet1_PLObj, sheet2_BSObj,sheet3_assWCObj } from './excelSheetConfig';
 import { columnsList } from './excelSheetConfig';
 import * as XLSX from 'xlsx';
 import { getCellValue } from './common.methods';
@@ -59,7 +59,7 @@ export async function OtherNonCashItemsMethodNext(i: number, worksheet1: any) {
   return exceptionalItems + extraordinaryItems - otherIncome;
 }
 
-export async function ChangeInNCA(i: number, worksheet2: any) {
+export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
   //formula: =+(SUM(@BS!B64:B69-BS!B68)-SUM(BS!B34:B40))-(SUM(@BS!C64:C69-BS!C68)-SUM(BS!C34:C40))
 
   // Current Column
@@ -84,6 +84,12 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
     `${columnsList[i] + sheet2_BSObj.otherCurrentAssetsRow}`,
   );
 
+  const otherOperatingAssets = await getCellValue(
+    worksheet3,
+    `${columnsList[i] + sheet3_assWCObj.otherOperatingAssetsRow}`,
+  );
+  
+  
   // b variables
   const tradePayables = await getCellValue(
     worksheet2,
@@ -114,12 +120,18 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
     `${columnsList[i] + sheet2_BSObj.interCoRow}`,
   );
 
+  const otherOperatingLiabilities = await getCellValue(
+    worksheet3,
+    `${columnsList[i] + sheet3_assWCObj.otherOperatingLiabilitiesRow}`,
+  );
+
   const sum1 =
     tradeReceivables +
     unbilledRevenues +
     inventories +
     advances +
-    otherCurrentAssets;
+    otherCurrentAssets +
+    otherOperatingAssets;
   const sum2 =
     tradePayables +
     employeePayables +
@@ -127,6 +139,7 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
     lcPayablesRow +
     otherCurrentLiabilities +
     shortTermProvisions +
+    otherOperatingLiabilities +
     interCo;
 
   const currentSum = sum1 - sum2;
@@ -152,6 +165,11 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
   const nextOtherCurrentAssets = await getCellValue(
     worksheet2,
     `${columnsList[i + 1] + sheet2_BSObj.otherCurrentAssetsRow}`,
+  );
+
+  const nextOtherOperatingAssets = await getCellValue(
+    worksheet3,
+    `${columnsList[i + 1] + sheet3_assWCObj.otherOperatingAssetsRow}`,
   );
 
   // b variables
@@ -184,10 +202,15 @@ export async function ChangeInNCA(i: number, worksheet2: any) {
     `${columnsList[i + 1] + sheet2_BSObj.interCoRow}`,
   );
 
-  const nextSum1 = nextTradeReceivables + nextUnbilledRevenues + nextInventories + nextAdvances + nextOtherCurrentAssets
-  const nextSum2 = nextTradePayables + nextEmployeePayables + nextShortTermBorrowings + nextLcPayablesRow + nextOtherCurrentLiabilities + nextShortTermProvisions + nextInterCo
-  const nextSum = nextSum1 - nextSum2
+  const nextOtherOperatingLiabilities = await getCellValue(
+    worksheet3,
+    `${columnsList[i + 1] + sheet3_assWCObj.otherOperatingLiabilitiesRow}`,
+  );
 
+  const nextSum1 = nextTradeReceivables + nextUnbilledRevenues + nextInventories + nextAdvances + nextOtherCurrentAssets + nextOtherOperatingAssets
+  const nextSum2 = nextTradePayables + nextEmployeePayables + nextShortTermBorrowings + nextLcPayablesRow + nextOtherCurrentLiabilities + nextShortTermProvisions + nextInterCo + nextOtherOperatingLiabilities
+  const nextSum = nextSum1 - nextSum2
+    console.log('Change in NCA ', currentSum - nextSum);
   return currentSum - nextSum;
 }
 
@@ -782,9 +805,18 @@ export async function getShareholderFunds(i: number, worksheet2: any) {
     definedBenefitObligationReserve +
     otherComprehensiveIncome + shareWarrants + nonControllingInterest +
     shareApplication;
-
-
-
   return shareHolderFunds;
+}
 
+export async function differenceAssetsLiabilities(i: number, worksheet3: any) {
+  const operatingAssets = await getCellValue(
+    worksheet3,
+    `${columnsList[i] + sheet3_assWCObj.totalOperatingAssetsRow}`,
+  );
+  const operatingLiabilities = await getCellValue(
+    worksheet3,
+    `${columnsList[i] + sheet3_assWCObj.totalOperatingLiabilitiesRow}`,
+  );
+
+  return operatingAssets - operatingLiabilities;
 }
