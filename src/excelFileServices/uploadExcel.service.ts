@@ -13,6 +13,7 @@ import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
+import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 
 @Injectable()
 export class ExcelSheetService {
@@ -77,8 +78,8 @@ export class ExcelSheetService {
                      return from(getYearsList(worksheet1)).pipe(
                       switchMap((years) => {
 
-                       
-                      return from(this.generatePayload(years)).pipe(
+                        const worksheet2 = workbookXLSX.Sheets['BS']
+                      return from(this.generatePayload(years,worksheet2)).pipe(
                         switchMap((data)=>{
                           // console.log(data,"final opayload")
                           return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
@@ -153,8 +154,6 @@ export class ExcelSheetService {
             })
         );
       }
-    
-      
 
       async readFile(filePath: string): Promise<xlsx.WorkBook> {
         return new Promise((resolve, reject) => {
@@ -1261,8 +1260,9 @@ export class ExcelSheetService {
              const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
              const emptyObj={ //push this empty object to have empty td between two td tags
                 fieldName:'',
-                type:'',
-                value:''
+                // type:'',
+                bookValue:'',
+                fairValue:''
               }
              navData.splice(firmValueInd,0,emptyObj);
              navData.splice(netCurrentAssetInd,0,emptyObj);
@@ -1270,12 +1270,14 @@ export class ExcelSheetService {
              navData = navData.map((indNav)=>{
               return {
                 fieldName:indNav.fieldName,
-                type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                value:indNav?.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.value
+                // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
+                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(3) : indNav?.bookValue,
+                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(3) : indNav.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.fairValue
               }
              })
             }
           })
+          console.log(navData,"nav data")
           return navData;
         })
       }  
@@ -1650,15 +1652,20 @@ export class ExcelSheetService {
   return formattedData;
 }
 
-async generatePayload(years){
-    const transformedObject = years.reduce((acc, year, index, array) => {
+async generatePayload(years,worksheet){
+    let transformedObject = years.reduce((acc, year, index, array) => {
       if (index < array.length - 1) {
           const nextYear = array[index + 1];
           acc[`${year}-${nextYear}`] = '';
       }
       return acc;
   }, {});
-
+  let provisionalDate = worksheet['B1'].v
+  transformedObject = {
+    [provisionalDate]: '',
+    ...transformedObject
+};
+  console.log(transformedObject,"transformed object")
   const payload = ASSESSMENT_DATA.map((data,index)=>{
     if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
       const transformedEntry = { Particulars: data.lineEntry?.particulars };
@@ -1674,10 +1681,184 @@ async generatePayload(years){
     }
     
   })
+
+  const calculatedPayload = await this.assessmentCalculations(payload,worksheet);
+// console.log(calculatedPayload,"payload")
   const addEmptyLineForSpace = payload.findIndex(item=>item.Particulars === 'Operating Liabilities');
   if(addEmptyLineForSpace !== -1){
     payload.splice(addEmptyLineForSpace,0,{Particulars: '  '})
   }
+ 
   return payload;
+}
+
+async assessmentCalculations(payload,worksheet){
+  await Promise.all(payload.map(async (data) => {
+    let keysToProcess = Object.keys(data).filter(key => key !== 'Particulars');
+    await Promise.all(ASSESSMENT_DATA.map(async (original) => {
+        if (data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3002) {
+
+            for (const key of keysToProcess) {
+                data[key] = await getCellValue(
+                    worksheet,
+                    `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.tradeReceivablesRow}`
+                );
+            }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3003){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.unbilledRevenuesRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3004){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.inventoriesRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3005){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.advancesRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3006){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermInvestmentsRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3007){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentAssetsRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3008){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherNonCurrentAssetsRow}`
+              );
+              // console.log(data[key], "key");
+          }
+
+        }
+       
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3010){
+
+          for await (const key of keysToProcess) {
+              data[key] = await this.getTotalValue(
+                  worksheet,
+                  3,
+                  10,
+                `${String.fromCharCode(65 + keysToProcess.indexOf(key) + 1)}`
+              );
+              // console.log(data[key], "alphabets");
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3012){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.tradePayablesRow}`
+            );
+        }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3013){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.employeePayablesRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3014){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.lcPayablesRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3015){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentLiabilitiesRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3016){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermProvisionsRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3017){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.longTermProvisionRow}`
+            );
+          }
+        }
+        // if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3019){
+
+        //   for (const key of keysToProcess) {
+        //     data[key] = await this.getTotalValue(
+        //         worksheet,
+        //         14,
+        //         19,
+        //       `${String.fromCharCode(65 + keysToProcess.indexOf(key) + 1)}`
+        //     );
+        //     // console.log(data[key],"values")
+        // }
+        // }
+
+    }));
+}));
+return payload
+}
+
+async getTotalValue(worksheet,startRow,endRow,cellName){
+  let summationVlaue=0;
+  for(let i = startRow;i<=endRow;i++){
+    // const checkIfValue = isNotEmpty()
+    // console.log(worksheet[`${cellName}${i}`],"values",`${cellName}${i}`)
+    // console.log(`${cellName}${i}`)
+    if(worksheet[`${cellName}${i}`]){
+      // console.log(worksheet[`${cellName}${i}`]?.v,"summation vlaues")
+      summationVlaue =summationVlaue +  parseFloat(worksheet[`${cellName}${i}`]?.v) ;
+      // console.log(summationVlaue,"summation value",`${cells.columnCell}${i}`,worksheet.getCell(`${cells.columnCell}${i}`)?.value)
+    }
+  }
+  // console.log(summationVlaue,"summation value")
+  return summationVlaue;
 }
 }
