@@ -249,7 +249,7 @@ export class ReportService {
       })
       hbs.registerHelper('beta',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0]?.beta;
+            return valuationResult.inputData[0]?.beta?.toFixed(2);
         return '';
       })
       hbs.registerHelper('companyRiskPremium',()=>{

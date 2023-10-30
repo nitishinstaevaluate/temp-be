@@ -42,6 +42,8 @@ export const ASSESSMENT_DATA = [
     "lineEntry": {
         particulars : "Operating Assets",
         sysCode:3001,
+        header:true,
+        rowNumber:2
         },		
     "2022-23": null,
     "2023-24": null,
@@ -51,6 +53,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Trade Recievables",
           sysCode:3002,
+          rowNumber:3
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -60,6 +63,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Unbilled Revenues",
           sysCode:3003,
+          rowNumber:4
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -69,6 +73,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Inventories",
           sysCode:3004,
+          rowNumber:5
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -78,6 +83,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Advances",
           sysCode:3005,
+          rowNumber:6
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -87,6 +93,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Short Term Investments",
           sysCode:3006,
+          rowNumber:7
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -95,7 +102,8 @@ export const ASSESSMENT_DATA = [
     {
       "lineEntry": {
           particulars : "Other Current Assets",
-          sysCode:3007
+          sysCode:3007,
+          rowNumber:8
           },		
       "2022-23": '',
       "2023-24": '',
@@ -105,6 +113,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Non Current Assets",
           sysCode:3008,
+          rowNumber:9
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -114,7 +123,9 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Other Operating Assets",
           sysCode:3009,
-          editable:true
+          editable:true,
+          subHeader:true,
+          rowNumber:10
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -124,6 +135,9 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Total",
           sysCode:3010,
+          dependent:[3003,3004,3005,3006,3007,3008,3009,3010],
+          formula:"SUM(currentOne3:currentOne10)",
+          rowNumber:11
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -133,6 +147,8 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Operating Liabilities",
           sysCode:3011,
+          header:true,
+          rowNumber:13
           },		
       "2022-23": null,
       "2023-24": null,
@@ -142,6 +158,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Trade Payables",
           sysCode:3012,
+          rowNumber:14
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -151,6 +168,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Employee Payables",
           sysCode:3013,
+          rowNumber:15
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -160,6 +178,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "LC Payables",
           sysCode:3014,
+          rowNumber:16
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -168,7 +187,8 @@ export const ASSESSMENT_DATA = [
     {
       "lineEntry": {
           particulars : "Other Current Liablities",
-          sysCode:3015
+          sysCode:3015,
+          rowNumber:17
           },		
       "2022-23": '',
       "2023-24": '',
@@ -178,6 +198,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Short Term Provisions",
           sysCode:3016,
+          rowNumber:18
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -187,6 +208,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Long Term Provisions",
           sysCode:3017,
+          rowNumber:19
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -196,7 +218,9 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Other Operating Liabilities",
           sysCode:3018,
-          editable:true
+          editable:true,
+          subHeader:true,
+          rowNumber:20
           },		
       "2022-23": 61.3,
       "2023-24": 103,
@@ -206,9 +230,132 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Total",
           sysCode:3019,
+          dependent:[3014,3015,3016,3017,3018,3019,3020],
+          formula:"SUM(currentOne14:currentOne20)",
+          rowNumber:21
           },		
       "2022-23": 61.3,
       "2023-24": 103,
       "2024-25":40
     }
   ]
+
+  export const ASSESSMENT_SHEET_DATA=[
+    {
+        "Particulars": "Operating Assets",
+        "2022-23": null,
+        "2023-24": null,
+        "2024-25": null
+    },
+    {
+        "Particulars": "Trade Recievables",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Unbilled Revenues",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Inventories",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Advances",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Short Term Investments",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Other Current Assets",
+        "2022-23": "",
+        "2023-24": "",
+        "2024-25": ""
+    },
+    {
+        "Particulars": "Non Current Assets",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Other Operating Assets",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Total",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "  "
+    },
+    {
+        "Particulars": "Operating Liabilities",
+        "2022-23": null,
+        "2023-24": null,
+        "2024-25": null
+    },
+    {
+        "Particulars": "Trade Payables",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Employee Payables",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "LC Payables",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Other Current Liablities",
+        "2022-23": "",
+        "2023-24": "",
+        "2024-25": ""
+    },
+    {
+        "Particulars": "Short Term Provisions",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Long Term Provisions",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Other Operating Liabilities",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    },
+    {
+        "Particulars": "Total",
+        "2022-23": 61.3,
+        "2023-24": 103,
+        "2024-25": 40
+    }
+]
