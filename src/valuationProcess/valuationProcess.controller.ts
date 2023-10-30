@@ -56,6 +56,7 @@ let workbook=null;
 }
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
+    const worksheet3 = inputs.isExcelModified === true ? workbook.Sheets['Assessment of Working Capital'] : 'NA';
     let capitalStruc: any;
 
     // capitalStruc = await CapitalStruc(i,worksheet2);
@@ -112,6 +113,7 @@ let workbook=null;
         inputs,
         worksheet1,
         worksheet2,
+        worksheet3,
       );
       if (valuationResponse.result === null) return valuationResponse.msg;
       
@@ -139,6 +141,7 @@ let workbook=null;
         inputs,
         worksheet1,
         worksheet2,
+        worksheet3,
         );
       // console.log(inputs);
       if (valuationResponse.result === null) return valuationResponse.msg;
@@ -202,22 +205,27 @@ let workbook=null;
 
     const { model, valuationDate, company, userId, excelSheetId } = inputs;
     let workbook = null;
+    // An issue is resulting in old modified sheet id hence passing manually
+    const valuationFileToProcess = inputs.isExcelModified === true ? inputs.modifiedExcelSheetId : excelSheetId;
+    // const valuationFileToProcess = inputs.isExcelModified === true ? `edited-${excelSheetId}` : excelSheetId;
 
     try {
-      workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
+      workbook = XLSX.readFile(`./uploads/${valuationFileToProcess}`);
     } catch (error) {
       this.customLogger.log({
-        message: `excelSheetId: ${excelSheetId} not available`,
+        message: `excelSheetId: ${valuationFileToProcess} not available`,
         userId: inputs.userId,
       });
       return {
         result: null,
-        msg: `excelSheetId: ${excelSheetId} not available`,
+        msg: `excelSheetId: ${valuationFileToProcess} not available`,
       };
     }
 
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
+    const worksheet3 = inputs.isExcelModified === true ? workbook.Sheets['Assessment of Working Capital'] : 'NA';
+    
     console.log('Choosing Model Run:');
     if (inputs.model) {
       const valResult = [];
@@ -228,7 +236,7 @@ let workbook=null;
           switch (modelValue) {
             case MODEL[0]:
               const fcfeResponse = await this.valuationMethodsService
-                .FCFEMethod(inputs, worksheet1, worksheet2)
+                .FCFEMethod(inputs, worksheet1, worksheet2, worksheet3)
                 valResult.push({
                   model: MODEL[0],
                   valuationData: fcfeResponse.result,
@@ -248,7 +256,7 @@ let workbook=null;
               
               case MODEL[1]:
                 const fcffResponse = await this.valuationMethodsService
-                .FCFFMethod(inputs, worksheet1, worksheet2)
+                .FCFFMethod(inputs, worksheet1, worksheet2,worksheet3)
                 valResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.result,
@@ -284,7 +292,7 @@ let workbook=null;
   
             case MODEL[3]:  
             const excessEarningsResponse = await this.valuationMethodsService
-            .Excess_Earnings_method(inputs, worksheet1, worksheet2)
+            .Excess_Earnings_method(inputs, worksheet1, worksheet2,worksheet3)
             valResult.push({
               model: MODEL[3],
               valuationData: excessEarningsResponse.result,

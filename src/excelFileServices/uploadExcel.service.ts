@@ -1,15 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as xlsx from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
+import { isNotEmpty } from 'class-validator';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
+import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 
 @Injectable()
 export class ExcelSheetService {
@@ -20,43 +24,137 @@ export class ExcelSheetService {
     
         return from(this.readFile(filePath)).pipe(
             switchMap((workbook) => {
-                if (!workbook.SheetNames.includes(sheetName)) {
-                  return throwError(new NotFoundException('Sheet not found'));
+                if(sheetName !== 'Assessment of Working Capital'){
+                  if (!workbook.SheetNames.includes(sheetName)) {
+                  return throwError( {
+                    message: `${sheetName} Sheet not found`,
+                    status: false
+                });
+                  }
+                  const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                  sheetData.forEach((row:any) => {
+                     for (let columns in row) {
+                       if (typeof row[columns] === 'string') {
+                         row[columns] = row[columns].replace(/\r\n/g, '').toLowerCase();;
+                     }
+                   
+                       if (typeof row[columns] === 'number') {
+                         row[columns] = parseFloat(row[columns].toFixed(3));
+                       }
+                       if (typeof columns === 'string') {
+                         const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+                         // const cleanedColumn = columns.replace(/^\s+/g, '');
+                         // console.log(cleanedColumn)
+                         if (columns !== cleanedColumn) {
+                           row[cleanedColumn] = row[columns];
+                           //   console.log(row[cleanedColumn])
+                           delete row[columns];
+                         }
+                       }
+                     }
+                   });
+                   return from(this.transformData(sheetData)).pipe(
+                    switchMap((excelData)=>{
+
+                     return of(excelData)
+                   }),
+                   catchError((error)=>{
+                    return throwError(error)
+                   })
+                   )
                 }
-        
-                 const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                sheetData.forEach((row:any) => {
-                    for (let columns in row) {
-                      if (typeof row[columns] === 'string') {
-                        row[columns] = row[columns].replace(/\r\n/g, '').toLowerCase();;
-                    }
-                  
-                      if (typeof row[columns] === 'number') {
-                        row[columns] = parseFloat(row[columns].toFixed(3));
-                      }
-                      if (typeof columns === 'string') {
-                        const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-                        // const cleanedColumn = columns.replace(/^\s+/g, '');
-                        // console.log(cleanedColumn)
-                        if (columns !== cleanedColumn) {
-                          row[cleanedColumn] = row[columns];
-                          //   console.log(row[cleanedColumn])
-                          delete row[columns];
-                        }
-                      }
-                    }
-                  });
-                  return from(this.transformData(sheetData)).pipe(switchMap((excelData)=>{
+                else{
+
+                  // add assessment calculations
+                  // const workbook = new ExcelJS.Workbook();
+                  // await workbook.xlsx.readFile(filepath);
+                  // let alreadyExistAssessmentSheet = workbook.getWorksheet('Assessment of Working Capital');
+                  // const alreadyExistAssessmentSheet = workbook.Sheets[sheetName]
+                  // console.log(alreadyExistAssessmentSheet,sheetName,"sheet already exist")
+                  if(!workbook.SheetNames.includes(sheetName)){
+                     const workbookXLSX = xlsx.readFile(filePath);
+                     const worksheet1 = workbookXLSX.Sheets['P&L'];
+
+                     return from(getYearsList(worksheet1)).pipe(
+                      switchMap((years) => {
+
+                        const worksheet2 = workbookXLSX.Sheets['BS']
+                      return from(this.generatePayload(years,worksheet2)).pipe(
+                        switchMap((data)=>{
+                          // console.log(data,"final opayload")
+                          return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
+                            switchMap((response) => {
+                              if (response) {
+                                return from(this.formatExcelResult(response)).pipe(
+                                  switchMap((excelData)=>{
+                                    return of({
+                                      data:excelData,
+                                      msg:"Assessment Sheet Fetched",
+                                      status:true
+                                    });
+                                  }),catchError((error)=>{
+                                    return throwError(error)
+                                  })
+                                )
+
+                              } else {
+                                return throwError('Error: Response not found');
+                              }
+                            }),
+                            catchError((error) => {
+                              return throwError(error);
+                            })
+                          );
+                        }),catchError((error)=>{
+                          return throwError(error)
+                        })
+                      )
                     
-                    return of(excelData)
-                  }))
+                      }),
+                      catchError((error) => {
+                        return throwError(error);
+                      })
+                    );
+                  }
+                  else{
+                    return from(this.appendSheetInExcel(filePath,[])).pipe(
+                      switchMap((response)=>{
+                        if(response){
+                          if (response) {
+                            return from(this.formatExcelResult(response)).pipe(
+                              switchMap((excelData)=>{
+                                return of({
+                                  data:excelData,
+                                  msg:"Assessment Sheet Fetched",
+                                  status:true
+                                });
+                              }),catchError((error)=>{
+                                return throwError(error)
+                              })
+                            )
+
+                          } else {
+                            return throwError('Error: Response not found');
+                          }
+                        }
+                      }),catchError((error)=>{
+                          return throwError(error)
+                      })
+                    )
+                  }
+                }
               }),
-            catchError(() => {
-                throw new NotFoundException('File not found');
+            catchError((error) => {
+              console.log(error,"error")
+                return of({
+                  msg:'Something went wrong',
+                  error:error.message,
+                  status:false
+                });
             })
         );
       }
-    
+
       async readFile(filePath: string): Promise<xlsx.WorkBook> {
         return new Promise((resolve, reject) => {
           if (!fs.existsSync(filePath)) {
@@ -1162,8 +1260,9 @@ export class ExcelSheetService {
              const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
              const emptyObj={ //push this empty object to have empty td between two td tags
                 fieldName:'',
-                type:'',
-                value:''
+                // type:'',
+                bookValue:'',
+                fairValue:''
               }
              navData.splice(firmValueInd,0,emptyObj);
              navData.splice(netCurrentAssetInd,0,emptyObj);
@@ -1171,12 +1270,14 @@ export class ExcelSheetService {
              navData = navData.map((indNav)=>{
               return {
                 fieldName:indNav.fieldName,
-                type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                value:indNav?.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.value
+                // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
+                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(3) : indNav?.bookValue,
+                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(3) : indNav.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.fairValue
               }
              })
             }
           })
+          console.log(navData,"nav data")
           return navData;
         })
       }  
@@ -1272,39 +1373,70 @@ export class ExcelSheetService {
       else{
         originalWorkbook = xlsx.readFile(`./uploads/${data.excelSheetId}`)
       }
-      let jsonData: any[] = [];
-      const worksheet = originalWorkbook.Sheets[data.excelSheet];
-      jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
-
-      const transformedData = await this.transformData(jsonData);
-      transformedData.map((workBookData)=>{
-        data.editedValues.map((dataToModify)=>{
-        if(workBookData[0]?.toLowerCase()?.trim() === dataToModify.subHeader.toLowerCase().trim()){
-          const colIndex = transformedData[1].findIndex(column => column.toLowerCase().trim() === dataToModify.columnName.toLowerCase().trim());
-          workBookData[colIndex] = +dataToModify.newValue;
-        }
+      if(data.excelSheet !== 'Assessment of Working Capital'){
+        let jsonData: any[] = [];
+        const worksheet = originalWorkbook.Sheets[data.excelSheet];
+        jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
+  
+        const transformedData = await this.transformData(jsonData);
+        transformedData.map((workBookData)=>{
+          data.editedValues.map((dataToModify)=>{
+          if(workBookData[0]?.toLowerCase()?.trim() === dataToModify.subHeader.toLowerCase().trim()){
+            const colIndex = transformedData[1].findIndex(column => column.toLowerCase().trim() === dataToModify.columnName.toLowerCase().trim());
+            workBookData[colIndex] = +dataToModify.newValue;
+          }
+          })
         })
-      })
-      transformedData.shift();
-
-      const modifiedWorksheet = xlsx.utils.aoa_to_sheet(transformedData);
-      const newWorkbook = xlsx.utils.book_new();
-      xlsx.utils.book_append_sheet(newWorkbook, modifiedWorksheet, `${data.excelSheet}`);
-
-      for (const sheetName in originalWorkbook.Sheets) {
-        if (sheetName !== `${data.excelSheet}`) {
-          xlsx.utils.book_append_sheet(newWorkbook, originalWorkbook.Sheets[sheetName], sheetName);
+        transformedData.shift();
+  
+        const modifiedWorksheet = xlsx.utils.aoa_to_sheet(transformedData);
+        const newWorkbook = xlsx.utils.book_new();
+        xlsx.utils.book_append_sheet(newWorkbook, modifiedWorksheet, `${data.excelSheet}`);
+  
+        for (const sheetName in originalWorkbook.Sheets) {
+          if (sheetName !== `${data.excelSheet}`) {
+            xlsx.utils.book_append_sheet(newWorkbook, originalWorkbook.Sheets[sheetName], sheetName);
+          }
         }
+  
+        await xlsx.writeFile(newWorkbook, `./uploads/edited-${data?.excelSheetId}`);
+  
+        return of({
+          originalFileName: `${data?.excelSheetId}`,
+          modifiedFileName: `edited-${data?.excelSheetId}`,
+          msg: 'Excel sheet updated successfully',
+          status: true,
+        });
       }
+      else{
+        const uploadDir = path.join(__dirname, '../../uploads');
+        const filePath = path.join(uploadDir, data.excelSheetId);
+        // console.log(data,"data from modify excel")
+        const updatedExcel = await this.appendSheetInExcel(filePath,data);
 
-      await xlsx.writeFile(newWorkbook, `./uploads/edited-${data?.excelSheetId}`);
-
-      return of({
-        originalFileName: `${data?.excelSheetId}`,
-        modifiedFileName: `edited-${data?.excelSheetId}`,
-        msg: 'Excel sheet updated successfully',
-        status: true,
-      });
+        if(updatedExcel.status){
+          const formatExcel = await this.formatExcelResult(updatedExcel);
+          return (
+            {
+              data:formatExcel,
+              status:true,
+              msg:'Excel Updated Successfully',
+              originalFileName:updatedExcel.originalFileName,
+              modifiedFileName:updatedExcel.modifiedFileName
+            }
+          );
+        }
+        else{
+          return of(
+            {
+              msg:'Excel update failed',
+              updatedExcel
+            }
+          )
+        }
+        
+      }
+     
     } catch (error) {
       return of({
         msg: "Something went wrong",
@@ -1313,4 +1445,420 @@ export class ExcelSheetService {
       });
     }
   }
+
+    async formatExcelResult(excelData){
+      let arrayExcel = [];
+      let index = 0;
+      const emptyLineIndex = excelData.data.findIndex(item=>item?.Particulars ==="  ");
+    if(emptyLineIndex !== -1){
+      excelData.data.splice(emptyLineIndex,1)
+    }
+      for await(let item of excelData.data){
+        const { Particulars, ...rest } = item;
+        arrayExcel.push({lineEntry:ASSESSMENT_DATA[index]?.lineEntry,...rest});
+        index++;
+      }
+     return arrayExcel;  
+    }
+
+  async appendSheetInExcel(filepath,data){
+    try{
+      let sheet;
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filepath);
+      let alreadyExistAssessmentSheet = workbook.getWorksheet('Assessment of Working Capital');
+      if(!alreadyExistAssessmentSheet){
+        sheet = workbook.addWorksheet('Assessment of Working Capital');
+
+        const headers = Object.keys(data[0]);
+        sheet.addRow(headers);
+
+        const headerRow = sheet.getRow(1);
+
+        headerRow.eachCell((cell) => {
+          cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'D3D3D3' },
+          };
+          cell.font = {
+              size: 14,
+              bold: true,
+              color: { argb: '000000' },
+          };
+          cell.alignment = {
+              vertical: 'middle',
+              horizontal: 'center',
+              wrapText: true,
+          };
+        });
+
+        sheet.autoFilter = {
+            from: { row: 1, column: 1 },
+            to: { row: 1, column: headers.length },
+        };
+
+        data.forEach((row, index) => {
+          const dataRow = sheet.addRow(Object.values(row));
+
+          dataRow.eachCell((cell, cellNumber) => {
+              cell.font = {
+                  size: 12,
+                  color: { argb: '333333' },
+              };
+              cell.alignment = {
+                  vertical: 'middle',
+                  horizontal: 'center',
+                  wrapText: true,
+              };
+
+              if (cellNumber === 1 && (index === 0 || index === 11)) {
+                  cell.fill = {
+                      type: 'pattern',
+                      pattern: 'solid',
+                      fgColor: { argb: 'ADD8E6' },
+                  };
+                  cell.font = {
+                      size: 14,
+                      color: { argb: '000080' },
+                      bold: true,
+                  };
+              }
+          });
+        });
+
+        const a2 = sheet.getRow(2);
+        const a13 = sheet.getRow(13);
+
+        a2.protection = { locked: true };
+        a13.protection = { locked: true };
+        sheet.getRow(1).protection = { locked: true };
+
+        sheet.columns.forEach((column) => {
+          let maxLength = 0;
+          column.eachCell({ includeEmpty: true }, (cell) => {
+              const length = cell.value ? cell.value.toString().length : 0;
+              maxLength = Math.max(length, maxLength);
+          });
+
+          column.width = maxLength < 20 ? 20 : maxLength + 2; // Minimum width set to 20 for readability
+        });
+
+        await workbook.xlsx.writeFile(filepath);
+        const evaluatedValues = await this.readAndEvaluateExcel(filepath)
+      
+        return {
+          msg:'Excel Appended Successfully',
+          status:true,
+          data:evaluatedValues
+        };
+      }
+      else {
+        // console.log(data,"new data that needs to be appended/updated")
+        if(data.length === 0){
+          const evaluatedValues = await this.readAndEvaluateExcel(filepath);
+          // console.log(formattedData,"if length === 0")
+          return {
+            msg:'Excel Fetched Successfully',
+            status:true,
+            data:evaluatedValues
+          }
+        }
+        else{
+          let  editedFilePath='';
+          const uploadDir = path.join(__dirname, '../../uploads');
+          if(data?.excelSheetId.includes('edited')){
+             editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
+          }
+          else{
+            editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
+          }
+          const workbook= new ExcelJS.Workbook();
+          console.log(filepath,"filepath")
+          await workbook.xlsx.readFile(filepath);
+          let worksheet:any = workbook.getWorksheet('Assessment of Working Capital');
+
+          // manage dynamic formulas
+          let startingCalcuationIndex,maxCalculationIndex, summationVlaue=0;
+          data.cellData.map((cells:any)=>{
+            worksheet.getCell(`${cells.cellAddress}`).value = data.newValue;
+            if(cells.sysCode === 3009){
+              startingCalcuationIndex = 3;
+              maxCalculationIndex = 10;
+            }
+            else{
+              startingCalcuationIndex = 14;
+              maxCalculationIndex = 20;
+            }
+            for(let i = startingCalcuationIndex;i<=maxCalculationIndex;i++){
+              const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value)
+               summationVlaue =summationVlaue + (checkIfValue ?  parseFloat(worksheet.getCell(`${cells.columnCell}${i}`).value) : 0);
+              //  console.log(summationVlaue,"summation value",`${cells.columnCell}${i}`,worksheet.getCell(`${cells.columnCell}${i}`)?.value)
+            }
+            ASSESSMENT_DATA.map((mainData: any) => {
+            const dependentArray = mainData.lineEntry?.dependent;
+            const sysCode = mainData.lineEntry?.sysCode;
+            if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) {
+              // let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
+              // console.log(summationVlaue,"formulae")
+              
+                // const cell:any = worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value;
+                worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue
+             }
+           });
+         })
+        
+          await workbook.xlsx.writeFile(editedFilePath);
+
+          const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
+          return {
+            msg:'Excel Updated Successfully',
+            status:true,
+            data:evaluatedValues,
+            originalFileName: `${data?.excelSheetId}`,
+            modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
+          }
+        }
+      }
+    }
+    catch(error){
+      throw  error
+    }
+  }
+
+
+  async  readAndEvaluateExcel(filepath): Promise<any[]> {
+ 
+    let jsonData = xlsx.utils.sheet_to_json((await this.readFile(filepath)).Sheets['Assessment of Working Capital'], { header: 1 });
+          
+    const head:any = jsonData[0];
+    const formattedData = [];
+
+    for (let i = 1; i < jsonData.length; i++) {
+      const row = jsonData[i];
+      const obj = {};
+
+      for (let j = 0; j < head.length; j++) {
+          obj[head[j]] = row[j] || row[j] === '' ? row[j] : null;
+      }
+
+      formattedData.push(obj);
+    }
+    const emptyLineIndex = formattedData.findIndex(item=>item.Particulars ==="  ");
+    if(emptyLineIndex !== -1){
+      formattedData.splice(emptyLineIndex,1)
+    }
+  
+  return formattedData;
+}
+
+async generatePayload(years,worksheet){
+    let transformedObject = years.reduce((acc, year, index, array) => {
+      if (index < array.length - 1) {
+          const nextYear = array[index + 1];
+          acc[`${year}-${nextYear}`] = '';
+      }
+      return acc;
+  }, {});
+  let provisionalDate = worksheet['B1'].v
+  transformedObject = {
+    [provisionalDate]: '',
+    ...transformedObject
+};
+  console.log(transformedObject,"transformed object")
+  const payload = ASSESSMENT_DATA.map((data,index)=>{
+    if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
+      const transformedEntry = { Particulars: data.lineEntry?.particulars };
+      for (const key in transformedObject) {
+          transformedEntry[key] = null;
+      }
+      return transformedEntry;
+    }
+
+    return {
+    Particulars:data.lineEntry?.particulars,
+    ...transformedObject
+    }
+    
+  })
+
+  const calculatedPayload = await this.assessmentCalculations(payload,worksheet);
+// console.log(calculatedPayload,"payload")
+  const addEmptyLineForSpace = payload.findIndex(item=>item.Particulars === 'Operating Liabilities');
+  if(addEmptyLineForSpace !== -1){
+    payload.splice(addEmptyLineForSpace,0,{Particulars: '  '})
+  }
+ 
+  return payload;
+}
+
+async assessmentCalculations(payload,worksheet){
+  await Promise.all(payload.map(async (data) => {
+    let keysToProcess = Object.keys(data).filter(key => key !== 'Particulars');
+    await Promise.all(ASSESSMENT_DATA.map(async (original) => {
+        if (data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3002) {
+
+            for (const key of keysToProcess) {
+                data[key] = await getCellValue(
+                    worksheet,
+                    `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.tradeReceivablesRow}`
+                );
+            }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3003){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.unbilledRevenuesRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3004){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.inventoriesRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3005){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.advancesRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3006){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermInvestmentsRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3007){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentAssetsRow}`
+              );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3008){
+
+          for (const key of keysToProcess) {
+              data[key] = await getCellValue(
+                  worksheet,
+                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherNonCurrentAssetsRow}`
+              );
+              // console.log(data[key], "key");
+          }
+
+        }
+       
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3010){
+
+          for await (const key of keysToProcess) {
+              data[key] = await this.getTotalValue(
+                  worksheet,
+                  3,
+                  10,
+                `${String.fromCharCode(65 + keysToProcess.indexOf(key) + 1)}`
+              );
+              // console.log(data[key], "alphabets");
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3012){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.tradePayablesRow}`
+            );
+        }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3013){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.employeePayablesRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3014){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.lcPayablesRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3015){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentLiabilitiesRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3016){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermProvisionsRow}`
+            );
+          }
+        }
+        if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3017){
+
+          for (const key of keysToProcess) {
+            data[key] = await getCellValue(
+                worksheet,
+                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.longTermProvisionRow}`
+            );
+          }
+        }
+        // if(data.Particulars === original.lineEntry.particulars && original.lineEntry.sysCode === 3019){
+
+        //   for (const key of keysToProcess) {
+        //     data[key] = await this.getTotalValue(
+        //         worksheet,
+        //         14,
+        //         19,
+        //       `${String.fromCharCode(65 + keysToProcess.indexOf(key) + 1)}`
+        //     );
+        //     // console.log(data[key],"values")
+        // }
+        // }
+
+    }));
+}));
+return payload
+}
+
+async getTotalValue(worksheet,startRow,endRow,cellName){
+  let summationVlaue=0;
+  for(let i = startRow;i<=endRow;i++){
+    // const checkIfValue = isNotEmpty()
+    // console.log(worksheet[`${cellName}${i}`],"values",`${cellName}${i}`)
+    // console.log(`${cellName}${i}`)
+    if(worksheet[`${cellName}${i}`]){
+      // console.log(worksheet[`${cellName}${i}`]?.v,"summation vlaues")
+      summationVlaue =summationVlaue +  parseFloat(worksheet[`${cellName}${i}`]?.v) ;
+      // console.log(summationVlaue,"summation value",`${cells.columnCell}${i}`,worksheet.getCell(`${cells.columnCell}${i}`)?.value)
+    }
+  }
+  // console.log(summationVlaue,"summation value")
+  return summationVlaue;
+}
 }

@@ -23,7 +23,8 @@ import {
   interestAdjustedTaxes,
   fcfeTerminalValue,
   fcffTerminalValue,
-  interestAdjustedTaxesWithStubPeriod
+  interestAdjustedTaxesWithStubPeriod,
+  // differenceAssetsLiabilities
 } from '../excelFileServices/fcfeAndFCFF.method';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
@@ -48,6 +49,7 @@ export class FCFEAndFCFFService {
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    worksheet3: any,
   ): Promise<any> {
     try{
     this.customLogger.log({
@@ -165,6 +167,8 @@ export class FCFEAndFCFFService {
         // let fcff = 0;
         let fcfeValueAtTerminalRate = 0;
         let fcffValueAtTerminalRate = 0;
+        let netOperatingAssets;
+        let netOperatingAssetsInit = 0;
         // let equityValue =0;
         let presentFCFF = 0;
         
@@ -192,14 +196,19 @@ export class FCFEAndFCFFService {
         //Get Depn and Amortisation value
         let depAndAmortisation = await DepAndAmortisation(i+1, worksheet1);
         let depAndAmortisationOld = await DepAndAmortisation(i, worksheet1);
+
+        // netOperatingAssets = await differenceAssetsLiabilities(i,worksheet3);
+        // const netOperatingDifference = i === 0 ? 0 : netOperatingAssets-netOperatingAssetsInit;
+        // netOperatingAssetsInit = netOperatingAssets;   // Storing past value to get difference
         
+
         depAndAmortisation = i === 0 && this.stubAdjRequired == true  ? depAndAmortisation - depAndAmortisationOld:depAndAmortisation;
 
         //Get Oher Non Cash items Value
         let otherNonCashItems = await OtherNonCashItemsMethod(i+1, worksheet1);
         let otherNonCashItemsOld = await OtherNonCashItemsMethodNext(i, worksheet1);
         otherNonCashItems = i === 0 && this.stubAdjRequired == true ? otherNonCashItems - otherNonCashItemsOld : otherNonCashItems;
-        const changeInNCAValue = await ChangeInNCA(i, worksheet2);
+        const changeInNCAValue = await ChangeInNCA(i, worksheet2,worksheet3);
         changeInNCA = changeInNCAValue;
 
         const deferredTaxAssetsValue = await DeferredTaxAssets(i, worksheet2);

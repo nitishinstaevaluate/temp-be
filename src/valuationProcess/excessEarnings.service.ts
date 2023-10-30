@@ -5,6 +5,7 @@ import {
   getShareholderFunds,
   GetPAT,
   CapitalStruc,
+  // differenceAssetsLiabilities
 } from 'src/excelFileServices/fcfeAndFCFF.method';
 import {
   getYearsList,
@@ -13,7 +14,7 @@ import {
   getDiscountingPeriod,
   calculateDaysFromDate,
   parseDate,
-  getFormattedProvisionalDate
+  getFormattedProvisionalDate,
 } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj, columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -31,6 +32,7 @@ export class ExcessEarningsService {
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    worksheet3: any,
     // companiesInfo: any,
   ): Promise<any> {
  try{
