@@ -7,11 +7,12 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, ASSESSMENT_SHEET_DATA, MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
 
 @Injectable()
 export class ExcelSheetService {
@@ -70,27 +71,70 @@ export class ExcelSheetService {
                   // const alreadyExistAssessmentSheet = workbook.Sheets[sheetName]
                   // console.log(alreadyExistAssessmentSheet,sheetName,"sheet already exist")
                   if(!workbook.SheetNames.includes(sheetName)){
-                    return from(this.appendSheetInExcel(filePath,ASSESSMENT_SHEET_DATA)).pipe(
-                      switchMap((response)=>{
-                        if(response){
-                          return of({...response,data:ASSESSMENT_DATA});
-                        
+                     const workbookXLSX = xlsx.readFile(filePath);
+                     const worksheet1 = workbookXLSX.Sheets['P&L'];
 
-                        }
-                      }),catchError((error)=>{
+                     return from(getYearsList(worksheet1)).pipe(
+                      switchMap((years) => {
+
+                       
+                      return from(this.generatePayload(years)).pipe(
+                        switchMap((data)=>{
+                          // console.log(data,"final opayload")
+                          return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
+                            switchMap((response) => {
+                              if (response) {
+                                return from(this.formatExcelResult(response)).pipe(
+                                  switchMap((excelData)=>{
+                                    return of({
+                                      data:excelData,
+                                      msg:"Assessment Sheet Fetched",
+                                      status:true
+                                    });
+                                  }),catchError((error)=>{
+                                    return throwError(error)
+                                  })
+                                )
+
+                              } else {
+                                return throwError('Error: Response not found');
+                              }
+                            }),
+                            catchError((error) => {
+                              return throwError(error);
+                            })
+                          );
+                        }),catchError((error)=>{
                           return throwError(error)
+                        })
+                      )
+                    
+                      }),
+                      catchError((error) => {
+                        return throwError(error);
                       })
-                    )
+                    );
                   }
                   else{
                     return from(this.appendSheetInExcel(filePath,[])).pipe(
                       switchMap((response)=>{
                         if(response){
-                          // console.log(response.assessmentData,"assessment data")
-                          return of({...response,data:ASSESSMENT_DATA});
-                        
-                          // console.log(output,"new output")
-                          // return output;
+                          if (response) {
+                            return from(this.formatExcelResult(response)).pipe(
+                              switchMap((excelData)=>{
+                                return of({
+                                  data:excelData,
+                                  msg:"Assessment Sheet Fetched",
+                                  status:true
+                                });
+                              }),catchError((error)=>{
+                                return throwError(error)
+                              })
+                            )
+
+                          } else {
+                            return throwError('Error: Response not found');
+                          }
                         }
                       }),catchError((error)=>{
                           return throwError(error)
@@ -110,6 +154,8 @@ export class ExcelSheetService {
         );
       }
     
+      
+
       async readFile(filePath: string): Promise<xlsx.WorkBook> {
         return new Promise((resolve, reject) => {
           if (!fs.existsSync(filePath)) {
@@ -1365,18 +1411,12 @@ export class ExcelSheetService {
         const filePath = path.join(uploadDir, data.excelSheetId);
         // console.log(data,"data from modify excel")
         const updatedExcel = await this.appendSheetInExcel(filePath,data);
-        let  arrayExcel= [];
-        let index = 0;
+
         if(updatedExcel.status){
-          for await(let item of updatedExcel.assessmentData){
-            const { Particulars, ...rest } = item;
-            arrayExcel.push({lineEntry:ASSESSMENT_DATA[index]?.lineEntry,...rest});
-            index++;
-          }
-  
-          return of(
+          const formatExcel = await this.formatExcelResult(updatedExcel);
+          return (
             {
-              data:arrayExcel,
+              data:formatExcel,
               status:true,
               msg:'Excel Updated Successfully',
               originalFileName:updatedExcel.originalFileName,
@@ -1403,6 +1443,21 @@ export class ExcelSheetService {
       });
     }
   }
+
+    async formatExcelResult(excelData){
+      let arrayExcel = [];
+      let index = 0;
+      const emptyLineIndex = excelData.data.findIndex(item=>item?.Particulars ==="  ");
+    if(emptyLineIndex !== -1){
+      excelData.data.splice(emptyLineIndex,1)
+    }
+      for await(let item of excelData.data){
+        const { Particulars, ...rest } = item;
+        arrayExcel.push({lineEntry:ASSESSMENT_DATA[index]?.lineEntry,...rest});
+        index++;
+      }
+     return arrayExcel;  
+    }
 
   async appendSheetInExcel(filepath,data){
     try{
@@ -1488,10 +1543,12 @@ export class ExcelSheetService {
         });
 
         await workbook.xlsx.writeFile(filepath);
+        const evaluatedValues = await this.readAndEvaluateExcel(filepath)
       
         return {
           msg:'Excel Appended Successfully',
-          status:true
+          status:true,
+          data:evaluatedValues
         };
       }
       else {
@@ -1500,9 +1557,9 @@ export class ExcelSheetService {
           const evaluatedValues = await this.readAndEvaluateExcel(filepath);
           // console.log(formattedData,"if length === 0")
           return {
-            msg:'Excel Updated Successfully',
+            msg:'Excel Fetched Successfully',
             status:true,
-            assessmentData:evaluatedValues
+            data:evaluatedValues
           }
         }
         else{
@@ -1555,7 +1612,7 @@ export class ExcelSheetService {
           return {
             msg:'Excel Updated Successfully',
             status:true,
-            assessmentData:evaluatedValues,
+            data:evaluatedValues,
             originalFileName: `${data?.excelSheetId}`,
             modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
           }
@@ -1593,4 +1650,34 @@ export class ExcelSheetService {
   return formattedData;
 }
 
+async generatePayload(years){
+    const transformedObject = years.reduce((acc, year, index, array) => {
+      if (index < array.length - 1) {
+          const nextYear = array[index + 1];
+          acc[`${year}-${nextYear}`] = '';
+      }
+      return acc;
+  }, {});
+
+  const payload = ASSESSMENT_DATA.map((data,index)=>{
+    if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
+      const transformedEntry = { Particulars: data.lineEntry?.particulars };
+      for (const key in transformedObject) {
+          transformedEntry[key] = null;
+      }
+      return transformedEntry;
+    }
+
+    return {
+    Particulars:data.lineEntry?.particulars,
+    ...transformedObject
+    }
+    
+  })
+  const addEmptyLineForSpace = payload.findIndex(item=>item.Particulars === 'Operating Liabilities');
+  if(addEmptyLineForSpace !== -1){
+    payload.splice(addEmptyLineForSpace,0,{Particulars: '  '})
+  }
+  return payload;
+}
 }
