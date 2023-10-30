@@ -86,3 +86,10 @@ export const sheet2_BSObj={
     otherCurrentAssetsRow:"69"    
 
 }
+
+export const sheet3_assWCObj={
+    otherOperatingAssetsRow : "10",
+    totalOperatingAssetsRow : "11",
+    otherOperatingLiabilitiesRow : "20",
+    totalOperatingLiabilitiesRow : "21"
+}

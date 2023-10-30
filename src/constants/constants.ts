@@ -48,7 +48,7 @@ export const ASSESSMENT_DATA = [
     },
     {
       "lineEntry": {
-          particulars : "Trade Recievables",
+          particulars : "Trade Receivables",
           sysCode:3002,
           rowNumber:3
           }
