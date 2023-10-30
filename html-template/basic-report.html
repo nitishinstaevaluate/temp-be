@@ -1618,11 +1618,18 @@
                                                 </tr>
                                             </table>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;"><span class="p">In
-                                                    the present case, the weighted average cost of capital has been computed as
-                                                </span><span class="s9" style="">{{wacc}}%</span><span
+                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;">
+                                                {{#if (checkIfFcff)}}
+                                                <span class="p">
+                                                    In the present case, the weighted average cost of capital has been computed as
+                                                </span>
+                                                    <span class="s9" style="">
+                                                        {{wacc}}%
+                                                    </span>
+                                                <span
                                                     class="s10"> </span><span class="p">as presented on the following
                                                     page.</span></p>
+                                                    {{/if}}
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                             <h1 style="text-align: center;">Computation of
                                                 Cost of Equity via Capital Asset Pricing Model</h1>
@@ -1653,7 +1660,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{riskFreeRate}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;">{{riskFreeRate}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1665,7 +1672,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{expMarketReturn}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;">{{expMarketReturn}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1677,7 +1684,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{beta}}</p>
+                                                        <p style="text-align: right;padding-right: 5pt;">{{beta}}</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1689,7 +1696,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{costOfEquity}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;">{{costOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1701,7 +1708,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{companyRiskPremium}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;">{{companyRiskPremium}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1713,7 +1720,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-indent: 0pt;text-align: left;padding-left: 5pt;">{{adjustedCostOfEquity}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;">{{adjustedCostOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -2094,13 +2101,13 @@
                                     {{#ifZero fcff}}
                                     {{#if (isNumber fcff)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;">
                                             {{fcff}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;">
                                             {{fcff}}
                                         </p>
                                     </td>
@@ -2151,13 +2158,13 @@
                                     {{#ifZero fcffPresentFCFF}}
                                     {{#if (isNumber fcffPresentFCFF)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;">
                                             {{fcffPresentFCFF}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;">
                                             {{fcffPresentFCFF}}
                                         </p>
                                     </td>
@@ -2355,13 +2362,13 @@
                                     {{#ifZero fcff}}
                                     {{#if (isNumber fcff)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;">
                                             {{fcff}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;">
                                             {{fcff}}
                                         </p>
                                     </td>
@@ -2412,13 +2419,13 @@
                                     {{#ifZero fcfePresentFCFF}}
                                     {{#if (isNumber fcfePresentFCFF)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;">
                                             {{fcfePresentFCFF}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: 500;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;">
                                             {{fcfePresentFCFF}}
                                         </p>
                                     </td>

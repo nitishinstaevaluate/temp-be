@@ -15,7 +15,7 @@ import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { Observable, catchError, from } from 'rxjs';
+import { Observable, catchError, from, throwError } from 'rxjs';
 import { ExcelSheetService } from './uploadExcel.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -77,7 +77,7 @@ export class UploadController {
   ): Observable<any> {
     return from(this.excelSheetService.getSheetData(fileName, sheetName)).pipe(
       catchError((error) => {
-        throw new NotFoundException(error.message);
+        return throwError(error);
       })
     );
   }
@@ -96,5 +96,5 @@ export class UploadController {
   @Post('modifyExcel')
   async modifyExcel(@Body() excelData){
     return await this.excelSheetService.modifyExcelSheet(excelData);
-  } 
+  }
 }
