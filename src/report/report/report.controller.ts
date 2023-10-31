@@ -15,13 +15,14 @@ export class ReportController {
     constructor(private reportService:ReportService){}
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('getReport/:reportId')
+  @Get('getReport/:approach/:reportId')
   async getReport(
     @Param('reportId') reportId : string,
+    @Param('approach') approach : string,
     @Res() res
   ) {
     try {
-      const result = await this.reportService.getReport(reportId, res);
+      const result = await this.reportService.getReport(reportId, res,approach);
       if (result.status) {
          return result;
       } else {
