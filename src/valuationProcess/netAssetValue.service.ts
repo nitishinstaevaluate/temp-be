@@ -393,7 +393,7 @@ export class NetAssetValueService {
         value : noOfShares,
       },
       valuePerShare: {
-        fieldName : 'Value per share (INR)',
+        fieldName : `Value per share (${inputs.currencyUnit})`,
         bookValue : valuePerShareAtBook, 
         fairValue : valuePerShare,
       }

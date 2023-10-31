@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { CAPITAL_STRUCTURE_TYPE, MODEL, NATURE_OF_INSTRUMENT } from 'src/constants/constants';
+import { CAPITAL_STRUCTURE_TYPE, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
@@ -20,7 +20,7 @@ export class ReportService {
     private fcfeService:FCFEAndFCFFService,
     private calculationService:CalculationService){}
 
-    async getReport(id,res){
+    async getReport(id,res,approach){
       try {
           const transposedData = [];
           let  getCapitalStructure;
@@ -40,7 +40,7 @@ export class ReportService {
 
         let htmlFilePath, pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-          htmlFilePath = path.join(process.cwd(), 'html-template', 'basic-report.html');
+          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
   
           for await (let data of valuationResult.modelResults) {
@@ -1026,6 +1026,65 @@ export class ReportService {
           
         })
 
+        // Nav helpers
+        hbs.registerHelper('netAssetValue',()=>{
+          let navData = [];
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.model === MODEL[5]){
+              navData = Object.values(result.valuationData);
+             const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
+             const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
+             const emptyObj={ //push this empty object to have empty td between two td tags
+                fieldName:'',
+                // type:'',
+                bookValue:'',
+                fairValue:''
+              }
+             navData.splice(firmValueInd,0,emptyObj);
+             navData.splice(netCurrentAssetInd,0,emptyObj);
+
+             navData = navData.map((indNav)=>{
+              return {
+                fieldName:indNav.fieldName,
+                // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
+                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(3) : indNav?.bookValue,
+                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(3) : indNav.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.fairValue
+              }
+             })
+            }
+          })
+          // console.log(navData,"nav data")
+          return navData;
+        })
+
+        hbs.registerHelper('checkHead',(txt,val)=>{
+          if(typeof txt === 'number' && val === 'srNo'){
+            return true;
+          }
+          if(txt === '' && val === 'particular'){
+            return true;
+          }
+          if(txt.includes('Value per share') && val === 'onlyValuePerShare'){
+            return true
+          }
+          return false
+        })
+        
+        hbs.registerHelper('checkSubHead',(txt,val)=>{
+          if(typeof txt === 'number' && val === 'srNo'){
+            return true;
+          }
+          if(txt === '' && val === 'particular'){
+            return true;
+          }
+
+          if( txt === 'Equity Value' || txt === 'Firm Value'|| txt === 'Net Current Assets' || txt === 'Non Current Assets' || txt === 'Non Current Assets' || txt ===  'Total Non Current Assets'   )
+          {
+            return true;
+          }
+          return false
+        })
+        
       hbs.registerHelper('ifZero', function (value, options) {
         if(value === 0 ){
           return options.fn(this);
