@@ -1764,12 +1764,7 @@ async assessmentCalculations(payload,balanceSheet){
         if(i === 9){
 
           for await (const key of keysToProcess) {
-              data[key] = (await this.getTotalValue(
-                balanceSheet,
-                  3,
-                  10,
-                `${String.fromCharCode(65 + keysToProcess.indexOf(key)+1)}`
-              )).toFixed(2);
+              data[key] = (parseFloat(payload[1][key]) + parseFloat(payload[2][key]) + parseFloat(payload[3][key]) + parseFloat(payload[4][key]) + parseFloat(payload[5][key]) + parseFloat(payload[6][key]) + parseFloat(payload[7][key])).toFixed(2) 
           }
         }
         if(i===11){
@@ -1828,13 +1823,9 @@ async assessmentCalculations(payload,balanceSheet){
         }
         if(i === 18){
 
-          for (const key of keysToProcess) {
-            data[key] = (await this.getTotalValue(
-                balanceSheet,
-                14,
-                20,
-              `${String.fromCharCode(65 + keysToProcess.indexOf(key) + 1)}`
-            ))?.toFixed(2);
+          for await(const key of keysToProcess) {
+            data[key] = (parseFloat(payload[11][key]) + parseFloat(payload[12][key]) + parseFloat(payload[13][key]) + parseFloat(payload[14][key]) + parseFloat(payload[15][key]) + parseFloat(payload[16][key])).toFixed(2); 
+
         }
         }
 }));
