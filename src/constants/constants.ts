@@ -181,6 +181,22 @@ export const ASSESSMENT_DATA = [
           formula:"SUM(currentOne14:currentOne20)",
           rowNumber:21
           }
+    },
+    {
+      "lineEntry": {
+          particulars : "Net Operating Assets",
+          sysCode:3020,
+          dependent:[3009,3018,3019],
+          rowNumber:23,
+          }
+    },
+    {
+      "lineEntry": {
+          particulars : "Change in NCA",
+          sysCode:3021,
+          dependent:[3009,3018,3020],
+          rowNumber:24,
+          }
     }
   ]
 
