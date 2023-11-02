@@ -5,7 +5,7 @@ import * as xlsx from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
 import { ASSESSMENT_DATA, MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
@@ -14,6 +14,7 @@ import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
+import { ChangeInNCA } from './fcfeAndFCFF.method';
 
 @Injectable()
 export class ExcelSheetService {
@@ -1594,9 +1595,9 @@ export class ExcelSheetService {
             for(let i = startingCalcuationIndex;i<=maxCalculationIndex;i++){
               const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value)
                summationVlaue =summationVlaue + (checkIfValue ?  parseFloat(worksheet.getCell(`${cells.columnCell}${i}`).value) : 0);
-              //  console.log(summationVlaue,"summation value",`${cells.columnCell}${i}`,worksheet.getCell(`${cells.columnCell}${i}`)?.value)
             }
-            ASSESSMENT_DATA.map((mainData: any) => {
+
+            ASSESSMENT_DATA.map( async (mainData: any) => {
             const dependentArray = mainData.lineEntry?.dependent;
             const sysCode = mainData.lineEntry?.sysCode;
             if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) {
@@ -1604,11 +1605,43 @@ export class ExcelSheetService {
               // console.log(summationVlaue,"formulae")
               
                 // const cell:any = worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value;
-                worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue?.toFixed(2)
+                worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue?.toFixed(2);
+                
              }
-           });
-         })
-        
+            if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3020) { // update net operating assets
+              
+                worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = (worksheet.getCell(`${cells.columnCell}11`)?.value - worksheet.getCell(`${cells.columnCell}21`)?.value).toFixed(2);
+                
+             }
+            if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3021) { // update change in nca
+            await this.updateChangeInNCA(worksheet,mainData)
+              
+              
+              // const firstColumnIndex = xlsx.utils.letterToNumber(firstColumnLetter);
+              // const lastColumnIndex = ExcelJS.letterToNumber(lastColumnLetter);
+                // worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = (worksheet.getCell(`${String.fromCharCode(cells.columnCell.toUpperCase().charCodeAt(0)-1)}23`)?.value - worksheet.getCell(`${cells.columnCell}23`)?.value).toFixed(2);      
+              // console.log(String.fromCharCode(cells.columnCell.toUpperCase().charCodeAt(0)+1),"values",mainData.lineEntry?.rowNumber) 
+              // await this.updateChangeInNCA(worksheet);
+              // console.log(firstColumnLetter,"first column letter")
+              // console.log(lastColumnLetter,"last column letter")
+              //   console.log("inside for loop")
+              // for(let ind = parseInt(String.fromCharCode(firstColumnLetter)); ind <= parseInt(String.fromCharCode(lastColumnLetter)); ind++) {
+              //   const currentColumn = String.fromCharCode(ind);
+              //   const previousColumn = String.fromCharCode(ind - 1);
+                
+              //   const currentCellValue = worksheet.getCell(`${currentColumn}23`)?.value;
+              //   const previousCellValue = worksheet.getCell(`${previousColumn}23`)?.value;
+              //   console.log(currentCellValue,"current cell value",previousCellValue,"previous cell value")
+              //   if (!isNaN(currentCellValue) && !isNaN(previousCellValue)) {
+              //     const updatedValue = (previousCellValue - currentCellValue).toFixed(2);
+              //     worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
+              //   } else {
+              //     console.error(`Invalid values found in columns ${previousColumn} and ${currentColumn}`);
+              //   }
+              // }
+            }
+          });
+        })
           await workbook.xlsx.writeFile(editedFilePath);
 
           const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
@@ -1625,6 +1658,43 @@ export class ExcelSheetService {
     catch(error){
       throw  error
     }
+  }
+
+  async updateChangeInNCA(worksheet,mainData){
+    let  firstRowName=[]
+    let letterIndex = 0; //starting capital letter in ascii format
+    let letter;
+    worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        if (rowNumber === 1 && cell.text) {
+          // letter = String.fromCharCode(letterIndex);
+          firstRowName.push(letterIndex);
+        }
+        letterIndex++;
+      });
+  });
+    for await (let columns of firstRowName){
+      const currentColumn =  String.fromCharCode(65 + columns);
+      const startcurrentColumn =  String.fromCharCode(65 + columns+1);
+      const previousColumn = String.fromCharCode(65 + columns - 1);
+      if(columns > 0){
+
+        const currentCellValue = await worksheet.getCell(`${currentColumn}23`)?.value;
+        const previousCellValue =await worksheet.getCell(`${previousColumn}23`)?.value;
+        // console.log(currentCellValue,"curr",previousCellValue,"prev")
+        // if () {
+          console.log(currentCellValue,"current cell value",previousCellValue,"previous cell value")
+          const updatedValue = (previousCellValue - currentCellValue).toFixed(2);
+          worksheet.getCell(`${startcurrentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
+          // console.log(worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value)
+        // }
+        console.log(updatedValue,"updated value",`${startcurrentColumn}${mainData.lineEntry?.rowNumber}`)
+        //  else {
+        //   console.error(`Invalid values found in columns ${previousColumn} and ${currentColumn}`);
+        // }
+      }
+    }
+                 
   }
 
 
@@ -1666,7 +1736,7 @@ async generatePayload(years,balanceSheet){
     [provisionalDate]: '',
     ...transformedObject
 };
-  console.log(transformedObject,"transformed object")
+  // console.log(transformedObject,"transformed object")
   const payload = ASSESSMENT_DATA.map((data,index)=>{
     if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
       const transformedEntry = { Particulars: data.lineEntry?.particulars };
@@ -1685,9 +1755,13 @@ async generatePayload(years,balanceSheet){
 
   const calculatedPayload = await this.assessmentCalculations(payload,balanceSheet);
 // console.log(calculatedPayload,"payload")
-  const addEmptyLineForSpace = calculatedPayload.findIndex(item=>item.Particulars === 'Operating Liabilities');
-  if(addEmptyLineForSpace !== -1){
-    calculatedPayload.splice(addEmptyLineForSpace,0,{Particulars: '  '})
+  const emptySpaceOne = calculatedPayload.findIndex(item=>item.Particulars === 'Operating Liabilities');
+  if(emptySpaceOne !== -1){
+    calculatedPayload.splice(emptySpaceOne,0,{Particulars: '  '})
+  }
+  const emptySpaceTwo = calculatedPayload.findIndex(item=>item.Particulars === 'Net Operating Assets');
+  if(emptySpaceTwo !== -1){
+    calculatedPayload.splice(emptySpaceTwo,0,{Particulars: '  '})
   }
  
   return calculatedPayload;
@@ -1764,12 +1838,7 @@ async assessmentCalculations(payload,balanceSheet){
         if(i === 9){
 
           for await (const key of keysToProcess) {
-              data[key] = (await this.getTotalValue(
-                balanceSheet,
-                  3,
-                  10,
-                `${String.fromCharCode(65 + keysToProcess.indexOf(key)+1)}`
-              )).toFixed(2);
+              data[key] = (parseFloat(payload[1][key]) + parseFloat(payload[2][key]) + parseFloat(payload[3][key]) + parseFloat(payload[4][key]) + parseFloat(payload[5][key]) + parseFloat(payload[6][key]) + parseFloat(payload[7][key])).toFixed(2) 
           }
         }
         if(i===11){
@@ -1827,16 +1896,22 @@ async assessmentCalculations(payload,balanceSheet){
           }
         }
         if(i === 18){
-
-          for (const key of keysToProcess) {
-            data[key] = (await this.getTotalValue(
-                balanceSheet,
-                14,
-                20,
-              `${String.fromCharCode(65 + keysToProcess.indexOf(key) + 1)}`
-            ))?.toFixed(2);
+          for await(const key of keysToProcess) {
+            data[key] = (parseFloat(payload[11][key]) + parseFloat(payload[12][key]) + parseFloat(payload[13][key]) + parseFloat(payload[14][key]) + parseFloat(payload[15][key]) + parseFloat(payload[16][key])).toFixed(2); 
         }
+      }
+      if(i ===19){ // add net operating liablities in excel
+        for await(const key of keysToProcess) {
+          data[key] = (parseFloat(payload[9][key]) - parseFloat(payload[18][key])).toFixed(2); 
         }
+      }
+      if(i ===20){
+        for await(const key of keysToProcess) { // add change in nca in excel
+          if(keysToProcess.indexOf(key) < keysToProcess.length-1){
+                data[ keysToProcess[  keysToProcess.indexOf(key)+1]] = (parseFloat(payload[19][key]) - parseFloat(payload[19][`${await keysToProcess[await keysToProcess.indexOf(key)+1]}`])).toFixed(2); 
+           }
+      }
+      }
 }));
 return payload
 }
