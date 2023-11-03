@@ -1594,7 +1594,7 @@ export class ExcelSheetService {
                   maxCalculationIndex = 20;
                 }
                 for(let i = startingCalcuationIndex;i<=maxCalculationIndex;i++){
-                  const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value)
+                  const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value);
                    summationVlaue =summationVlaue + (checkIfValue ?  parseFloat(worksheet.getCell(`${cells.columnCell}${i}`).value) : 0);
                 }
     
@@ -1811,7 +1811,7 @@ async assessmentCalculations(payload,balanceSheet){
         if(i === 9){
 
           for await (const key of keysToProcess) {
-              data[key] = (parseFloat(payload[1][key]) + parseFloat(payload[2][key]) + parseFloat(payload[3][key]) + parseFloat(payload[4][key]) + parseFloat(payload[5][key]) + parseFloat(payload[6][key]) + parseFloat(payload[7][key])).toFixed(2) 
+              data[key] = (parseFloat(payload[1][key] ?? 0) + parseFloat(payload[2][key] ?? 0) + parseFloat(payload[3][key] ?? 0) + parseFloat(payload[4][key] ?? 0) + parseFloat(payload[5][key] ?? 0) + parseFloat(payload[6][key] ?? 0) + parseFloat(payload[7][key] ?? 0)).toFixed(2);
           }
         }
         if(i===11){
@@ -1870,18 +1870,18 @@ async assessmentCalculations(payload,balanceSheet){
         }
         if(i === 18){
           for await(const key of keysToProcess) {
-            data[key] = (parseFloat(payload[11][key]) + parseFloat(payload[12][key]) + parseFloat(payload[13][key]) + parseFloat(payload[14][key]) + parseFloat(payload[15][key]) + parseFloat(payload[16][key])).toFixed(2); 
+            data[key] = (parseFloat(payload[11][key] ?? 0) + parseFloat(payload[12][key] ?? 0) + parseFloat(payload[13][key] ?? 0) + parseFloat(payload[14][key] ?? 0) + parseFloat(payload[15][key] ?? 0) + parseFloat(payload[16][key] ?? 0)).toFixed(2); 
         }
       }
       if(i ===19){ // add net operating liablities in excel
         for await(const key of keysToProcess) {
-          data[key] = (parseFloat(payload[9][key]) - parseFloat(payload[18][key])).toFixed(2); 
+          data[key] = (parseFloat(payload[9][key] ?? 0) - parseFloat(payload[18][key] ?? 0)).toFixed(2); 
         }
       }
       if(i ===20){
         for await(const key of keysToProcess) { // add change in nca in excel
           if(keysToProcess.indexOf(key) < keysToProcess.length-1){
-                data[ keysToProcess[  keysToProcess.indexOf(key)+1]] = (parseFloat(payload[19][key]) - parseFloat(payload[19][`${await keysToProcess[await keysToProcess.indexOf(key)+1]}`])).toFixed(2); 
+                data[ keysToProcess[  keysToProcess.indexOf(key)+1]] = (parseFloat(payload[19][key] ?? 0) - parseFloat(payload[19][`${await keysToProcess[await keysToProcess.indexOf(key)+1]}`] ?? 0)).toFixed(2); 
            }
       }
       }
