@@ -1884,14 +1884,4 @@ async assessmentCalculations(payload,balanceSheet){
 }));
 return payload
 }
-
-async getTotalValue(worksheet,startRow,endRow,cellName){
-  let summationVlaue=0;
-  for(let i = startRow;i<=endRow;i++){
-    if(worksheet[`${cellName}${i}`]){
-      summationVlaue =summationVlaue +  parseFloat(worksheet[`${cellName}${i}`]?.v) ;
-    }
-  }
-  return summationVlaue;
-}
 }
