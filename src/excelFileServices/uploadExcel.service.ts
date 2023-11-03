@@ -1637,8 +1637,12 @@ export class ExcelSheetService {
                           const currentCellValue = await worksheet.getCell(`${currentColumn}23`)?.value;
                           const previousCellValue =await worksheet.getCell(`${previousColumn}23`)?.value;
                           const updatedValue =(previousCellValue - currentCellValue).toFixed(2);
-                          if (!isNaN(parseInt(updatedValue))) {
+                          if (!isNaN(parseInt(updatedValue)) ) {
                             worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
+                          }
+                          else{
+                            worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value ='';
+
                           }
                         }
                       }
