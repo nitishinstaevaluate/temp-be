@@ -1611,9 +1611,11 @@ export class ExcelSheetService {
                         worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue?.toFixed(2);
                         
                      }
+
                     if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3020) { // update net operating assets
                         worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = (worksheet.getCell(`${cells.columnCell}11`)?.value - worksheet.getCell(`${cells.columnCell}21`)?.value).toFixed(2);
-                      }
+                    }
+
                     if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3021) { // update change in nca 
                       let  firstRowName=[]
                       let letterIndex = 0; //starting capital letter in ascii format
@@ -1664,45 +1666,6 @@ export class ExcelSheetService {
       throw  error
     }
   }
-  async updateChangeInNCA(worksheet,mainData,workbook,editedFilePath){
-    let  firstRowName=[]
-    let letterIndex = 0; //starting capital letter in ascii format
-    let letter;
-    worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-        if (rowNumber === 1 && cell.text) {
-          // letter = String.fromCharCode(letterIndex);
-          firstRowName.push(letterIndex);
-        }
-        letterIndex++;
-      });
-  });
-    for await (let columns of firstRowName){
-      const currentColumn =  await String.fromCharCode(65 + columns);
-      const startcurrentColumn =  await String.fromCharCode(65 + columns+1);
-      const previousColumn = await String.fromCharCode(65 + columns - 1);
-      
-      if( previousColumn !== '@' ){
-        console.log(currentColumn,"curr",previousColumn,"prev")
-        const currentCellValue = await worksheet.getCell(`${currentColumn}23`)?.value;
-        const previousCellValue =await worksheet.getCell(`${previousColumn}23`)?.value;
-        // if () {
-          console.log(currentCellValue,"current cell value",previousCellValue,"previous cell value")
-          const updatedValue =await  (previousCellValue - currentCellValue).toFixed(2);
-          console.log(updatedValue,"updated value",`${currentColumn}${mainData.lineEntry?.rowNumber}`)
-           worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
-          // console.log(worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value)
-        // }
-        console.log( worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value,"new values")
-        //  else {
-        //   console.error(`Invalid values found in columns ${previousColumn} and ${currentColumn}`);
-        // }
-      }
-    }
-
-                 
-  }
-
 
   async  readAndEvaluateExcel(filepath): Promise<any[]> {
  
