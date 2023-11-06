@@ -11,6 +11,22 @@ import { CAPITAL_STRUCTURE_TYPE, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRU
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
+const HTMLDOCX = require('html-docx-js');
+const HTMLtoDOCX = require('html-to-docx');
+const officegen = require('pdf-officegen');
+const pdf = require('pdf-parse');
+const mammoth = require('mammoth');
+const { PDFNet } = require('@pdftron/pdfnet-node');
+const libre = require('libreoffice-convert');
+const { PDFDocument } = require('pdf-lib');
+const { ConvertApi, ConvertSettings, DocxConvertOptions, ConvertDocumentRequest,Configuration,FileApi,UploadFileRequest, fromConfig,DownloadFileRequest,ConvertDocumentDirectRequest } = require('groupdocs-conversion-cloud');
+// const convertApi = new ConvertApi(, );
+const configuration = new Configuration({
+  clientId: '6d62246c-6e01-49ba-84dc-38d4572bb1a5',
+  clientSecret: 'c4fcd9242b15907078790c9a62f90caf',
+});
+
+
 
 @Injectable()
 export class ReportService {
@@ -55,7 +71,86 @@ export class ReportService {
               const template = hbs.compile(htmlContent);
               const html = template(valuationResult);
   
-              const pdf = await this.generatePdf(html, pdfFilePath);
+
+              let newHtmlPath =  path.join(process.cwd(), 'html-template', `basic-report.html`)
+              let newPdf = fs.readFileSync(newHtmlPath,'utf-8')
+              // const pdf = await this.generatePdf(html, pdfFilePath);
+              const blob = await HTMLDOCX.asBlob(newPdf);
+              const buffer = await blob.arrayBuffer();
+              const docxBuffer = Buffer.from(buffer);
+      
+              // // Write Buffer to DOCX file
+              fs.writeFileSync('new-output.docx', docxBuffer);
+              // console.log(pdfFilePath,"file path")
+              // const p = new Powerpoint([options])
+              //  await this.createDocx(pdfFilePath);
+              // await this.convertPdfToDocx(pdfFilePath, 'new-output-docx');
+            // PDFNet.runWithCleanup(await this.generatePdfWeb(pdfFilePath), 'demo:1698819263288:7cce4602030000000063747c655eb0046bd5327eaf925f89162f6a1a3e');
+
+            // pdf tron starts
+            // await PDFNet.runWithCleanup(async () => {
+            //   // await PDFNet.initialize("demo:1699256755878:7cc7e90e0300000000396203c42a7c8728c189710895b0779ff4e125af");
+            //   await this.generatePdfWeb(pdfFilePath);
+            // }, "demo:1699256755878:7cc7e90e0300000000396203c42a7c8728c189710895b0779ff4e125af", {})
+            // .then(() => {
+            //   console.log('PDF to DOCX conversion completed successfully.');
+            // })
+            // .catch((error) => {
+            //   console.error('Conversion error:', error);
+            // });
+            // await this.generatePdfWeb(pdfFilePath);
+
+            // pdf tron ends
+            // await this.createDocx(pdfFilePath)
+
+            // PDFNet.runWithCleanup(await this.generatePdfWeb(pdfFilePath), 'demo:1698819263288:7cce4602030000000063747c655eb0046bd5327eaf925f89162f6a1a3e');
+              // Convert Blob to Buffer
+
+
+
+
+            // mammoth and pdf-lib starts
+            // const pdfBlob = new Blob(pdf, { type: 'application/pdf' });
+
+            // await this.convertPdfBlobToDocxBlob(pdf)
+            // .then((docxBuffer) => {
+            // // Save docxBuffer to a file or send it as a response
+            // return fs.promises.writeFile('output.docx', Buffer.from(docxBuffer));
+            // })
+            // .then(() => {
+            // console.log('Conversion completed successfully.');
+            // })
+            // .catch((error) => {
+            // console.error('Error:', error);
+            // });
+            // mammoth and pdf-lib ends
+
+
+
+              // PDFNet.runWithCleanup(this.main, 'demo:1698819263288:7cce4602030000000063747c655eb0046bd5327eaf925f89162f6a1a3e')
+              // .then(() => {
+              //   console.log('Conversion completed successfully.');
+              // })
+              // .catch((error) => {
+              //   console.error('Error:', error);
+              // });
+              
+
+
+              // html-to-docx starts
+            //   const documentOptions = {
+            //     fontSize:26,
+            //     header:true,
+            //     footer:true,
+            //     orientation:'portrait',
+                
+            //   }
+            //   let docxFilePath =  path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.docx`);
+            //   console.log(docxFilePath,"file path")
+              
+            // const docxBuffer =   await HTMLtoDOCX(html,'', documentOptions,'')
+            // await fs.writeFileSync(docxFilePath, docxBuffer);  
+            // html-to-docx ends
   
               res.setHeader('Content-Type', 'application/pdf');
               res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.pdf"`);
@@ -81,8 +176,342 @@ export class ReportService {
         };
       }
   }
-  
 
+ async previewReport(id,res,approach){
+  try {
+    const transposedData = [];
+    let  getCapitalStructure;
+    const getReportData = await this.reportModel.findById(id);
+
+    const valuationResult:any = await this.valuationService.getValuationById(getReportData.reportId);
+
+    if(valuationResult.inputData[0].model.includes(MODEL[1])){
+      const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
+       getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(
+        +valuationResult.inputData[0].adjustedCostOfEquity,
+        valuationResult.inputData[0].excelSheetId,+valuationResult.inputData[0].costOfDebt,
+        +valuationResult.inputData[0].copShareCapital,+valuationResult.inputData[0].capitalStructure.deRatio,
+        valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
+        );
+    }
+
+  let htmlFilePath, pdfFilePath;
+    let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
+    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+    pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
+
+    for await (let data of valuationResult.modelResults) {
+        if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+            transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
+        }
+    }
+    this.loadHelpers(transposedData, valuationResult, getReportData,getCapitalStructure);
+
+    if (valuationResult.modelResults.length > 0) {
+        const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+        const template = hbs.compile(htmlContent);
+        const html = template(valuationResult);
+
+
+        // html-to-docx starts
+        const documentOptions = {
+          fontSize:26,
+          header:true,
+          footer:true,
+          orientation:'portrait',
+          pageNumber:true,
+          creator:'Nitish Chaturvedi',
+          createdAt:new Date()
+        }
+        let docxFilePath =  path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.docx`);
+//         console.log(docxFilePath,"filepath")
+        
+      const docxBuffer =   await HTMLtoDOCX(html,'', documentOptions,
+      `<div style="width: 100%; text-align: center;">
+      <hr style="border: 1px solid #bbccbb; margin: 0;">
+      <div style="font-size: 11px; color: #5F978E; margin-top: 5px; text-align: right;position:relative;">
+          <span style="font-size:11px;color:#5F978E;position:absolute;top:10%;">Page <span class="pageNumber"></span></span>
+          <span style="text-align: right;font-size:11px;color:#5F978E;">Private &amp; confidential</span>
+          
+      </div>
+  </div>`
+
+//  ` 
+//  <table style=" width: 100%;">
+//  <tr style="height:10px">
+//  <td style="border:1px solid white">
+//  <div style="font-size: 11px; color: #5F978E; margin-top: 5px; text-align: right;">
+//             <span style="font-size:11px;color:#5F978E;">Page <span class="pageNumber"></span></span>
+//             </div>
+//             </td>
+//             <td style=" font-size: 10px;font-size:13px;color:#5F978E;border:1px solid white;float:right">Private And Confidential</td>
+//             </tr>
+//           </table>
+//           `
+  )
+
+
+
+       fs.writeFileSync(docxFilePath, docxBuffer);  
+      // html-to-docx ends
+
+
+
+
+      // html-docx-js starts
+      
+      // const blob = await HTMLDOCX.asBlob(html);
+
+      // // Convert Blob to Buffer
+      // const buffer = await blob.arrayBuffer();
+      // const docxBuffer = Buffer.from(buffer);
+  
+      // // Write Buffer to DOCX file
+      // fs.writeFileSync('output-new.docx', docxBuffer);
+      // console.log('DOCX file created successfully.');
+      // html-docx-js ends
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.docx"`);
+        res.send(docxBuffer);
+
+        return {
+            msg: "Preview Success",
+            status: true,
+        };
+    } else {
+        console.log("Data not found");
+        return {
+            msg: "No data found for report preview",
+            status: false
+        };
+    }
+} catch (error) {
+  console.error("Error previewing Report:", error);
+  return {
+      msg: "Error Previewing Report",
+      status: false,
+      error: error.message
+  };
+}
+ }
+  
+  async createDocx(pdffilePath){
+
+// define convert settings
+// let convertApi = groupdocs_conversion_cloud.ConvertApi.fromKeys("6d62246c-6e01-49ba-84dc-38d4572bb1a5", "c4fcd9242b15907078790c9a62f90caf");
+
+// define convert settings
+// let settings = new groupdocs_conversion_cloud.ConvertSettings();
+// settings.filePath = "sample.pdf";
+// settings.format = "docx";
+
+// // define docx convert options
+// let convertOptions = new groupdocs_conversion_cloud.DocxConvertOptions();
+// convertOptions.pages = [1,2]; // set page numbers to convert
+
+// settings.convertOptions = convertOptions
+// settings.outputPath = "specific_pages.docx";
+
+// // create convert document request
+// let request = new groupdocs_conversion_cloud.ConvertDocumentRequest(settings);
+
+// // convert document
+// let result = await convertApi.convertDocument(request);
+// console.log("Document converted successfully: " + result[0].url);
+
+const convertApi =await  new ConvertApi(configuration);
+// const config = new Configuration('6d62246c-6e01-49ba-84dc-38d4572bb1a5', 'c4fcd9242b15907078790c9a62f90caf')
+// // config.apiBaseUrl = "https://api.groupdocs.cloud"
+
+// // var resourcesFolder = pdffilePath;
+// // fs.readFile(resourcesFolder, (err, fileStream) => {
+// //   // construct FileApi
+// //   var fileApi = FileApi.fromConfig(config);
+// //   // create upload file request
+// //   var request = new UploadFileRequest("sample.pdf", fileStream, '98bf7a20-eb04-4d8a-a0d8-e4207ff2874e');
+// //   // upload file
+// //   fileApi.uploadFile(request);
+// // });
+
+// // let settings = new ConvertSettings();
+// // settings.filePath = "sample.pdf"; // input file path on the cloud
+// // settings.format = "docx";         // output format
+// // settings.outputPath = "output";
+
+// // let request = new ConvertDocumentRequest(settings);
+
+// // // convert document
+// // let result = await convertApi.convertDocument(request);
+// // console.log("Document converted successfully: " + result[0].url);
+
+// // var fileApi = new fromConfig(config);
+
+// // // create download file request
+// // let downloadrequest = new DownloadFileRequest("output/sample.docx", '98bf7a20-eb04-4d8a-a0d8-e4207ff2874e');
+
+// // // download file
+// // let response = await fileApi.downloadFile(downloadrequest);
+
+// // // save file in your working directory
+// // fs.writeFile("sample.docx", response, "binary", function (err) { });
+// // console.log(response);
+
+let file = await fs.readFileSync(pdffilePath);
+
+// create convert document direct request
+let newrequest = new ConvertDocumentDirectRequest("docx", file);
+
+// convert document directly
+let newresult = await convertApi.convertDocumentDirect(newrequest);
+
+// save file in working dorectory
+fs.writeFile("sample_direct.docx", newresult, "binary", function (err) { });
+console.log("Document converted: " + newresult.length);
+
+// const settings = new ConvertSettings();
+//   settings.filePath = pdffilePath; // Path to your PDF file
+//   settings.format = "docx"; // Output format
+//   const convertOptions = new DocxConvertOptions();
+//   // convertOptions.pages = [1, 2]; // Set page numbers to convert
+//   settings.convertOptions = convertOptions;
+//   settings.outputPath = "specific_pages.docx"; // Output file path
+//   const request = new ConvertDocumentRequest(settings);
+//   const result = await convertApi.convertDocument(request);
+//   console.log("Document converted successfully: " + result[0].url);
+
+// let file = fs.readFileSync(pdffilePath);
+
+// // create convert document direct request
+// let request = new ConvertDocumentRequest("docx", file);
+
+// // convert document directly
+// let result = await convertApi.convertDocument(request);
+
+// // save file in working dorectory
+// fs.writeFile("sample_direct.docx", result, "binary", function (err) { });
+// console.log("Document converted: " + result.length);
+  }
+
+  // async  convertPdfToDocx(pdfFilePath, docxFilePath) {
+  //   // Read PDF content
+  //   const pdfData = await fs.promises.readFile(pdfFilePath);
+  //   const pdfText = await pdf(pdfData);
+  
+  //   // Extracted text from PDF
+  //   const extractedText = pdfText.text;
+  
+  //   // Convert extracted text to DOCX using mammoth
+  //   const options = {
+  //     array: extractedText,
+  //   };
+    
+  //   // mammoth.extractRawText(options)
+  //   //   .then((result) => {
+  //   //     const { value } = result;
+  //   //     fs.writeFileSync(docxFilePath, value, 'utf-8');
+  //   //     console.log('Conversion successful. DOCX file saved.');
+  //   //   })
+  //   //   .catch((error) => {
+  //   //     console.error('Error converting PDF to DOCX:', error);
+  //   //   });
+  //   const { value } = await mammoth.extractRawText(options);
+  //   const docxArrayBuffer = toArrayBuffer(new Blob([value], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }));
+  // }
+
+  async generatePdfWeb(filePath) {
+    try {
+      // Initialize PDFNet
+      await PDFNet.initialize("demo:1699256755878:7cc7e90e0300000000396203c42a7c8728c189710895b0779ff4e125af");
+      
+      // // Add resource search path if necessary
+      let libPath = path.join(process.cwd(), 'StructuredOutputWindows','lib');
+
+      // C:\Ifinworth\ifinworth\node_modules\@pdftron\pdfnet-node\lib
+      console.log(libPath,"lib path")
+      await PDFNet.addResourceSearchPath(libPath);
+      
+      // Check if the module is available
+      if (!(await PDFNet.StructuredOutputModule.isModuleAvailable())) {
+        console.log("Document not generated");
+        return;
+      }
+      
+      // Convert the file to Word
+      await PDFNet.Convert.fileToWord(filePath, 'webviewer-output.docx');
+  
+      // Do other operations with the generated DOCX file if needed
+      
+      // Clean up PDFNet
+      PDFNet.shutdown();
+
+      await PDFNet.addResourceSearchPath(libPath);
+
+  // check if the module is available
+  if (!(await PDFNet.StructuredOutputModule.isModuleAvailable())) {
+    console.log("path not found")
+    return;
+  }
+
+  await PDFNet.Convert.fileToWord(filePath, 'output.docx');
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle errors appropriately
+    }
+  }
+
+
+
+
+async  main() {
+  let libPath = path.join(process.cwd(), 'StructuredOutputWindows','lib');
+
+  await PDFNet.addResourceSearchPath(libPath);
+
+  // check if the module is available
+  if (!(await PDFNet.StructuredOutputModule.isModuleAvailable())) {
+    return;
+  }
+
+  await PDFNet.Convert.fileToWord('./report-test.pdf', 'output-webviewer.docx');
+}
+
+
+
+
+async  convertPdfBlobToDocxBlob(pdfBuffer) {
+  const dataBuffer = await pdf(pdfBuffer);
+  console.log(pdfBuffer,"buffer")
+  const pdfText = dataBuffer.text;
+
+  // Convert text to DOCX using mammoth.js
+  // const docxBuffer = await mammoth.extractRawText({ arrayBuffer: Uint8Array.from(pdfText) })
+  //   .then((result) => {
+  //     const { value } = result;
+  //     const html:any = `<html><body>${value}</body></html>`;
+  //     return mammoth.extractRawText({ arrayBuffer: Uint8Array.from(html) });
+  //   })
+  //   .then((result) => {
+  //     const { value } = result;
+  //     return mammoth.async.arrayBuffer(value);
+  //   });
+  const html:any = `<html><body>${pdfText}</body></html>`;
+  const mammothXml = mammoth.convertToMammothXml({ value: html });
+
+  const result = await mammoth.extractRawText({ arrayBuffer: Uint8Array.from(mammothXml) });
+
+  const docxBuffer = result.value; // This is the DOCX buffer
+
+  return docxBuffer;
+
+  return docxBuffer;
+}
+
+// Example usage
+
+
+
+  
     async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
           headless:"new"

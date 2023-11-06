@@ -45,4 +45,14 @@ export class ReportController {
     const result = await this.reportService.createReport(data);
     return result;
   }
+  
+  @UseGuards(AuthGuard('jwt'))
+  @Get('previewReport/:approach/:reportId')
+  async previewReport(
+    @Param('reportId') reportId : string,
+    @Param('approach') approach : string,
+    @Res() res) {
+    const result = await this.reportService.previewReport(reportId, res,approach);
+    return result;
+  }
 }
