@@ -12,8 +12,6 @@ import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
 
-
-
 @Injectable()
 export class ReportService {
     constructor( private valuationService:ValuationsService,
