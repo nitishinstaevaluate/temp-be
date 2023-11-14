@@ -21,9 +21,24 @@ export const GET_MULTIPLIER_UNITS = {
     Crores:10000000
 }
 
+export const ALPHA={
+  companySize:'Company Size',
+  marketPosition:'Market Position',
+  liquidityFactor:'Liquidity Factor',
+  competition:'Competition',
+  qualitativeFactor:'Qualitative Factor'
+}
+
+export const REPORT_PURPOSE={
+  companiesAct:'Companies Act, 2013',
+  ita1961:'Income Tax Act, 1961',
+  fema:'Foreign Exchange Management Act',
+  sebiRegulations:'SEBI Regulations'
+}
+
 export const NATURE_OF_INSTRUMENT = {
     equityShares:"Equity Shares",
-    equitySharesAndCcps:"Equity Shares & CCPS",
+    equitySharesAndCcps:"Equity Shares & Compulsorily Convertible Preference Shares",
     ccps:"Compulsorily Convertible Preference Shares",
     ccds:"Compulsorily Convertible Dimentures",
     ocds:"Optionally Convertible Dimentures",
