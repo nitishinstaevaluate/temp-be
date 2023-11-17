@@ -230,7 +230,7 @@ export const ASSESSMENT_DATA = [
           sysCode:2002,
           header:true,
           editable:false,
-          formula:"SUM(currentOne7:currentOne22)",
+          formula:"SUM(currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22)",
           dependent:[2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
                     2013,2014,2015,2016,2017],
           rowNumber:6
@@ -373,7 +373,7 @@ export const ASSESSMENT_DATA = [
           header:true,
           editable:false,
           dependent:[2019,2020,2021,2022,2023,2024,2025,2026],
-          formula:"SUM(currentOne25:currentOne32)",
+          formula:"currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne32",
           rowNumber:24
           }
     },
@@ -448,8 +448,8 @@ export const ASSESSMENT_DATA = [
           sysCode:2027,
           header:true,
           editable:false,
-          dependent:[1004,1006,1007,1008,1016],
-          formula:"SUM()",
+          dependent:[2028,2029,2030,2031,2032,2033,2034],
+          formula:"currentOne34+currentOne35+currentOne36+currentOne37+currentOne38+currentOne39+currentOne40",
           rowNumber:33
           }
     },
@@ -516,7 +516,7 @@ export const ASSESSMENT_DATA = [
           sysCode:2035,
           editable:false,
           dependent:[2027,2018,2002],
-          formula:"SUM(currentOne33,currentOne24,currentOne6)",
+          formula:"currentOne33+currentOne24+currentOne6",
           subHeader:true,
           rowNumber:41
           }
@@ -537,7 +537,7 @@ export const ASSESSMENT_DATA = [
           editable:false,
           header:true,
           dependent:[2038,2047,2048,2049,2050,2051],
-          formula:"SUM(currentOne46,currentOne55:currentOne59)",
+          formula:"currentOne46+currentOne55+currentOne56+currentOne57+currentOne58+currentOne59",
           rowNumber:45
           }
     },
@@ -549,7 +549,7 @@ export const ASSESSMENT_DATA = [
           editable:false,
           subHeader:true,
           dependent:[2040,2041,2042,2043,2044,2045],
-          formula:"SUM(currentOne48:currentOne53)",
+          formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53",
           rowNumber:46
           }
     },
@@ -687,7 +687,7 @@ export const ASSESSMENT_DATA = [
           sysCode:2053,
           editable:false,
           dependent:[2054,2055,2056,2057,2058,2059,2060,2061],
-          formula:"SUM(currentOne62:currentOne69)",
+          formula:"currentOne62+currentOne63+currentOne64+currentOne65+currentOne66+currentOne67+currentOne68+currentOne69",
           rowNumber:61
           }
     },
@@ -781,158 +781,8 @@ export const ASSESSMENT_DATA = [
           editable:false,
           header:true,
           dependent:[2037,2053],
-          formula:"SUM(currentOne45,currentOne61)",
+          formula:"currentOne45+currentOne61",
           rowNumber:72
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "(a) Current tax expense for current year",
-          sysCode:1028,
-          editable:true,
-          subHeader:true,
-          rowNumber:36
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "(b) (Less): MAT credit (where applicable)",
-          sysCode:1029,
-          editable:true,
-          subHeader:true,
-          rowNumber:37
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "(c) Current tax expense relating to prior years",
-          sysCode:1030,
-          editable:true,
-          subHeader:true,
-          rowNumber:38
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "(d) Net current tax expense ",
-          sysCode:1031,
-          editable:true,
-          subHeader:true,
-          rowNumber:39
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "(e) Deferred tax",
-          sysCode:1032,
-          editable:true,
-          subHeader:true,
-          rowNumber:40
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Profit / (Loss) from continuing operations ",
-          sysCode:1033,
-          editable:false,
-          header:true,
-          dependent:[1026,1027],
-          formula:"SUM()",
-          rowNumber:42
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "DISCONTINUING OPERATIONS",
-          sysCode:1034,
-          editable:false,
-          header:true,
-          rowNumber:44
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Profit / (Loss) from discontinuing operations (before tax)",
-          sysCode:1035,
-          editable:true,
-          rowNumber:45
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Gain / (Loss) on disposal of assets / settlement of liabilities attributable to the discontinuing operations",
-          sysCode:1036,
-          editable:true,
-          rowNumber:46
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Add / (Less): Tax expense of discontinuing operations",
-          sysCode:1037,
-          editable:true,
-          rowNumber:48
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "(a) on ordinary activities attributable to the discontinuing operations",
-          sysCode:1038,
-          editable:true,
-          rowNumber:49
-          }
-    },
-
-    {
-      "lineEntry": {
-          particulars : "(b) on gain / (loss) on disposal of assets / settlement of liabilities",
-          sysCode:1039,
-          editable:true,
-          rowNumber:50
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Profit / (Loss) from discontinuing operations net of tax",
-          sysCode:1040,
-          header:true,
-          editable:true,
-          rowNumber:52
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Profit / (Loss) for the year",
-          sysCode:1041,
-          header:true,
-          editable:true,
-          dependent:[1033,1040],
-          formula:"SUM()",
-          rowNumber:54
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Minority Interest ",
-          sysCode:1042,
-          editable:true,
-          rowNumber:55
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Share in profit of Associates",
-          sysCode:1043,
-          editable:true,
-          rowNumber:56
-          }
-    },
-    {
-      "lineEntry": {
-          particulars : "Net Profit after minority interests",
-          sysCode:1044,
-          editable:true,
-          rowNumber:57
           }
     }
   ]
@@ -970,7 +820,7 @@ export const ASSESSMENT_DATA = [
           editable:false,
           subHeader:true,
           dependent:[1002,1003],
-          formula:"SUM(currentOne7:currentOne8)",
+          formula:"currentOne7+currentOne8",
           rowNumber:9
           }
     },
@@ -1071,7 +921,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1016,
           editable:false,
           dependent:[1009,1010,1011,1012,1013,1014,1015],
-          formula:"SUM(currentOne16:currentOne22)",
+          formula:"currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22)",
           rowNumber:23
           }
     },
@@ -1082,7 +932,7 @@ export const ASSESSMENT_DATA = [
           header:true,
           editable:false,
           dependent:[1004,1006,1007,1008,1016],
-          formula:"SUM()",
+          formula:"currentOne9-currentOne13-currentOne14-currentOne15-currentOne23",
           rowNumber:25
           }
     },
@@ -1101,7 +951,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1019,
           editable:false,
           dependent:[1017,1018],
-          formula:"SUM()",
+          formula:"currentOne25-currentOne26",
           rowNumber:27
           }
     },
@@ -1127,7 +977,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1022,
           editable:false,
           dependent:[1019,1020,1021],
-          formula:"SUM()",
+          formula:"currentOne27-currentOne28+currentOne29",
           rowNumber:30
           }
     },
@@ -1145,7 +995,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1024,
           editable:false,
           dependent:[1022,1023],
-          formula:"SUM()",
+          formula:"currentOne30+currentOne31",
           rowNumber:32
           }
     },
@@ -1163,7 +1013,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1026,
           editable:false,
           dependent:[1024,1025],
-          formula:"SUM()",
+          formula:"currentOne32+currentOne33",
           rowNumber:34
           }
     },
@@ -1173,7 +1023,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1027,
           editable:false,
           dependent:[1028,1029,1030,1031,1032],
-          formula:"SUM(currentOne36:currentOne40)",
+          formula:"currentOne36+currentOne37+currentOne38+currentOne39+currentOne40",
           rowNumber:35
           }
     },
@@ -1229,7 +1079,7 @@ export const ASSESSMENT_DATA = [
           editable:false,
           header:true,
           dependent:[1026,1027],
-          formula:"SUM()",
+          formula:"currentOne34-currentOne35",
           rowNumber:42
           }
     },
@@ -1299,7 +1149,7 @@ export const ASSESSMENT_DATA = [
           header:true,
           editable:true,
           dependent:[1033,1040],
-          formula:"SUM()",
+          formula:"currentOne42+currentOne52",
           rowNumber:54
           }
     },
@@ -1325,6 +1175,15 @@ export const ASSESSMENT_DATA = [
           sysCode:1044,
           editable:true,
           rowNumber:57
+          }
+    },
+    {
+      "lineEntry": {
+          particulars : "Earning per Share(EPS)",
+          sysCode:1045,
+          editable:false,
+          rowNumber:58,
+          flaggedOff:true
           }
     }
   ]
