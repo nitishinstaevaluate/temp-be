@@ -5,9 +5,9 @@ import * as xlsx from 'xlsx';
 import * as ExcelJS from 'exceljs';
 import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
-import { catchError, last, switchMap } from 'rxjs/operators';
+import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, MODEL, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, BALANCE_SHEET, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -24,7 +24,9 @@ export class ExcelSheetService {
         const filePath = path.join(uploadDir, fileName);
     
         return from(this.readFile(filePath)).pipe(
-            switchMap((workbook) => {
+          switchMap((workbook) => {
+            return from(this.copyWorksheets(workbook,fileName)).pipe(
+                switchMap((response)=>{
                 if(sheetName !== 'Assessment of Working Capital'){
                   if (!workbook.SheetNames.includes(sheetName)) {
                   return throwError( {
@@ -36,11 +38,11 @@ export class ExcelSheetService {
                   sheetData.forEach((row:any) => {
                      for (let columns in row) {
                        if (typeof row[columns] === 'string') {
-                         row[columns] = row[columns].replace(/\r\n/g, '').toLowerCase();;
+                         row[columns] = row[columns].replace(/\r\n/g, '');
                      }
                    
                        if (typeof row[columns] === 'number') {
-                         row[columns] = parseFloat(row[columns].toFixed(3));
+                         row[columns] = parseFloat(row[columns].toFixed(2));
                        }
                        if (typeof columns === 'string') {
                          const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
@@ -56,8 +58,17 @@ export class ExcelSheetService {
                    });
                    return from(this.transformData(sheetData)).pipe(
                     switchMap((excelData)=>{
-
-                     return of(excelData)
+                      return from(this.createStructure(excelData,sheetName)).pipe(
+                        switchMap((structure)=>{
+                          // return of(structure);
+                          return of({
+                            data:structure,
+                            msg:`Excel Sheet Fetched`,
+                            status:true
+                          });
+                        })
+                      )
+                    //  return of(excelData)
                    }),
                    catchError((error)=>{
                     return throwError(error)
@@ -65,13 +76,6 @@ export class ExcelSheetService {
                    )
                 }
                 else{
-
-                  // add assessment calculations
-                  // const workbook = new ExcelJS.Workbook();
-                  // await workbook.xlsx.readFile(filepath);
-                  // let alreadyExistAssessmentSheet = workbook.getWorksheet('Assessment of Working Capital');
-                  // const alreadyExistAssessmentSheet = workbook.Sheets[sheetName]
-                  // console.log(alreadyExistAssessmentSheet,sheetName,"sheet already exist")
                   if(!workbook.SheetNames.includes(sheetName)){
                      const workbookXLSX = xlsx.readFile(filePath);
                      const worksheet1 = workbookXLSX.Sheets['P&L'];
@@ -155,8 +159,29 @@ export class ExcelSheetService {
                 });
             })
         );
+          }),
+          catchError((error) => {
+            console.log(error,"error")
+              return of({
+                msg:'Something went wrong',
+                error:error.message,
+                status:false
+              });
+          })
+        )
+       
       }
 
+      
+      async copyWorksheets(workbook, fileName) {
+          const newWorkbook = xlsx.utils.book_new();            
+          for (const sheetName in workbook.Sheets) {
+              xlsx.utils.book_append_sheet(newWorkbook, workbook.Sheets[sheetName], sheetName);
+          }
+    
+          xlsx.writeFile(newWorkbook, `./uploads/${fileName}`);
+      }
+      
       async readFile(filePath: string): Promise<xlsx.WorkBook> {
         return new Promise((resolve, reject) => {
           if (!fs.existsSync(filePath)) {
@@ -1369,49 +1394,37 @@ export class ExcelSheetService {
 
   async modifyExcelSheet(data) {
     try {
-      let originalWorkbook;
-      if(fs.existsSync(`./uploads/edited-${data?.excelSheetId}`)){
-        originalWorkbook = xlsx.readFile(`./uploads/edited-${data.excelSheetId}`);
-      }
-      else{
-        originalWorkbook = xlsx.readFile(`./uploads/${data.excelSheetId}`)
-      }
-      if(data.excelSheet !== 'Assessment of Working Capital'){
-        let jsonData: any[] = [];
-        const worksheet = originalWorkbook.Sheets[data.excelSheet];
-        jsonData = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
-  
-        const transformedData = await this.transformData(jsonData);
-        transformedData.map((workBookData)=>{
-          data.editedValues.map((dataToModify)=>{
-          if(workBookData[0]?.toLowerCase()?.trim() === dataToModify.subHeader.toLowerCase().trim()){
-            const colIndex = transformedData[1].findIndex(column => column.toLowerCase().trim() === dataToModify.columnName.toLowerCase().trim());
-            workBookData[colIndex] = +dataToModify.newValue;
+      if(data.excelSheet == 'P&L'){
+        const uploadDir = path.join(__dirname, '../../uploads');
+        const filePath = path.join(uploadDir, data.excelSheetId);
+
+        const updateProfitAndLossExcel = await this.updateExcel(filePath,data,data.excelSheet);
+        return (
+          {
+            data:updateProfitAndLossExcel.data,
+            status:true,
+            msg:'Excel Updated Successfully',
+            originalFileName:updateProfitAndLossExcel.originalFileName,
+            modifiedFileName:updateProfitAndLossExcel.modifiedFileName
           }
-          })
-        })
-        transformedData.shift();
-  
-        const modifiedWorksheet = xlsx.utils.aoa_to_sheet(transformedData);
-        const newWorkbook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(newWorkbook, modifiedWorksheet, `${data.excelSheet}`);
-  
-        for (const sheetName in originalWorkbook.Sheets) {
-          if (sheetName !== `${data.excelSheet}`) {
-            xlsx.utils.book_append_sheet(newWorkbook, originalWorkbook.Sheets[sheetName], sheetName);
-          }
-        }
-  
-        await xlsx.writeFile(newWorkbook, `./uploads/edited-${data?.excelSheetId}`);
-  
-        return of({
-          originalFileName: `${data?.excelSheetId}`,
-          modifiedFileName: `edited-${data?.excelSheetId}`,
-          msg: 'Excel sheet updated successfully',
-          status: true,
-        });
+        );
       }
-      else{
+      else if(data.excelSheet === 'BS'){
+        const uploadDir = path.join(__dirname, '../../uploads');
+        const filePath = path.join(uploadDir, data.excelSheetId);
+
+        const updateProfitAndLossExcel = await this.updateExcel(filePath,data,data.excelSheet);
+        return (
+          {
+            data:updateProfitAndLossExcel.data,
+            status:true,
+            msg:'Excel Updated Successfully',
+            originalFileName:updateProfitAndLossExcel.originalFileName,
+            modifiedFileName:updateProfitAndLossExcel.modifiedFileName
+          }
+        );
+      }
+      else if(data.excelSheet === 'Assessment of Working Capital'){
         const uploadDir = path.join(__dirname, '../../uploads');
         const filePath = path.join(uploadDir, data.excelSheetId);
         // console.log(data,"data from modify excel")
@@ -1671,6 +1684,114 @@ export class ExcelSheetService {
     }
   }
 
+  async updateExcel(filepath,data,sheetName){
+    const workbook= new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(filepath);
+    let worksheet:any = workbook.getWorksheet(sheetName);
+    const structure:any = sheetName === 'P&L' ? PROFIT_LOSS : sheetName === 'BS' ? BALANCE_SHEET : '' 
+
+    let  editedFilePath='';
+          const uploadDir = path.join(__dirname, '../../uploads');
+          if(data?.excelSheetId.includes('edited')){
+             editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
+          }
+          else{
+            editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
+          }
+
+    for await(const cells of data.cellData) {
+      worksheet.getCell(`${cells.cellAddress}`).value = data.newValue;
+      await new Promise<void>(async (resolve) => {      
+        for await(let mainData of structure){
+          await new Promise<void>(async (resolve) => {
+            
+            const dependentArray = mainData.lineEntry?.dependent;
+            const sysCode = mainData.lineEntry?.sysCode;
+            if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) {     //updating cells
+              let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
+              // console.log(formulae,"formula list")
+              const formulaComputation = await this.formulaComputations(formulae,worksheet)
+              worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = formulaComputation;
+            }
+         resolve();
+          })
+        }
+      resolve();
+    })
+    }
+  
+await workbook.xlsx.writeFile(editedFilePath,sheetName);
+const evaluatedValues = await this.fetchProfitLossOrBalanceSheetData(editedFilePath,sheetName);
+return {
+  msg:'Excel Updated Successfully',
+  status:true,
+  data:evaluatedValues,
+  originalFileName: `${data?.excelSheetId}`,
+  modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
+}
+  }
+
+  async formulaComputations(formula,worksheet){
+    const operations = formula.split(/([+*/-])/);
+
+    let result = 0;
+    let operator = '+';
+    operations.forEach(part => {
+      if (['+', '-', '*', '/'].includes(part)) {
+        operator = part;
+      } else {
+        // const operand = parseFloat(part);
+        const operand =  worksheet.getCell(part)?.value?.result ?  worksheet.getCell(part)?.value?.result : worksheet.getCell(part)?.value; 
+        console.log(operand,"operand",part)
+        // console.log(part,"seperated values")
+        switch (operator)   {
+          case '+':
+            result += operand;
+            break;
+          case '-':
+            result -= operand;
+            break;
+          case '*':
+            result *= operand;
+            break;
+          case '/':
+            result /= operand;
+            break;
+        }
+      }
+    });
+    console.log(result,"result")
+    return result;
+  }
+  async fetchProfitLossOrBalanceSheetData(filepath,sheetName){
+
+    const workBook = await this.readFile(filepath)
+    const sheetData = xlsx.utils.sheet_to_json(workBook.Sheets[sheetName]);
+
+      sheetData.forEach((row:any) => {
+          for (let columns in row) {
+            if (typeof row[columns] === 'string') {
+              row[columns] = row[columns].replace(/\r\n/g, '');
+          }
+        
+            if (typeof row[columns] === 'number') {
+              row[columns] = parseFloat(row[columns].toFixed(2));
+            }
+            if (typeof columns === 'string') {
+              const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+              if (columns !== cleanedColumn) {
+                row[cleanedColumn] = row[columns];
+                delete row[columns];
+              }
+            }
+          }
+        });
+        
+        const modifiedData = await this.transformData(sheetData);
+        const updateStructure = await this.createStructure(modifiedData,sheetName);
+        // console.log(updateStructure,"new updated strucuture")
+        return updateStructure;
+  }
   async  readAndEvaluateExcel(filepath): Promise<any[]> {
  
     let jsonData = xlsx.utils.sheet_to_json((await this.readFile(filepath)).Sheets['Assessment of Working Capital'], { header: 1 });
@@ -1887,5 +2008,43 @@ async assessmentCalculations(payload,balanceSheet){
       }
 }));
 return payload
+}
+
+async createStructure(data,sheetName){
+  data.splice(0,1) // removing first element from array, since its consist only column headers
+  
+  let balanceSheetStructure = [];
+  let profitAndLossSheetStructure = [];
+  if(sheetName === 'BS'){
+      data.map((element)=>{
+        const {Particulars,...rest} = element; 
+        for (const lineItems of BALANCE_SHEET){
+          if(element.Particulars === lineItems.lineEntry.particulars){
+            balanceSheetStructure.push({lineEntry:lineItems.lineEntry,...rest})
+          }
+        }
+      })
+
+      balanceSheetStructure.splice(balanceSheetStructure.findIndex(item=>item.lineEntry.particulars === 'TOTAL' && item.lineEntry.sysCode === 2035)+1,1)
+      balanceSheetStructure.splice(balanceSheetStructure.findIndex(item=>item.lineEntry.particulars === 'TOTAL' && item.lineEntry.sysCode === 2064)-1,1)
+    return balanceSheetStructure;
+  }
+  else if(sheetName === 'P&L'){
+    // data.map((element)=>{
+    //   const {Particulars,...rest} = element;
+    //   for (const lineItems of PROFIT_LOSS){
+    //     if(element.Particulars === lineItems.lineEntry.particulars){
+    //       profitAndLossSheetStructure.push({lineEntry:lineItems.lineEntry,...rest})
+    //     }
+    //   }
+    // })
+    let index = 0
+    for await(let item of data){
+      const { Particulars, ...rest } = item;
+      profitAndLossSheetStructure.push({lineEntry:PROFIT_LOSS[index]?.lineEntry,...rest});
+      index++;
+    }
+    return profitAndLossSheetStructure;
+  }
 }
 }
