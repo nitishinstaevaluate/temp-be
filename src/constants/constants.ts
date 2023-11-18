@@ -500,7 +500,8 @@ export const ASSESSMENT_DATA = [
           particulars : "TOTAL",
           sysCode:2035,
           editable:false,
-          dependent:[2027,2018,2002],
+          dependent:[2028,2029,2030,2031,2032,2033,2034,2019,2020,2021,2022,2023,2024,2025,2026,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
+            2013,2014,2015,2016,2017],
           formula:"currentOne34+currentOne35+currentOne36+currentOne37+currentOne38+currentOne39+currentOne40+currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne32+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22",
           subHeader:true,
           rowNumber:41
@@ -521,7 +522,7 @@ export const ASSESSMENT_DATA = [
           sysCode:2037,
           editable:false,
           header:true,
-          dependent:[2038,2047,2048,2049,2050,2051],
+          dependent:[2040,2041,2042,2043,2044,2045,2047,2048,2049,2050,2051],
           formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53+currentOne55+currentOne56+currentOne57+currentOne58+currentOne59",
           rowNumber:45
           }
@@ -765,13 +766,12 @@ export const ASSESSMENT_DATA = [
           sysCode:2064,
           editable:false,
           header:true,
-          dependent:[2037,2053],
+          dependent:[2038,2047,2048,2049,2050,2051,2054,2055,2056,2057,2058,2059,2060,2061],
           formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53+currentOne55+currentOne56+currentOne57+currentOne58+currentOne59+currentOne62+currentOne63+currentOne64+currentOne65+currentOne66+currentOne67+currentOne68+currentOne69",
           rowNumber:72
           }
     }
   ]
-
 
   export const PROFIT_LOSS = [
     {
@@ -916,8 +916,8 @@ export const ASSESSMENT_DATA = [
           sysCode:1017,
           header:true,
           editable:false,
-          dependent:[1004,1006,1007,1008,1016],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22",
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015],
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22", //wrong formula
           rowNumber:25
           }
     },
@@ -935,7 +935,7 @@ export const ASSESSMENT_DATA = [
           particulars : "EBIT",
           sysCode:1019,
           editable:false,
-          dependent:[1017,1018],
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018],
           formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26",
           rowNumber:27
           }
@@ -961,7 +961,7 @@ export const ASSESSMENT_DATA = [
           particulars : "Profit / (Loss) before exceptional and extraordinary items and tax ",
           sysCode:1022,
           editable:false,
-          dependent:[1019,1020,1021],
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021],
           formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29",
           rowNumber:30
           }
@@ -979,7 +979,7 @@ export const ASSESSMENT_DATA = [
           particulars : "Profit / (Loss) before extraordinary items and tax  ",
           sysCode:1024,
           editable:false,
-          dependent:[1022,1023],
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023],
           formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31",
           rowNumber:32
           }
@@ -997,7 +997,7 @@ export const ASSESSMENT_DATA = [
           particulars : "Profit / (Loss) before tax ",
           sysCode:1026,
           editable:false,
-          dependent:[1024,1025],
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023,1025],
           formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31+currentOne33",
           rowNumber:34
           }
@@ -1063,7 +1063,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1033,
           editable:false,
           header:true,
-          dependent:[1026,1027],
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023,1025,1028,1029,1030,1031,1032],
           formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31+currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40",
           rowNumber:42
           }
@@ -1133,7 +1133,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1041,
           header:true,
           editable:true,
-          dependent:[1033,1040],
+          dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023,1025,1028,1029,1030,1031,1032,1040],
           formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31+currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40+currentOne52",
           rowNumber:54
           }
@@ -1172,6 +1172,7 @@ export const ASSESSMENT_DATA = [
           }
     }
   ]
+  
 
 //   export const ASSESSMENT_SHEET_DATA=[ // keep this for reference,once assessment table is implemented remove
 //     {
