@@ -1741,7 +1741,7 @@ return {
         operator = part;
       } else {
         // const operand = parseFloat(part);
-        const operand =  worksheet.getCell(part)?.value?.result ?  worksheet.getCell(part)?.value?.result : worksheet.getCell(part)?.value; 
+        const operand =  worksheet.getCell(part)?.value?.result ?  worksheet.getCell(part)?.value?.result : !isNaN(worksheet.getCell(part)?.value) ? worksheet.getCell(part)?.value : 0 ; 
         console.log(operand,"operand",part)
         // console.log(part,"seperated values")
         switch (operator)   {
