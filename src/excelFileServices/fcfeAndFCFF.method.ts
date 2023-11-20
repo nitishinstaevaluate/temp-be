@@ -84,6 +84,11 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     `${columnsList[i] + sheet2_BSObj.otherCurrentAssetsRow}`,
   );
 
+  const otherNonCurrentAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
+  );
+
   const otherOperatingAssets = await getCellValue(
     worksheet3,
     `${columnsList[i] + sheet3_assWCObj.otherOperatingAssetsRow}`,
@@ -99,10 +104,10 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.employeePayablesRow}`,
   );
-  const shortTermBorrowings = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
-  );
+  // const shortTermBorrowings = await getCellValue(
+  //   worksheet2,
+  //   `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
+  // );
   const lcPayablesRow = await getCellValue(
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.lcPayablesRow}`,
@@ -115,10 +120,16 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     worksheet2,
     `${columnsList[i] + sheet2_BSObj.shortTermProvisionsRow}`,
   );
-  const interCo = await getCellValue(
+
+  const longTermProvisions = await getCellValue(
     worksheet2,
-    `${columnsList[i] + sheet2_BSObj.interCoRow}`,
+    `${columnsList[i] + sheet2_BSObj.longTermProvisionRow}`,
   );
+
+  // const interCo = await getCellValue(
+  //   worksheet2,
+  //   `${columnsList[i] + sheet2_BSObj.interCoRow}`,
+  // );
 
   const otherOperatingLiabilities = await getCellValue(
     worksheet3,
@@ -131,16 +142,18 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     inventories +
     advances +
     otherCurrentAssets +
+    otherNonCurrentAssets +
     otherOperatingAssets;
   const sum2 =
     tradePayables +
     employeePayables +
-    shortTermBorrowings +
+    // shortTermBorrowings +
     lcPayablesRow +
     otherCurrentLiabilities +
     shortTermProvisions +
     otherOperatingLiabilities +
-    interCo;
+    longTermProvisions;
+    // interCo;
 
   const currentSum = sum1 - sum2;
 
@@ -167,6 +180,11 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     `${columnsList[i + 1] + sheet2_BSObj.otherCurrentAssetsRow}`,
   );
 
+  const nextOtherNonCurrentAssets = await getCellValue(
+    worksheet2,
+    `${columnsList[i + 1] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
+  );
+
   const nextOtherOperatingAssets = await getCellValue(
     worksheet3,
     `${columnsList[i + 1] + sheet3_assWCObj.otherOperatingAssetsRow}`,
@@ -181,10 +199,10 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     worksheet2,
     `${columnsList[i + 1] + sheet2_BSObj.employeePayablesRow}`,
   );
-  const nextShortTermBorrowings = await getCellValue(
-    worksheet2,
-    `${columnsList[i + 1] + sheet2_BSObj.shortTermBorrowingsRow}`,
-  );
+  // const nextShortTermBorrowings = await getCellValue(
+  //   worksheet2,
+  //   `${columnsList[i + 1] + sheet2_BSObj.shortTermBorrowingsRow}`,
+  // );
   const nextLcPayablesRow = await getCellValue(
     worksheet2,
     `${columnsList[i + 1] + sheet2_BSObj.lcPayablesRow}`,
@@ -197,18 +215,24 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
     worksheet2,
     `${columnsList[i + 1] + sheet2_BSObj.shortTermProvisionsRow}`,
   );
-  const nextInterCo = await getCellValue(
+  const nextLongTermProvisions = await getCellValue(
     worksheet2,
-    `${columnsList[i + 1] + sheet2_BSObj.interCoRow}`,
+    `${columnsList[i + 1] + sheet2_BSObj.longTermProvisionRow}`,
   );
+  // const nextInterCo = await getCellValue(
+  //   worksheet2,
+  //   `${columnsList[i + 1] + sheet2_BSObj.interCoRow}`,
+  // );
 
   const nextOtherOperatingLiabilities = await getCellValue(
     worksheet3,
     `${columnsList[i + 1] + sheet3_assWCObj.otherOperatingLiabilitiesRow}`,
   );
 
-  const nextSum1 = nextTradeReceivables + nextUnbilledRevenues + nextInventories + nextAdvances + nextOtherCurrentAssets + nextOtherOperatingAssets
-  const nextSum2 = nextTradePayables + nextEmployeePayables + nextShortTermBorrowings + nextLcPayablesRow + nextOtherCurrentLiabilities + nextShortTermProvisions + nextInterCo + nextOtherOperatingLiabilities
+  const nextSum1 = nextTradeReceivables + nextUnbilledRevenues + nextInventories + nextAdvances + nextOtherCurrentAssets + nextOtherNonCurrentAssets + nextOtherOperatingAssets
+  console.log(nextTradeReceivables," ",nextUnbilledRevenues," ",nextInventories," ",nextAdvances," ",nextOtherCurrentAssets," ",nextOtherNonCurrentAssets, " ",nextOtherOperatingAssets)
+  const nextSum2 = nextTradePayables + nextEmployeePayables  + nextLcPayablesRow + nextOtherCurrentLiabilities + nextShortTermProvisions + nextOtherOperatingLiabilities + nextLongTermProvisions
+  console.log(nextTradePayables," ",nextEmployeePayables," ",nextLcPayablesRow," ",nextOtherCurrentLiabilities," ",nextShortTermProvisions," ",nextOtherOperatingLiabilities)
   const nextSum = nextSum1 - nextSum2
     console.log('Change in NCA ', currentSum - nextSum);
   return currentSum - nextSum;

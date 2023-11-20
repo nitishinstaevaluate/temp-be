@@ -81,7 +81,66 @@ export class ReportService {
         };
       }
   }
-  
+
+ async previewReport(id,res,approach){
+  try {
+    const transposedData = [];
+    let  getCapitalStructure;
+    const getReportData = await this.reportModel.findById(id);
+
+    const valuationResult:any = await this.valuationService.getValuationById(getReportData.reportId);
+
+    if(valuationResult.inputData[0].model.includes(MODEL[1])){
+      const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
+       getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(
+        +valuationResult.inputData[0].adjustedCostOfEquity,
+        valuationResult.inputData[0].excelSheetId,+valuationResult.inputData[0].costOfDebt,
+        +valuationResult.inputData[0].copShareCapital,+valuationResult.inputData[0].capitalStructure.deRatio,
+        valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
+        );
+    }
+
+  let htmlFilePath, pdfFilePath;
+    let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
+    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+    pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
+
+    for await (let data of valuationResult.modelResults) {
+        if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+            transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
+        }
+    }
+    this.loadHelpers(transposedData, valuationResult, getReportData,getCapitalStructure);
+
+    if (valuationResult.modelResults.length > 0) {
+        const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+        const template = hbs.compile(htmlContent);
+        const html = template(valuationResult);
+
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.docx"`);
+        res.send({html:html});
+
+        return {
+            msg: "Preview Success",
+            status: true,
+        };
+    } else {
+        console.log("Data not found");
+        return {
+            msg: "No data found for report preview",
+            status: false
+        };
+    }
+} catch (error) {
+  console.error("Error previewing Report:", error);
+  return {
+      msg: "Error Previewing Report",
+      status: false,
+      error: error.message
+  };
+}
+ }
 
     async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({

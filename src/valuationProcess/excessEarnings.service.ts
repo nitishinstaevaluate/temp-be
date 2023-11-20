@@ -70,7 +70,7 @@ export class ExcessEarningsService {
       discountingPeriod
     );
     console.log(discountingPeriodObj);
-    var vdate = await calculateDaysFromDate(new Date(inputs.valuationDate));
+    var vdate = diffValProv > 1 ? await calculateDaysFromDate(new Date(provDtRef)): await calculateDaysFromDate(new Date(inputs.valuationDate));;
     // console.log('Days left ',vdate);
     // var vdayLeft = 365 - vdate;
     console.log('total days ', vdate.totalDays);
