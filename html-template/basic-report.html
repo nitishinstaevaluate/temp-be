@@ -575,7 +575,7 @@
     padding-top: 9%;padding-right: 2%;">
 
 <p style="padding-bottom: 1pt;padding-left: 10pt;text-indent: 0pt;text-align: left;"><span
-    class="h1" style="font-size: 15px;">VALUATION REPORT ON FAIR VALUATION OF EQUITY SHARES OF </span><span class="s1"
+    class="h1" style="font-size: 15px;">VALUATION REPORT ON FAIR VALUATION OF <span style="text-transform:uppercase;">{{natureOfInstrument}}</span> OF </span><span class="s1"
     style="text-transform: uppercase;font-size: 15px;">{{companyName}}</span><span class="h1" style="font-size: 15px;"> AS OF </span><span class="s1"
     style="font-size: 15px;">{{strdate}}</span></p>
        <div style="padding-top: 16%;">
@@ -610,7 +610,7 @@
     <p style="padding-top: 11pt;padding-left: 28pt;text-indent: 0pt;text-align: left;">Dear Sir,</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;"><span class="p">We have prepared a
-            valuation report to express our opinion on the fair value of equity shares of </span><span class="s2"
+            valuation report to express our opinion on the fair value of {{natureOfInstrument}} of </span><span class="s2"
             style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span><span class="p"> (hereinafter, “</span><span
             class="s2" style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span><span class="p">” or the “Company”) as of </span><span
             class="s2" style="">{{strdate}}</span><span class="p">.</span>
@@ -619,7 +619,7 @@
     <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;"><span class="p">The purpose of
             valuation is solely to provide an independent opinion to the management of </span><span class="s2"
             style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span class="p"> (hereinafter the “Management”) on
-            the fair value of equity shares of the Company.</span></p>
+            the fair value of {{natureOfInstrument}} of the Company in accordance of {{reportSection}} of the {{reportPurpose}}.</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">In rendering the aforementioned advisory
         services, we reviewed and relied upon various materials/information provided by the Management. Our report is
@@ -636,8 +636,7 @@
   <div style="page-break-before: always;padding-left: 0%;padding-right: 4%;padding-top: 10%;line-height: 150%;">
     <p style="padding-top: 4pt;padding-left: 20pt;text-indent: 0pt;text-align: left;"><span class="h1">Based on our
         study and analytical review procedures, and subject to the limitations expressed within this report, our
-        opinion of fair value of </span><span class="s1" style=" font-weight: bold;">equity
-        shares/CCPS</span><span class="h1"> of </span><span class="s1" ><span style=" font-weight: bold;">{{companyName}}</span>, as of
+        opinion of fair value of </span><span class="s1" style=" font-weight: bold;">{{natureOfInstrument}}</span><span class="h1"> of </span><span class="s1" ><span style=" font-weight: bold;">{{companyName}}</span>, as of
         {{reportDate}}</span><span class="h1">:-</span></p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <p style="text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">Fair Value of <span style="font-weight: bold;">{{companyName}}</span></span><span class="h1"> </span><span class="s1" style=" font-weight: bold;"></span></p>
@@ -795,11 +794,10 @@
                                 the Management of </span><span class="s2" style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span
                                 class="p"> for determining the fair value of </span><span class="s2"
                                 style="">{{natureOfInstrument}}</span><span class="p"> of the Company.
-                                We understand that the fair value of equity shares of the Company is required to comply with
+                                We understand that the fair value of {{natureOfInstrument}} of the Company is required to comply with
                                 the relevant provisions of the </span><span class="s2"
                                 style="">Companies Act, 2013</span><span class="p"> in relation to
-                                proposed issuance of </span><span class="s2" style="">Equity
-                                shares/CCPS</span><span class="p">. The valuation date for this exercise is </span><span
+                                proposed issuance of </span><span class="s2" style="">{{natureOfInstrument}}</span><span class="p">. The valuation date for this exercise is </span><span
                                 class="s2" style=" ">{{strdate}}</span><span class="p">.</span></p>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 15pt;text-indent: 0pt;text-align: justify;">This Report must be considered
@@ -891,10 +889,9 @@
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;"><span
-                                    class="p">The purpose of valuation is to determine the fair value of equity shares of
+                                    class="p">The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of
                                 </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as of {{strdate}}</span><span
-                                    class="p"> to comply with the relevant provisions in relation to provisions of Companies
-                                    Act, 2013.</span></p>
+                                    class="p"> to comply with the relevant provisions in relation to provisions of {{reportSection}} of {{reportPurpose}}.</span></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;"><span
                                     class="p">The valuation date for this valuation exercise is taken to be </span><span
@@ -1797,7 +1794,7 @@
                                                     </table>
                                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                                 </li>
-                                                <li data-list-text="3." style="page-break-before: always;padding-top: 10%;">
+                                                <li data-list-text="3." style="page-break-before: always;padding-top: 5%;">
                                                     <p
                                                         style="padding-left: 150pt;text-indent: -18pt;line-height: 115%;text-align: left;">
                                                         The beta is arrived using {{betaName}} beta of the comparable companies in
@@ -1839,9 +1836,11 @@
                                     of WACC.</span></p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             {{/if}}
-                            <h1 style="padding-left: 28pt;text-indent: 0pt;line-height: 14pt;text-align: left;">Terminal Value:
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+
+                            <h1 style="padding-left: 28pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 5pt;">Terminal Value:
                             </h1>
-                            <p style="padding-left: 28pt;text-indent: 0pt;line-height: 14pt;text-align: left;">In estimating the
+                            <p style="padding-left: 28pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 4pt;">In estimating the
                                 terminal value, we have applied the Gordon Growth Model as computed below.</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <table style="border-collapse:collapse;margin-left:170pt" cellspacing="0">
@@ -1887,8 +1886,13 @@
                                     <td
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s5"
-                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 15px">WACC
-                                            Rate/Cost of Equity</p>
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 15px">
+                                            {{#if (checkIfFcff)}}
+                                                WACC Rate/Cost of Equity
+                                            {{else}}
+                                              Cost of Equity
+                                            {{/if}}
+                                        </p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         >
@@ -1909,10 +1913,10 @@
                                 </tr>
                             </table>
                             {{#if (checkIfFcff)}}
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;">Present Value of
                                Free Cash Flow to Firm(ie. FCFF)</h1>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;">Based on the DCF method, the
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;">Based on the DCF method, the
                                 present value of the projected FCFF has been computed in the table below:</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
 
@@ -2175,12 +2179,13 @@
                             </table>
                         </div>
                             <!-- fcff table ends -->
-                            {{else}}
+                            {{else}}    
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
 
                             <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;">Present Value of
                                 FCFE</h1>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;">Based on the DCF method, the
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <!-- fcfe table starts -->
@@ -2438,10 +2443,11 @@
                             <!-- fcfe table ends -->
                             {{/if}}
                             
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 6%;">Fair Value Indication via DCF
                                 Method</h1>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;"><span
+                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;"><span
                                     class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
                                     class="s2" style=" ">{{strdate}}</span><span class="p"> is calculated
                                     as </span><span class="h1">{{currencyUnit}} </span><span class="s1"
@@ -2843,7 +2849,7 @@
             analytical review procedures, and subject to the limitations expressed within this report, our opinion of
             fair value of </span><span class="s1" style="">{{natureOfInstrument}} of
             {{companyName}}</span><span class="h1"> , to comply with the relevant provisions of the Companies Act, 2013 in relation
-            to proposed issuance of equity shares, as of </span><span class="s1"
+            to proposed issuance of {{natureOfInstrument}}, as of </span><span class="s1"
             style="">{{reportDate}}</span><span class="h1">:</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 2%;text-align: center;"><span class="s3">Fair Value of

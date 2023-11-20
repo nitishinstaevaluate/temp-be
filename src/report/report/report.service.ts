@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { CAPITAL_STRUCTURE_TYPE, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT } from 'src/constants/constants';
+import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
@@ -40,7 +40,8 @@ export class ReportService {
 
         let htmlFilePath, pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+          // htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+          htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);  //use this file path to test multi-model report
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
   
           for await (let data of valuationResult.modelResults) {
@@ -209,6 +210,7 @@ export class ReportService {
         useExistingValuer:data?.useExistingValuer,
         reportDate:data?.reportDate,
         natureOfInstrument:data?.natureOfInstrument,
+        reportPurpose:data?.reportPurpose,
         reportSection:data?.reportSection
       }
       try {
@@ -303,7 +305,7 @@ export class ReportService {
       hbs.registerHelper('expMarketReturn',()=>{
         // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0]?.expMarketReturn.toFixed(3);
+            return valuationResult.inputData[0]?.expMarketReturn.toFixed(2);
         return '';
       })
       hbs.registerHelper('beta',()=>{
@@ -318,17 +320,17 @@ export class ReportService {
       })
       hbs.registerHelper('costOfEquity',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].costOfEquity?.toFixed(3);
+            return valuationResult.inputData[0].costOfEquity?.toFixed(2);
         return '';
       })
       hbs.registerHelper('adjustedCostOfEquity',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(3);
+            return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(2);
         return '';
       })
       hbs.registerHelper('wacc',()=>{
         if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-            return valuationResult.inputData[0]?.wacc?.toFixed(3);
+            return valuationResult.inputData[0]?.wacc?.toFixed(2);
         return '0';
       })
       hbs.registerHelper('costOfDebt',()=>{
@@ -367,7 +369,7 @@ export class ReportService {
                       return `${formattedNumber.replace(/,/g, ',')}/-`;
                   }
                   if (response.model === models && models === 'NAV') {
-                      const formattedNumber = Math.floor(response?.valuationData?.valuePerShare.value).toLocaleString('en-IN');
+                      const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
                       return `${formattedNumber.replace(/,/g, ',')}/-`;
                   }
                   return [];
@@ -375,11 +377,10 @@ export class ReportService {
           });
           return formattedValues[0];
       }
-      // console.log(formattedValues,"formatted value")
         return '';
       })
       hbs.registerHelper('equityPerShare',()=>{
-        if(transposedData[0].data.transposedResult[1])
+        if(transposedData[0]?.data.transposedResult[1])
         return valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
             const formattedNumber = Math.floor(response?.valuationData[0]?.equityValue * 100000).toLocaleString('en-IN');
@@ -408,7 +409,7 @@ export class ReportService {
         if(transposedData[0].data.transposedResult[1])
           return valuationResult.modelResults.map((response)=>{
             if(response.model===MODEL[0] || response.model === MODEL[1])
-              return response?.valuationData[0].presentFCFF.toFixed(2);
+              return response?.valuationData[response.valuationData.length -2].presentFCFF.toFixed(2); // subtract (- 2) to get last year fcfe/fcff data 
           });
           return '';
       })
@@ -439,22 +440,15 @@ export class ReportService {
       })
       hbs.registerHelper('alpha',()=>{
         let outputObject = {};
-        const stringAlpha={
-          companySize:'Company Size',
-          marketPosition:'Market Position',
-          liquidityFactor:'Liquidity Factor',
-          competition:'Competition',
-          qualitativeFactor:'Qualitative Factor'
-        }
         let letterIndex = 97; // this is the ascii code start
         for (const key in valuationResult.inputData[0].alpha) {
           if (valuationResult.inputData[0].alpha[key] !== '' && valuationResult.inputData[0].alpha[key] !== '0') {
             let element;
             let letter = String.fromCharCode(letterIndex);
             if (letterIndex > 97) {
-              element = `<br/><span style="text-align: center;text-transform:capitalize">${letter}. ${stringAlpha[`${key}`]}</span>`;
+              element = `<br/><span style="text-align: center;text-transform:capitalize">${letter}. ${ALPHA[`${key}`]}</span>`;
             } else {
-              element = `<span style="text-align: center;text-transform:capitalize">${letter}. ${stringAlpha[`${key}`]}</span>`;
+              element = `<span style="text-align: center;text-transform:capitalize">${letter}. ${ALPHA[`${key}`]}</span>`;
             }
             outputObject[element] = valuationResult.inputData[0].alpha[key];
             letterIndex++;
@@ -471,7 +465,7 @@ export class ReportService {
       hbs.registerHelper('postCostOfDebt',()=>{
         let costOfDebt,taxRate;
         if(valuationResult.inputData[0].model.includes(MODEL[1])){
-          costOfDebt =  parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(3);
+          costOfDebt =  parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(2);
           taxRate = valuationResult.inputData[0]?.taxRate.split('%')[0];
           return (((costOfDebt/100)*(1-parseFloat(taxRate)/100))*100).toFixed(2);
         } 
@@ -517,14 +511,17 @@ export class ReportService {
       hbs.registerHelper('explicitYear',()=>{
         let explicitYear='';
         let index;
-        if(valuationResult.modelResults){
+        if(valuationResult?.modelResults){
           valuationResult.modelResults.map((result)=>{
-            result.valuationData.map((response,i)=>{
-              if(response.particulars === 'Terminal Value'){
-                index = i
-              }
-            })
-            explicitYear = result.valuationData[index-1]['particulars'];
+
+            if( result?.model === MODEL[0] ||  result?.model === MODEL[1]){
+              result?.valuationData.map((response,i)=>{
+                if(response.particulars === 'Terminal Value'){
+                  index = i
+                }
+              })
+              explicitYear = result.valuationData[index-1]['particulars'];
+            }
           })
           explicitYear = `20${explicitYear.split('-')[1]}`
         }
@@ -907,7 +904,7 @@ export class ReportService {
         
         let arrayEquityValue = [];
         valuationResult.modelResults.forEach((result)=>{
-          if(result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+          if(Array.isArray(result.valuationData) && result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
             checkiIfStub=true;
           }
           if(result.model === 'FCFE'){
@@ -947,7 +944,6 @@ export class ReportService {
             }
           }
         })
-        console.log(arrayEquityValue);
         return arrayEquityValue;
       });
 
@@ -1072,7 +1068,7 @@ export class ReportService {
       hbs.registerHelper('ifEquityValProvisional',(options)=>{
         let checkiIfprovisional = false;
         valuationResult.modelResults.forEach((result)=>{
-          if(result.valuationData?.some(obj => obj.hasOwnProperty('equityValueNew'))){
+          if(Array.isArray(result.valuationData) && result.valuationData?.some(obj => obj.hasOwnProperty('equityValueNew'))){
             checkiIfprovisional = true;
           }
         })
@@ -1082,7 +1078,6 @@ export class ReportService {
             else{
               return options.inverse(this);
             }
-          
         })
 
         // Nav helpers
@@ -1106,14 +1101,36 @@ export class ReportService {
               return {
                 fieldName:indNav.fieldName,
                 // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(3) : indNav?.bookValue,
-                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(3) : indNav.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.fairValue
+                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(2) : indNav?.bookValue,
+                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(2) : indNav.value ? parseFloat(indNav.value)?.toFixed(2) : indNav.fairValue
               }
              })
             }
           })
           // console.log(navData,"nav data")
           return navData;
+        })
+
+        hbs.registerHelper('reportSection',()=>{
+          let outputObject = {};
+          let letterIndex = 97; // this is the ascii code start
+          for (const key in getReportData.reportSection) {
+              let element;
+              if (letterIndex > 97) {
+                element = ` ${getReportData.reportSection[key]}`;
+              } else {
+                element = `${getReportData.reportSection[key]}`;
+              }
+              outputObject[element] = key;
+              letterIndex++;
+          }
+          return `${Object.keys(outputObject)}`;
+        })
+
+        hbs.registerHelper('reportPurpose',()=>{
+          if(getReportData?.reportPurpose)
+            return `${REPORT_PURPOSE[`${getReportData?.reportPurpose}`]}`;
+          return '';
         })
 
         hbs.registerHelper('checkHead',(txt,val)=>{
@@ -1163,7 +1180,30 @@ export class ReportService {
           return true;
         return false;
       })
-     }
+
+      hbs.registerHelper('modelIncludes', (value, options) => {
+        const approaches = {
+            'INCOME_APPROACH': INCOME_APPROACH,
+            'NET_ASSET_VALUE_APPROACH': NET_ASSET_VALUE_APPROACH,
+            'MARKET_PRICE_APPROACH': MARKET_PRICE_APPROACH
+        };
+    
+        const approachModels = approaches[value];
+    
+        if (approachModels) {
+          const found = valuationResult.modelResults.some(response => {
+              return approachModels.includes(response.model);
+          });
+  
+          if (found) {
+              return options.fn(this);
+          } else {
+              return '';
+          }
+        }
+    });
+    }
+     
      catch(error){
       return {
         msg:'error in helper',
