@@ -56,7 +56,7 @@ export class IndustriesService {
     }
   }
   async getIndustries(): Promise<Industry[]> {
-    return await this.industryModel.find().exec();
+    return await this.industryModel.find({"isActive": true}).sort({"industry" : 1}).exec();
   }
   async updateIndustry(id: string, industry: Industry): Promise<Industry> {
     return await this.industryModel

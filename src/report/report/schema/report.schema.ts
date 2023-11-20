@@ -12,6 +12,7 @@ export class Report {
 
     @Prop({ required: false, type: [] }) 
     appointeeDetails: [];
+    
   
     @Prop({ required: true, type: String })
     reportId: string;
@@ -25,8 +26,14 @@ export class Report {
     @Prop({ required: true, type: String })
     natureOfInstrument: string;
 
-    @Prop({ required: true, type: [] }) 
-    reportSection: [];
+    @Prop({ required: false, type: [] }) 
+    regulationReference: [];
+
+    @Prop({ required: true, type: String }) 
+    reportPurpose:string;
+
+    @Prop({ required: false, type: [] }) 
+    reportSection:[];
 }
 
 export type ReportDocument = Report & Document;
