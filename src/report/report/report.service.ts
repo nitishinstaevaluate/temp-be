@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, CAPITAL_STRUCTURE_TYPE, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
@@ -40,7 +40,8 @@ export class ReportService {
 
         let htmlFilePath, pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+          // htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+          htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);  //use this file path to test multi-model report
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
   
           for await (let data of valuationResult.modelResults) {
@@ -374,13 +375,12 @@ export class ReportService {
                   return [];
               });
           });
-          console.log(formattedValues,"formatted value")
           return formattedValues[0];
       }
         return '';
       })
       hbs.registerHelper('equityPerShare',()=>{
-        if(transposedData[0].data.transposedResult[1])
+        if(transposedData[0]?.data.transposedResult[1])
         return valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
             const formattedNumber = Math.floor(response?.valuationData[0]?.equityValue * 100000).toLocaleString('en-IN');
@@ -511,14 +511,17 @@ export class ReportService {
       hbs.registerHelper('explicitYear',()=>{
         let explicitYear='';
         let index;
-        if(valuationResult.modelResults){
+        if(valuationResult?.modelResults){
           valuationResult.modelResults.map((result)=>{
-            result.valuationData.map((response,i)=>{
-              if(response.particulars === 'Terminal Value'){
-                index = i
-              }
-            })
-            explicitYear = result.valuationData[index-1]['particulars'];
+
+            if( result?.model === MODEL[0] ||  result?.model === MODEL[1]){
+              result?.valuationData.map((response,i)=>{
+                if(response.particulars === 'Terminal Value'){
+                  index = i
+                }
+              })
+              explicitYear = result.valuationData[index-1]['particulars'];
+            }
           })
           explicitYear = `20${explicitYear.split('-')[1]}`
         }
@@ -901,7 +904,7 @@ export class ReportService {
         
         let arrayEquityValue = [];
         valuationResult.modelResults.forEach((result)=>{
-          if(result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+          if(Array.isArray(result.valuationData) && result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
             checkiIfStub=true;
           }
           if(result.model === 'FCFE'){
@@ -941,7 +944,6 @@ export class ReportService {
             }
           }
         })
-        console.log(arrayEquityValue);
         return arrayEquityValue;
       });
 
@@ -1066,7 +1068,7 @@ export class ReportService {
       hbs.registerHelper('ifEquityValProvisional',(options)=>{
         let checkiIfprovisional = false;
         valuationResult.modelResults.forEach((result)=>{
-          if(result.valuationData?.some(obj => obj.hasOwnProperty('equityValueNew'))){
+          if(Array.isArray(result.valuationData) && result.valuationData?.some(obj => obj.hasOwnProperty('equityValueNew'))){
             checkiIfprovisional = true;
           }
         })
@@ -1076,7 +1078,6 @@ export class ReportService {
             else{
               return options.inverse(this);
             }
-          
         })
 
         // Nav helpers
@@ -1115,8 +1116,6 @@ export class ReportService {
           let letterIndex = 97; // this is the ascii code start
           for (const key in getReportData.reportSection) {
               let element;
-              let letter = String.fromCharCode(letterIndex);
-              console.log(getReportData.reportSection[key])
               if (letterIndex > 97) {
                 element = ` ${getReportData.reportSection[key]}`;
               } else {
@@ -1181,7 +1180,30 @@ export class ReportService {
           return true;
         return false;
       })
-     }
+
+      hbs.registerHelper('modelIncludes', (value, options) => {
+        const approaches = {
+            'INCOME_APPROACH': INCOME_APPROACH,
+            'NET_ASSET_VALUE_APPROACH': NET_ASSET_VALUE_APPROACH,
+            'MARKET_PRICE_APPROACH': MARKET_PRICE_APPROACH
+        };
+    
+        const approachModels = approaches[value];
+    
+        if (approachModels) {
+          const found = valuationResult.modelResults.some(response => {
+              return approachModels.includes(response.model);
+          });
+  
+          if (found) {
+              return options.fn(this);
+          } else {
+              return '';
+          }
+        }
+    });
+    }
+     
      catch(error){
       return {
         msg:'error in helper',
