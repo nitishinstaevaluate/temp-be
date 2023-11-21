@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
@@ -24,9 +24,9 @@ export class ReportService {
       try {
           const transposedData = [];
           let  getCapitalStructure;
-          const getReportData = await this.reportModel.findById(id);
+          const reportDetails = await this.reportModel.findById(id);
 
-          const valuationResult:any = await this.valuationService.getValuationById(getReportData.reportId);
+          const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
             const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
@@ -49,7 +49,7 @@ export class ReportService {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
-          this.loadHelpers(transposedData, valuationResult, getReportData,getCapitalStructure);
+          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure);
   
           if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -87,9 +87,9 @@ export class ReportService {
   try {
     const transposedData = [];
     let  getCapitalStructure;
-    const getReportData = await this.reportModel.findById(id);
+    const reportDetails = await this.reportModel.findById(id);
 
-    const valuationResult:any = await this.valuationService.getValuationById(getReportData.reportId);
+    const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
       const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
@@ -111,7 +111,7 @@ export class ReportService {
             transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
         }
     }
-    this.loadHelpers(transposedData, valuationResult, getReportData,getCapitalStructure);
+    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure);
 
     if (valuationResult.modelResults.length > 0) {
         const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -211,7 +211,8 @@ export class ReportService {
         reportDate:data?.reportDate,
         natureOfInstrument:data?.natureOfInstrument,
         reportPurpose:data?.reportPurpose,
-        reportSection:data?.reportSection
+        reportSection:data?.reportSection,
+        modelWeightageValue:data.finalWeightedAverage
       }
       try {
         const createdFoo = await this.reportModel.create(payload);
@@ -221,7 +222,7 @@ export class ReportService {
       }
     }
 
-   loadHelpers(transposedData,valuationResult,getReportData,getCapitalStructure){
+   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure){
      try{
       hbs.registerHelper('companyName',()=>{
         if(valuationResult.inputData[0].company)
@@ -230,8 +231,8 @@ export class ReportService {
       })
 
       hbs.registerHelper('reportDate',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  this.formatDate(new Date(getReportData.reportDate));
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  this.formatDate(new Date(reportDetails.reportDate));
         return '';
       })
 
@@ -242,53 +243,53 @@ export class ReportService {
       })
 
       hbs.registerHelper('registeredValuerName',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.registeredValuerDetails[0].registeredValuerName
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerName
         return '';
       })
 
       hbs.registerHelper('registeredValuerAddress',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.registeredValuerDetails[0].registeredValuerCorporateAddress ? getReportData.registeredValuerDetails[0].registeredValuerCorporateAddress : getReportData.registeredValuerDetails[0].registeredValuerGeneralAddress
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress ? reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress : reportDetails.registeredValuerDetails[0].registeredValuerGeneralAddress
         return '';
       })
 
       hbs.registerHelper('registeredValuerEmailId',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.registeredValuerDetails[0].registeredValuerEmailId; 
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerEmailId; 
         return '';
       })
 
       hbs.registerHelper('registeredValuerMobileNumber',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.registeredValuerDetails[0].registeredValuerMobileNumber; 
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerMobileNumber; 
         return '';
       })
       hbs.registerHelper('registeredValuerIbbiId',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.registeredValuerDetails[0].registeredValuerIbbiId; 
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerIbbiId; 
         return '';
       })
       hbs.registerHelper('registeredValuerQualifications',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.registeredValuerDetails[0].registeredValuerQualifications; 
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerQualifications; 
         return '';
       })
       hbs.registerHelper('appointingAuthorityName',()=>{
-        if(getReportData.appointeeDetails[0]) 
-            return  getReportData.appointeeDetails[0].appointingAuthorityName; 
+        if(reportDetails.appointeeDetails[0]) 
+            return  reportDetails.appointeeDetails[0].appointingAuthorityName; 
         return '';
       })
       hbs.registerHelper('dateOfAppointment',()=>{
-        if(getReportData.appointeeDetails[0]) 
-            // return  getReportData.appointeeDetails[0].dateOfAppointment; 
-            // let apptDate = await getReportData.appointeeDetails[0].dateOfAppointment; 
-            return this.formatDate(new Date(getReportData.appointeeDetails[0].dateOfAppointment));
+        if(reportDetails.appointeeDetails[0]) 
+            // return  reportDetails.appointeeDetails[0].dateOfAppointment; 
+            // let apptDate = await reportDetails.appointeeDetails[0].dateOfAppointment; 
+            return this.formatDate(new Date(reportDetails.appointeeDetails[0].dateOfAppointment));
         return '';
       })
       hbs.registerHelper('clientName',()=>{
-        if(getReportData.registeredValuerDetails[0]) 
-            return  getReportData.clientName; 
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.clientName; 
         return '';
       })
       hbs.registerHelper('location',()=>{
@@ -959,6 +960,29 @@ export class ReportService {
         }
         return isFcff;
       })
+      hbs.registerHelper('displayValuationHeader',()=>{
+        let modelArray = [];
+        let string;
+      if(valuationResult.modelResults){
+          valuationResult.modelResults.map((result)=>{
+            modelArray.push(result.model);
+          })
+        }
+        if((modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1])) && modelArray.includes(MODEL[5]) && (modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4]))){  
+          string = `Discounted Cash Flow Method (‘DCF’),
+          the Comparable Company Multiple Method (‘CCM’) and Net Asset Value Method (‘NAV’)`;
+        }
+        else if((modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1])) && modelArray.includes(MODEL[5])){
+          string = `Discounted Cash Flow Method (‘DCF’) and Net Asset Value Method (‘NAV’)`;
+        }
+        else if((modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1])) && (modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4]))){
+          string = `Discounted Cash Flow Method (‘DCF’) and Comparable Company Multiple Method (‘CCM’)`;
+        }
+        else{
+          string = `Net Asset Value Method (‘NAV’) and Comparable Company Multiple Method (‘CCM’)`;
+        }
+        return string;
+      })
 
       hbs.registerHelper('stubValue',()=>{
         let arrayStubValue = [];
@@ -1060,8 +1084,8 @@ export class ReportService {
       });
 
       hbs.registerHelper('natureOfInstrument',()=>{
-        if(getReportData)
-          return NATURE_OF_INSTRUMENT[`${getReportData.natureOfInstrument}`];
+        if(reportDetails)
+          return NATURE_OF_INSTRUMENT[`${reportDetails.natureOfInstrument}`];
         return '';
       })
 
@@ -1101,8 +1125,8 @@ export class ReportService {
               return {
                 fieldName:indNav.fieldName,
                 // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(2) : indNav?.bookValue,
-                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(2) : indNav.value ? parseFloat(indNav.value)?.toFixed(2) : indNav.fairValue
+                bookValue:indNav?.bookValue ? (Math.floor(parseFloat(indNav.bookValue) * 100) / 100).toLocaleString('en-IN') : indNav?.bookValue,
+                fairValue:indNav?.fairValue ? (Math.floor(parseFloat(indNav.bookValue) * 100) / 100).toLocaleString('en-IN') : indNav.value ? (Math.floor(parseFloat(indNav.value) * 100) / 100).toLocaleString('en-IN'): indNav.fairValue
               }
              })
             }
@@ -1114,12 +1138,12 @@ export class ReportService {
         hbs.registerHelper('reportSection',()=>{
           let outputObject = {};
           let letterIndex = 97; // this is the ascii code start
-          for (const key in getReportData.reportSection) {
+          for (const key in reportDetails.reportSection) {
               let element;
               if (letterIndex > 97) {
-                element = ` ${getReportData.reportSection[key]}`;
+                element = ` ${reportDetails.reportSection[key]}`;
               } else {
-                element = `${getReportData.reportSection[key]}`;
+                element = `${reportDetails.reportSection[key]}`;
               }
               outputObject[element] = key;
               letterIndex++;
@@ -1128,9 +1152,196 @@ export class ReportService {
         })
 
         hbs.registerHelper('reportPurpose',()=>{
-          if(getReportData?.reportPurpose)
-            return `${REPORT_PURPOSE[`${getReportData?.reportPurpose}`]}`;
+          if(reportDetails?.reportPurpose)
+            return `${REPORT_PURPOSE[`${reportDetails?.reportPurpose}`]}`;
           return '';
+        })
+
+        hbs.registerHelper('modelWeightageValue',()=>{
+          let dcfApproachString:any = [],netAssetValueString:any = [],marketPriceString:any = [],totalWeightage:any=[];
+          if(reportDetails?.modelWeightageValue){
+            reportDetails?.modelWeightageValue?.modelValue.map((data)=>{
+              if(data.model === MODEL[0] || data.model === MODEL[1]){
+                dcfApproachString = {
+                  particulars:'Value as DCF Method',
+                  weights:(data.weight * 100),
+                  weightedValue: (Math.floor(data.weightedValue * 100) / 100).toLocaleString('en-IN')
+                };
+                totalWeightage.push(dcfApproachString);
+              }
+              if(data.model === MODEL[5]){
+                netAssetValueString = {
+                  particulars:'Value as NAV Method',
+                  weights:(data.weight * 100),
+                  weightedValue: (Math.floor(data.weightedValue * 100) / 100).toLocaleString('en-IN')
+                };
+                totalWeightage.push(netAssetValueString);
+              }
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                marketPriceString = {
+                  particulars:'Value as CCM Method',
+                  weights:(data.weight * 100) ,
+                  weightedValue: (Math.floor(data.weightedValue * 100) / 100).toLocaleString('en-IN')
+                };
+                totalWeightage.push(marketPriceString);
+              }
+            })
+          }
+          return totalWeightage;
+        })
+
+        hbs.registerHelper('peRatioCalculation',()=>{
+          let pat:any = [],eps:any=[],marketPrice:any=[],totalPeRatio:any=[];
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              // console.log(data.valuationData)
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+              data.valuationData.valuation.map((valuationDetails)=>{
+                  if(valuationDetails.particular === 'peRatio'){
+                    pat = {
+                      particular:'Profit after Taxes',
+                      avg:(Math.floor(valuationDetails.pat * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.pat * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    eps = {
+                      particular:'P/E Ratio of Industry',
+                      avg: (Math.floor(valuationDetails.peRatioAvg * 100) / 100).toLocaleString('en-IN'),
+                      med: (Math.floor(valuationDetails.peRatioMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    marketPrice = {
+                      particular:'Market Price',
+                      avg:(Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.peMarketPriceMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    totalPeRatio.push(pat,eps,marketPrice)
+
+                  }
+                })
+              }
+            })
+          }
+          return totalPeRatio;
+        })
+
+        hbs.registerHelper('pbRatioCalculation',()=>{
+          let networth:any = [],pbShares:any=[],equityVal:any=[],totalPbRatio:any=[];
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                data.valuationData.valuation.map((valuationDetails)=>{
+                  if(valuationDetails.particular === 'pbRatio'){
+                    networth = {
+                      particular:'Net Worth of Company',
+                      avg:(Math.floor(valuationDetails.netWorthAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.netWorthMed * 100) / 100).toLocaleString('en-IN')
+                    }
+                    pbShares = {
+                      particular:'P/B Ratio of Industry',
+                      avg: (Math.floor(valuationDetails.pbRatioAvg * 100) / 100).toLocaleString('en-IN'),
+                      med: (Math.floor(valuationDetails.pbRatioMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    equityVal = {
+                      particular:'Fair Value of Equity',
+                      avg:(Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.pbMarketPriceMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    totalPbRatio.push(networth,pbShares,equityVal);
+                  }
+                })
+              }
+            })
+          }
+          return totalPbRatio;
+        })
+        
+        hbs.registerHelper('evEbitaRatioCalculation',()=>{
+          let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[];
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                data.valuationData.valuation.map((valuationDetails)=>{
+                  if(valuationDetails.particular === 'ebitda'){
+                    ebitda = {
+                      particular:'EBITDA',
+                      avg:(Math.floor(valuationDetails.ebitda * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.ebitda * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    evEbitda = {
+                      particular:'EV/EBITDA',
+                      avg: (Math.floor(valuationDetails.evAvg * 100) / 100).toLocaleString('en-IN'),
+                      med: (Math.floor(valuationDetails.evMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    enterpriseVal = {
+                      particular:'Enterprise Value',
+                      avg:(Math.floor(valuationDetails.enterpriseAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.enterpriseMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    debtVal = {
+                      particular:'Less : Value of Debt',
+                      avg:(Math.floor(valuationDetails.debtAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.debtMed * 100) / 100).toLocaleString('en-IN')
+                    }
+                    equityVal = {
+                      particular:'Value of Equity',
+                      avg:(Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.ebitdaEquityMed * 100) / 100).toLocaleString('en-IN')
+                    }
+                    totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,equityVal);
+                  }
+                })
+              }
+            })
+          }
+          return totalEvEbitdaRatio;
+        })
+
+        hbs.registerHelper('priceToSalesRatioCalculation',()=>{
+          let sales:any=[],psRatio:any=[],equityVal:any=[],totalPriceToSalesRatio:any=[];
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                data.valuationData.valuation.map((valuationDetails)=>{
+                  console.log(valuationDetails,"details")
+                  if(valuationDetails.particular === 'sales'){
+                    sales = {
+                      particular:'Sales of company',
+                      avg:(Math.floor(valuationDetails.salesAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.salesMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    psRatio = {
+                      particular:'P/S Ratio',
+                      avg: (Math.floor(valuationDetails.salesRatioAvg * 100) / 100).toLocaleString('en-IN'),
+                      med: (Math.floor(valuationDetails.salesRatioMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    equityVal = {
+                      particular:'Value of Equity',
+                      avg:(Math.floor(valuationDetails.salesEquityAvg * 100) / 100).toLocaleString('en-IN'),
+                      med:(Math.floor(valuationDetails.salesEquityMed * 100) / 100).toLocaleString('en-IN')
+                    }
+
+                    totalPriceToSalesRatio.push(sales,psRatio,equityVal);
+                  }
+                })
+              }
+            })
+          }
+          return totalPriceToSalesRatio;
+        })
+
+        hbs.registerHelper('checkPreferenceRatio',()=>{
+          if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
+            return true;
+          return false;
         })
 
         hbs.registerHelper('checkHead',(txt,val)=>{
@@ -1189,7 +1400,6 @@ export class ReportService {
         };
     
         const approachModels = approaches[value];
-    
         if (approachModels) {
           const found = valuationResult.modelResults.some(response => {
               return approachModels.includes(response.model);
