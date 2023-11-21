@@ -2,6 +2,14 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 
+export class modelWeightageValue{
+    @Prop({ required: true,type:Number,default:0 })
+    weightedVal:Number
+
+    @Prop({ required: true,type:[] })
+    modelValue:[]
+}
+
 @Schema()
 export class Report {
     @Prop({ type: String })
@@ -34,6 +42,9 @@ export class Report {
 
     @Prop({ required: false, type: [] }) 
     reportSection:[];
+
+    @Prop({ required: false, type: modelWeightageValue }) 
+    modelWeightageValue:modelWeightageValue;
 }
 
 export type ReportDocument = Report & Document;
