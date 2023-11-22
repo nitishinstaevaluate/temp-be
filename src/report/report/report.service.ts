@@ -11,6 +11,9 @@ import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, 
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
+import axios from 'axios';
+const FormData = require('form-data');
+import ConvertAPI from 'convertapi';
 
 @Injectable()
 export class ReportService {
@@ -40,8 +43,8 @@ export class ReportService {
 
         let htmlFilePath, pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-          // htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
-          htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);  //use this file path to test multi-model report
+          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+          // htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);  //use this file path to test multi-model report
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
   
           for await (let data of valuationResult.modelResults) {
@@ -101,10 +104,11 @@ export class ReportService {
         );
     }
 
-  let htmlFilePath, pdfFilePath;
+  let htmlFilePath, pdfFilePath,docFilePath;
     let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
+    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2] ? 'multi-model-report':''}.html`);
     pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.docx`);
 
     for await (let data of valuationResult.modelResults) {
         if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
@@ -120,7 +124,13 @@ export class ReportService {
 
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.docx"`);
-        res.send({html:html});
+        await this.generatePdf(html, pdfFilePath);
+
+        await this.convertPdfToDocx(pdfFilePath,docFilePath)
+        
+        const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
+
+        res.send(convertDocxToSfdt);
 
         return {
             msg: "Preview Success",
@@ -141,6 +151,47 @@ export class ReportService {
       error: error.message
   };
 }
+ }
+
+ async convertDocxToSyncfusionDocumentFormat(docxpath){
+  try{
+    const htmlContent = fs.readFileSync(docxpath);
+    const formData = new FormData();
+    formData.append('file', htmlContent, {
+      filename: docxpath,
+      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+  
+    const response = await axios.post('https://services.syncfusion.com/react/production/api/documenteditor/Import', formData);
+    return response.data;
+   }
+   catch(error){
+    console.log(error)
+  return {
+    msg:'something went wrong',
+    status:false,
+    error:error.message
+  }
+   }
+ }
+
+ async convertPdfToDocx(filePath,savePath){
+  try{
+    const convertapi = new ConvertAPI('uvPniQBbAIEJt9Bw');
+    const conversion = await  convertapi.convert('docx', { File: `${filePath}`},'pdf');
+    return conversion.file.save(savePath);
+  }
+  catch(error){
+    return{
+      msg:'conversion from pdf to docx failed',
+      status:false,
+      error:error.message
+    }
+  }
+ }
+
+ async convertDocxToPdf(blob:Blob){
+
  }
 
     async generatePdf(htmlContent: any, pdfFilePath: string) {

@@ -49,10 +49,17 @@ export class ReportController {
   @UseGuards(AuthGuard('jwt'))
   @Get('previewReport/:approach/:reportId')
   async previewReport(
-    @Param('reportId') reportId : string,
-    @Param('approach') approach : string,
+    @Param('reportId') reportId : string='',
+    @Param('approach') approach : string='',
     @Res() res) {
     const result = await this.reportService.previewReport(reportId, res,approach);
+    return  result;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('convertDocxToPdf')
+  async convertDocxToPdf(@Body() blob:Blob) {
+    const result = await this.reportService.convertDocxToPdf(blob);
     return result;
   }
 }
