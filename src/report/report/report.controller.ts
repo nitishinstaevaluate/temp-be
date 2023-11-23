@@ -4,12 +4,25 @@ import {
     Get,
     Param,
     Post,
+    Put,
     Res,
+    UploadedFile,
     UseGuards,
+    UseInterceptors,
   } from '@nestjs/common';
 import { ReportService } from './report.service';
+import { diskStorage } from 'multer';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
+const storage = diskStorage({
+  destination: './pdf',
+  filename: (req, file, cb) => {
+    const reportId = req.params.reportId
+    const fileName = `${file.originalname}`;
+    cb(null, fileName);
+  },
+});
 @Controller('report')
 export class ReportController {
     constructor(private reportService:ReportService){}
@@ -56,10 +69,10 @@ export class ReportController {
     return  result;
   }
 
+  @Put('updateReportDoc/:reportId')
   @UseGuards(AuthGuard('jwt'))
-  @Post('convertDocxToPdf')
-  async convertDocxToPdf(@Body() blob:Blob) {
-    const result = await this.reportService.convertDocxToPdf(blob);
-    return result;
+  @UseInterceptors(FileInterceptor('file', { storage }))
+  async updateDocx(@UploadedFile() file,@Param('reportId') reportId:string) {
+    return await this.reportService.updateReportDocxBuffer(reportId,file.filename);
   }
 }
