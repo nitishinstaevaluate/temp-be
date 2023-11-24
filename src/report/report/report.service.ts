@@ -220,10 +220,18 @@ export class ReportService {
       { $set: { fileName: fileName } },
       { new: true }
     );
-    return report.id;
+    return {
+      reportId:report.id,
+      msg:'Successfully updated doc',
+      status:true
+    };
   }
   catch(error){
-    throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    return {
+      error:error.message,
+      msg:'Doc update failed',
+      status:false
+    }
   }
  }
 
