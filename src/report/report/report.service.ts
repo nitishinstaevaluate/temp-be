@@ -9,8 +9,11 @@ import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
 import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
-import * as XLSX from 'xlsx';
 import { CalculationService } from 'src/calculation/calculation.service';
+import axios from 'axios';
+const FormData = require('form-data');
+import ConvertAPI from 'convertapi';
+require('dotenv').config();
 
 @Injectable()
 export class ReportService {
@@ -24,7 +27,27 @@ export class ReportService {
       try {
           const transposedData = [];
           let  getCapitalStructure;
+          let htmlFilePath, pdfFilePath,docFilePath;
           const reportDetails = await this.reportModel.findById(id);
+
+          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+          pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
+          docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
+          
+          
+          
+          if(reportDetails?.fileName){
+            const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation-${reportDetails.id}'.pdf"`);
+            res.send(convertDocxToPdf);
+
+             return {
+                  msg: "PDF download Success",
+                  status: true,
+              };
+          }
 
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
@@ -37,12 +60,6 @@ export class ReportService {
               valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
               );
           }
-
-        let htmlFilePath, pdfFilePath;
-          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-          // htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
-          htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);  //use this file path to test multi-model report
-          pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
   
           for await (let data of valuationResult.modelResults) {
               if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
@@ -59,7 +76,7 @@ export class ReportService {
               const pdf = await this.generatePdf(html, pdfFilePath);
   
               res.setHeader('Content-Type', 'application/pdf');
-              res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.pdf"`);
+              res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation-${reportDetails.id}'.pdf"`);
               res.send(pdf);
   
               return {
@@ -89,6 +106,22 @@ export class ReportService {
     let  getCapitalStructure;
     const reportDetails = await this.reportModel.findById(id);
 
+    let htmlFilePath, pdfFilePath,docFilePath;
+    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2] ? 'multi-model-report':''}.html`);
+    pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
+
+    if(reportDetails.fileName){
+      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
+
+        res.send(convertDocxToSfdt);
+
+        return {
+            msg: "Preview Success",
+            status: true,
+        };
+    }
+
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -100,11 +133,6 @@ export class ReportService {
         valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
         );
     }
-
-  let htmlFilePath, pdfFilePath;
-    let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
-    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : ''}.html`);
-    pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
 
     for await (let data of valuationResult.modelResults) {
         if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
@@ -120,7 +148,13 @@ export class ReportService {
 
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.docx"`);
-        res.send({html:html});
+        await this.generatePdf(html, pdfFilePath);
+
+        await this.convertPdfToDocx(pdfFilePath,docFilePath)
+        
+        const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
+
+        res.send(convertDocxToSfdt);
 
         return {
             msg: "Preview Success",
@@ -141,6 +175,81 @@ export class ReportService {
       error: error.message
   };
 }
+ }
+
+ async convertDocxToSyncfusionDocumentFormat(docxpath){
+  try{
+    const htmlContent = fs.readFileSync(docxpath);
+    const formData = new FormData();
+    formData.append('file', htmlContent, {
+      filename: docxpath,
+      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    });
+  
+    const response = await axios.post('https://services.syncfusion.com/react/production/api/documenteditor/Import', formData);
+    return response.data;
+   }
+   catch(error){
+    console.log(error)
+  return {
+    msg:'something went wrong',
+    status:false,
+    error:error.message
+  }
+   }
+ }
+
+ async convertPdfToDocx(filePath,savePath){
+  try{
+    const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
+    const conversion = await  convertapi.convert('docx', { File: `${filePath}`},'pdf');
+    return conversion.file.save(savePath);
+  }
+  catch(error){
+    return{
+      msg:'conversion from pdf to docx failed',
+      status:false,
+      error:error.message
+    }
+  }
+ }
+
+ async updateReportDocxBuffer(reportId:any,fileName){
+  try{
+    const report = await this.reportModel.findOneAndUpdate(
+      { _id: reportId },
+      { $set: { fileName: fileName } },
+      { new: true }
+    );
+    return {
+      reportId:report.id,
+      msg:'Successfully updated doc',
+      status:true
+    };
+  }
+  catch(error){
+    return {
+      error:error.message,
+      msg:'Doc update failed',
+      status:false
+    }
+  }
+ }
+
+ async convertDocxToPdf(docxFileName,pdfFilePath){
+  try{
+    const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
+    const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
+    await conversion.file.save(pdfFilePath);
+    return (await fs.readFileSync(pdfFilePath));
+  }
+  catch(error){
+    return{
+      msg:'conversion from docx to pdf failed',
+      status:false,
+      error:error.message
+    }
+  }
  }
 
     async generatePdf(htmlContent: any, pdfFilePath: string) {
@@ -215,8 +324,17 @@ export class ReportService {
         modelWeightageValue:data.finalWeightedAverage
       }
       try {
-        const createdFoo = await this.reportModel.create(payload);
-        return createdFoo._id;
+        const filter = { reportId: data?.reportId };
+        const update = { $set: payload };
+        
+        const options = {
+          upsert: true,
+          new: true,
+          runValidators: true
+        };
+      
+        const upsertReportDetails = await this.reportModel.findOneAndUpdate(filter, update, options);
+        return upsertReportDetails._id;
       } catch (e) {
         throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
       }

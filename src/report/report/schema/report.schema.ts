@@ -45,6 +45,9 @@ export class Report {
 
     @Prop({ required: false, type: modelWeightageValue }) 
     modelWeightageValue:modelWeightageValue;
+    
+    @Prop({ type:String,default:'' }) 
+    fileName:string; 
 }
 
 export type ReportDocument = Report & Document;
