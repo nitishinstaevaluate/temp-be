@@ -13,6 +13,7 @@ import { CalculationService } from 'src/calculation/calculation.service';
 import axios from 'axios';
 const FormData = require('form-data');
 import ConvertAPI from 'convertapi';
+require('dotenv').config();
 
 @Injectable()
 export class ReportService {
@@ -200,7 +201,7 @@ export class ReportService {
 
  async convertPdfToDocx(filePath,savePath){
   try{
-    const convertapi = new ConvertAPI('uvPniQBbAIEJt9Bw');
+    const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
     const conversion = await  convertapi.convert('docx', { File: `${filePath}`},'pdf');
     return conversion.file.save(savePath);
   }
@@ -237,7 +238,7 @@ export class ReportService {
 
  async convertDocxToPdf(docxFileName,pdfFilePath){
   try{
-    const convertapi = new ConvertAPI('uvPniQBbAIEJt9Bw');
+    const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
     const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
     await conversion.file.save(pdfFilePath);
     return (await fs.readFileSync(pdfFilePath));
