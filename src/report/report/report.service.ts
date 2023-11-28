@@ -29,8 +29,7 @@ export class ReportService {
           let  getCapitalStructure;
           let htmlFilePath, pdfFilePath,docFilePath;
           const reportDetails = await this.reportModel.findById(id);
-
-          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
           docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
           
@@ -478,35 +477,67 @@ export class ReportService {
           return '';
       })
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
-        modelName = modelName.split(',')
-        let formattedValues;
-        if (valuationResult) {
-          formattedValues = modelName.flatMap((models) => {
+        modelName = modelName.split(',');
+        if(modelName.length < 3){
+          let formattedValues;
+            formattedValues = modelName.flatMap((models) => {
               return valuationResult.modelResults.flatMap((response) => {
-                  if (response.model === models && models !== 'NAV') {
-                      const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
+                if (
+                  response.model === models &&
+                  (models === MODEL[2] || models === MODEL[4])
+                ) {
+                  const innerFormatted = response?.valuationData.valuation
+                    .filter((innerValuationData) => innerValuationData.particular === 'result')
+                    .map((innerValuationData) => {
+                      const formattedNumber = Math.floor(innerValuationData.fairValuePerShareAvg).toLocaleString('en-IN');
                       return `${formattedNumber.replace(/,/g, ',')}/-`;
-                  }
-                  if (response.model === models && models === 'NAV') {
-                      const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                      return `${formattedNumber.replace(/,/g, ',')}/-`;
-                  }
-                  return [];
+                    });
+                  return innerFormatted || [];
+                }
+                if (response.model === models && models !== 'NAV') {
+                  const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
+                  return `${formattedNumber.replace(/,/g, ',')}/-`;
+                }
+                if (response.model === models && models === 'NAV') {
+                  const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
+                  return `${formattedNumber.replace(/,/g, ',')}/-`;
+                }
+                return [];
               });
-          });
-          return formattedValues[0];
-      }
+            });
+            // console.log(formattedValues, "value per share");
+            return formattedValues[0];
+          }
+          else{
+            if(reportDetails?.modelWeightageValue){
+              const equityValue = reportDetails.modelWeightageValue.weightedVal;
+              const outstandingShares = valuationResult.inputData[0].outstandingShares;
+              const finalValue =  Math.floor(equityValue/outstandingShares).toLocaleString('en-IN');
+              return `${finalValue.replace(/,/g, ',')}/-`
+            }
+          }
+       
         return '';
       })
       hbs.registerHelper('equityPerShare',()=>{
+        let equityPerShare = [];
+        if(reportDetails?.modelWeightageValue){
+          const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
+          return `${number.replace(/,/g, ',')}/-`
+        }
         if(transposedData[0]?.data.transposedResult[1])
-        return valuationResult.modelResults.map((response)=>{
+          valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
-            const formattedNumber = Math.floor(response?.valuationData[0]?.equityValue * 100000).toLocaleString('en-IN');
-            return `${formattedNumber.replace(/,/g, ',')}/-`;
+            const number = response?.valuationData[0]?.equityValue.toFixed(2) || 0; 
+            const formattedNumber = (number ).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+            });
+            if(formattedNumber){
+              equityPerShare.push( `${formattedNumber}/-`);
+            }
           }
         });
-        return '';
+        return equityPerShare;
       })
       hbs.registerHelper('auditedYear',()=>{
         if(transposedData)
@@ -525,12 +556,14 @@ export class ReportService {
         return '0';
       })
       hbs.registerHelper('freeCashFlow',()=>{
+        let freeCashFlow = []
         if(transposedData[0].data.transposedResult[1])
-          return valuationResult.modelResults.map((response)=>{
-            if(response.model===MODEL[0] || response.model === MODEL[1])
-              return response?.valuationData[response.valuationData.length -2].presentFCFF.toFixed(2); // subtract (- 2) to get last year fcfe/fcff data 
+           valuationResult.modelResults.map((response)=>{
+            if(response.model===MODEL[0] || response.model === MODEL[1]){
+              freeCashFlow.push(response?.valuationData[response.valuationData.length -2].presentFCFF.toFixed(2)); // subtract (- 2) to get last year fcfe/fcff data 
+            }
           });
-          return '';
+          return freeCashFlow;
       })
       hbs.registerHelper('terminalValue',()=>{
         let terminalVal='';
@@ -730,7 +763,6 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              // console.log(response.onCashItems,"cash items", typeof response.onCashItems)
               arrayonCashItems.push({fcfeOnCashItems:response.onCashItems ? parseFloat(response?.onCashItems).toFixed(2) : response.onCashItems === 0 ? 0 : ''})
             })
             arrayonCashItems.unshift({fcfeOnCashItems:"Other Non Cash items"});
@@ -742,7 +774,6 @@ export class ReportService {
             arrayonCashItems.unshift({fcffOnCashItems:"Other Non Cash items"});
           }
         })
-        // console.log(arrayonCashItems,"array values")
         return arrayonCashItems;
       });
 
@@ -1282,7 +1313,7 @@ export class ReportService {
               if(data.model === MODEL[0] || data.model === MODEL[1]){
                 dcfApproachString = {
                   particulars:'Value as DCF Method',
-                  weights:(data.weight * 100),
+                  weights:(data.weight * 100)?.toFixed(1),
                   weightedValue: (Math.floor(data.weightedValue * 100) / 100).toLocaleString('en-IN')
                 };
                 totalWeightage.push(dcfApproachString);
@@ -1290,7 +1321,7 @@ export class ReportService {
               if(data.model === MODEL[5]){
                 netAssetValueString = {
                   particulars:'Value as NAV Method',
-                  weights:(data.weight * 100),
+                  weights:(data.weight * 100)?.toFixed(1),
                   weightedValue: (Math.floor(data.weightedValue * 100) / 100).toLocaleString('en-IN')
                 };
                 totalWeightage.push(netAssetValueString);
@@ -1298,7 +1329,7 @@ export class ReportService {
               if(data.model === MODEL[2] || data.model === MODEL[4]){
                 marketPriceString = {
                   particulars:'Value as CCM Method',
-                  weights:(data.weight * 100) ,
+                  weights:(data.weight * 100)?.toFixed(1),
                   weightedValue: (Math.floor(data.weightedValue * 100) / 100).toLocaleString('en-IN')
                 };
                 totalWeightage.push(marketPriceString);
@@ -1329,7 +1360,7 @@ export class ReportService {
                     }
 
                     marketPrice = {
-                      particular:'Market Price',
+                      particular:'Fair Value of Equity',
                       avg:(Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100).toLocaleString('en-IN'),
                       med:(Math.floor(valuationDetails.peMarketPriceMed * 100) / 100).toLocaleString('en-IN')
                     }
@@ -1427,7 +1458,6 @@ export class ReportService {
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
                 data.valuationData.valuation.map((valuationDetails)=>{
-                  console.log(valuationDetails,"details")
                   if(valuationDetails.particular === 'sales'){
                     sales = {
                       particular:'Sales of company',
@@ -1456,10 +1486,78 @@ export class ReportService {
           return totalPriceToSalesRatio;
         })
 
+        hbs.registerHelper('weightedAvgValuePrShare',()=>{
+          let evSales:any=[],evEbitda:any=[],priceToBookValue:any=[],priceToEarnings:any=[],avgValuePerShare:any=[],totalWeightedAvgValuePrShare:any=[];
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                data.valuationData.valuation.map((valuationDetails)=>{
+                  if(valuationDetails.particular === 'sales'){
+                    evSales = {
+                      particular:'Value as per P/Sales',
+                      fairValOfEquity:(Math.floor(valuationDetails.salesEquityAvg * 100) / 100).toLocaleString('en-IN'), // only for calculating average
+                      weights:'25%',
+                      weightedVal:((25 * (Math.floor(valuationDetails.salesEquityAvg * 100) / 100))/100).toFixed(2),  //only for calculating average
+                    }
+                  }
+                  if(valuationDetails.particular === 'ebitda'){
+                    evEbitda = {
+                      particular:'Value as per EV/EBITDA',
+                      fairValOfEquity: (Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100).toLocaleString('en-IN'), //only for calculating average
+                      weights:'25%',
+                      weightedVal:((25 * (Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100))/100).toFixed(2) //only for calculating average
+                    }
+                  }
+
+                  if(valuationDetails.particular === 'pbRatio'){
+                    priceToBookValue = {
+                      particular:'Value as per P/BV',
+                      fairValOfEquity:(Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100).toLocaleString('en-IN'), //only for calculating average
+                      weights:'25%',
+                      weightedVal:((25 * (Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100))/100).toFixed(2) //only for calculating average
+                    }
+                  }
+
+                  if(valuationDetails.particular === 'peRatio'){
+                    priceToEarnings = {
+                      particular:'Value as per P/E',
+                      fairValOfEquity:(Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100).toLocaleString('en-IN'), //only for calculating average
+                      weights:'25%',
+                      weightedVal:((25 * (Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100))/100).toFixed(2) //only for calculating average
+                    }
+                  }
+                  if(valuationDetails.particular === 'result'){
+                    avgValuePerShare = {
+                      particular:`Value per Share ${valuationResult.inputData[0].currencyUnit}`,
+                      fairValOfEquity:'', //selected fair value of equity for average calculation
+                      weights:'',
+                      weightedVal: (Math.floor(valuationDetails.fairValuePerShareAvg * 100) / 100).toFixed(2) //selected fair value of equity for average calculation
+                    }
+                  }
+                })
+              }
+            })
+            totalWeightedAvgValuePrShare.push(evSales,evEbitda,priceToBookValue,priceToEarnings,avgValuePerShare);
+          }
+          return totalWeightedAvgValuePrShare;
+        })
+
         hbs.registerHelper('checkPreferenceRatio',()=>{
           if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
             return true;
           return false;
+        })
+
+        hbs.registerHelper('industryName',()=>{
+          if(valuationResult.inputData[0].industry)
+            return valuationResult.inputData[0].industry;
+          return '';
+        })
+
+        hbs.registerHelper('numberOfSubindustry',()=>{
+          if(valuationResult.inputData[0].companies)
+            return valuationResult.inputData[0].companies?.length
+          return 0
         })
 
         hbs.registerHelper('checkHead',(txt,val)=>{
@@ -1530,6 +1628,13 @@ export class ReportService {
           }
         }
     });
+
+    hbs.registerHelper('checkIfValuePerShare',(particular,stringToCheck)=>{
+      if(stringToCheck === 'Value per Share' && particular.includes('Value per Share')){
+        return true;
+      }
+      return false;
+    })
     }
      
      catch(error){
