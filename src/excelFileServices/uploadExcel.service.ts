@@ -1046,7 +1046,7 @@ export class ExcelSheetService {
                   }
                   const peRatioMrktPrceObj={
                     srNo:'',
-                    particular:'Market Price',
+                    particular:'Fair Value of Equity',
                     avg:response.peMarketPriceAvg?.toFixed(2),
                     med:response.peMarketPriceMed?.toFixed(2)
                   }
@@ -1305,7 +1305,6 @@ export class ExcelSheetService {
              })
             }
           })
-          console.log(navData,"nav data")
           return navData;
         })
       }  
@@ -1740,10 +1739,7 @@ return {
       if (['+', '-', '*', '/'].includes(part)) {
         operator = part;
       } else {
-        // const operand = parseFloat(part);
         const operand =  worksheet.getCell(part)?.value?.result ?  worksheet.getCell(part)?.value?.result : !isNaN(worksheet.getCell(part)?.value) ? worksheet.getCell(part)?.value : 0 ; 
-        console.log(operand,"operand",part)
-        // console.log(part,"seperated values")
         switch (operator)   {
           case '+':
             result += operand;
@@ -1760,7 +1756,6 @@ return {
         }
       }
     });
-    console.log(result,"result")
     return result;
   }
   async fetchProfitLossOrBalanceSheetData(filepath,sheetName){
