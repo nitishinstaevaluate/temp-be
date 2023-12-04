@@ -24,57 +24,57 @@ export class ProcessStatusManagerService {
                     _id: processId,
                     'secondStageInput.model': { $in: process.secondStageInput.map((obj) => obj.model) },
                   });
-                  
+
                   if (modelExists) {
                     for await(const obj of process.secondStageInput) {
-                        existingRecord = await this.processStatusModel.updateOne(
-                          { _id: processId, 'secondStageInput.model': obj.model },
-                          {
-                            $set: {
-                              'secondStageInput.$': obj,
-                              step: parseInt(step) + 1,
-                            },
-                          },
-                          (err)=>{
-                           if(err){
-                            this.logger.log({
-                              message: `Second stage creation failed`,
-                              error:err,
-                              status:false
-                            });
-                           }
-                          }
-                        );
+                      if(obj){
+                        try {
+                          existingRecord =  await this.processStatusModel.updateOne(
+                            { _id: processId, 'secondStageInput.model': obj.model },
+                            {
+                              $set: {
+                                'secondStageInput.$': obj,
+                                step: parseInt(step) + 1,
+                              },
+                            }
+                          );
+                        } catch (err) {
+                          this.logger.log({
+                            message: `Second stage creation failed`,
+                            error: err,
+                            status: false,
+                          });
+                        }
                       }
-
+                      }
                       if (existingRecord.matchedCount === 1) {
                         existingRecord = await this.processStatusModel.findOne({ _id: processId });
                       }
                   } 
                   else {
-                    existingRecord = await this.processStatusModel.findOneAndUpdate(
-                      { _id: processId },
-                      {
-                        $push: {
-                          secondStageInput: {
-                            $each: process.secondStageInput,
+                    try{
+                      
+                      existingRecord = await this.processStatusModel.findOneAndUpdate(
+                        { _id: processId },
+                        {
+                          $push: {
+                            secondStageInput: {
+                              $each: process.secondStageInput,
+                            },
+                          },
+                          $set: {
+                            step: parseInt(step) + 1,
                           },
                         },
-                        $set: {
-                          step: parseInt(step) + 1,
-                        },
-                      },
-                      { new: true },
-                      (err)=>{
-                        if(err){
-                          this.logger.log({
-                            message: `Second stage insertion failed`,
-                            error:err,
-                            status:false
-                          });
-                         }
-                      }
-                    );
+                        { new: true },
+                      );
+                    }catch(err){
+                      this.logger.log({
+                        message: `Second stage insertion failed`,
+                        error:err,
+                        status:false
+                      });
+                    }
                   }
 
                   if (step === 2) {

@@ -58,5 +58,9 @@ export class AuthenticationController {
     return { msg: 'The user session has ended' }
   }
 
+  @Get('/extractUser')
+  async extractUser(@Request() req){
+    return this.authenticationService.extractUserId(req)
+  }
 
 }
