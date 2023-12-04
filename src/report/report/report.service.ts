@@ -512,7 +512,7 @@ export class ReportService {
             if(reportDetails?.modelWeightageValue){
               const equityValue = reportDetails.modelWeightageValue.weightedVal;
               const outstandingShares = valuationResult.inputData[0].outstandingShares;
-              const finalValue =  Math.floor(equityValue/outstandingShares).toLocaleString('en-IN');
+              const finalValue =  Math.floor(equityValue*100000/outstandingShares).toLocaleString('en-IN'); // use muliplier
               return `${finalValue.replace(/,/g, ',')}/-`
             }
           }

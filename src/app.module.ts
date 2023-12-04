@@ -19,6 +19,7 @@ import { DataReferencesModule } from './data-references/data-references.module';
 import { CalculationModule } from './calculation//calculation.module';
 import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
 import { ReportModule } from './report/report/report.module';
+import { ProcessStatusManagerModule } from './processStatusManager/process-status-manager.module';
 require('dotenv').config();
 
 @Module({
@@ -27,7 +28,7 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule],
+   CalculationModule,ReportModule,ProcessStatusManagerModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,
