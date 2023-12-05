@@ -6,6 +6,7 @@ import {
       Query,
       Put,
       UseGuards,
+      Request
     } from '@nestjs/common';
 import { ProcessStatusManagerService } from './process-status-manager.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,10 +19,11 @@ export class ProcessStatusManagerController {
     @UseGuards(AuthGuard('jwt'))
     @Put('instantiateProcess')
     async upsertProcessState(
+        @Request() req,
         @Body() process: ProcessStatusManagerDTO,
         @Query('processId') processId?: string
         ) {
-      return await this.processStatusManagerService.upsertProcess(process,processId);
+      return await this.processStatusManagerService.upsertProcess(req,process,processId);
     }
 
     @UseGuards(AuthGuard('jwt'))

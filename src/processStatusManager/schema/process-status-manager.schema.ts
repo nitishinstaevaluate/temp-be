@@ -396,7 +396,7 @@ export class fifthStageInput{
     finalWeightedAverage:[];
 }
 
-@Schema()
+@Schema({ versionKey: false })
 export class ProcessStatusManager {
     @Prop({ type: firstStageInput })
     firstStageInput:firstStageInput;
@@ -418,6 +418,12 @@ export class ProcessStatusManager {
 
     @Prop({ type: Number,default:0 })
     step:Number;
+
+    @Prop({ type: Number,unique: true,required:true  })
+    processIdentifierId:number;
+
+    @Prop({ default: () => new Date(), required: false })
+    createdOn: Date;
 }
 
 export type ProcessStatusManagerDocument = ProcessStatusManager & Document;

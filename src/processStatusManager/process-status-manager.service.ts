@@ -4,17 +4,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
 import { isNotEmpty } from 'class-validator';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { AuthenticationService } from 'src/authentication/authentication.service';
 
 @Injectable()
 export class ProcessStatusManagerService {
     constructor(@InjectModel('processStatusManager')
     private readonly processStatusModel: Model<ProcessStatusManagerDocument>,
-    private logger : CustomLogger){}
-    async upsertProcess(process,processId){
+    private logger : CustomLogger,
+    private readonly authenticationService: AuthenticationService){}
+
+    async upsertProcess(req,process,processId){
        try{
         let existingRecord,alreadyExistingRecord;
 
-        const {userId,step,...rest} = process
+        const {step,...rest} = process
         
         if (processId && isValidObjectId(processId)) {
             alreadyExistingRecord = await this.processStatusModel.findOne({ _id: processId });
@@ -125,9 +128,9 @@ export class ProcessStatusManagerService {
                 existingRecord = await this.processStatusModel.findOneAndUpdate(
                     { _id: processId },
                     { 
-                      $set: { 
+                      $set: {
                           ...rest,
-                          step: parseInt(step)+1
+                          step: parseInt(step)+1,
                       } 
                     },
                     { new: true }
@@ -141,12 +144,19 @@ export class ProcessStatusManagerService {
             }
         } 
         else {
+          const maxProcessIdentifierId = await this.getMaxId();
+
+          const authoriseUser = await this.authenticationService.extractUserId(req);
+
+          if(!authoriseUser.status)
+            return authoriseUser;
 
           const newRecord = await new this.processStatusModel(
             {
-                userId:userId,
                 ...rest,
-                step:parseInt(step)+1
+                step:parseInt(step)+1,
+                processIdentifierId : maxProcessIdentifierId + 1,
+                userId:authoriseUser.userId
             }).save();
 
           return {
@@ -187,5 +197,10 @@ export class ProcessStatusManagerService {
           msg:'Process retrieve failed'
         }
       }
+    }
+
+    async getMaxId(){
+      const maxState = await this.processStatusModel.findOne({ createdOn: { $exists: true, $ne: null } }).sort({ createdOn: -1 });;
+      return maxState.processIdentifierId | 100000;
     }
 }
