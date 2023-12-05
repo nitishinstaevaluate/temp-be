@@ -27,13 +27,17 @@ export class ReportService {
       try {
           const transposedData = [];
           let  getCapitalStructure;
-          let htmlFilePath, pdfFilePath,docFilePath;
+          let htmlFilePath, pdfFilePath,docFilePath,pdf;
           const reportDetails = await this.reportModel.findById(id);
-          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+
+          if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+            htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+          }
+          else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+            htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+          }
           pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
           docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
-          
-          
           
           if(reportDetails?.fileName){
             const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
@@ -71,8 +75,13 @@ export class ReportService {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
               const template = hbs.compile(htmlContent);
               const html = template(valuationResult);
-  
-              const pdf = await this.generatePdf(html, pdfFilePath);
+            
+              if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+                pdf = await this.generatePdf(html, pdfFilePath);
+              }
+              else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+                pdf = await this.generateSebiReport(html, pdfFilePath);
+              }
   
               res.setHeader('Content-Type', 'application/pdf');
               res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation-${reportDetails.id}'.pdf"`);
@@ -105,8 +114,15 @@ export class ReportService {
     let  getCapitalStructure;
     const reportDetails = await this.reportModel.findById(id);
 
-    let htmlFilePath, pdfFilePath,docFilePath;
-    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2] ? 'multi-model-report':''}.html`);
+    let htmlFilePath, pdfFilePath,docFilePath,pdf;
+
+    if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+      htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+    }
+    else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+      htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+    }
+
     pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
     docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
 
@@ -147,7 +163,12 @@ export class ReportService {
 
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.docx"`);
-        await this.generatePdf(html, pdfFilePath);
+        if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+          pdf = await this.generatePdf(html, pdfFilePath);
+        }
+        else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+          pdf = await this.generateSebiReport(html, pdfFilePath);
+        }
 
         await this.convertPdfToDocx(pdfFilePath,docFilePath)
         
@@ -267,6 +288,53 @@ export class ReportService {
             footerTemplate: `<div style="width:100%">
             <hr style="border:1px solid #bbccbb">
             <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
+            </div>`,
+          });
+
+          return pdf;
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        } finally {
+          await browser.close();
+         
+        }
+      }
+      
+    async generateSebiReport(htmlContent: any, pdfFilePath: string) {
+        const browser = await puppeteer.launch({
+          headless:"new"
+        });
+        const page = await browser.newPage();
+
+        try {
+          const contenread = await page.setContent(htmlContent);
+          const pdf = await page.pdf({
+            path: pdfFilePath,
+            format: 'A4' as puppeteer.PaperFormat, // Cast 'A4' to PaperFormat
+            displayHeaderFooter: true,
+            printBackground: true,
+            margin: {
+              top: "35px",
+              right: "0px",
+              bottom: "50px",
+              left: "0px"
+          },
+          headerTemplate:`<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+          <td style="width:100%;">
+            <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:3%;padding-right:3%">
+              <tr>
+                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of ABC Limited</i></td>
+              </tr>
+              <tr>
+                <td style="font-size: 11px">&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr></table>`,
+            footerTemplate: `<div style="width:100%;padding-left:3%;padding-right:3%">
+            <hr style="border:1px solid #bbccbb">
+            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span></h1>
             </div>`,
           });
 
