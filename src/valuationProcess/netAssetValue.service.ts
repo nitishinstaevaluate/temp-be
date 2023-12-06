@@ -8,6 +8,7 @@ import {
 } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj, sheet1_PLObj } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { GET_MULTIPLIER_UNITS } from 'src/constants/constants';
 const date = require('date-and-time');
 @Injectable()
 export class NetAssetValueService {
@@ -30,7 +31,7 @@ export class NetAssetValueService {
     let provDtRef = await parseDate(provisionalDates.trim());
     let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
     
-    let multiplier = 100000;
+    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];;
     if (years === null)
       return {
         result: null,

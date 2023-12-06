@@ -397,7 +397,7 @@ export class fifthStageInput{
 }
 
 @Schema({ versionKey: false })
-export class ProcessStatusManager {
+export class ProcessManager {
     @Prop({ type: firstStageInput })
     firstStageInput:firstStageInput;
 
@@ -426,5 +426,5 @@ export class ProcessStatusManager {
     createdOn: Date;
 }
 
-export type ProcessStatusManagerDocument = ProcessStatusManager & Document;
-export const ProcessStatusManagerSchema = SchemaFactory.createForClass(ProcessStatusManager);
+export type ProcessManagerDocument = ProcessManager & Document;
+export const ProcessManagerSchema = SchemaFactory.createForClass(ProcessManager);

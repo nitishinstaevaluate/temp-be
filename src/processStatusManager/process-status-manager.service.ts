@@ -1,17 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ProcessStatusManagerDocument } from './schema/process-status-manager.schema';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ProcessManagerDocument } from './schema/process-status-manager.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
 import { isNotEmpty } from 'class-validator';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
+import { utilsService } from 'src/utils/utils.service';
 
 @Injectable()
 export class ProcessStatusManagerService {
-    constructor(@InjectModel('processStatusManager')
-    private readonly processStatusModel: Model<ProcessStatusManagerDocument>,
+    constructor(@InjectModel('processManager')
+    private readonly processModel: Model<ProcessManagerDocument>,
     private logger : CustomLogger,
-    private readonly authenticationService: AuthenticationService){}
+    private readonly authenticationService: AuthenticationService,
+    private readonly utilsService:utilsService){}
 
     async upsertProcess(req,process,processId){
        try{
@@ -20,10 +22,10 @@ export class ProcessStatusManagerService {
         const {step,...rest} = process
         
         if (processId && isValidObjectId(processId)) {
-            alreadyExistingRecord = await this.processStatusModel.findOne({ _id: processId });
+            alreadyExistingRecord = await this.processModel.findOne({ _id: processId });
           
             if(process?.secondStageInput){
-                const modelExists = await this.processStatusModel.exists({
+                const modelExists = await this.processModel.exists({
                     _id: processId,
                     'secondStageInput.model': { $in: process.secondStageInput.map((obj) => obj.model) },
                   });
@@ -32,7 +34,7 @@ export class ProcessStatusManagerService {
                     for await(const obj of process.secondStageInput) {
                       if(obj){
                         try {
-                          existingRecord =  await this.processStatusModel.updateOne(
+                          existingRecord =  await this.processModel.updateOne(
                             { _id: processId, 'secondStageInput.model': obj.model },
                             {
                               $set: {
@@ -51,13 +53,13 @@ export class ProcessStatusManagerService {
                       }
                       }
                       if (existingRecord.matchedCount === 1) {
-                        existingRecord = await this.processStatusModel.findOne({ _id: processId });
+                        existingRecord = await this.processModel.findOne({ _id: processId });
                       }
                   } 
                   else {
                     try{
                       
-                      existingRecord = await this.processStatusModel.findOneAndUpdate(
+                      existingRecord = await this.processModel.findOneAndUpdate(
                         { _id: processId },
                         {
                           $push: {
@@ -88,36 +90,35 @@ export class ProcessStatusManagerService {
                     if (stageOneDetails && stageTwoDetails) {
                       const orgModels = stageOneDetails.model;
                     
-                      for await (let model of orgModels) {
-                        for await (let secondStageDetails of stageTwoDetails){
-                            if(model !== secondStageDetails.model){
-                              existingRecord=  await this.processStatusModel.findOneAndUpdate(
-                                { _id: processId },
-                                { $pull: 
-                                  { 
-                                    secondStageInput : 
-                                    { 
-                                      model: `${secondStageDetails?.model}`
-                                    }
-                                  } 
-                                },
-                                { new: true },
-                                (err) => {
-                                  if(err){
-                                    this.logger.log({
-                                      message: `Second stage deletion failed`,
-                                      error:err,
-                                      status:false
-                                    });
-                                   }
+                      for await (let secondStageDetails of stageTwoDetails) {
+                        const modelExist = orgModels.some((model)=>model === secondStageDetails.model);
+                        if(!modelExist){
+                          existingRecord=  await this.processModel.findOneAndUpdate(
+                            { _id: processId },
+                            { $pull: 
+                              { 
+                                secondStageInput : 
+                                { 
+                                  model: `${secondStageDetails.model}`
                                 }
-                              );
+                              } 
+                            },
+                            { new: true },
+                            (err) => {
+                              if(err){
+                                this.logger.log({
+                                  message: `Second stage deletion failed`,
+                                  error:err,
+                                  status:false
+                                });
+                               }
                             }
-                          }
+                          );
+                        }
                       }
                     }
                   }
-                
+
                   return {
                     processId: existingRecord.id,
                     status: true,
@@ -125,7 +126,7 @@ export class ProcessStatusManagerService {
                   };
             }
             else {
-                existingRecord = await this.processStatusModel.findOneAndUpdate(
+                existingRecord = await this.processModel.findOneAndUpdate(
                     { _id: processId },
                     { 
                       $set: {
@@ -144,14 +145,14 @@ export class ProcessStatusManagerService {
             }
         } 
         else {
-          const maxProcessIdentifierId = await this.getMaxId();
+          const maxProcessIdentifierId = await this.utilsService.getMaxObId();
 
           const authoriseUser = await this.authenticationService.extractUserId(req);
 
           if(!authoriseUser.status)
             return authoriseUser;
 
-          const newRecord = await new this.processStatusModel(
+          const newRecord = await new this.processModel(
             {
                 ...rest,
                 step:parseInt(step)+1,
@@ -183,7 +184,7 @@ export class ProcessStatusManagerService {
 
     async fetchProcess(processId){
       try{
-        const processInfo = await this.processStatusModel.findById({_id:processId});
+        const processInfo = await this.processModel.findById({_id:processId});
 
         return {
           stateInfo:processInfo,
@@ -197,10 +198,5 @@ export class ProcessStatusManagerService {
           msg:'Process retrieve failed'
         }
       }
-    }
-
-    async getMaxId(){
-      const maxState = await this.processStatusModel.findOne({ createdOn: { $exists: true, $ne: null } }).sort({ createdOn: -1 });;
-      return maxState.processIdentifierId | 100000;
     }
 }
