@@ -447,11 +447,15 @@ export class SecondStageInputDTO {
     
     @IsOptional()
     @IsString()
-    reportId:string;
-
+    valuationResultId:string;
+    
     @IsOptional()
     @ArrayNotEmpty()
     finalWeightedAverage:[];
+
+    @IsOptional()
+    @IsString()
+    valuationReportId:string;
   }
 
 export class ProcessStatusManagerDTO {

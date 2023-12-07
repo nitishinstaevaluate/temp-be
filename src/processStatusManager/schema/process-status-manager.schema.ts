@@ -390,10 +390,13 @@ export class fifthStageInput{
     registeredValuerQualifications:String;
     
     @Prop({type:String,required:false,default:''})
-    reportId:String;
+    valuationResultId:String;
     
     @Prop({type:[],required:false,default:[]})
     finalWeightedAverage:[];
+
+    @Prop({type:String,required:false,default:''})
+    valuationReportId:String;
 }
 
 @Schema({ versionKey: false })
