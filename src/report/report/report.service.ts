@@ -1703,6 +1703,13 @@ export class ReportService {
       }
       return false;
     })
+
+    hbs.registerHelper('isSection165',()=>{
+      if(reportDetails.reportSection.includes(`165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018`) && reportDetails.reportSection.length === 1){
+        return true;
+      }
+      return false;
+    })
     }
      
      catch(error){
