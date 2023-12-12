@@ -73,6 +73,6 @@ export class ReportController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file', { storage }))
   async updateDocx(@UploadedFile() file,@Param('reportId') reportId:string) {
-    return await this.reportService.updateReportDocxBuffer(reportId,file.filename);
+    return await this.reportService.updateReportDocxBuffer(reportId,file);
   }
 }

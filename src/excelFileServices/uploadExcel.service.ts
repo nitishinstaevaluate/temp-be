@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, BALANCE_SHEET, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -15,24 +15,30 @@ import { isNotEmpty } from 'class-validator';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
+import axios from 'axios';
+import { IFIN_FINANCIAL_SHEETS } from 'src/interfaces/api-endpoints.prod';
+require('dotenv').config();
+
 
 @Injectable()
 export class ExcelSheetService {
   constructor( private valuationService:ValuationsService,private fcfeService:FCFEAndFCFFService){}
     getSheetData(fileName: string, sheetName: string): Observable<any> {
-        const uploadDir = path.join(__dirname, '../../uploads');
-        const filePath = path.join(uploadDir, fileName);
-    
+        // const uploadDir = path.join(__dirname, '../../uploads');
+        // const filePath = path.join(uploadDir, fileName);
+        
+    return from(this.fetchFinancialSheetFromS3(fileName)).pipe(
+      switchMap((filePath:any)=>{
         return from(this.readFile(filePath)).pipe(
           switchMap((workbook) => {
             return from(this.copyWorksheets(workbook,fileName)).pipe(
                 switchMap((response)=>{
                 if(sheetName !== 'Assessment of Working Capital'){
                   if (!workbook.SheetNames.includes(sheetName)) {
-                  return throwError( {
-                    message: `${sheetName} Sheet not found`,
-                    status: false
-                });
+                    return throwError( {
+                      message: `${sheetName} Sheet not found`,
+                      status: false
+                    });
                   }
                   const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
                   sheetData.forEach((row:any) => {
@@ -169,17 +175,32 @@ export class ExcelSheetService {
               });
           })
         )
+        },
+       ),
+       catchError((error) => {
+        console.log(error,"error")
+          return of({
+            msg:'Fetching of financial sheet failed',
+            error:error.message,
+            status:false
+          });
+      })
+      )
+        
        
       }
 
       
       async copyWorksheets(workbook, fileName) {
-          const newWorkbook = xlsx.utils.book_new();            
-          for (const sheetName in workbook.Sheets) {
-              xlsx.utils.book_append_sheet(newWorkbook, workbook.Sheets[sheetName], sheetName);
-          }
-    
-          xlsx.writeFile(newWorkbook, `./uploads/${fileName}`);
+        const uploadDir = path.join(__dirname, '../../uploads');
+        const filePath = path.join(uploadDir, fileName);
+        const newWorkbook = xlsx.utils.book_new();            
+        for (const sheetName in workbook.Sheets) {
+            xlsx.utils.book_append_sheet(newWorkbook, workbook.Sheets[sheetName], sheetName);
+        }
+  
+        xlsx.writeFile(newWorkbook, `./uploads/${fileName}`);
+        // await this.uploadFinancialSheet(filePath);
       }
       
       async readFile(filePath: string): Promise<xlsx.WorkBook> {
@@ -1479,7 +1500,7 @@ export class ExcelSheetService {
   async appendSheetInExcel(filepath,data){
     try{
       let sheet;
-      const workbook = new ExcelJS.Workbook();
+      const workbook:any = new ExcelJS.Workbook();
       await workbook.xlsx.readFile(filepath);
       let alreadyExistAssessmentSheet = workbook.getWorksheet('Assessment of Working Capital');
       if(!alreadyExistAssessmentSheet){
@@ -1560,6 +1581,7 @@ export class ExcelSheetService {
         });
 
         await workbook.xlsx.writeFile(filepath);
+        await this.updateFinancialSheet(filepath);
         const evaluatedValues = await this.readAndEvaluateExcel(filepath)
       
         return {
@@ -1667,6 +1689,7 @@ export class ExcelSheetService {
             }
           
         await workbook.xlsx.writeFile(editedFilePath);
+        await this.updateFinancialSheet(editedFilePath);
           const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
           return {
             msg:'Excel Updated Successfully',
@@ -1720,6 +1743,7 @@ export class ExcelSheetService {
     }
   
 await workbook.xlsx.writeFile(editedFilePath,sheetName);
+await this.updateFinancialSheet(editedFilePath);
 const evaluatedValues = await this.fetchProfitLossOrBalanceSheetData(editedFilePath,sheetName);
 return {
   msg:'Excel Updated Successfully',
@@ -2040,6 +2064,113 @@ async createStructure(data,sheetName){
       index++;
     }
     return profitAndLossSheetStructure;
+  }
+}
+
+async updateFinancialSheet(filepath){
+  try{
+    const base64 = await fs.readFileSync(filepath).toString('base64');
+      const fileName = filepath.split('\\');
+      const data = {
+        filename : `${fileName[fileName.length-1]}`,
+        base64Document: base64
+      }
+
+      return await this.upsertExcelInS3(data.base64Document,data.filename)
+  }catch(error){
+    return {
+      error:error,
+      status:false,
+      msg:'Financial sheet upload failed'
+    }
+  }
+}
+
+async pushInitialFinancialSheet(formData){
+  try{
+    const uploadDir = path.join(__dirname, '../../uploads');
+    const filePath = path.join(uploadDir, formData.filename);
+
+    let file = fs.readFileSync(filePath).toString('base64');
+    return await this.upsertExcelInS3(file,formData.filename)
+  }
+  catch(error){
+    return {
+      error:error,
+      msg:'uploading financial sheet in s3 failed',
+      status : false
+    }
+  }
+}
+
+async upsertExcelInS3(data,filename){
+  try{
+
+    const headers = {
+      'x-api-key': process.env.AWS_S3_API_KEY,
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    }
+  
+   const upsertExcel = await axios.put(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${filename}`,data,{headers});
+  
+   if(upsertExcel.status === 200){
+    return { excelSheetId: `${filename}` } 
+   }
+   else{
+    return {
+      status:false,
+      msg:'financial sheet upload failed',
+    }
+   }
+  }
+  catch(error){
+    throw error
+  }
+}
+async fetchFinancialSheetFromS3(fileName){
+  try{
+    if(fileName){
+
+      const headers = {
+        'x-api-key': process.env.AWS_S3_API_KEY,
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      }
+
+     const fetchFinancialSheet = await axios.get(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${fileName}`,{headers});
+
+     if(fetchFinancialSheet.status === 200){
+      if(Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()){
+        throw new Error('The specified key does not exist');
+      }
+      else{
+        const uploadDir = path.join(__dirname, '../../uploads');
+  
+        const buffer = Buffer.from(fetchFinancialSheet.data, 'base64')
+  
+        const filePath = path.join(uploadDir, fileName);
+  
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        fs.writeFileSync(filePath, buffer);
+        
+        return filePath; 
+      }
+     }
+     else{
+      return {
+        status:false,
+        msg:'financial sheet fetch failed',
+      }
+     }
+  
+    }
+  }catch(error){
+    return {
+      error:error,
+      status:false,
+      msg:'Financial sheet upload failed'
+    }
   }
 }
 }
