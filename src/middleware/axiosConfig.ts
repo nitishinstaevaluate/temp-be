@@ -1,4 +1,3 @@
-// axiosConfig.js
 import axios from 'axios';
 import { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { utilities as nestWinstonModuleUtilities, WinstonModule,  } from 'nest-winston';
