@@ -50,7 +50,7 @@ const setupAxiosInterceptor = (axiosInstance: AxiosInstance) => {
       if (error.response) {
         logger.error(`[${currentDateIST}] Error Response ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url}`);
       } else if (error.request) {
-        logger.error(`[${currentDateIST}] Request Erro ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.request}`);
+        logger.error(`[${currentDateIST}] Request Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.request}`);
       } else {
         logger.error(`[${currentDateIST}] Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.message}`);
       }
