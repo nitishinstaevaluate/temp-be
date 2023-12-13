@@ -68,4 +68,19 @@ export class AuthenticationService {
         // };
       }
 
+      async extractUserId (req) {
+        const token = req.headers.authorization;
+      
+        if (!token || !token.startsWith('Bearer ')) {
+          return { status:false, msg: 'Unauthorized' };
+        }
+        const authToken = token.split(' ')[1];
+
+        const decodedToken =  this.jwtService.verify(authToken);
+        return {
+          userId:decodedToken.sub,
+          status:true,
+          msg:"Extraction successful"
+        };
+      };
 }

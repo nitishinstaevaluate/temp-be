@@ -45,15 +45,9 @@ export class UploadController {
   // @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
-  async uploadFile(@UploadedFile() file) {
-  
-    this.customLogger.log({
-      message: 'Upload Request is executed successfully into uploadExcel Controller.',
-     });
-    return { excelSheetId: file.filename };
+  async uploadFile(@UploadedFile() formData) {
+    return await this.excelSheetService.pushInitialFinancialSheet(formData);
   }
-
-  //For deleting the uploaded excel files based on uploaded Date.
 
   // @UseGuards(AuthGuard('jwt'))
   @Get('dates')
