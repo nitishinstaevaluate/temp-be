@@ -1320,3 +1320,5 @@ export const DOCUMENT_UPLOAD_TYPE = {
   FINANCIAL_EXCEL: 'ifin-financial-sheet',
   VALUATION_REPORT: 'ifin-reports'
 }
+
+export const XML_FORMAT = /<("[^"]*"|'[^']*'|[^'">])*>/;

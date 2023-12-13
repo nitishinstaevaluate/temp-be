@@ -62,35 +62,6 @@ export class CorsMiddleware implements NestMiddleware {
           this.logger.log(`[${currentDateIST}] Response ${method} ${originalUrl} ${statusCode} ${JSON.stringify({ body: req.body })}`);
         }
       });
-    
-      axios.interceptors.response.use(
-        (response: AxiosResponse) => {
-          const currentDateIST = new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Kolkata',
-          });
-          if(Buffer.from(response.data, 'base64').toString('base64') !== response.data.trim()){
-            this.logger.error(`[${currentDateIST}] Error Response ${response.config.method?.toUpperCase()} ${response.config.url} ${response.status} ${JSON.stringify({error:response.data})}`);
-          }
-          else{
-            this.logger.log(`[${currentDateIST}] Response ${response.config.method?.toUpperCase()} ${response.config.url} ${response.status}`);
-          }
-          return response;
-        },
-        (error: AxiosError) => {
-          const currentDateIST = new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Kolkata',
-          });
-          if (error.response) {
-            this.logger.error(`[${currentDateIST}] Error Response ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url}`);
-          } else if (error.request) {
-            this.logger.error(`[${currentDateIST}] Request Error ${error.request}`);
-          } else {
-            this.logger.error(`[${currentDateIST}] Error ${error.message}`);
-          }
-          return Promise.reject(error);
-        }
-      );
-
       next();
     }
   }

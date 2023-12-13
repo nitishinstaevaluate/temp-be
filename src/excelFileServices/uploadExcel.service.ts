@@ -17,6 +17,7 @@ import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
 import axios from 'axios';
 import { IFIN_FINANCIAL_SHEETS } from 'src/interfaces/api-endpoints.prod';
+import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 
 
@@ -2111,7 +2112,7 @@ async upsertExcelInS3(data,filename){
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     }
   
-   const upsertExcel = await axios.put(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${filename}`,data,{headers});
+   const upsertExcel = await axiosInstance.put(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${filename}`,data,{headers});
   
    if(upsertExcel.status === 200){
     return { excelSheetId: `${filename}` } 
@@ -2136,7 +2137,7 @@ async fetchFinancialSheetFromS3(fileName){
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       }
 
-     const fetchFinancialSheet = await axios.get(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${fileName}`,{headers});
+     const fetchFinancialSheet = await axiosInstance.get(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${fileName}`,{headers})
 
      if(fetchFinancialSheet.status === 200){
       if(Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()){

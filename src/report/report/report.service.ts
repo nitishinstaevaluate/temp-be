@@ -10,10 +10,10 @@ import { ReportDocument } from './schema/report.schema';
 import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
-import axios from 'axios';
 const FormData = require('form-data');
 import ConvertAPI from 'convertapi';
-import { IFIN_REPORT } from 'src/interfaces/api-endpoints.prod';
+import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
+import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 
 @Injectable()
@@ -211,7 +211,7 @@ export class ReportService {
       contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     });
   
-    const response = await axios.post('https://services.syncfusion.com/react/production/api/documenteditor/Import', formData);
+    const response = await axiosInstance.post(SYNC_FUSION_DOC_CONVERT, formData);
     return response.data;
    }
    catch(error){
@@ -1768,7 +1768,7 @@ export class ReportService {
         "Content-Type": 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       }
     
-      const upsertReport = await axios.put(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${filename}`,data,{headers});
+      const upsertReport = await axiosInstance.put(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${filename}`,data,{headers});
       if(upsertReport.status === 200){
       return { filename } 
       }
@@ -1795,7 +1795,7 @@ export class ReportService {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       }
 
-      const fetchFinancialSheet = await axios.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
+      const fetchFinancialSheet = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
 
       if(fetchFinancialSheet.status === 200){
         if (Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()) {
