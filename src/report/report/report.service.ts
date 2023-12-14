@@ -199,10 +199,9 @@ export class ReportService {
 
  async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
   try{
-    let docFileName;
     if(fileExist){
-      docFileName = docxpath.split('\\');
-      await this.fetchReportFromS3(docFileName[docFileName.length-1]);
+      const { dir: directory, base: filename } = path.parse(docxpath);
+      await this.fetchReportFromS3(filename);
     }
     const htmlContent = fs.readFileSync(docxpath);
     const formData = new FormData();
@@ -267,8 +266,8 @@ export class ReportService {
 
  async convertDocxToPdf(docxFileName,pdfFilePath){
   try{
-    const docFileName = docxFileName.split('\\');
-    await this.fetchReportFromS3(docFileName[docFileName.length-1])
+    const { dir: directory, base: filename } = path.parse(docxFileName);
+    await this.fetchReportFromS3(filename);
     const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
     const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
     await conversion.file.save(pdfFilePath);
@@ -1754,7 +1753,7 @@ export class ReportService {
       catch(error){
         return {
           error:error,
-          msg:'uploading financial sheet in s3 failed',
+          msg:'uploading report in s3 failed',
           status : false
         }
       }
@@ -1795,16 +1794,16 @@ export class ReportService {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       }
 
-      const fetchFinancialSheet = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
+      const fetchReport = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
 
-      if(fetchFinancialSheet.status === 200){
-        if (Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()) {
+      if(fetchReport.status === 200){
+        if (Buffer.from(fetchReport.data, 'base64').toString('base64') !== fetchReport.data.trim()) {
           throw new Error('The specified key does not exist');
         } else {
 
           const uploadDir = path.join(__dirname, '../../../pdf');
   
-          const buffer = Buffer.from(fetchFinancialSheet.data, 'base64')
+          const buffer = Buffer.from(fetchReport.data, 'base64')
   
           const filePath = path.join(uploadDir, fileName);
   
