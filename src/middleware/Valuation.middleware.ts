@@ -45,7 +45,7 @@ export class MyMiddleware implements NestInterceptor {
     const { userId, excelSheetId, company, projectionYears, model } = inputs;
 
     console.log('Middleware: This is Valuation Process Validation Middleware.');
-    if (!userId) throw new BadRequestException('userId is required.');
+    // if (!userId) throw new BadRequestException('userId is required.');
     if (!excelSheetId)
       throw new BadRequestException('excelSheetId is required.');
 

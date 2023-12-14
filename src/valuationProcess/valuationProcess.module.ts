@@ -12,12 +12,24 @@ import { ExcessEarningsService } from './excessEarnings.service';
 import { NetAssetValueService } from './netAssetValue.service';
 import { utilsService } from 'src/utils/utils.service';
 import {LoggerModule} from '../loggerService/logger.module'; 
+import { ProcessManagerSchema } from 'src/processStatusManager/schema/process-status-manager.schema';
+import { AuthenticationService } from 'src/authentication/authentication.service';
+import { AuthenticationModule } from 'src/authentication/authentication.module';
+import { UsersModule } from 'src/users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
+    MongooseModule.forFeature([{ name: 'processManager', schema: ProcessManagerSchema }]),
     IndustryModule,
     MastersModule,
-    LoggerModule
+    LoggerModule,
+    AuthenticationModule,
+    UsersModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '24h' },
+    })
   ],
   controllers: [ValuationProcessController,ValuationsController], //ImportController
   providers: [
@@ -27,7 +39,8 @@ import {LoggerModule} from '../loggerService/logger.module';
     ValuationMethodsService,
     ExcessEarningsService,
     NetAssetValueService,
-    utilsService
+    utilsService,
+    AuthenticationService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService],
 })

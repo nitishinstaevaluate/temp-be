@@ -7,12 +7,13 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, CAPITAL_STRUCTURE_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
-import axios from 'axios';
 const FormData = require('form-data');
 import ConvertAPI from 'convertapi';
+import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
+import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 
 @Injectable()
@@ -27,19 +28,25 @@ export class ReportService {
       try {
           const transposedData = [];
           let  getCapitalStructure;
-          let htmlFilePath, pdfFilePath,docFilePath;
+          let htmlFilePath, pdfFilePath,docFilePath,pdf;
           const reportDetails = await this.reportModel.findById(id);
-          htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
-          pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
-          docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
-          
-          
+          const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+
+
+          if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+            htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+          }
+          else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+            htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+          }
+          pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+          docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
           
           if(reportDetails?.fileName){
             const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
 
             res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation-${reportDetails.id}'.pdf"`);
+            res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
             res.send(convertDocxToPdf);
 
              return {
@@ -48,7 +55,6 @@ export class ReportService {
               };
           }
 
-          const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
             const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
@@ -71,11 +77,16 @@ export class ReportService {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
               const template = hbs.compile(htmlContent);
               const html = template(valuationResult);
-  
-              const pdf = await this.generatePdf(html, pdfFilePath);
+            
+              if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+                pdf = await this.generatePdf(html, pdfFilePath);
+              }
+              else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+                pdf = await this.generateSebiReport(html, pdfFilePath);
+              }
   
               res.setHeader('Content-Type', 'application/pdf');
-              res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation-${reportDetails.id}'.pdf"`);
+              res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
               res.send(pdf);
   
               return {
@@ -105,23 +116,30 @@ export class ReportService {
     let  getCapitalStructure;
     const reportDetails = await this.reportModel.findById(id);
 
-    let htmlFilePath, pdfFilePath,docFilePath;
-    htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' : approach === METHODS_AND_APPROACHES[2] ? 'multi-model-report':''}.html`);
-    pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.pdf`);
-    docFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${reportDetails.id}.docx`);
+    let htmlFilePath, pdfFilePath,docFilePath,pdf;
+    const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
-    if(reportDetails.fileName){
-      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
-
-        res.send(convertDocxToSfdt);
-
-        return {
-            msg: "Preview Success",
-            status: true,
-        };
+    if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+      htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+    }
+    else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+      htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
     }
 
-    const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+    pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
+
+    if(reportDetails.fileName){
+      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
+
+      res.send(convertDocxToSfdt);
+
+      return {
+        msg: "Preview Success",
+        status: true,
+      };
+    }
+
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
       const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
@@ -145,9 +163,12 @@ export class ReportService {
         const template = hbs.compile(htmlContent);
         const html = template(valuationResult);
 
-        // res.setHeader('Content-Type', 'application/pdf');
-        // res.setHeader('Content-Disposition', `attachment; filename="='Ifinworth Valuation Report' }-${dateStamp}.docx"`);
-        await this.generatePdf(html, pdfFilePath);
+        if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+          pdf = await this.generatePdf(html, pdfFilePath);
+        }
+        else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+          pdf = await this.generateSebiReport(html, pdfFilePath);
+        }
 
         await this.convertPdfToDocx(pdfFilePath,docFilePath)
         
@@ -176,8 +197,13 @@ export class ReportService {
 }
  }
 
- async convertDocxToSyncfusionDocumentFormat(docxpath){
+ async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
   try{
+    let docFileName;
+    if(fileExist){
+      docFileName = docxpath.split('\\');
+      await this.fetchReportFromS3(docFileName[docFileName.length-1]);
+    }
     const htmlContent = fs.readFileSync(docxpath);
     const formData = new FormData();
     formData.append('file', htmlContent, {
@@ -185,7 +211,7 @@ export class ReportService {
       contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     });
   
-    const response = await axios.post('https://services.syncfusion.com/react/production/api/documenteditor/Import', formData);
+    const response = await axiosInstance.post(SYNC_FUSION_DOC_CONVERT, formData);
     return response.data;
    }
    catch(error){
@@ -213,13 +239,17 @@ export class ReportService {
   }
  }
 
- async updateReportDocxBuffer(reportId:any,fileName){
+ async updateReportDocxBuffer(reportId:any,file){
   try{
     const report = await this.reportModel.findOneAndUpdate(
       { _id: reportId },
-      { $set: { fileName: fileName } },
+      { $set: { fileName: file.filename } },
       { new: true }
     );
+
+    if(report.id)
+      await this.pushUpdatedReportIntoS3(file);
+    
     return {
       reportId:report.id,
       msg:'Successfully updated doc',
@@ -237,6 +267,8 @@ export class ReportService {
 
  async convertDocxToPdf(docxFileName,pdfFilePath){
   try{
+    const docFileName = docxFileName.split('\\');
+    await this.fetchReportFromS3(docFileName[docFileName.length-1])
     const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
     const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
     await conversion.file.save(pdfFilePath);
@@ -261,12 +293,58 @@ export class ReportService {
           const contenread = await page.setContent(htmlContent);
           const pdf = await page.pdf({
             path: pdfFilePath,
-            format: 'A4' as puppeteer.PaperFormat, // Cast 'A4' to PaperFormat
+            format: 'A4' as puppeteer.PaperFormat,
             displayHeaderFooter: true,
             printBackground: true,
             footerTemplate: `<div style="width:100%">
             <hr style="border:1px solid #bbccbb">
             <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
+            </div>`,
+          });
+
+          return pdf;
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        } finally {
+          await browser.close();
+        }
+      }
+      
+    async generateSebiReport(htmlContent: any, pdfFilePath: string) {
+        const browser = await puppeteer.launch({
+          headless:"new"
+        });
+        const page = await browser.newPage();
+
+        try {
+          const contenread = await page.setContent(htmlContent);
+          const pdf = await page.pdf({
+            path: pdfFilePath,
+            format: 'A4' as puppeteer.PaperFormat,
+            displayHeaderFooter: true,
+            printBackground: true,
+            margin: {
+              top: "35px",
+              right: "0px",
+              bottom: "50px",
+              left: "0px"
+          },
+          headerTemplate:`<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+          <td style="width:100%;">
+            <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:3%;padding-right:3%">
+              <tr>
+                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of ABC Limited</i></td>
+              </tr>
+              <tr>
+                <td style="font-size: 11px">&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr></table>`,
+            footerTemplate: `<div style="width:100%;padding-left:3%;padding-right:3%">
+            <hr style="border:1px solid #bbccbb">
+            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span></h1>
             </div>`,
           });
 
@@ -512,7 +590,7 @@ export class ReportService {
             if(reportDetails?.modelWeightageValue){
               const equityValue = reportDetails.modelWeightageValue.weightedVal;
               const outstandingShares = valuationResult.inputData[0].outstandingShares;
-              const finalValue =  Math.floor(equityValue/outstandingShares).toLocaleString('en-IN');
+              const finalValue =  Math.floor(equityValue*100000/outstandingShares).toLocaleString('en-IN'); // use muliplier
               return `${finalValue.replace(/,/g, ',')}/-`
             }
           }
@@ -1635,6 +1713,13 @@ export class ReportService {
       }
       return false;
     })
+
+    hbs.registerHelper('isSection165',()=>{
+      if(reportDetails.reportSection.includes(`165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018`) && reportDetails.reportSection.length === 1){
+        return true;
+      }
+      return false;
+    })
     }
      
      catch(error){
@@ -1658,4 +1743,89 @@ export class ReportService {
   
       return `${month} ${day}, ${year}`;
     }
+
+    async pushUpdatedReportIntoS3(formData){
+      try{
+        const uploadDir = path.join(__dirname, '../../../pdf');
+        const filePath = path.join(uploadDir, formData.filename);
+        let file = fs.readFileSync(filePath).toString('base64');
+        return await this.upsertReportInS3(file,formData.filename);
+      }
+      catch(error){
+        return {
+          error:error,
+          msg:'uploading financial sheet in s3 failed',
+          status : false
+        }
+      }
+    }
+
+  async upsertReportInS3(data,filename){
+    try{
+      
+      const headers = {
+        'x-api-key': process.env.AWS_S3_API_KEY,
+        "Content-Type": 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      }
+    
+      const upsertReport = await axiosInstance.put(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${filename}`,data,{headers});
+      if(upsertReport.status === 200){
+      return { filename } 
+      }
+      else{
+      return {
+        status:false,
+        msg:'Report upload failed',
+      }
+      }
+    }
+    catch(error){
+      throw error
+    }
+  }
+
+
+
+  async fetchReportFromS3(fileName){
+    try{
+      if(fileName){
+
+      const headers = {
+        'x-api-key': process.env.AWS_S3_API_KEY,
+        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      }
+
+      const fetchFinancialSheet = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
+
+      if(fetchFinancialSheet.status === 200){
+        if (Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()) {
+          throw new Error('The specified key does not exist');
+        } else {
+
+          const uploadDir = path.join(__dirname, '../../../pdf');
+  
+          const buffer = Buffer.from(fetchFinancialSheet.data, 'base64')
+  
+          const filePath = path.join(uploadDir, fileName);
+  
+          if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+          }
+          fs.writeFileSync(filePath, buffer);
+          
+          return filePath;
+        }
+      }
+      else{
+        throw new Error('Report fetching from S3 failed');
+      }
+    }
+    }catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:'Report fetch from S3 failed'
+      }
+    }
+  }
 }

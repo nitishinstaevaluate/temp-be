@@ -8,6 +8,7 @@ import {
   Query,
   ParseIntPipe,
   UseGuards,
+  Request
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
@@ -21,6 +22,7 @@ import { utilsService } from 'src/utils/utils.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { MODEL } from 'src/constants/constants';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthenticationService } from 'src/authentication/authentication.service';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('valuationProcess')
@@ -30,6 +32,7 @@ export class ValuationProcessController {
     private valuationsService: ValuationsService,
     private valuationMethodsService: ValuationMethodsService,
     private customLogger: CustomLogger,
+    private authService:AuthenticationService
   ) {}
 
   @Post()
@@ -196,7 +199,13 @@ let workbook=null;
 
   @UseGuards(AuthGuard('jwt'))
   @Post('v1')
-  async processValuationModel(@Body() inputs): Promise<any> {
+  async processValuationModel(@Request() req, @Body() inputs): Promise<any> {
+    const authoriseUser = await this.authService.extractUserId(req);
+    if(!authoriseUser.status)
+      return authoriseUser;
+    
+    inputs.userId = authoriseUser.userId;
+
     console.log('Initiating Process v1');
     this.customLogger.log({
       message: 'Request is entered into Valuation Process Controller.',
@@ -382,15 +391,5 @@ export class ValuationsController {
   @Get(':userId')
   async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
     return this.valuationsService.getValuationsByUserId(userId);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get('paginate/:ids')
-  async getPaginatedValuations(
-    @Param('ids') ids: string,
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('pageSize', ParseIntPipe) pageSize: number = 10,
-  ) :Promise<any>{
-    return this.utilsService.paginateValuationByUserId(ids,page,pageSize);
   }
 }
