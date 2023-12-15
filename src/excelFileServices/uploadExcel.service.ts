@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as xlsx from 'xlsx';
@@ -15,7 +15,6 @@ import { isNotEmpty } from 'class-validator';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
-import axios from 'axios';
 import { IFIN_FINANCIAL_SHEETS } from 'src/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
@@ -1917,7 +1916,7 @@ async assessmentCalculations(payload,balanceSheet){
               data[key] = (await getCellValue(
                   balanceSheet,
                   `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.advancesRow}`
-              )).toFixed(2);
+              ))?.toFixed(2);
           }
         }
         if(i === 5){

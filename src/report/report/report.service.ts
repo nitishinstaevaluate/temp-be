@@ -35,6 +35,7 @@ export class ReportService {
 
           if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+            // htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
           }
           else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
             htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
@@ -80,6 +81,7 @@ export class ReportService {
             
               if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
                 pdf = await this.generatePdf(html, pdfFilePath);
+                // pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
               }
               else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
                 pdf = await this.generateSebiReport(html, pdfFilePath);
@@ -199,10 +201,9 @@ export class ReportService {
 
  async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
   try{
-    let docFileName;
     if(fileExist){
-      docFileName = docxpath.split('\\');
-      await this.fetchReportFromS3(docFileName[docFileName.length-1]);
+      const { dir: directory, base: filename } = path.parse(docxpath);
+      await this.fetchReportFromS3(filename);
     }
     const htmlContent = fs.readFileSync(docxpath);
     const formData = new FormData();
@@ -267,8 +268,8 @@ export class ReportService {
 
  async convertDocxToPdf(docxFileName,pdfFilePath){
   try{
-    const docFileName = docxFileName.split('\\');
-    await this.fetchReportFromS3(docFileName[docFileName.length-1])
+    const { dir: directory, base: filename } = path.parse(docxFileName);
+    await this.fetchReportFromS3(filename);
     const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
     const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
     await conversion.file.save(pdfFilePath);
@@ -298,7 +299,7 @@ export class ReportService {
             printBackground: true,
             footerTemplate: `<div style="width:100%">
             <hr style="border:1px solid #bbccbb">
-            <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
+            <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
             </div>`,
           });
 
@@ -344,7 +345,53 @@ export class ReportService {
         </tr></table>`,
             footerTemplate: `<div style="width:100%;padding-left:3%;padding-right:3%">
             <hr style="border:1px solid #bbccbb">
-            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></span></h1>
+            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span> </span></span></h1>
+            </div>`,
+          });
+
+          return pdf;
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        } finally {
+          await browser.close();
+         
+        }
+      }
+    async generateTransferOfSharesReport(htmlContent: any, pdfFilePath: string) {
+        const browser = await puppeteer.launch({
+          headless:"new"
+        });
+        const page = await browser.newPage();
+
+        try {
+          const contenread = await page.setContent(htmlContent);
+          const pdf = await page.pdf({
+            path: pdfFilePath,
+            format: 'A4' as puppeteer.PaperFormat,
+            displayHeaderFooter: false,
+            printBackground: true,
+            margin: {
+              top: "30px",
+              right: "0px",
+              bottom: "50px",
+              left: "0px"
+          },
+          headerTemplate:`<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+          <td style="width:100%;">
+            <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:3%;padding-right:3%">
+              <tr>
+                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of ABC Limited</i></td>
+              </tr>
+              <tr>
+                <td style="font-size: 11px">&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr></table>`,
+            footerTemplate: `<div style="width:100%;padding-left:3%;padding-right:3%">
+            <hr style="border:1px solid #bbccbb">
+            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span></span></span></span></h1>
             </div>`,
           });
 
@@ -364,8 +411,8 @@ export class ReportService {
           registeredValuerName: 'Nitish Chaturvedi',
           registeredValuerEmailId: 'nitish@ifinworth.com',
           registeredValuerIbbiId: 'IBBI/LAD/35/2020',
-          registeredValuerMobileNumber: '9878678776',
-          registeredValuerGeneralAddress: 'Sterling Enterprises,Andheri (West)',
+          registeredValuerMobileNumber: '9997354674',
+          registeredValuerGeneralAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling,Enterprises,Andheri (E) ',
           registeredvaluerDOIorConflict: 'No',
           registeredValuerQualifications: 'Government Valuation License Holder'
         }
@@ -1353,7 +1400,7 @@ export class ReportService {
                 fieldName:indNav.fieldName,
                 // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
                 bookValue:indNav?.bookValue ? (Math.floor(parseFloat(indNav.bookValue) * 100) / 100).toLocaleString('en-IN') : indNav?.bookValue,
-                fairValue:indNav?.fairValue ? (Math.floor(parseFloat(indNav.bookValue) * 100) / 100).toLocaleString('en-IN') : indNav.value ? (Math.floor(parseFloat(indNav.value) * 100) / 100).toLocaleString('en-IN'): indNav.fairValue
+                fairValue:indNav?.fairValue ? (Math.floor(parseFloat(indNav.fairValue) * 100) / 100).toLocaleString('en-IN') : indNav.value ? (Math.floor(parseFloat(indNav.value) * 100) / 100).toLocaleString('en-IN'): indNav.fairValue
               }
              })
             }
@@ -1754,7 +1801,7 @@ export class ReportService {
       catch(error){
         return {
           error:error,
-          msg:'uploading financial sheet in s3 failed',
+          msg:'uploading report in s3 failed',
           status : false
         }
       }
@@ -1795,16 +1842,16 @@ export class ReportService {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       }
 
-      const fetchFinancialSheet = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
+      const fetchReport = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
 
-      if(fetchFinancialSheet.status === 200){
-        if (Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()) {
+      if(fetchReport.status === 200){
+        if (Buffer.from(fetchReport.data, 'base64').toString('base64') !== fetchReport.data.trim()) {
           throw new Error('The specified key does not exist');
         } else {
 
           const uploadDir = path.join(__dirname, '../../../pdf');
   
-          const buffer = Buffer.from(fetchFinancialSheet.data, 'base64')
+          const buffer = Buffer.from(fetchReport.data, 'base64')
   
           const filePath = path.join(uploadDir, fileName);
   
