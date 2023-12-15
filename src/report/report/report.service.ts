@@ -411,8 +411,8 @@ export class ReportService {
           registeredValuerName: 'Nitish Chaturvedi',
           registeredValuerEmailId: 'nitish@ifinworth.com',
           registeredValuerIbbiId: 'IBBI/LAD/35/2020',
-          registeredValuerMobileNumber: '9878678776',
-          registeredValuerGeneralAddress: 'Sterling Enterprises,Andheri (West)',
+          registeredValuerMobileNumber: '9997354674',
+          registeredValuerGeneralAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling,Enterprises,Andheri (E) ',
           registeredvaluerDOIorConflict: 'No',
           registeredValuerQualifications: 'Government Valuation License Holder'
         }
