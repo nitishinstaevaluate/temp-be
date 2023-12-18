@@ -634,7 +634,7 @@
     <p style="padding-top: 2%;text-indent: 0pt;text-align: center;">
         <span style=" color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;">Registered
             Valuer- Securities or Financial Assets </span></p>
-    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3" style="text-transform: capitalize;">{{registeredValuerAddress}}</span></p>
+    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;width: 40%;margin:auto"><span class="s3" style="text-transform: capitalize;">{{registeredValuerAddress}}</span></p>
     <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3">{{registeredValuerEmailId}}</span></p>
     <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">{{registeredValuerMobileNumber}}</span></p>
 </div>
@@ -655,7 +655,7 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">Based on discussions with the
         management, the management requires the valuation analysis of the {{natureOfInstrument}} of the Company for the purpose
-        of {{reportSection}} of the {{reportPurpose}}. In this regard, management of the Company requires report carried out by a
+        of section {{reportSection}} of the {{reportPurpose}}. In this regard, management of the Company requires report carried out by a
         Registered Valuer in accordance with provisions of Companies Act, 2013.</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">The report has been prepared
@@ -1405,7 +1405,7 @@
                                             <li data-list-text="">
                                                 <p class="s7"
                                                     style="padding-left: 48pt;text-indent: -10pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                    Management has provided to me with audited/management financials of the Company.</p>
+                                                    Management has provided to me with audited/management certified financials of the Company.</p>
                                             </li>
                                             <li data-list-text="">
                                                 <p class="s7"
@@ -1472,10 +1472,37 @@
                     </li>
                 </ol>
             </li>
-            <h2 style="padding-left: 44pt;text-indent: 0pt;text-align: left;padding-top: 6%;">Date: {{reportDate}} <span style="float: right;padding-right: 29%;">{{registeredValuerName}}</span></h2>
+            <!-- <h2 style="padding-left: 44pt;text-indent: 0pt;text-align: left;padding-top: 6%;">Date: {{reportDate}} <span style="float: right;padding-right: 29%;">{{registeredValuerName}}</span></h2>
             <p style="padding-top: 3pt;text-indent: 0pt;text-align: right;">Registered Valuer- Securities or
                 Financial Assets</p>
-            <h2 style="padding-top: 2pt;padding-left: 44pt;text-indent: 0pt;text-align: left;">Place: ________________ <span style="float: right;padding-right: 29%;">{{registeredValuerIbbiId}}</span></h2>
+            <h2 style="padding-top: 2pt;padding-left: 44pt;text-indent: 0pt;text-align: left;">Place: ________________ <span style="float: right;padding-right: 29%;">{{registeredValuerIbbiId}}</span></h2> -->
+            <table style="width: 100%;margin: auto;padding-top: 5%;">
+                <tr>
+                    <td style="padding-left: 5%;"> 
+                        Date: {{reportDate}}
+                    </td>
+                    <td style="padding-left: 23%;">
+                        {{registeredValuerName}}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 5%;"> 
+                        Place: ___________
+                    </td>
+                    <td style="padding-left: 23%;">
+                        Registered Valuer- Securities or
+                Financial Assets
+                    </td>
+                </tr>
+                <tr>
+                    <td style="">
+                        
+                    </td>
+                    <td style="padding-left: 23%;">
+                        {{registeredValuerIbbiId}}
+                    </td>
+                </tr>
+            </table>
        </div>
     </ol>
 
@@ -1484,8 +1511,8 @@
         <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;font-size: 20px;"><a name="bookmark10">Annexure</a></h2>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h2 style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><a name="bookmark9">Net Asset Valuation of {{companyName}}</a></h2>
-        <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Valuation as per Net Asset Value
-            Method <span style="float: right;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></h3>
+        <!-- <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Valuation as per Net Asset Value
+            Method <span style="float: right;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></h3> -->
         <table style="border-collapse:collapse;margin-left:8pt;width: 100%;" cellspacing="0">
             <tr style="height:14pt">
                 <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
