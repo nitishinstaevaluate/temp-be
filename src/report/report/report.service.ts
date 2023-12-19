@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -297,12 +297,14 @@ export class ReportService {
             format: 'A4' as puppeteer.PaperFormat,
             displayHeaderFooter: true,
             printBackground: true,
-            footerTemplate: `<div style="width:100%">
+            footerTemplate:`<div style="width:100%">
             <hr style="border:1px solid #bbccbb">
             <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
-            </div>`,
+            </div>` ,
+            margin: {
+              right: "20px"
+          },          
           });
-
           return pdf;
         } catch (error) {
           console.error('Error generating PDF:', error);
@@ -603,7 +605,7 @@ export class ReportService {
       })
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
         modelName = modelName.split(',');
-        if(modelName.length < 3){
+        if(modelName.length < 2){
           let formattedValues;
             formattedValues = modelName.flatMap((models) => {
               return valuationResult.modelResults.flatMap((response) => {
@@ -637,7 +639,7 @@ export class ReportService {
             if(reportDetails?.modelWeightageValue){
               const equityValue = reportDetails.modelWeightageValue.weightedVal;
               const outstandingShares = valuationResult.inputData[0].outstandingShares;
-              const finalValue =  Math.floor(equityValue*100000/outstandingShares).toLocaleString('en-IN'); // use muliplier
+              const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
               return `${finalValue.replace(/,/g, ',')}/-`
             }
           }
@@ -1766,6 +1768,16 @@ export class ReportService {
         return true;
       }
       return false;
+    })
+
+    hbs.registerHelper('calculateColspan',()=>{
+      let colspan;
+      valuationResult.modelResults.map((response)=>{
+        if(response.model === MODEL[0] || response.model === MODEL[1]){
+          colspan = response?.valuationData.length;
+        }
+      })
+      return colspan + 1;  //add one since column starts from particulars
     })
     }
      
