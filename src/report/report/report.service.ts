@@ -605,7 +605,7 @@ export class ReportService {
       })
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
         modelName = modelName.split(',');
-        if(modelName.length < 2){
+        if(modelName.length <= 2 ){
           let formattedValues;
             formattedValues = modelName.flatMap((models) => {
               return valuationResult.modelResults.flatMap((response) => {
