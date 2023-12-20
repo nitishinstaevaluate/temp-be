@@ -295,7 +295,7 @@ export class ReportService {
           const pdf = await page.pdf({
             path: pdfFilePath,
             format: 'A4' as puppeteer.PaperFormat,
-            displayHeaderFooter: false,
+            displayHeaderFooter: true,
             printBackground: true,
             footerTemplate:`<div style="width:100%;margin-top:5%">
             <hr style="border:1px solid #bbccbb">
@@ -303,7 +303,6 @@ export class ReportService {
             </div>` ,
             margin: {
               right: "20px",
-              bottom: "10px"
           },          
           });
           return pdf;
