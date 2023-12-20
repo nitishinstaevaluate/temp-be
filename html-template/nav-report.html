@@ -162,16 +162,16 @@
         }
 
         .larger-bullet {
-  list-style-type: none; /* Remove default bullet */
-  padding-left: 20px; /* Add some padding for space */
-}
+        list-style-type: none;
+        padding-left: 20px;
+        }
 
-.larger-bullet::before {
-  content: "\2022"; /* Unicode character for bullet point */
-  font-size: 20px; /* Increase font size to make the bullet appear larger */
-  margin-right: 5px; /* Adjust the space between bullet and text */
-  vertical-align: bottom !important;
-}
+        .larger-bullet::before {
+        content: "\2022";
+        font-size: 20px;
+        margin-right: 5px;
+        vertical-align: bottom !important;
+        }
         .s14 {
             color: black;
             font-family: Calibri, sans-serif;
@@ -627,6 +627,21 @@
         tbody {
             vertical-align: top;
             overflow: visible;
+        }
+        .container-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 16px;
+            padding-left: 43pt;
+        }
+        .column {
+            width: 50%; /* Adjust the width as needed */
+            /* padding: 10px; */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -1396,7 +1411,7 @@
             Methodology</h2>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <div >
-            <table style="border-collapse:collapse;margin-left:5.074pt;width: 100%;" cellspacing="0">
+            <table style="border-collapse:collapse;margin-left:15pt;width: 100%;" cellspacing="0">
                 <tr style="height:15pt;border:1px solid black">
                     <td
                         style="">
@@ -1486,11 +1501,7 @@
                     </li>
                 </ol>
             </li>
-            <!-- <h2 style="padding-left: 44pt;text-indent: 0pt;text-align: left;padding-top: 6%;">Date: {{reportDate}} <span style="float: right;padding-right: 29%;">{{registeredValuerName}}</span></h2>
-            <p style="padding-top: 3pt;text-indent: 0pt;text-align: right;">Registered Valuer- Securities or
-                Financial Assets</p>
-            <h2 style="padding-top: 2pt;padding-left: 44pt;text-indent: 0pt;text-align: left;">Place: ________________ <span style="float: right;padding-right: 29%;">{{registeredValuerIbbiId}}</span></h2> -->
-            <table style="width: 100%;margin: auto;padding-top: 5%;">
+            <!-- <table style="width: 100%;margin: auto;padding-top: 5%;">
                 <tr>
                     <td style="padding-left: 5%;"> 
                         Date: {{reportDate}}
@@ -1516,7 +1527,18 @@
                         {{registeredValuerIbbiId}}
                     </td>
                 </tr>
-            </table>
+            </table> -->
+            <div class="container-top" style="padding-top: 3%;">
+                <div class="column">
+                    <p >Date: {{reportDate}}</p>
+                    <p style="padding-top: 4px;">Place: ______________</p>
+                </div>
+                <div class="column">
+                    <p><strong>{{registeredValuerName}}</strong> </p>
+                    <p style="padding-top: 4px;"> Registered Valuer- Securities or Financial Assets</p>
+                    <p style="padding-top: 4px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+                </div>
+            </div>
        </div>
     </ol>
 

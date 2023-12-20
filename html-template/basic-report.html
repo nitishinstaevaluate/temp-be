@@ -585,37 +585,94 @@
             vertical-align: top;
             overflow: visible;
         }
+        .container-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 16px;
+            
+        }
+        .column {
+            width: 50%; /* Adjust the width as needed */
+            /* padding: 10px; */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .larger-bullet {
+        list-style-type: none;
+        padding-left: 20px;
+        }
+
+        .larger-bullet::before {
+        content: "\2022";
+        font-size: 20px;
+        margin-right: 5px;
+        vertical-align: bottom !important;
+        }
+
+        #l81 {
+            padding-left: 0pt;
+        }
+
+        #l81>li>*:first-child:before {
+            content: " ";
+            color: black;
+            font-family: Symbol, serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 11pt;
+        }
     </style>
 </head>
 
 <body>
    
-    <div style="page-break-before: always;padding-left: 3%;padding-top: 9%;padding-right: 2%;">
+    <div style="page-break-before: always;padding-left: 5%;padding-top: 13%;padding-right: 5%;">
 
 <p style="padding-bottom: 1pt;padding-left: 10pt;text-indent: 0pt;text-align: left;"><span
     class="h1" style="font-size: 15px;">VALUATION REPORT ON FAIR VALUATION OF <span style="text-transform:uppercase;">{{natureOfInstrument}}</span> OF </span><span class="s1"
     style="text-transform: uppercase;font-size: 15px;">{{companyName}}</span><span class="h1" style="font-size: 15px;"> AS OF </span><span class="h1"
     style="font-size: 15px;text-transform: uppercase;">{{strdate}}</span></p>
-       <div style="padding-top: 16%;">
+       <div style="padding-top: 30%;">
        
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;"><span class="s1"
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><span class="s1"
             style=" ">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <h1 style="padding-top: 8%;padding-left: 28pt;text-indent: 0pt;text-align: left;">Prepared by</h1>
+    <h1 style="padding-top: 8%;padding-left: 10pt;text-indent: 0pt;text-align: left;">Prepared by</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">{{registeredValuerName}}</span></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">Securities or Financial Assets</span>
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">{{registeredValuerName}}</span></p>
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">Securities or Financial Assets</span>
         </p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerAddress}}</span>
-        </p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 400;">{{registeredValuerEmailId}}</span></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 400;">{{registeredValuerMobileNumber}}</span></p>
+    {{#if (registeredValuerAddress)}}
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 40%;line-height: 150%;">
+        <span style="font-weight: 400;">
+            {{registeredValuerAddress}}
+        </span>
+    </p>
+    {{/if}}
+    {{#if (registeredValuerEmailId)}}
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+        <span style="font-weight: 400;">
+            {{registeredValuerEmailId}}
+        </span>
+    </p>
+    {{/if}}
+    {{#if (registeredValuerMobileNumber)}}
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+        <span style="font-weight: 400;">
+            {{registeredValuerMobileNumber}}
+        </span>
+    </p>
+    {{/if}}
        </div>
     </div>
   <!-- page 2 html -->
-    <div style="page-break-before: always;padding-left: 3%;padding-right: 6%;padding-top: 5%;line-height: 150%;">
+    <div style="page-break-before: always;padding-left: 3%;padding-right: 6%;padding-top: 15%;line-height: 150%;">
         <p style="padding-top: 6pt;padding-left: 28pt;text-indent: 0pt;text-align: left;"><span class="s2"
             style="">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -627,19 +684,19 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 11pt;padding-left: 28pt;text-indent: 0pt;text-align: left;">Dear Sir,</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;line-height: 150%;"><span class="p">We have prepared a
+    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 153%;"><span class="p">We have prepared a
             valuation report to express our opinion on the fair value of {{natureOfInstrument}} of </span><span class="s2"
             style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span><span class="p"> (hereinafter, “</span><span
             class="s2" style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span><span class="p">” or the “Company”) as of </span><span
             class="s2" style="">{{strdate}}</span><span class="p">.</span>
     </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">The purpose of
+    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 153%;"><span class="p">The purpose of
             valuation is solely to provide an independent opinion to the management of </span><span class="s2"
             style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span class="p"> (hereinafter the “Management”) on
-            the fair value of {{natureOfInstrument}} of the Company in accordance with provisions of {{reportSection}} of the {{reportPurpose}}.</span></p>
+            the fair value of {{natureOfInstrument}} of the Company in accordance with provisions of section {{reportSection}} of the {{reportPurpose}}.</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">In rendering the aforementioned advisory
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 153%;">In rendering the aforementioned advisory
         services, we reviewed and relied upon various materials/information provided by the Management. Our report is
         based on the historical and projected financial information provided to us by the Management. Because of the
         limited purpose of this report, the financial information presented in this report may be incomplete and contain
@@ -651,8 +708,8 @@
   </div>
 
   <!-- page 3 thml -->
-  <div style="page-break-before: always;padding-left: 2%;padding-right: 5%;padding-top: 10%;line-height: 150%;">
-    <p style="padding-top: 4pt;padding-left: 20pt;text-align: left;line-height: 140%;">
+  <div style="page-break-before: always;padding-left: 8%;padding-right: 5%;padding-top: 13%;line-height: 150%;">
+    <p style="padding-top: 4pt;text-align: left;line-height: 140%;">
         <span class="h1">Based on our
         study and analytical review procedures, and subject to the limitations expressed within this report, our
         opinion of fair value of </span>
@@ -664,14 +721,14 @@
         <span class="h1">:-</span>
     </p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
-<p style="text-indent: 0pt;text-align: center;padding-top: 2%;line-height: 150%;"><span class="s3">Fair Value of <span style="font-weight: bold;">{{companyName}}</span></span><span class="h1"> </span><span class="s1" style=" font-weight: bold;"></span></p>
+<p style="text-indent: 0pt;text-align: center;padding-top: 6%;line-height: 150%;"><span class="s3">Fair Value of <span style="font-weight: bold;">{{companyName}}</span></span><span class="h1"> </span><span class="s1" style=" font-weight: bold;"></span></p>
 <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}} {{reportingUnit}}</p>
 <p><br></p>
 <p style="text-indent: 0pt;text-align: center;padding-top: 2%;line-height: 150%;"><span class="s3">Fair Value per Equity Share
         (Rounded) </span><span class="h1"> </span><span class="s1" style=""></span></p>
 <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{modelValuePerShare 'FCFE,FCFF'}}</p>
 <p><br></p>
-<p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;padding-top: 2%;line-height: 150%;"><span class="p">We have no
+<p style="padding-top: 4pt;text-indent: 0pt;text-align: justify;padding-top: 8%;line-height: 150%;"><span class="p">We have no
         present or contemplated financial interest in </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span>
         </span><span class="p"> and its affiliates. Our fees for this valuation are based upon our
         normal billing rates and are in no way contingent upon the results of our findings. We have no
@@ -679,19 +736,18 @@
         report. This report is not to be copied or made available to any persons without the express written consent
         of me.</span></p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
-<p style="padding-top: 4pt;padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 2%;"><span
-        class="s1" style="">{{registeredValuerName}}</span></p>
-<p style="padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 0%;"><span class="s2"
-        style="">Registered Valuer- Securities and Financial Assets</span></p>
-<!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
-<p style="padding-left: 300pt;text-indent: 0pt;text-align: left;padding-top: 0%;"><span class="s2"
-        style=""> IBBI Registration No.: {{registeredValuerIbbiId}}</span></p>
-<p style="text-indent: 0pt;text-align: left;"><br /></p>
-<p style="padding-top: 4pt;padding-left: 33pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s1"
-        style="">Date: </span><span class="s2"
-        style="">{{reportDate}}</span></p>
-<p style="padding-left: 33pt;text-indent: 0pt;text-align: left;"><span class="s1"
-        style="">Place:______________</span></p>
+
+        <div class="container-top" style="padding-top: 25%;padding-left: 1%;">
+            <div class="column">
+                <p>Date: {{reportDate}}</p>
+                <p style="padding-top: 5px;">Place: ______________</p>
+            </div>
+            <div class="column">
+                <p><strong>{{registeredValuerName}}</strong> </p>
+                <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
+                <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+            </div>
+        </div>
 </div>
 
 <!-- page 4 html -->
@@ -802,7 +858,7 @@
     </div>
 
     <!-- page 5 html -->
-    <div style="page-break-before: always;padding-left: 5%;padding-right: 5%;line-height: 150%;padding-top: 3%;font-size: 14px !important;">
+    <div style="page-break-before: always;padding-left: 5%;padding-right: 5%;line-height: 150%;padding-top: 10%;font-size: 14px !important;">
         <ol id="l5">
             <li data-list-text="I.">
                 <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: -22pt;text-align: left;"><a
@@ -865,14 +921,14 @@
                             assumptions used in preparing it, and we do not assume any obligation to update, revise or
                             reaffirm this Report.</p>
 
-                            <p style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">The ultimate
+                            <p style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;page-break-before: always;padding-top: 14%;">The ultimate
                                 analysis will have to be tempered by the exercise of judicious discretion by the RV and judgment
                                 taking into account the relevant factors. There will always be several factors, e.g. management
                                 capability, present and prospective competition, yield on comparable securities, market
                                 sentiment, etc. which may not be apparent from the face of the Balance Sheet but could strongly
                                 influence the value.</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: justify;page-break-before: always;padding-top: 10%;">In the course of the valuation,
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: justify;">In the course of the valuation,
                                 we were provided with both written and verbal information. We have however, evaluated the
                                 information provided to us by the Company through broad inquiry, analysis and review but have
                                 not carried out a due diligence or audit of the information provided for the purpose of this
@@ -935,64 +991,85 @@
                 <h1 style="padding-top: 3pt;padding-left: 64pt;text-indent: -36pt;text-align: left;">
                     Appointing Authority, Date of Appointment, Valuation Date and Date of Report</h1>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                <table style="border-collapse:collapse;margin-left:76.03pt;text-align: center;" cellspacing="0">
-                    <tr style="height:20pt;padding:2%">
-                        <td
+                <table style="border-collapse:collapse;width: 94%;margin-left:5%;" cellspacing="0">
+                    <tr style="padding:2%">
+                        <!-- <td
                             style="width:129pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p class="s5"
-                                style="text-align: center;padding-top: 4%;padding-bottom: 4%;">
+                                style="text-align: center;padding:4%">
                                 Appointing Authority</p>
+                        </td> -->
+                        <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            <p  style="text-align: center;padding-top: 7%;">
+                                Appointing Authority
+                            </p>
                         </td>
                         <td
-                            style="width:277pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p
                                 style="text-align: center;padding-top: 2.5%;padding-bottom: 2.5%;">
-                                <span class="s5" style="text-transform: capitalize;">{{ appointingAuthorityName }}</span><span class="s6"
-                                    style=" "></span></p>
+                                <span class="s5" style="text-transform: capitalize;">{{ appointingAuthorityName }}</span>
                         </td>
                     </tr>
-                    <tr style="height:20pt">
-                        <td
+                    <tr style="">
+                        <!-- <td
                             style="width:129pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p class="s5"
-                                style="text-align:center;padding-top: 4%;padding-bottom: 4%;">
+                                style="text-align:center;padding:4%">
+                                Date of Appointment</p>
+                        </td> -->
+                        <td
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            <p 
+                                style="text-align: center;padding-top: 7%;">
                                 Date of Appointment</p>
                         </td>
                         <td
-                            style="width:277pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p
                             style="text-align: center;padding-top: 2.5%;padding-bottom: 2.5%;font-weight: bold;">
-                            <span class="s5">{{ dateOfAppointment }}</span><span class="s6"
-                            style=" "></span>  
+                            {{ dateOfAppointment }}  
                                   
                             </p>
                         </td>
                     </tr>
-                    <tr style="height:20pt">
-                        <td
+                    <tr style="">
+                        <!-- <td
                             style="width:129pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p class="s5"
-                                style="text-align: center;padding-top: 4%;padding-bottom: 4%;">
+                                style="text-align: center;padding:4%">
+                                Valuation Date</p>
+                        </td> -->
+                        <td
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            <p 
+                                style="text-align: center;padding-top: 7%;">
                                 Valuation Date</p>
                         </td>
                         <td
-                            style="width:277pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p class="s5"
                                 style="text-align: center;padding-top: 2.5%;padding-bottom: 2.5%;">
                                 {{strdate}}</p>
                         </td>
                     </tr>
-                    <tr style="height:20pt">
-                        <td
+                    <tr style="">
+                        <!-- <td
                             style="width:129pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p class="s5"
-                                style="text-align: center;padding-left: 4%;padding-right:4% ;">
+                                style="text-align: center;padding:4%">
+                                Date of Report</p>
+                        </td> -->
+                        <td
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            <p 
+                                style="text-align: center;padding-top: 7%;">
                                 Date of Report</p>
                         </td>
                         <td
-                            style="width:277pt;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
+                            style="width:auto;border-top-style:solid;border-top-width:1pt;border-top-color:#F7C8AC;border-left-style:solid;border-left-width:1pt;border-left-color:#F7C8AC;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#F7C8AC;border-right-style:solid;border-right-width:1pt;border-right-color:#F7C8AC">
                             <p
-                                style="text-align: center;padding-left: 2.5%;padding-right: 2.5%;">
+                                style="text-align: center;padding-top: 2.5%;padding-bottom: 2.5%;">
                                 <span class="s6">{{reportDate}}</span></p>
                         </td>
                     </tr>
@@ -1011,31 +1088,45 @@
                     assumed that this financial information provided to us are true and accurate.</p>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
             </li>
+            <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <li data-list-text="2.0" >
-                <h1 style="padding-left: 60pt;text-indent: -32pt;text-align: left;">Procedures adopted in
+                <h1 style="padding-left: 60pt;text-indent: -32pt;text-align: justify;">Procedures adopted in
                     carrying out the Valuation</h1>
-                <p style="padding-top: 1%;padding-left: 45pt;text-indent: 0pt;text-align: left;">Receipt of
-                    proposal for valuation;</p>
-                <p
-                    style="padding-top: 1%;padding-left: 45pt;text-indent: 0pt;line-height: 150%;text-align: left;">
-                    Discussion with the management and acceptance of the proposal; Receipt of intimation
-                    about appointment and acceptance of proposal;</p>
-                <p style="padding-top:1%;padding-left: 45pt;text-indent: 0pt;line-height: 150%;text-align: left;">Execution
-                    of valuation engagement letter and providing the checklist for required information,
-                    documents,Financial statement and records;</p>
-                <p style="padding-top:1%;padding-left: 45pt;text-indent: 0pt;line-height: 150%;text-align: left;">Receipt
-                    of information, documents as per the checklist leading to preliminary study including
-                    analysis of business, etc; Cross verification of data and meeting with the concerned
-                    officials of the company for clarifications/explanations; Determining valuations
-                    approach, techniques and methods</p>
-                <p style="padding-top:1%;padding-left: 45pt;text-indent: 0pt;line-height: 150%;text-align: left;">Analysis
-                    of publicly available data including economic factors and industry trends; Valuation
-                    synthesis &amp; revisiting the assumptions and decision made;</p>
-                <p style="padding-top:1%;padding-left: 45pt;text-indent: 0pt;text-align: left;">Report preparation and its
-                    validation.</p>
+                    <ul id="l81">
+                        <li >
+                            <p style="padding-top: 1%;padding-left: 55pt;text-indent: -10pt;text-align: justify;line-height: 160%;">Receipt of
+                                proposal for valuation;</p>
+                        </li>
+                        <li >
+                            <p style="padding-top: 1%;padding-left: 55pt;text-indent: -10pt;line-height: 160%;text-align: justify;">
+                                Discussion with the management and acceptance of the proposal; Receipt of intimation
+                                about appointment and acceptance of proposal;</p>
+                        </li>
+                        <li >
+                            <p style="padding-top:1%;padding-left: 55pt;text-indent: -10pt;line-height: 160%;text-align: justify;">Execution
+                                of valuation engagement letter and providing the checklist for required information,
+                                documents,Financial statement and records;</p>
+                        </li>
+                        <li >
+                            <p style="padding-top:1%;padding-left: 55pt;text-indent: -10pt;line-height: 160%;text-align: justify;">Receipt
+                                of information, documents as per the checklist leading to preliminary study including
+                                analysis of business, etc; Cross verification of data and meeting with the concerned
+                                officials of the company for clarifications/explanations; Determining valuations
+                                approach, techniques and methods;</p>
+                        </li>
+                        <li >
+                            <p style="padding-top:1%;padding-left: 55pt;text-indent: -10pt;line-height: 160%;text-align: justify;">Analysis
+                                of publicly available data including economic factors and industry trends; Valuation
+                                synthesis &amp; revisiting the assumptions and decision made;</p>
+                        </li>
+                        <li >
+                            <p style="padding-top:1%;padding-left: 55pt;text-indent: -10pt;text-align: justify;">Report preparation and its
+                                validation.</p>
+                        </li>
+                    </ul>
             </li>
             <li data-list-text="3.0" style="page-break-before: always;padding-top: 6%;">
-                <h1 style="padding-top: 3pt;padding-left: 41pt;text-indent: -28pt;text-align: left;">
+                <h1 style="padding-top: 3pt;padding-left: 41pt;text-indent: -28pt;text-align: justify;">
                     Identity of the Valuer and Any other experts involved in the Valuation</h1>
                     <!-- <table style="border-collapse:collapse;margin-left:14pt;margin-top:3%;width: 100% !important;" cellspacing="0">
                         <tr style="height:30pt;width:100% !important;">
@@ -1291,6 +1382,9 @@
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         </li>
                     </ol>
                 </li>
@@ -1313,7 +1407,7 @@
                                     <p style="padding-left: 28pt;text-indent: 0pt;line-height: 200%;text-align: left;">A brief
                                         explanation of each valuation approach is provided below. <u></u></p>
                                         <p><br></p>
-                                        <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Income Approach</p>
+                                        <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 145%;">Income Approach</p>
                                     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">The income approach
                                         provides an estimate of the present value of the monetary benefits expected to flow to
                                         the owners of the business. It requires the projection of the cash flows that the
@@ -1325,7 +1419,7 @@
                                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Market
                                         Approach</p>
-                                    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;">The
+                                    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 145%;">The
                                         market approach considers actual arm’s-length transactions for which the market value of
                                         investments alternative to the subject company can be observed. The value of a company
                                         or an ownership interest in the company can be estimated by developing relevant
@@ -1336,9 +1430,9 @@
                                         publicly traded company or private companies.</p>
                                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <p class="s7"
-                                    style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;">Cost
+                                    style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Cost
                                     (Asset-Based) Approach</p>
-                                    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;">The
+                                    <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">The
                                         asset-based (net underlying assets) approach is a form of the cost approach. The values
                                         of the individual assets (i.e., current, fixed, and intangible) of the business are
                                         estimated. The sum of the individual asset values represents the total asset value of
@@ -1352,7 +1446,7 @@
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                 </li>
                                 <li data-list-text="2.">
-                                    <h1 style="padding-top: 10pt;padding-left: 46pt;text-indent: -18pt;text-align: left;page-break-before: always;padding-top: 7%;">
+                                    <h1 style="padding-top: 10pt;padding-left: 46pt;text-indent: -18pt;text-align: left;">
                                         Valuation Methodologies</h1>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <ol id="l12" >
@@ -1363,13 +1457,13 @@
                                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                             <p
-                                                style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;">
+                                                style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">
                                                 The valuation methodology to be adopted varies from case to case depending upon
                                                 different factors affecting valuation. Different methodologies are adopted for
                                                 the valuation of manufacturing, investment, consultancy and trading companies.
                                             </p>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Though there are
+                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Though there are
                                                 no thumb rules for valuation, the method to be adopted has to be appropriate to
                                                 the particular purpose for which valuation is being done as well as the
                                                 attendant circumstances of each case. For example, a manufacturing company is
@@ -1377,7 +1471,7 @@
                                                 the business. An investment company is valued on the basis of the fair market
                                                 value of underlying assets.</p>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">However, the
+                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">However, the
                                                 value is specific to the point in time and may change with the passage of time.
                                                 The value is derived in the context of an existing environment that includes
                                                 economic conditions, state of industry/market and state of business activities
@@ -1389,7 +1483,7 @@
                                                 Discounted Cash Flow Method (DCF) – Income Approach</p>
                                             <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
                                             <p
-                                                style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;">
+                                                style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">
                                                 The DCF method values the asset by discounting the cash flows expected to be
                                                 generated by the asset for the explicit forecast period and also the perpetuity
                                                 value (or terminal value) in case of assets with an indefinite life. The DCF
@@ -1397,17 +1491,17 @@
                                                 shares, businesses, real estate projects, debt instruments, etc. This method
                                                 involves discounting of future cash flows</p>
                                             <p
-                                                style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;">
+                                                style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">
                                                 expected to be generated by an asset over its life using an appropriate discount
                                                 rate to arrive at the present value. The important inputs for the DCF method are
                                                 (a) Cash flows; (b) Discount rate; and (c) Terminal value.</p>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">The following
+                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;page-break-before: always;padding-top: 13%;">The following
                                                 are the cash flows which are used for the projections:</p>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                             <ol id="l13">
                                                 <li data-list-text="(a)">
-                                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Free
+                                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Free
                                                         Cash Flows to Firm (FCFF): FCFF refers to cash flows that are available
                                                         to all the providers of capital, i.e. equity shareholders, preference
                                                         shareholders and lenders. Therefore, cash flows required to service
@@ -1417,7 +1511,7 @@
                                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                                 </li>
                                                 <li data-list-text="(b)">
-                                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Free
+                                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Free
                                                         Cash Flows to Equity (FCFE): FCFE refers to cash flows available to
                                                         equity shareholders and therefore, cash flows after interest, dividend
                                                         to preference shareholders, principal repayment and additional funds
@@ -1429,7 +1523,7 @@
                                 </li>
                             </ol>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;page-break-before: always;padding-top: 4%;">Appropriate Discount Rate -
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Appropriate Discount Rate -
                                 Discount Rate is the return expected by a market participant from a particular investment and
                                 shall reflect not only the time value of money but also the risk inherent in the asset being
                                 valued as well as the risk inherent in achieving the future cash flows. In discounting the FCFF
@@ -1437,28 +1531,28 @@
                                 enterprise value of the Company. Whereas, in the case of FCFE the appropriate discount rate is
                                 the cost of equity, which results in the equity value of the Company.</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Terminal value – It represents
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Terminal value – It represents
                                 the present value at the end of explicit forecast period of all subsequent cash flows to the end
                                 of the life of the asset or into perpetuity if the asset has an indefinite life. There are
                                 different methods for estimating the terminal value. The commonly used methods are:</p>
-                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <ol id="l14">
                                 <li data-list-text="(a)">
-                                    <p style="padding-left: 44pt;text-indent: -16pt;text-align: left;">Gordon (Constant) Growth
+                                    <p style="padding-left: 44pt;text-indent: -16pt;text-align: left;line-height: 160%;">Gordon (Constant) Growth
                                         Model;</p>
                                 </li>
                                 <li data-list-text="(b)">
-                                    <p style="padding-left: 44pt;text-indent: -16pt;text-align: left;">Variable Growth Model;
+                                    <p style="padding-left: 44pt;text-indent: -16pt;text-align: left;line-height: 160%;">Variable Growth Model;
                                     </p>
                                 </li>
                                 <li data-list-text="(c)">
-                                    <p style="padding-left: 44pt;text-indent: -16pt;text-align: left;">Exit Multiple; and</p>
+                                    <p style="padding-left: 44pt;text-indent: -16pt;text-align: left;line-height: 160%;">Exit Multiple; and</p>
                                 </li>
                             </ol>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Comparable Company
                                 Multiple Method (CCM) – Market Approach</p>
-                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 130%;">This method
+                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">This method
                                 involves reviewing valuation multiples for companies that are in the same or similar line of
                                 business as the company being valued and then applying the relevant valuation multiples to the
                                 subject company to determine its value. The theory behind this approach is that valuation
@@ -1468,9 +1562,9 @@
                                 valuation measures might be used including Enterprise Value (EV) to Sales, EV to EBITDA, Price
                                 to Earnings, etc.</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Comparable
+                            <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;page-break-before: always;padding-top: 13%;">Comparable
                                 Transaction Multiple Method (CTM) – Market Approach</p>
-                            <p style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 130%;">This method
+                            <p style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">This method
                                 involves reviewing transaction multiples for companies that are in the same or similar line of
                                 business as the company being valued and then applying the relevant transaction multiples to the
                                 subject company to determine its value. The transaction multiples are determined for the
@@ -1483,18 +1577,20 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Net Assets Value
                                 Method – Cost (Asset-Based) Approach</p>
-                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 130%;">The net asset
+                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">The net asset
                                 value method is an asset-based approach to valuation where the value of the business is based on
                                 the difference between the fair market value of the assets and liabilities of the business. This
                                 method is a sound method for estimating the value of a non-operating business, such as real
                                 estate holding company, or a business that is continuing to generate losses, or which is
                                 expected to be liquidated.</p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Based on the Company’s current
                                 status and nature of the business, we have considered it appropriate to apply the discounted
                                 cash flow method to determine the fair value of the Company. We have explained this valuation
                                 methodology in detail in the following sections.</p>
+                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         </li>
-                        <li data-list-text="B." style="page-break-before: always;padding-top: 6%;">
+                        <li data-list-text="B." style="">
                             <h1
                                 style="padding-top: 3pt;padding-bottom: 1pt;padding-left: 20pt;text-indent: -18pt;text-align: left;border-bottom: 1px solid #cacaca;margin-left: 5%;">
                                 <a name="bookmark18" style="font-weight: bold;">Valuation of the Company via the Discounted Cash Flow Method (‘DCF’)</a><a
@@ -1506,7 +1602,7 @@
                                     <h1 style="padding-top: 4pt;padding-left: 46pt;text-indent: -18pt;text-align: left;">About
                                         the Method</h1>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">The Discounted Cash Flow
+                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 160%;">The Discounted Cash Flow
                                         method is an income-based approach that is based on the concept that the estimated value
                                         of a business is the present value of its discretely projected future cash flows, plus
                                         the present value of the Company’s terminal value. This method is suitable in situations
@@ -1516,16 +1612,17 @@
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                 </li>
                                 <li data-list-text="2.">
-                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Valuation Methodology
+                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;page-break-before: always;padding-top: 13%;">Valuation Methodology
                                     </h1>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">For the purpose of fair
+                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">For the purpose of fair
                                         valuation of the Company we have considered it appropriate to apply the Discounted Free
                                         Cash Flow Method, which is an internationally accepted valuation method.</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Based on the assumptions
+                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">Based on the assumptions
                                         and business plan of the Company for all the divisions shared with us by the Management,
                                         the fair value of the Company has been determined as per DCF Method as follows:</p>
+                                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Free Cash Flows:</h1>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1533,25 +1630,25 @@
                                     <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;">
                                         Explicit Period:<u> &nbsp;&nbsp;&nbsp; </u>.</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Terminal value: Terminal
+                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">Terminal value: Terminal
                                         value represents the estimated value of the Company at the end of explicit forecast
                                         period. There are different methods for estimating the terminal value. The commonly used
                                         methods are:</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <ol id="l16">
                                         <li data-list-text="(a)">
-                                            <p style="padding-left: 64pt;text-indent: -18pt;text-align: left;">Gordon (Constant)
+                                            <p style="padding-left: 64pt;text-indent: -18pt;text-align: left;line-height: 170%;">Gordon (Constant)
                                                 Growth Model;</p>
                                         </li>
                                         <li data-list-text="(b)">
-                                            <p style="padding-left: 64pt;text-indent: -18pt;text-align: left;">Variable Growth
+                                            <p style="padding-left: 64pt;text-indent: -18pt;text-align: left;line-height: 170%;">Variable Growth
                                                 Model;</p>
                                         </li>
                                         <li data-list-text="(c)">
-                                            <p style="padding-left: 64pt;text-indent: -18pt;text-align: left;">Exit Multiple;
+                                            <p style="padding-left: 64pt;text-indent: -18pt;text-align: left;line-height: 170%;">Exit Multiple
                                             </p>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">The Management
+                                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 160%;">The Management
                                                 has projected growth capital expenditure during the last years of projected
                                                 period which is expected to reap benefits over next few years beyond the
                                                 forecasted period. As the business operations of the Company will reach at a
@@ -1703,7 +1800,7 @@
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
 
                                         
-                                            <table style="border-collapse:collapse;margin-left:130pt" cellspacing="0">
+                                            <table style="border-collapse:collapse;margin-left:120pt" cellspacing="0">
                                                 <tr style="height:16pt">
                                                     <td style="width:248pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                                         bgcolor="#001F5F">
@@ -1791,34 +1888,34 @@
                                                     </td>
                                                 </tr>
                                             </table>
-                                            <h1 style="padding-top:5%;padding-left: 120pt;text-indent: 0pt;text-align: left;">
+                                            <h1 style="padding-top:5%;padding-left: 110pt;text-indent: 0pt;text-align: left;">
                                                 Notes:</h1>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                             <ol id="l17">
                                                 <li data-list-text="1.">
-                                                    <p style="padding-left: 150pt;text-indent: -18pt;text-align: left;">Yield of
+                                                    <p style="padding-left: 140pt;text-indent: -18pt;text-align: left;">Yield of
                                                         10- Year Government Bonds as on {{strdate}}</p>
                                                 </li>
                                                 <li data-list-text="2.">
-                                                    <p style="padding-left: 150pt;text-indent: -18pt;text-align: left;">Market
+                                                    <p style="padding-left: 140pt;text-indent: -18pt;text-align: left;">Market
                                                         Return</p>
 
-                                                    <table style="border-collapse:collapse;margin-left:130pt"
+                                                    <table style="border-collapse:collapse;margin-left:120pt"
                                                         cellspacing="0">
                                                         <tr style="height:14pt">
-                                                            <td style="width:101pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-left-style:solid;border-left-width:1pt;border-left-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4"
+                                                            <td style="width:101pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                                                 bgcolor="#001F5F">
                                                                 <p class="s11"
                                                                     style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                                                     Particulars</p>
                                                             </td>
-                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4"
+                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                                                 bgcolor="#001F5F">
                                                                 <p class="s11"
                                                                     style="padding-left: 15pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                                                     1st Feb 1999</p>
                                                             </td>
-                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
+                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
                                                             bgcolor="#001F5F">
                                                                 <p class="s11"
                                                                     style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
@@ -1827,36 +1924,36 @@
                                                         </tr>
                                                         <tr style="height:14pt">
                                                             <td
-                                                                style="width:101pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-left-style:solid;border-left-width:1pt;border-left-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4">
+                                                                style="width:101pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black">
                                                                 <p class="s5"
                                                                     style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                                                     BSE 500</p>
                                                             </td>
                                                             <td
-                                                                style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4">
+                                                                style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black">
                                                                 <p class="s5"
                                                                     style="padding-left: 15pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                                                     1,000</p>
                                                             </td>
-                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
+                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
                                                                 >
                                                                 <p style="text-indent: 0pt;text-align: right;padding-right: 15pt;">{{bse500Value}}</p>
                                                             </td>
                                                         </tr>
                                                         <tr style="height:14pt">
                                                             <td
-                                                                style="width:101pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-left-style:solid;border-left-width:1pt;border-left-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4">
+                                                                style="width:101pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black">
                                                                 <p class="s5"
                                                                     style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                                                     Market Return</p>
                                                             </td>
                                                             <td
-                                                                style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4">
+                                                                style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black">
                                                                 <p class="s5"
                                                                     style="padding-left: 20pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                                                     -</p>
                                                             </td>
-                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
+                                                            <td style="width:100pt;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
                                                                 >
                                                                 <p style="text-indent: 0pt;text-align: right;padding-right: 15pt;">{{expMarketReturn}}</p>
                                                             </td>
@@ -1913,15 +2010,15 @@
                             <p style="padding-left: 28pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 4pt;">In estimating the
                                 terminal value, we have applied the Gordon Growth Model as computed below.</p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <table style="border-collapse:collapse;margin-left:170pt" cellspacing="0">
+                            <table style="border-collapse:collapse;margin-left:160pt" cellspacing="0">
                                 <tr style="height:14pt">
-                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-left-style:solid;border-left-width:1pt;border-left-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4"
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                         bgcolor="#001F5F">
                                         <p class="s11"
                                             style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                             Particulars</p>
                                     </td>
-                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
                                         bgcolor="#001F5F">
                                         <p class="s11"
                                             style="padding-left: 10pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
@@ -2515,7 +2612,7 @@
                             
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 6%;">Fair Value Indication via DCF
+                            <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 13%;">Fair Value Indication via DCF
                                 Method</h1>
                             <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;"><span
                                     class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
@@ -2908,7 +3005,7 @@
     </div>
     
     
-   <div style="page-break-before: always;padding-top: 6%;padding-left: 3%;padding-right: 4%;font-size: 14px !important;">
+   <div style="page-break-before: always;padding-top: 10%;padding-left: 5%;padding-right: 5%;font-size: 14px !important;">
     <ul>
         <li >
             <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: -22pt;text-align: left;"><a
@@ -2935,7 +3032,7 @@
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 7%;">Please note, this Report is to be read in its
         entirety.</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <table style="border-collapse:collapse;margin-left:30.9pt;margin-top: 8%;" cellspacing="0">
+    <!-- <table style="border-collapse:collapse;margin-left:30.9pt;margin-top: 8%;" cellspacing="0">
         <tr style="height:14pt">
             <td style="width:253pt">
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -2965,7 +3062,19 @@
                     <span class="s5" style="font-weight: 400;">__________</span></p>
             </td>
         </tr>
-    </table>
+    </table> -->
+
+    <div class="container-top" style="padding-top: 20%;padding-left: 4%;">
+        <div class="column">
+            <p>Date: {{reportDate}}</p>
+            <p style="padding-top: 5px;">Place: ______________</p>
+        </div>
+        <div class="column">
+            <p><strong>{{registeredValuerName}}</strong> </p>
+            <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
+            <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+        </div>
+    </div>
     
    </div>
 
