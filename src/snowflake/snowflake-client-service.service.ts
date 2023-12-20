@@ -67,7 +67,7 @@ export class SnowflakeClientServiceService {
     //   }
 
     async connectToSnowflake(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    // return new Promise((resolve, reject) => {
         this.connection = snowflake.createConnection({
             account: 'your_account',
             username: 'your_username',
@@ -91,7 +91,7 @@ export class SnowflakeClientServiceService {
                 this.logger.log(`[${this.currentDateIST}] Response ${conn.response.config.method.toUpperCase()} ${conn.response?.config?.url} ${conn.response?.status} ${conn.response?.config?.data}`);
             }
         });
-    });
+    // });
     }
     
     isConnectionActive(): boolean {
