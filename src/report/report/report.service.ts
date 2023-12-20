@@ -297,12 +297,12 @@ export class ReportService {
             format: 'A4' as puppeteer.PaperFormat,
             displayHeaderFooter: true,
             printBackground: true,
-            footerTemplate:`<div style="width:100%">
+            footerTemplate:`<div style="width:100%;margin-top:5%">
             <hr style="border:1px solid #bbccbb">
             <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
             </div>` ,
             margin: {
-              right: "20px"
+              right: "20px",
           },          
           });
           return pdf;
@@ -655,12 +655,9 @@ export class ReportService {
         if(transposedData[0]?.data.transposedResult[1])
           valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
-            const number = response?.valuationData[0]?.equityValue.toFixed(2) || 0; 
-            const formattedNumber = (number ).toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-            });
-            if(formattedNumber){
-              equityPerShare.push( `${formattedNumber}/-`);
+            const number = Math.floor(response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
+            if(number){
+              equityPerShare.push( `${number.replace(/,/g, ',')}/-`);
             }
           }
         });
