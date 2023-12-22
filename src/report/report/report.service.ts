@@ -411,12 +411,12 @@ export class ReportService {
       if(!data.useExistingValuer){
        registerValuerPayload={
           registeredValuerName: 'Nitish Chaturvedi',
-          registeredValuerEmailId: 'nitish@ifinworth.com',
+          registeredValuerEmailId: 'chaturvedinitish@gmail.com',
           registeredValuerIbbiId: 'IBBI/RV/03/2020/12916',
           registeredValuerMobileNumber: '9997354674',
           registeredValuerGeneralAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
           registeredvaluerDOIorConflict: 'No',
-          registeredValuerQualifications: 'Government Valuation License Holder'
+          registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets'
         }
       }
       else{
