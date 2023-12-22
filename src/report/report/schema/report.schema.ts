@@ -19,9 +19,7 @@ export class Report {
     registeredValuerDetails: [];
 
     @Prop({ required: false, type: [] }) 
-    appointeeDetails: [];
-    
-  
+    appointeeDetails: []; 
     @Prop({ required: true, type: String })
     reportId: string;
   
@@ -45,6 +43,15 @@ export class Report {
 
     @Prop({ required: false, type: modelWeightageValue }) 
     modelWeightageValue:modelWeightageValue;
+
+    @Prop({ required: true, type: String }) 
+    dateOfIncorporation:string;
+
+    @Prop({ required: true, type: String }) 
+    cinNumber:string;
+
+    @Prop({ required: true, type: String }) 
+    companyAddress:string;
     
     @Prop({ type:String,default:'' }) 
     fileName:string; 
