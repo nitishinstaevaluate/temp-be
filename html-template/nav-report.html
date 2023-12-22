@@ -161,6 +161,17 @@
             font-size: 10.5pt;
         }
 
+        .larger-bullet {
+        list-style-type: none;
+        padding-left: 20px;
+        }
+
+        .larger-bullet::before {
+        content: "\2022";
+        font-size: 20px;
+        margin-right: 5px;
+        vertical-align: bottom !important;
+        }
         .s14 {
             color: black;
             font-family: Calibri, sans-serif;
@@ -462,7 +473,7 @@
             content: counter(f1, decimal)"." counter(f2, decimal)" ";
             color: black;
             font-style: normal;
-            font-weight: normal;
+            font-weight: bold;
             text-decoration: none;
         }
 
@@ -604,7 +615,7 @@
             content: counter(f1, decimal)"." counter(f2, decimal)" ";
             color: black;
             font-style: normal;
-            font-weight: normal;
+            font-weight: bold;
             text-decoration: none;
         }
 
@@ -617,11 +628,26 @@
             vertical-align: top;
             overflow: visible;
         }
+        .container-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 16px;
+            padding-left: 43pt;
+        }
+        .column {
+            width: 50%; /* Adjust the width as needed */
+            /* padding: 10px; */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
 <body>
-   <div style="page-break-before: always;padding-left: 3%;padding-top: 9%;padding-right: 2%;">
+   <div style="page-break-before: always;padding-left: 3%;padding-top: 13%;padding-right: 2%;">
     <h1 style="padding-top: 4pt;text-indent: 0pt;text-align: center;">VALUATION REPORT</h1>
     <p class="s1" style="padding-bottom: 3pt;text-indent: 0pt;text-align: center;padding-top: 3%;">of</p>
     <p class="s1" style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 3%;">Fair Value of Equity Shares</p>
@@ -630,17 +656,17 @@
     <h2 style="padding-left: 1pt;text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 20%;">Prepared By<span
             class="p">:</span></h2>
 
-    <p style="padding-top: 7pt;text-indent: 0pt;text-align: center;padding-top: 3%;"><span class="s3" style="text-transform: capitalize;font-weight: 500;">{{registeredValuerName}}</span></p>
-    <p style="padding-top: 2%;text-indent: 0pt;text-align: center;">
+    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3" style="text-transform: capitalize;font-weight: 500;">{{registeredValuerName}}</span></p>
+    <p style="padding-top: 1%;text-indent: 0pt;text-align: center;">
         <span style=" color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;">Registered
             Valuer- Securities or Financial Assets </span></p>
-    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3" style="text-transform: capitalize;">{{registeredValuerAddress}}</span></p>
-    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 2%;"><span class="s3">{{registeredValuerEmailId}}</span></p>
-    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">{{registeredValuerMobileNumber}}</span></p>
+    <p style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 1%;width: 40%;margin:auto"><span class="s3" style="text-transform: capitalize;">{{registeredValuerAddress}}</span></p>
+    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 1%;width: 100% !important;"><span>{{registeredValuerEmailId}}</span></p>
+    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 1%;"><span class="s3">{{registeredValuerMobileNumber}}</span></p>
 </div>
 
     <!-- page 2 html -->
-  <div style="page-break-before: always;padding-top: 5%;padding-left: 6%;padding-right:6%">
+  <div style="page-break-before: always;padding-top: 13%;padding-left: 6%;padding-right:6%">
     <p style="padding-top: 6pt;padding-left: 13pt;text-indent: 0pt;text-align: left;">To,</p>
     <p style="padding-top: 6pt;padding-left: 13pt;text-indent: 0pt;line-height: 120%;text-align: left;"><a
             name="bookmark0"><span class="h2">{{appointingAuthorityName}}</span></a>
@@ -654,9 +680,9 @@
     <h2 style="padding-left: 12pt;text-indent: 0pt;text-align: left;padding-top: 2%;padding-bottom: 2%;">Context and Purpose</h2>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">Based on discussions with the
-        management, the management requires the valuation analysis of the {{natureOfInstrument}} of the Company for the purpose
-        of {{reportSection}} of the {{reportPurpose}}. In this regard, management of the Company requires report carried out by a
-        Registered Valuer in accordance with provisions of Companies Act, 2013.</p>
+        management, the management requires the valuation analysis of the {{natureOfInstrument}} of the Company for the proposed issuance of
+         {{natureOfInstrument}} in accordance with provisions of Section {{reportSection}}of the {{reportPurpose}}. In this regard, management of the Company requires report carried out by a
+        Registered Valuer.</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">The report has been prepared
         exclusively for specified purpose as mentioned above and hence should not be used for any other purpose, without
@@ -742,57 +768,58 @@
                         </td>
                     </tr>
                 </table>
-                <ol id="l3">
-                    <li data-list-text="(i)">
-                        <p style="padding-top: 3%;padding-left: 47pt;text-indent: -36pt;text-align: left;padding-bottom: 2%;"><a
-                                name="bookmark3"><span class="h2">Particulars of the Subject Company –</span></a><span
-                                class="s2" style="text-transform: capitalize;font-weight: bold;"> {{companyName}}</span></p>
-                    </li>
-                </ol>
             </li>
         </ol>
     </ol>
-    <table style="border-collapse:collapse;margin-left:13.59pt" cellspacing="0">
-        <tr style="height:27pt">
-            <td
-                style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s6" style="padding-top: 5pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">Date of
-                    Incorporation:</p>
-            </td>
-            <td
-                style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="padding-top: 6pt;padding-left: 12pt;text-indent: 0pt;text-align: left;"><span class="s8"
-                        style=""></span></p>
-            </td>
-        </tr>
-        <tr style="height:27pt">
-            <td
-                style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s6" style="padding-top: 5pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">CIN:</p>
-            </td>
-            <td
-                style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:27pt">
-            <td
-                style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s6" style="padding-left: 12pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 5pt;">Registered
-                    Office:</p>
-            </td>
-            <td
-                style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-    </table>
 </div>
 
     <!-- page 3 html -->
-   <div style="page-break-before: always;padding-left: 6%;padding-right: 6%;padding-top: 5%;">
-   
-    <div style="line-height: 180% !important;">
+   <div style="page-break-before: always;padding-left: 6%;padding-right: 8%;padding-top: 13%;">
+    <div>
+        <ol id="l3">
+            <li data-list-text="(i)">
+                <p style="padding-top: 3%;padding-left: 47pt;text-indent: -36pt;text-align: left;padding-bottom: 2%;"><a
+                        name="bookmark3"><span class="h2">Particulars of the Subject Company –</span></a><span
+                        class="s2" style="text-transform: capitalize;font-weight: bold;"> {{companyName}}</span></p>
+            </li>
+        </ol>
+        <table style="border-collapse:collapse;margin-left:13.59pt" cellspacing="0">
+            <tr style="height:27pt">
+                <td
+                    style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s6" style="padding-top: 5pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">Date of
+                        Incorporation:</p>
+                </td>
+                <td
+                    style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="padding-top: 6pt;padding-left: 12pt;text-indent: 0pt;text-align: left;"><span class="s8"
+                            style=""></span></p>
+                </td>
+            </tr>
+            <tr style="height:27pt">
+                <td
+                    style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s6" style="padding-top: 5pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">CIN:</p>
+                </td>
+                <td
+                    style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:27pt">
+                <td
+                    style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s6" style="padding-left: 12pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 5pt;">Registered
+                        Office:</p>
+                </td>
+                <td
+                    style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="line-height: 180% !important;margin-right: 10%;">
     <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;padding-bottom: 3%;padding-top: 1%;">Nature of business of the Subject Company:</h2>
     <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;padding-bottom: 1%;">Procedures adopted in carrying out the Valuation
     </h2>
@@ -838,33 +865,34 @@
                 its validation.</p>
         </li>
     </ul>
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <ol id="l5">
-        <ol id="l6">
-            <li data-list-text="2.0">
-                <h2 style="padding-left: 41pt;text-indent: -28pt;text-align: left;padding-bottom: 1%;">Inspections / investigation
-                    undertaken</h2>
-                <ol id="l7">
-                    <li data-list-text="a)">
-                        <p style="padding-left: 36pt;text-indent: -18pt;text-align: left;padding-top: 1%;padding-bottom: 1%;">Similar Companies financial
-                            data and market price from financial sites.</p>
-                    </li>
-                    <li data-list-text="b)">
-                        <p style="padding-top: 2pt;padding-left: 36pt;text-indent: -18pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Web Site of
-                            Ministry of Corporate Affairs (MCA) was inspected.</p>
-                    </li>
-                </ol>
-            </li>
-        </ol>
-    </ol>
+    <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
+    
    </div>
    </div>
 
    <!-- page 4 html -->
-    <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
+    <div style="page-break-before: always;padding-top: 13%;padding-left: 6%;padding-right: 6%;">
+        <ol id="l5">
+            <ol id="l6">
+                <li data-list-text="2.0">
+                    <h2 style="padding-left: 41pt;text-indent: -28pt;text-align: left;padding-bottom: 1%;">Inspections / investigation
+                        undertaken</h2>
+                    <ol id="l7">
+                        <li data-list-text="a)">
+                            <p style="padding-left: 36pt;text-indent: -18pt;text-align: left;padding-top: 1%;padding-bottom: 1%;line-height: 160%;">Similar Companies financial
+                                data and market price from financial sites.</p>
+                        </li>
+                        <li data-list-text="b)">
+                            <p style="padding-top: 2pt;padding-left: 36pt;text-indent: -18pt;text-align: left;padding-top: 1%;padding-bottom: 1%;line-height: 160%;">Web Site of
+                                Ministry of Corporate Affairs (MCA) was inspected.</p>
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+        </ol>
         <ol id="l8">
             <li data-list-text="3.0">
-                <h2 style="padding-top: 3pt;padding-left: 41pt;text-indent: -28pt;text-align: left;">Identity of the Valuer
+                <h2 style="padding-top: 3%;padding-left: 41pt;text-indent: -28pt;text-align: left;">Identity of the Valuer
                     and Any other experts involved in the Valuation</h2>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <table style="border-collapse:collapse;margin-left:14pt;margin-top:3%;width: 100% !important;" cellspacing="0">
@@ -876,7 +904,7 @@
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">: {{registeredValuerName}}
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">: {{registeredValuerName}}
                             </p>
                         </td> 
                     </tr>
@@ -887,7 +915,7 @@
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 20pt;text-align: left;">:  {{registeredValuerAddress}}
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 20pt;text-align: left;">: {{registeredValuerAddress}}
                             </p>
                         </td> 
                     </tr>
@@ -898,7 +926,7 @@
                         </td>
                         <td style="width: auto">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 20pt;text-align: left;">:  {{registeredValuerAddress}}
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 20pt;text-align: left;">: {{registeredValuerAddress}}
                             </p>
                         </td> 
                     </tr>
@@ -909,7 +937,7 @@
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">:
                             </p>
                         </td>
                     </tr>
@@ -920,7 +948,7 @@
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:  {{registeredValuerEmailId}}
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">:  {{registeredValuerEmailId}}
                             </p>
                         </td> 
                     </tr>
@@ -931,7 +959,7 @@
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">:
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">:
                             </p>
                         </td> 
                     </tr>
@@ -942,7 +970,7 @@
                         </td>
                         <td style="">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: 0pt;line-height: 11pt;text-align: left;">: No
+                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">: No
                             </p>
                         </td> 
                     </tr>
@@ -954,7 +982,7 @@
                         </td>
                         <td style="width:auto">
                             <p class="s5"
-                                style="padding-top: 1pt;padding-right: 7pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
+                                style="padding-top: 1pt;padding-right: 7pt;text-indent: -8pt;line-height: 13pt;text-align: left;">
                                 : No</p>
                         </td>
                     </tr>
@@ -1004,41 +1032,41 @@
                     </tr>
                 </table>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                <p style="padding-top: 10pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"><a name="bookmark4"><span
-                            class="h2">Documents /Information of </span></a><span class="s2" style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span class="h2"> used or relied
-                        upon:</span></p>
-                <p style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">.</p>
-                <ol id="l9">
-                    <li data-list-text="i.">
-                        <p style="padding-left: 41pt;text-indent: -23pt;line-height: 160%;text-align: left;padding-top: 1%;"><span
-                                class="s9">Audited/Management Certified
-                                Provisional</span><span class="p"> Financials of the Company for the year ended ______.</span>
-                            </p>
-                    </li>
-                    <li data-list-text="ii.">
-                        <p style="padding-left: 41pt;text-indent: -26pt;line-height: 13pt;text-align: left;padding-top: 1%;">Various
-                            fillings by the company with MCA.</p>
-                    </li>
-                    <li data-list-text="iii.">
-                        <p
-                            style="padding-top: 1pt;padding-left: 25pt;text-indent: -14pt;line-height: 160%;text-align: left;padding-top: 1%;">
-                            Reliance has been placed on verbal explanations and information provided by the officials of the
-                            company.</p>
-                    </li>
-                    <li data-list-text="iv.">
-                        <p style="padding-left: 25pt;line-height: 160%;text-align: left;text-indent: -14pt;padding-top: 1%;">It has been
-                            informed to that there are no material events and / or demand decisions -legal or otherwise
-                            against the companies which have arisen / will arise subsequent to the valuation date and are
-                            likely to affect materially the state of affairs as on date and / or its net assets.</p>
-                    </li>
-                </ol>
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+               
             </li>
         </ol>
     </div>
        
     <!-- page 5 html -->
-    <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
+    <div style="page-break-before: always;padding-top: 13%;padding-left: 6%;padding-right: 6%;">
+        <p style="padding-top: 10pt;padding-left: 13pt;text-indent: 0pt;text-align: left;"><a name="bookmark4"><span
+            class="h2">Documents /Information of </span></a><span class="s2" style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span class="h2"> used or relied
+        upon:</span></p>
+        <p style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">.</p>
+        <ol id="l9">
+            <li data-list-text="i.">
+                <p style="padding-left: 41pt;text-indent: -23pt;line-height: 160%;text-align: left;padding-top: 1%;"><span
+                        class="s9">Audited/Management Certified
+                        Provisional</span><span class="p"> Financials of the Company for the year ended ______.</span>
+                    </p>
+            </li>
+            <li data-list-text="ii.">
+                <p style="padding-left: 41pt;text-indent: -26pt;line-height: 13pt;text-align: left;padding-top: 1%;">Various
+                    fillings by the company with MCA.</p>
+            </li>
+            <li data-list-text="iii.">
+                <p
+                    style="padding-top: 1pt;padding-left: 25pt;text-indent: -14pt;line-height: 160%;text-align: left;padding-top: 1%;">
+                    Reliance has been placed on verbal explanations and information provided by the officials of the
+                    company.</p>
+            </li>
+            <li data-list-text="iv.">
+                <p style="padding-left: 25pt;line-height: 160%;text-align: left;text-indent: -14pt;padding-top: 1%;">iv. It has been
+                    informed to that there are no material events and / or demand decisions -legal or otherwise
+                    against the companies which have arisen / will arise subsequent to the valuation date and are
+                    likely to affect materially the state of affairs as on date and / or its net assets.</p>
+            </li>
+        </ol>
         <ol id="l90">
             <li data-list-text="5.0">
                 <h2 style="padding-left: 37pt;text-indent: -28pt;text-align: left;padding-top: 1%;padding-bottom: 1%;">LIMITATIONS, CAVEATS AND DISCLAIMER</h2>
@@ -1084,45 +1112,47 @@
                             influence the value.</p>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     </li>
-                    <li data-list-text="5.5">
-                        <p style="padding-left: 25pt;text-indent: -20pt;line-height: 150%;text-align: justify;">Unavailability
-                            of information as of valuation date: Please note that the Fair Value of assets of the company
-                            have been performed as of an earlier date based on the provisional unaudited standalone balance
-                            sheet of company provided by management as of the valuation date.</p>
-                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                    </li>
-                    <li data-list-text="5.6">
-                        <p
-                            style="padding-left: 25pt;text-indent: -20pt;line-height: 150%;text-align: justify;">
-                            In the course of the valuation, I was provided with both written and verbal information. I have
-                            however, evaluated the information provided to me by the Company through broad inquiry, analysis
-                            and review but have not carried out a due diligence or audit of the information provided for the
-                            purpose of this engagement. My conclusions are based on the assumptions, forecasts and other
-                            information given by/on behalf of the Company.</p>
-                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                    </li>
-                    <li data-list-text="5.7">
-                        <p style="padding-left: 25pt;text-indent: -20pt;line-height: 150%;text-align: justify;">I am
-                            independent of the client/company and have no current or expected interest in the Company or its
-                            assets. The fee paid for my services in no way influenced the results of my analysis.</p>
-                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                    </li>
-                    <li data-list-text="5.8">
-                        <p style="padding-left: 25pt;text-indent: -20pt;line-height: 150%;text-align: justify;">My report is
-                            meant for the purpose mentioned above and should not be used for any purpose other than the
-                            purpose mentioned therein. The Report should not be copied or reproduced  without obtaining my prior written approval for any purpose other than the purpose for which it
-                            is prepared.</p>
-                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                    </li>
+                   
+                   
                 </ol>
             </li>
             </ol>
         </div>
 
         <!-- page 6 html -->
-        <div style="page-break-before: always;padding-top: 6%;padding-left: 5%;padding-right: 6%;">
+        <div style="page-break-before: always;padding-top: 13%;padding-left: 5%;padding-right: 6%;">
+            <ol>
+                <li >
+                    <p style="padding-left: 30pt;text-indent: -19pt;line-height: 150%;text-align: justify;">5.5 Unavailability
+                        of information as of valuation date: Please note that the Fair Value of assets of the company
+                        have been performed as of an earlier date based on the provisional unaudited standalone balance
+                        sheet of company provided by management as of the valuation date.</p>
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </li>
+                <li >
+                    <p
+                        style="padding-left: 30pt;text-indent: -19pt;line-height: 150%;text-align: justify;">
+                        5.6 In the course of the valuation, I was provided with both written and verbal information. I have
+                        however, evaluated the information provided to me by the Company through broad inquiry, analysis
+                        and review but have not carried out a due diligence or audit of the information provided for the
+                        purpose of this engagement. My conclusions are based on the assumptions, forecasts and other
+                        information given by/on behalf of the Company.</p>
+                </li>
+                <li>
+                    <p style="padding-left: 30pt;text-indent: -19pt;line-height: 150%;text-align: justify;">5.7 I am
+                        independent of the client/company and have no current or expected interest in the Company or its
+                        assets. The fee paid for my services in no way influenced the results of my analysis.</p>
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </li>
+                <li>
+                    <p style="padding-left: 30pt;text-indent: -19pt;line-height: 150%;text-align: justify;">5.8 My report is
+                        meant for the purpose mentioned above and should not be used for any purpose other than the
+                        purpose mentioned therein. The Report should not be copied or reproduced  without obtaining my prior written approval for any purpose other than the purpose for which it
+                        is prepared.</p>
+                </li>
+            </ol>
             <ol id="l91">
-                <li data-list-text="6.0" style="padding-right: 1%;">
+                <li data-list-text="6.0" style="padding-right: 1%;padding-top: 4%;">
                     <h2 style="padding-left: 46pt;text-indent: -28pt;text-align: left;">VALUATION APPROACH AND MEHODOLOGY</h2>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     <ol id="l11">
@@ -1136,15 +1166,15 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <ul id="l12">
                                 <li data-list-text="">
-                                    <p style="padding-left: 42pt;text-indent: -21pt;text-align: left;">Industry to which the
+                                    <p style="padding-left: 42pt;text-indent: -21pt;text-align: left;line-height: 160%;">Industry to which the
                                         Company belongs</p>
                                 </li>
                                 <li data-list-text="">
-                                    <p style="padding-top: 1pt;padding-left: 42pt;text-indent: -21pt;text-align: left;">Extent
+                                    <p style="padding-top: 1pt;padding-left: 42pt;text-indent: -21pt;text-align: left;line-height: 160%;">Extent
                                         to which industry and comparable company information are available</p>
                                 </li>
                                 <li data-list-text="">
-                                    <p style="padding-top: 1pt;padding-left: 42pt;text-indent: -21pt;text-align: left;">Whether
+                                    <p style="padding-top: 1pt;padding-left: 42pt;text-indent: -21pt;text-align: left;line-height: 160%;">Whether
                                         the entity is listed on a stock exchange</p>
                                 </li>
                                 <li data-list-text="">
@@ -1161,20 +1191,20 @@
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <ol id="l13">
                                         <li data-list-text="A.">
-                                            <p style="padding-left: 42pt;text-indent: -20pt;text-align: left;">Market Approach
+                                            <p style="padding-left: 42pt;text-indent: -20pt;text-align: left;line-height: 160%;">Market Approach
                                             </p>
                                         </li>
                                         <li data-list-text="B.">
-                                            <p style="padding-top: 2pt;padding-left: 42pt;text-indent: -20pt;text-align: left;">
+                                            <p style="padding-top: 2pt;padding-left: 42pt;text-indent: -20pt;text-align: left;line-height: 160%;">
                                                 Asset Approach</p>
                                         </li>
                                         <li data-list-text="C.">
-                                            <p style="padding-top: 2pt;padding-left: 42pt;text-indent: -20pt;text-align: left;">
+                                            <p style="padding-top: 2pt;padding-left: 42pt;text-indent: -20pt;text-align: left;line-height: 160%;">
                                                 Income Approach</p>
                                         </li>
                                     </ol>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <ol id="l14">
+                                    <ol id="l14" style="page-break-before: always;padding-top: 8%;">
                                         <li data-list-text="A.">
                                             <h2 style="padding-left: 42pt;text-indent: -21pt;text-align: left;"><a
                                                     name="bookmark5">Market Approach</a></h2>
@@ -1199,13 +1229,13 @@
                                                 technological factors that correspond with those confronting the Company.
                                                 However, comparable that fit perfectly rarely exist. Privately held companies
                                                 are compared to publicly traded ones that are typically further along in their
-                                                stage of development, have superior access to capital, and</p>
-                                            <p
+                                                stage of development, have superior access to capital, and have common stock that is readily marketable.</p>
+                                            <!-- <p
                                                 style="padding-top: 4pt;padding-left: 20pt;text-indent: 0pt;text-align: justify;">
-                                                have common stock that is readily marketable.</p>
+                                                </p> -->
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                         </li>
-                                        <li data-list-text="B.">
+                                        <li data-list-text="B." >
                                             <h2 style="padding-left: 42pt;text-indent: -21pt;text-align: left;"><a
                                                     name="bookmark6">Asset Approach</a></h2>
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1224,7 +1254,7 @@
                                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                         </li>
                                         <!-- page 7 html -->
-                                        <li data-list-text="C." style="page-break-before: always;padding-top: 8%;">
+                                        <li data-list-text="C." >
                                             <h2 style="padding-left: 42pt;text-indent: -21pt;text-align: left;"><a
                                                     name="bookmark7">Income Approach</a></h2>
                                         </li>
@@ -1242,192 +1272,194 @@
                                         benefit stream of the subject company is most often valued, and the capitalization and
                                         discount rates are derived from statistics concerning public companies.</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <table style="border-collapse:collapse;width: 100%;margin-left: 2%;" cellspacing="0">
-                                        <tr style="height:30pt">
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s6" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">
-                                                    Valuation</p>
-                                                <p class="s6"
-                                                    style="padding-top: 1pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">
-                                                    Approach</p>
-                                            </td>
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s6" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">
-                                                    Valuation</p>
-                                                <p class="s6"
-                                                    style="padding-top: 1pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">
-                                                    Methodology</p>
-                                            </td>
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s6" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">
-                                                    Reason for regarding / discarding the</p>
-                                                <p class="s6"
-                                                    style="padding-top: 1pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">
-                                                    methodology</p>
-                                            </td>
-                                        </tr>
-                                        <tr style="height:102pt">
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s7"
-                                                    style="text-align: center;padding-top: 40%;">
-                                                    Market Approach</p>
-                                            </td>
-                                            <td style="width:30% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" >
-                                                <ul id="l15" style="padding-top: 10%;padding-left: 20pt;">
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;padding-right: 26pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                            Comparable Companies</p>
-                                                    </li>
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;padding-right: 23pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                            Comparable Transactions</p>
-                                                    </li>
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;padding-right: 6pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                            Market Price Method</p>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s7"
-                                                    style="padding-left: 12pt;padding-right: 6pt;text-indent: 0pt;line-height: 150%;text-align: justify;padding-top: 3%;">
-                                                    Considering the nature of business and size of the company, it was difficult
-                                                    to find a similar peer in the listed space. Therefore, I have not adopted
-                                                    the Comparable Companies Approach for valuation of equity shares of the Company.</p>
-                                            </td>
-                                        </tr>
-                                        <tr style="height:88pt">
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s7"
-                                                    style="text-align: center;padding-top: 40%;">
-                                                    Asset Approach</p>
-                                            </td>
-                                            <td  style="width:30% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <ul id="l15" style="padding-top: 10%;padding-left: 20pt;">
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;padding-right: 10pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                            Replacement Cost Method</p>
-                                                    </li>
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;padding-right: 10pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                            Reproduction Cost Method</p>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s7"
-                                                    style="padding-left: 12pt;padding-right: 7pt;text-indent: 0pt;line-height: 150%;text-align: justify;padding-top: 3%;">
-                                                    As I Understand market and income approach of valuation are not suitable to
-                                                    determine the value of equity shares. Therefore, I have found only net asset
-                                                    value method appropriate for valuation purpose.</p>
-                                            </td>
-                                        </tr>
-                                        <tr style="height:102pt">
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s7" style="text-align: center;padding-top: 40%;">
-                                                    Income Approach</p>
-                                            </td>
-                                            <td  style="width:30% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <ul id="l15" style="padding-top: 10%;padding-left: 20pt;">
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;text-indent: -8pt;line-height: 113%;text-align: left;padding: 1%;">
-                                                            Discounted Cash Flow (DCF) Method</p>
-                                                    </li>
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;text-indent: -8pt;line-height: 112%;text-align: left;padding: 1%;">
-                                                           Excess Capitalization Method</p>
-                                                    </li>
-                                                    <li data-list-text="">
-                                                        <p class="s7"
-                                                            style="padding-left: 12pt;;text-indent: -8pt;line-height: 112%;text-align: left;padding: 1%;">
-                                                           Excess Earning Method</p>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                            <td
-                                                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s7" style="padding-left: 12pt;text-indent: 0pt;text-align: left;padding-top: 3%;line-height: 150%;">I
-                                                    understand from the company that it is unable to accurately and adequately
-                                                    project cash flows for the explicit forecast period. Since, DCF is based on
-                                                    future projections and hence not been considered for valuation.</p>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                    
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                 </li>
                             </ul>
-                        </li>
-                        <!-- page 8 html -->
-                        <li data-list-text="6.2" style="page-break-before: always;padding-top: 6%;">
-                            <h2 style="padding-top: 4pt;padding-left: 33pt;text-indent: -28pt;text-align: left;">Valuation
-                                Methodology</h2>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <table style="border-collapse:collapse;margin-left:6.074pt;width: 100%;" cellspacing="0">
-                                <tr style="height:15pt">
-                                    <td
-                                        style="">
-                                        <p class="s6"
-                                            style="padding-left: 12pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Net
-                                            Asset Value Method (NAV Method)</p>
-                                    </td>
-                                </tr>
-                                <tr style="height:129pt">
-                                    <td
-                                        style="">
-                                        <ul id="l15" style="padding-top: 2%;padding-left: 20pt;">
-                                            <li data-list-text="">
-                                                <p class="s7"
-                                                    style="padding-left: 48pt;text-indent: -10pt;line-height: 150%;text-align: left;padding: 1%">
-                                                    Valuation of equity shares of the Company is based on the existing financial information
-                                                    as provided to me by the Management<span class="s10">.</span></p>
-                                            </li>
-                                            <li data-list-text="">
-                                                <p class="s7"
-                                                    style="padding-left: 48pt;text-indent: -10pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                    As per NAV Method, value is defined as the difference between Market Value of Assets and
-                                                    Market value of Liabilities.</p>
-                                            </li>
-                                            <li data-list-text="">
-                                                <p class="s7"
-                                                    style="padding-left: 48pt;text-indent: -10pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                    Management has provided to me with audited/management financials of the Company.</p>
-                                            </li>
-                                            <li data-list-text="">
-                                                <p class="s7"
-                                                    style="padding-top: 1pt;padding-left: 48pt;text-indent: -10pt;line-height: 150%;text-align: left;padding: 1%;">
-                                                    To estimate the fair value of the business, I have considered book value of assets and
-                                                    liabilities as fair market value for my calculation purposes.</p>
-                                            </li>
-                                        </ul>    
-                                    </td> 
-                                </tr>
-                            </table>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         </li>
                     </ol>
                 </li>
                 </ol>
         </div>
         
-       <div style="padding-left: 3%;padding-right: 5%;">
+       <div style="padding-left: 3%;padding-right: 5%;page-break-before: always;padding-top: 8%;">
+        <table style="border-collapse:collapse;width: 100%;margin-left: 2%;padding-bottom: 3%;" cellspacing="0">
+            <tr style="height:30pt">
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s6" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">
+                        Valuation</p>
+                    <p class="s6"
+                        style="padding-top: 1pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">
+                        Approach</p>
+                </td>
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s6" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">
+                        Valuation</p>
+                    <p class="s6"
+                        style="padding-top: 1pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">
+                        Methodology</p>
+                </td>
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s6" style="padding-left: 12pt;text-indent: 0pt;text-align: left;">
+                        Reason for regarding / discarding the methodology</p>
+                    <!-- <p class="s6"
+                        style="padding-top: 1pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">
+                        </p> -->
+                </td>
+            </tr>
+            <tr style="height:102pt">
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s7"
+                        style="text-align: center;padding-top: 40%;">
+                        Market Approach</p>
+                </td>
+                <td style="width:30% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" >
+                    <ul id="l15" style="padding-top: 10%;padding-left: 20pt;">
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;padding-right: 26pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
+                                Comparable Companies</p>
+                        </li>
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;padding-right: 23pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
+                                Comparable Transactions</p>
+                        </li>
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;padding-right: 6pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
+                                Market Price Method</p>
+                        </li>
+                    </ul>
+                </td>
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s7"
+                        style="padding-left: 12pt;padding-right: 6pt;text-indent: 0pt;line-height: 150%;text-align: justify;padding-top: 3%;">
+                        Considering the nature of business and size of the company, it was difficult
+                        to find a similar peer in the listed space. Therefore, I have not adopted
+                        the Comparable Companies Approach for valuation of equity shares of the Company.</p>
+                </td>
+            </tr>
+            <tr style="height:88pt">
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s7"
+                        style="text-align: center;padding-top: 40%;">
+                        Asset Approach</p>
+                </td>
+                <td  style="width:30% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <ul id="l15" style="padding-top: 10%;padding-left: 20pt;">
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;padding-right: 10pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
+                                Replacement Cost Method</p>
+                        </li>
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;padding-right: 10pt;text-indent: -8pt;line-height: 150%;text-align: left;padding: 1%;">
+                                Reproduction Cost Method</p>
+                        </li>
+                    </ul>
+                </td>
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s7"
+                        style="padding-left: 12pt;padding-right: 7pt;text-indent: 0pt;line-height: 150%;text-align: justify;padding-top: 3%;">
+                        As I Understand market and income approach of valuation are not suitable to
+                        determine the value of equity shares. Therefore, I have found only net asset
+                        value method appropriate for valuation purpose.</p>
+                </td>
+            </tr>
+            <tr style="height:102pt">
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s7" style="text-align: center;padding-top: 40%;">
+                        Income Approach</p>
+                </td>
+                <td  style="width:30% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <ul id="l15" style="padding-top: 10%;padding-left: 20pt;">
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;text-indent: -8pt;line-height: 113%;text-align: left;padding: 1%;">
+                                Discounted Cash Flow (DCF) Method</p>
+                        </li>
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;text-indent: -8pt;line-height: 112%;text-align: left;padding: 1%;">
+                               Excess Capitalization Method</p>
+                        </li>
+                        <li data-list-text="">
+                            <p class="s7"
+                                style="padding-left: 12pt;;text-indent: -8pt;line-height: 112%;text-align: left;padding: 1%;">
+                               Excess Earning Method</p>
+                        </li>
+                    </ul>
+                </td>
+                <td
+                    style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s7" style="padding-left: 12pt;text-indent: 0pt;text-align: left;padding-top: 3%;line-height: 150%;">I
+                        understand from the company that it is unable to accurately and adequately
+                        project cash flows for the explicit forecast period. Since, DCF is based on
+                        future projections and hence not been considered for valuation.</p>
+                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+        </table>
+        <h2 style="padding-top: 3%;padding-left: 36pt;text-indent: -28pt;text-align: left;">6.2 Valuation
+            Methodology</h2>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <div >
+            <table style="border-collapse:collapse;margin-left:15pt;width: 100%;" cellspacing="0">
+                <tr style="height:15pt;border:1px solid black">
+                    <td
+                        style="">
+                        <p class="s6"
+                        style="padding-left: 12pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;">Net Asset Value Method (NAV Method)</p>
+                        
+                    </td>
+                </tr>
+                <tr style="border: 1px solid black;border-bottom: 1px solid white;">
+                    <td
+                        style="">
+                        <p  class=" larger-bullet"
+                        style="text-indent: -11pt;padding-right: 1%;padding-top: 2%;text-align: justify;">
+                            Valuation of equity shares of the Company is based on the existing financial information
+                        as provided to me by the Management.</p>
+                        
+                          
+                    </td> 
+                </tr>
+                <tr style="border: 1px solid black;border-top: 1px solid white;border-bottom: 1px solid white;">
+                    <td>
+                        <p class=" larger-bullet" style="text-indent: -11pt;padding-right: 1%;padding-top: 2%;text-align: justify;">
+                            As per NAV Method, value is defined as the difference between Market Value of Assets and
+                            Market value of Liabilities.</p>   
+                    </td> 
+                </tr>
+                <tr style="border: 1px solid black;border-bottom: 1px solid white;border-top: 1px solid white;">
+                    <td>
+                        <p class=" larger-bullet" style="text-indent: -11pt;padding-right: 1%;padding-top: 2%;text-align: justify;">
+                            Management has provided to me with audited/management certified financials of the Company.</p>
+                    </td> 
+                </tr>
+                <tr style="border: 1px solid black;border-top: 1px solid white;">
+                    <td>
+                        <p class="larger-bullet" style="text-indent: -11pt;padding-right: 1%;padding-top: 2%;padding-bottom: 1%;text-align: justify;">
+                            To estimate the fair value of the business, I have considered book value of assets and
+                            liabilities as fair market value for my calculation purposes.</p>
+                    </td> 
+                </tr>
+            </table>
+        </div>
+       
         <ol id="l92">
             <li data-list-text="7.0">
-                <h2 style="padding-top: 9pt;padding-left: 43pt;text-indent: -28pt;text-align: left;">VALUATION
+                <h2 style="padding-top: 2%;padding-left: 43pt;text-indent: -28pt;text-align: left;">VALUATION
                     RECOMMENDATION</h2>
                 <ol id="l20">
                     <li data-list-text="7.1">
@@ -1440,7 +1472,7 @@
                             </span><span class="s2" >{{currencyUnit}}. {{modelValuePerShare 'NAV'}}</span><span
                                 class="h2">.</span></p>
                     </li>
-                    <li data-list-text="7.2">
+                    <li data-list-text="7.2" style="page-break-before: always;padding-top: 8%;">
                         <h2 style="padding-left: 50pt;text-indent: -28pt;text-align: left;padding-top: 3%;">Standard of Value</h2>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 43pt;text-indent: 0pt;line-height: 150%;text-align: justify;">Business
@@ -1472,10 +1504,44 @@
                     </li>
                 </ol>
             </li>
-            <h2 style="padding-left: 44pt;text-indent: 0pt;text-align: left;padding-top: 6%;">Date: {{reportDate}} <span style="float: right;padding-right: 29%;">{{registeredValuerName}}</span></h2>
-            <p style="padding-top: 3pt;text-indent: 0pt;text-align: right;">Registered Valuer- Securities or
-                Financial Assets</p>
-            <h2 style="padding-top: 2pt;padding-left: 44pt;text-indent: 0pt;text-align: left;">Place: ________________ <span style="float: right;padding-right: 29%;">{{registeredValuerIbbiId}}</span></h2>
+            <!-- <table style="width: 100%;margin: auto;padding-top: 5%;">
+                <tr>
+                    <td style="padding-left: 5%;"> 
+                        Date: {{reportDate}}
+                    </td>
+                    <td style="padding-left: 23%;">
+                        {{registeredValuerName}}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding-left: 5%;"> 
+                        Place: ___________
+                    </td>
+                    <td style="padding-left: 23%;">
+                        Registered Valuer- Securities or
+                Financial Assets
+                    </td>
+                </tr>
+                <tr>
+                    <td style="">
+                        
+                    </td>
+                    <td style="padding-left: 23%;">
+                        {{registeredValuerIbbiId}}
+                    </td>
+                </tr>
+            </table> -->
+            <div class="container-top" style="padding-top: 10%;">
+                <div class="column">
+                    <p >Date: {{reportDate}}</p>
+                    <p style="padding-top: 4px;">Place: ______________</p>
+                </div>
+                <div class="column">
+                    <p><strong>{{registeredValuerName}}</strong> </p>
+                    <p style="padding-top: 4px;"> Registered Valuer- Securities or Financial Assets</p>
+                    <p style="padding-top: 4px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+                </div>
+            </div>
        </div>
     </ol>
 
@@ -1484,8 +1550,8 @@
         <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;font-size: 20px;"><a name="bookmark10">Annexure</a></h2>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h2 style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><a name="bookmark9">Net Asset Valuation of {{companyName}}</a></h2>
-        <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Valuation as per Net Asset Value
-            Method <span style="float: right;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></h3>
+        <!-- <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Valuation as per Net Asset Value
+            Method <span style="float: right;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></h3> -->
         <table style="border-collapse:collapse;margin-left:8pt;width: 100%;" cellspacing="0">
             <tr style="height:14pt">
                 <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
