@@ -660,9 +660,15 @@
     <p style="padding-top: 1%;text-indent: 0pt;text-align: center;">
         <span style=" color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;">Registered
             Valuer- Securities or Financial Assets </span></p>
-    <p style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 1%;width: 40%;margin:auto"><span class="s3" style="text-transform: capitalize;">{{registeredValuerAddress}}</span></p>
-    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 1%;width: 100% !important;"><span>{{registeredValuerEmailId}}</span></p>
-    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 1%;"><span class="s3">{{registeredValuerMobileNumber}}</span></p>
+    <p style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 1%;width: 40%;margin:auto"><span class="s3" style="text-transform: capitalize;">{{registeredValuerCorporateAddress}}</span></p>
+    <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 1%;width: 100% !important;"><span>
+        <span style="font-weight: bold;">
+            Email Id :
+        </span>
+         {{registeredValuerEmailId}}</span></p>
+    <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 1%;"><span class="s3">
+        <span style="font-weight: bold;">Mob No.</span>
+        {{registeredValuerMobileNumber}}</span></p>
 </div>
 
     <!-- page 2 html -->
@@ -675,8 +681,12 @@
     <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;"><a name="bookmark2">
          
             <span class="s2" style="font-weight: 600;text-transform: capitalize;padding-top: 1%;">{{companyName}}</span></a></p>
-    <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;"><a name="bookmark2"><span class="s3">Add:</span></a></p>
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            {{#if (companyAddress)}}
+            <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;line-height: 150%;"><a name="bookmark2"><span class="s3">{{companyAddress}}</span></a></p>
+            {{else}}
+            <p style="padding-left: 14pt;text-indent: 0pt;text-align: left;padding-top: 1%;line-height: 150%;"><a name="bookmark2"><span class="s3">Add.</span></a></p>
+            {{/if}}
+            <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h2 style="padding-left: 12pt;text-indent: 0pt;text-align: left;padding-top: 2%;padding-bottom: 2%;">Context and Purpose</h2>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;">Based on discussions with the
@@ -694,7 +704,7 @@
     <p style="padding-left: 13pt;text-indent: 0pt;line-height: 150%;text-align: justify;"><span class="p">Based on my
             Valuation Analysis, in my assessment, the Fair Value of Equity shares of the Company as on </span><span
             class="s2" >{{strdate}}</span><span class="h2"> is
-        </span><span class="s2">{{currencyUnit}}. {{modelValuePerShare 'NAV'}}</span><span class="h2">. </span><span
+        </span><span class="s2">{{currencyUnit}}. {{modelValuePerShare 'NAV'}} <span style="text-transform: capitalize;">({{modelValuePerShareNumbersToWords 'NAV'}})</span></span><span class="h2">. </span><span
             class="s4">Refer </span><span><a class="h2" href="#bookmark10">Annexure </a></span><span class="p">of the report of even date.</span>
     </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -787,13 +797,12 @@
             <tr style="height:27pt">
                 <td
                     style="width:134pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s6" style="padding-top: 5pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">Date of
-                        Incorporation:</p>
+                    <p class="s6" style="padding-top: 5pt;padding-left: 12pt;text-indent: 0pt;text-align: left;">Date of Incorporation:</p>
                 </td>
                 <td
                     style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-top: 6pt;padding-left: 12pt;text-indent: 0pt;text-align: left;"><span class="s8"
-                            style=""></span></p>
+                    <p style="padding-top: 6pt;padding-left: 12pt;text-indent: 0pt;text-align: center;"><span class="s8"
+                            style=""> {{dateOfIncorporation}}</span></p>
                 </td>
             </tr>
             <tr style="height:27pt">
@@ -803,7 +812,7 @@
                 </td>
                 <td
                     style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;text-align: center;padding-top: 6pt;">{{cinNumber}}</p>
                 </td>
             </tr>
             <tr style="height:27pt">
@@ -814,7 +823,7 @@
                 </td>
                 <td
                     style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p style="text-indent: 0pt;text-align: center;">{{companyAddress}}</p>
                 </td>
             </tr>
         </table>
@@ -871,7 +880,7 @@
    </div>
 
    <!-- page 4 html -->
-    <div style="page-break-before: always;padding-top: 13%;padding-left: 6%;padding-right: 6%;">
+    <div style="page-break-before: always;padding-top: 13%;padding-left: 5%;padding-right: 6%;">
         <ol id="l5">
             <ol id="l6">
                 <li data-list-text="2.0">
@@ -897,92 +906,92 @@
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <table style="border-collapse:collapse;margin-left:14pt;margin-top:3%;width: 100% !important;" cellspacing="0">
                     <tr style="height:30pt;width:100% !important;">
-                        <td style="width:40%">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="text-indent: 0pt;line-height: 11pt;text-align: left;">Name
                                 of the Valuer </p>
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">: {{registeredValuerName}}
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;">: {{registeredValuerName}}
                             </p>
                         </td> 
                     </tr>
                     <tr style="height:30pt;width:100% !important;">
-                        <td style="width:40%">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="text-indent: 0pt;line-height: 20pt;text-align: left;">Corporate Address of the Valuer </p>
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 20pt;text-align: left;">: {{registeredValuerAddress}}
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">: {{registeredValuerCorporateAddress}}
                             </p>
                         </td> 
                     </tr>
                     <tr style="height:30pt;width:100% !important;">
-                        <td style="width:40%;">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="text-indent: 0pt;line-height: 20pt;text-align: left;">Registered Address of the Valuer</p>
                         </td>
                         <td style="width: auto">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 20pt;text-align: left;">: {{registeredValuerAddress}}
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">: {{registeredValuerAddress}}
                             </p>
                         </td> 
                     </tr>
                     <tr style="height:30pt;width:100% !important;">
-                        <td style="width:auto">
+                        <td style="width:35%">
                             <p class="s5"
-                                style="text-indent: 0pt;line-height: 11pt;text-align: left;"> Contact Detail</p>
+                                style="text-indent: 0pt;line-height: 11pt;text-align: left;">Contact Detail</p>
                         </td>
                         <td style="width:auto !important;">
-                            <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">:
+                            <p class="s5" style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">
+                                :&nbsp;&nbsp; {{registeredValuerMobileNumber}}
                             </p>
                         </td>
                     </tr>
                     <tr style="height:30pt;width:100% !important;">
-                        <td style="width:40%">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="text-indent: 0pt;line-height: 11pt;text-align: left;">Email Address</p>
                         </td>
                         <td style="width:auto !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">:  {{registeredValuerEmailId}}
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">: {{registeredValuerEmailId}}
                             </p>
                         </td> 
                     </tr>
                     <tr style="height:30pt;">
-                        <td style="width:40%">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="text-indent: 0pt;line-height: 11pt;text-align: left;">Qualifications</p>
                         </td>
-                        <td style="width:auto !important;">
+                        <td style="width:65% !important;">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">:
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">: {{registeredValuerQualifications}}
                             </p>
                         </td> 
                     </tr>
                     <tr style="height:30pt">
-                        <td style="width:50%">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="text-indent: 0pt;line-height: 11pt;text-align: left;">Disclosure of Interest or Conflict</p>
                         </td>
                         <td style="">
                             <p class="s5"
-                                style="padding-right: 7pt;text-indent: -8pt;line-height: 11pt;text-align: left;">: No
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">: No
                             </p>
                         </td> 
                     </tr>
                     <tr style="height:16pt">
-                        <td style="width:30%">
+                        <td style="width:35%">
                             <p class="s5"
                                 style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                                 Any other expert involved</p>
                         </td>
                         <td style="width:auto">
                             <p class="s5"
-                                style="padding-top: 1pt;padding-right: 7pt;text-indent: -8pt;line-height: 13pt;text-align: left;">
+                                style="text-indent: -5pt;line-height: 20pt;text-align: left;padding-left: 1%;">
                                 : No</p>
                         </td>
                     </tr>
@@ -1061,7 +1070,7 @@
                     company.</p>
             </li>
             <li data-list-text="iv.">
-                <p style="padding-left: 25pt;line-height: 160%;text-align: left;text-indent: -14pt;padding-top: 1%;">iv. It has been
+                <p style="padding-left: 25pt;line-height: 160%;text-align: left;text-indent: -14pt;padding-top: 1%;">It has been
                     informed to that there are no material events and / or demand decisions -legal or otherwise
                     against the companies which have arisen / will arise subsequent to the valuation date and are
                     likely to affect materially the state of affairs as on date and / or its net assets.</p>
@@ -1069,7 +1078,7 @@
         </ol>
         <ol id="l90">
             <li data-list-text="5.0">
-                <h2 style="padding-left: 37pt;text-indent: -28pt;text-align: left;padding-top: 1%;padding-bottom: 1%;">LIMITATIONS, CAVEATS AND DISCLAIMER</h2>
+                <h2 style="padding-left: 37pt;text-indent: -28pt;text-align: left;padding-top: 2%;padding-bottom: 1%;">LIMITATIONS, CAVEATS AND DISCLAIMER</h2>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <ol id="l10" style="padding-left: 1%;padding-right: 1%;">
                     <li data-list-text="5.1">
@@ -1459,8 +1468,7 @@
        
         <ol id="l92">
             <li data-list-text="7.0">
-                <h2 style="padding-top: 2%;padding-left: 43pt;text-indent: -28pt;text-align: left;">VALUATION
-                    RECOMMENDATION</h2>
+                <h2 style="padding-top: 4%;padding-left: 43pt;text-indent: -28pt;text-align: left;">VALUATION RECOMMENDATION</h2>
                 <ol id="l20">
                     <li data-list-text="7.1">
                         <h2 style="padding-left: 50pt;text-indent: -28pt;text-align: left;padding-top: 3%;">Valuation Opinion</h2>
@@ -1469,7 +1477,7 @@
                                 class="p">Based on my Valuation Analysis as per the information provided by the management
                                 of Company, in my assessment, the Net Asset Value of Equity shares of the Company as on
                             </span><span class="s9" >{{strdate}}</span><span class="p"> is
-                            </span><span class="s2" >{{currencyUnit}}. {{modelValuePerShare 'NAV'}}</span><span
+                            </span><span class="s2" >{{currencyUnit}}. {{modelValuePerShare 'NAV'}} ({{modelValuePerShareNumbersToWords 'NAV'}})</span><span
                                 class="h2">.</span></p>
                     </li>
                     <li data-list-text="7.2" style="page-break-before: always;padding-top: 8%;">
@@ -1549,7 +1557,7 @@
     <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
         <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;font-size: 20px;"><a name="bookmark10">Annexure</a></h2>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <h2 style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><a name="bookmark9">Net Asset Valuation of {{companyName}}</a></h2>
+        <h2 style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><a name="bookmark9">Net Asset Valuation of {{companyName}}</a><span style="float: right;"><i>Amount ({{currencyUnit}})</i></span></h2>
         <!-- <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Valuation as per Net Asset Value
             Method <span style="float: right;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></h3> -->
         <table style="border-collapse:collapse;margin-left:8pt;width: 100%;" cellspacing="0">

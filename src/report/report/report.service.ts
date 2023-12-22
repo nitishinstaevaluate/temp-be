@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -15,6 +15,7 @@ import ConvertAPI from 'convertapi';
 import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
+import * as converter from 'number-to-words'
 
 @Injectable()
 export class ReportService {
@@ -414,7 +415,8 @@ export class ReportService {
           registeredValuerEmailId: 'chaturvedinitish@gmail.com',
           registeredValuerIbbiId: 'IBBI/RV/03/2020/12916',
           registeredValuerMobileNumber: '9997354674',
-          registeredValuerGeneralAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
+          registeredValuerGeneralAddress: '94, Bheesm Kunj, Gaja Paisa, Mathura 281001',
+          registeredValuerCorporateAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
           registeredvaluerDOIorConflict: 'No',
           registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets'
         }
@@ -447,6 +449,9 @@ export class ReportService {
         natureOfInstrument:data?.natureOfInstrument,
         reportPurpose:data?.reportPurpose,
         reportSection:data?.reportSection,
+        dateOfIncorporation:data?.dateOfIncorporation,
+        cinNumber:data?.cinNumber,
+        companyAddress:data?.companyAddress,
         modelWeightageValue:data.finalWeightedAverage
       }
       try {
@@ -494,7 +499,12 @@ export class ReportService {
 
       hbs.registerHelper('registeredValuerAddress',()=>{
         if(reportDetails.registeredValuerDetails[0]) 
-            return  reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress ? reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress : reportDetails.registeredValuerDetails[0].registeredValuerGeneralAddress
+            return reportDetails.registeredValuerDetails[0].registeredValuerGeneralAddress
+        return '';
+      })
+      hbs.registerHelper('registeredValuerCorporateAddress',()=>{
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress ? reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress : reportDetails.registeredValuerDetails[0].registeredValuerGeneralAddress;
         return '';
       })
 
@@ -525,10 +535,23 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('dateOfAppointment',()=>{
-        if(reportDetails.appointeeDetails[0]) 
-            // return  reportDetails.appointeeDetails[0].dateOfAppointment; 
-            // let apptDate = await reportDetails.appointeeDetails[0].dateOfAppointment; 
+        if(reportDetails)
             return this.formatDate(new Date(reportDetails.appointeeDetails[0].dateOfAppointment));
+        return '';
+      })
+      hbs.registerHelper('dateOfIncorporation',()=>{
+        if(reportDetails.appointeeDetails[0])
+            return this.formatDate(new Date(reportDetails.dateOfIncorporation));
+        return '';
+      })
+      hbs.registerHelper('cinNumber',()=>{
+        if(reportDetails)
+            return reportDetails.cinNumber
+        return '';
+      })
+      hbs.registerHelper('companyAddress',()=>{
+        if(reportDetails)
+            return reportDetails.companyAddress;
         return '';
       })
       hbs.registerHelper('clientName',()=>{
@@ -633,6 +656,49 @@ export class ReportService {
               });
             });
             // console.log(formattedValues, "value per share");
+            return formattedValues[0];
+          }
+          else{
+            if(reportDetails?.modelWeightageValue){
+              const equityValue = reportDetails.modelWeightageValue.weightedVal;
+              const outstandingShares = valuationResult.inputData[0].outstandingShares;
+              const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
+              return `${finalValue.replace(/,/g, ',')}/-`
+            }
+          }
+       
+        return '';
+      })
+      hbs.registerHelper('modelValuePerShareNumbersToWords',(modelName)=>{
+        modelName = modelName.split(',');
+        if(modelName.length <= 2 ){
+          let formattedValues;
+            formattedValues = modelName.flatMap((models) => {
+              return valuationResult.modelResults.flatMap((response) => {
+                if (
+                  response.model === models &&
+                  (models === MODEL[2] || models === MODEL[4])
+                ) {
+                  const innerFormatted = response?.valuationData.valuation
+                    .filter((innerValuationData) => innerValuationData.particular === 'result')
+                    .map((innerValuationData) => {
+                      const formattedNumber = Math.floor(innerValuationData.fairValuePerShareAvg).toLocaleString('en-IN');
+                      return `Rupees${converter.toWords(formattedNumber)} Only`;
+                    });
+                  return innerFormatted || [];
+                }
+                if (response.model === models && models !== 'NAV') {
+                  const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
+                  return `Rupees ${converter.toWords(formattedNumber)} Only`;
+                }
+                if (response.model === models && models === 'NAV') {
+                  const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
+                  return `Rupees ${converter.toWords(formattedNumber)} Only`;
+                }
+                return [];
+              });
+            });
+            console.log(formattedValues, "converted value");
             return formattedValues[0];
           }
           else{
@@ -808,20 +874,23 @@ export class ReportService {
         let arrayPAT = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
-            result.valuationData.map((response:any)=>{
-              arrayPAT.push({fcfePat:response.pat ? parseFloat(response?.pat).toFixed(2) : ''})
+            result.valuationData.map((response:any)=>{              
+              const patValue = this.formatPositiveAndNegativeValues(response?.pat);
+              arrayPAT.push({fcfePat:patValue})
             })
             arrayPAT.unshift({fcfePat:"PAT"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayPAT.push({fcffPat:response.pat ? parseFloat(response?.pat).toFixed(2) : ''})
+              const patValue = this.formatPositiveAndNegativeValues(response?.pat);
+              arrayPAT.push({fcffPat:patValue})
             })
             arrayPAT.unshift({fcffPat:"PAT"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arrayPAT.push({excessEarningPat:response.pat ? parseFloat(response?.pat).toFixed(2) : ''})
+              const patValue = this.formatPositiveAndNegativeValues(response?.pat);
+              arrayPAT.push({excessEarningPat:patValue})
             })
             arrayPAT.unshift({excessEarningPat:"PAT"});
           }
@@ -834,7 +903,8 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayfcff.push({fcff:response?.fcff ? parseFloat(response?.fcff).toFixed(2) : response.fcff === 0 ? 0 : ''})
+              const fcffValue = this.formatPositiveAndNegativeValues(response.fcff);
+              arrayfcff.push({fcff:fcffValue})
             })
             arrayfcff.unshift({fcff:"FCFF"});
           }
@@ -847,13 +917,17 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arraydepAndAmortisation.push({fcfeDepAmortisation:response.depAndAmortisation ? parseFloat(response?.depAndAmortisation).toFixed(2) : ''})
+              const depAndAmortisationValue = response?.depAndAmortisation;
+              let depAndAmortisation = depAndAmortisationValue ? (Math.abs(depAndAmortisationValue) < 0.005 ? '0.00' : `${Math.abs(depAndAmortisationValue).toFixed(2)}`) : '';
+              depAndAmortisation = depAndAmortisationValue && `${depAndAmortisation}`.includes('-') ? `(${depAndAmortisation})` : depAndAmortisation;
+              arraydepAndAmortisation.push({fcfeDepAmortisation:depAndAmortisation})
             })
             arraydepAndAmortisation.unshift({fcfeDepAmortisation:"Depn. and Amortn."});
           }
           else if (result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arraydepAndAmortisation.push({fcffDepAmortisation:response.depAndAmortisation ? parseFloat(response?.depAndAmortisation).toFixed(2) : ''})
+             const depAndAmortisation = this.formatPositiveAndNegativeValues(response.depAndAmortisation)
+              arraydepAndAmortisation.push({fcffDepAmortisation:depAndAmortisation})
             })
             arraydepAndAmortisation.unshift({fcffDepAmortisation:"Depn. and Amortn."});
             
@@ -867,13 +941,15 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:response.addInterestAdjTaxes ? parseFloat(response?.addInterestAdjTaxes).toFixed(2)  : response?.addInterestAdjTaxes === 0 ? 0 : ''})
+              const addInterestAdjTaxesValue = this.formatPositiveAndNegativeValues(response?.addInterestAdjTaxes);
+              arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:addInterestAdjTaxesValue})
             })
             arrayaddInterestAdjTaxes.unshift({fcfeAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:response.addInterestAdjTaxes ? parseFloat(response?.addInterestAdjTaxes).toFixed(2)  : response?.addInterestAdjTaxes === 0 ? 0 : ''})
+              const addInterestAdjTaxesValue = this.formatPositiveAndNegativeValues(response?.addInterestAdjTaxes);
+              arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:addInterestAdjTaxesValue})
             })
             arrayaddInterestAdjTaxes.unshift({fcffAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
             
@@ -887,13 +963,16 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayonCashItems.push({fcfeOnCashItems:response.onCashItems ? parseFloat(response?.onCashItems).toFixed(2) : response.onCashItems === 0 ? 0 : ''})
+             const nonCashItem = this.formatPositiveAndNegativeValues(response?.onCashItems)
+              arrayonCashItems.push({fcfeOnCashItems:nonCashItem})
             })
             arrayonCashItems.unshift({fcfeOnCashItems:"Other Non Cash items"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayonCashItems.push({fcffOnCashItems:response.onCashItems ? parseFloat(response?.onCashItems).toFixed(2) : response.onCashItems === 0 ? 0 : ''})
+              const nonCashItem = this.formatPositiveAndNegativeValues(response?.onCashItems)
+
+              arrayonCashItems.push({fcffOnCashItems:nonCashItem})
             })
             arrayonCashItems.unshift({fcffOnCashItems:"Other Non Cash items"});
           }
@@ -906,13 +985,15 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayNca.push({fcfeNca:response.nca ? parseFloat(response?.nca).toFixed(2) : response.nca === 0 ? 0 : ''})
+              const ncaValue = this.formatPositiveAndNegativeValues(response?.nca);
+              arrayNca.push({fcfeNca:ncaValue})
             })
             arrayNca.unshift({fcfeNca:"Change in NCA"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayNca.push({fcffNca:response.nca ? parseFloat(response?.nca).toFixed(2) : response.nca === 0 ? 0 : ''})
+              const ncaValue = this.formatPositiveAndNegativeValues(response?.nca);
+              arrayNca.push({fcffNca:ncaValue})
             })
             arrayNca.unshift({fcffNca:"Change in NCA"});
           }
@@ -925,13 +1006,15 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arraydefferedTaxAssets.push({fcfeDefferedTaxAssets:response?.defferedTaxAssets ? parseFloat(response?.defferedTaxAssets).toFixed(2) : response.defferedTaxAssets === 0 ? 0 : ''})
+              const deferredTaxValue = this.formatPositiveAndNegativeValues(response?.defferedTaxAssets);
+              arraydefferedTaxAssets.push({fcfeDefferedTaxAssets:deferredTaxValue})
             })
             arraydefferedTaxAssets.unshift({fcfeDefferedTaxAssets:"Add/Less: Deferred Tax Assets(Net)"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arraydefferedTaxAssets.push({fcffDefferedTaxAssets:response?.defferedTaxAssets ? parseFloat(response?.defferedTaxAssets).toFixed(2) : response.defferedTaxAssets === 0 ? 0 : ''})
+              const deferredTaxValue = this.formatPositiveAndNegativeValues(response?.defferedTaxAssets);
+              arraydefferedTaxAssets.push({fcffDefferedTaxAssets:deferredTaxValue})
             })
             arraydefferedTaxAssets.unshift({fcffDefferedTaxAssets:"Add/Less: Deferred Tax Assets(Net)"});
           }
@@ -944,7 +1027,8 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayChangeInBorrowings.push({changeInBorrowings:response?.changeInBorrowings ? parseFloat(response?.changeInBorrowings).toFixed(2) : response.changeInBorrowings === 0 ? 0 : ''})
+              const changeInBorrowingValue = this.formatPositiveAndNegativeValues(response?.changeInBorrowings);
+              arrayChangeInBorrowings.push({changeInBorrowings:changeInBorrowingValue})
             })
             arrayChangeInBorrowings.unshift({changeInBorrowings:"Change in Borrowings"});
           }
@@ -957,13 +1041,15 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayNetCashFlow.push({fcfeNetCashFlow:response?.netCashFlow ? parseFloat(response?.netCashFlow).toFixed(2) : response.netCashFlow === 0 ? 0 : ''})
+              const netCashFlowValue = this.formatPositiveAndNegativeValues(response?.netCashFlow);
+              arrayNetCashFlow.push({fcfeNetCashFlow:netCashFlowValue})
             })
             arrayNetCashFlow.unshift({fcfeNetCashFlow:"Net Cash Flow"});
           }
           if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayNetCashFlow.push({fcffNetCashFlow:response?.netCashFlow ? parseFloat(response?.netCashFlow).toFixed(2) : response.netCashFlow === 0 ? 0 : ''})
+              const netCashFlowValue = this.formatPositiveAndNegativeValues(response?.netCashFlow);
+              arrayNetCashFlow.push({fcffNetCashFlow:netCashFlowValue})
             })
             arrayNetCashFlow.unshift({fcffNetCashFlow:"Net Cash Flow"});
           }
@@ -976,196 +1062,218 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayFixedAssets.push({fcfeFixedAssets:response?.fixedAssets ? parseFloat(response?.fixedAssets).toFixed(2) : response.fixedAssets === 0 ? 0 : ''})
+              const fixedAssetsValue = this.formatPositiveAndNegativeValues(response?.fixedAssets);
+              arrayFixedAssets.push({fcfeFixedAssets:fixedAssetsValue})
             })
             arrayFixedAssets.unshift({fcfeFixedAssets:"Change in fixed assets"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayFixedAssets.push({fcffFixedAssets:response?.fixedAssets ? parseFloat(response?.fixedAssets).toFixed(2) : response.fixedAssets === 0 ? 0 : ''})
+              const fixedAssetsValue = this.formatPositiveAndNegativeValues(response?.fixedAssets);
+              arrayFixedAssets.push({fcffFixedAssets:fixedAssetsValue})
             })
             arrayFixedAssets.unshift({fcffFixedAssets:"Change in fixed assets"});
           }
         })
         return arrayFixedAssets;
       });
-
+      
       hbs.registerHelper('FCFE', () => {
         let arrayfcff = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayfcff.push({fcff:response?.fcff ? parseFloat(response?.fcff).toFixed(2) : response.fcff === 0 ? 0 : ''})
+              const fcffValue = this.formatPositiveAndNegativeValues(response?.fcff);
+              arrayfcff.push({fcff:fcffValue})
             })
             arrayfcff.unshift({fcff:"FCFE"});
           }
         })
         return arrayfcff;
       });
-
+      
       hbs.registerHelper('discPeriod', () => {
         let arrayDiscountingPeriod = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayDiscountingPeriod.push({fcfeDiscountingPeriod:response?.discountingPeriod ? parseFloat(response?.discountingPeriod).toFixed(2) : response.discountingPeriod === 0 ? 0 : ''})
+              const discountingPeriodValue = this.formatPositiveAndNegativeValues(response?.discountingPeriod);
+              arrayDiscountingPeriod.push({fcfeDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({fcfeDiscountingPeriod:"Discounting Period"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayDiscountingPeriod.push({fcffDiscountingPeriod:response?.discountingPeriod ? parseFloat(response?.discountingPeriod).toFixed(2) : response.discountingPeriod === 0 ? 0 : ''})
+              const discountingPeriodValue = this.formatPositiveAndNegativeValues(response?.discountingPeriod);
+              arrayDiscountingPeriod.push({fcffDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({fcffDiscountingPeriod:"Discounting Period"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arrayDiscountingPeriod.push({excessEarningDiscountingPeriod:response?.discountingPeriod ? parseFloat(response?.discountingPeriod).toFixed(2) : response.discountingPeriod === 0 ? 0 : ''})
+              const discountingPeriodValue = this.formatPositiveAndNegativeValues(response?.discountingPeriod);
+              arrayDiscountingPeriod.push({excessEarningDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({excessEarningDiscountingPeriod:"Discounting Period"});
           }
         })
         return arrayDiscountingPeriod;
       });
-
+      
       hbs.registerHelper('discFactor', () => {
         let arrayDiscountingFactor = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayDiscountingFactor.push({fcfeDiscountingFactor:response?.discountingFactor ? parseFloat(response?.discountingFactor).toFixed(2) : response.discountingFactor === 0 ? 0 : ''})
+              const discountingFactorValue = this.formatPositiveAndNegativeValues(response?.discountingFactor);
+              arrayDiscountingFactor.push({fcfeDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({fcfeDiscountingFactor:"Discounting Factor"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayDiscountingFactor.push({fcffDiscountingFactor:response?.discountingFactor ? parseFloat(response?.discountingFactor).toFixed(2) : response.discountingFactor === 0 ? 0 : ''})
+              const discountingFactorValue = this.formatPositiveAndNegativeValues(response?.discountingFactor);
+              arrayDiscountingFactor.push({fcffDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({fcffDiscountingFactor:"Discounting Factor"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arrayDiscountingFactor.push({excessEarningDiscountingFactor:response?.discountingFactor ? parseFloat(response?.discountingFactor).toFixed(2) : response.discountingFactor === 0 ? 0 : ''})
+              const discountingFactorValue = this.formatPositiveAndNegativeValues(response?.discountingFactor);
+              arrayDiscountingFactor.push({excessEarningDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({excessEarningDiscountingFactor:"Discounting Factor"});
           }
         })
         return arrayDiscountingFactor;
       });
-
+      
       hbs.registerHelper('prsntFCFF', () => {
         let arrayPresentFCFF = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayPresentFCFF.push({fcfePresentFCFF:response?.presentFCFF ? parseFloat(response?.presentFCFF).toFixed(2) : response.presentFCFF === 0 ? 0 : ''})
+              const presentFCFFValue = this.formatPositiveAndNegativeValues(response?.presentFCFF);
+              arrayPresentFCFF.push({fcfePresentFCFF:presentFCFFValue})
             })
             arrayPresentFCFF.unshift({fcfePresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayPresentFCFF.push({fcffPresentFCFF:response?.presentFCFF ? parseFloat(response?.presentFCFF).toFixed(2) : response.presentFCFF === 0 ? 0 : ''})
+              const presentFCFFValue = this.formatPositiveAndNegativeValues(response?.presentFCFF);
+              arrayPresentFCFF.push({fcffPresentFCFF:presentFCFFValue})
             })
             arrayPresentFCFF.unshift({fcffPresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
           }
         })
         return arrayPresentFCFF;
       });
-
+      
       hbs.registerHelper('debtDate', () => {
         let arrayDebtOnDate = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayDebtOnDate.push({fcfeDebtOnDate:response?.debtOnDate ? parseFloat(response?.debtOnDate).toFixed(2) : response.debtOnDate === 0 ? 0 : ''})
+              const debtOnDateValue = this.formatPositiveAndNegativeValues(response?.debtOnDate);
+              arrayDebtOnDate.push({fcfeDebtOnDate:debtOnDateValue})
             })
             arrayDebtOnDate.unshift({fcfeDebtOnDate:"Less: Debt as on Date"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayDebtOnDate.push({fcffDebtOnDate:response?.debtOnDate ? parseFloat(response?.debtOnDate).toFixed(2) : response.debtOnDate === 0 ? 0 : ''})
+              const debtOnDateValue = this.formatPositiveAndNegativeValues(response?.debtOnDate);
+              arrayDebtOnDate.push({fcffDebtOnDate:debtOnDateValue})
             })
             arrayDebtOnDate.unshift({fcffDebtOnDate:"Less: Debt as on Date"});
           }
         })
         return arrayDebtOnDate;
       });
-
+      
       hbs.registerHelper('sumCashFlow', () => {
         let arraySumOfCashFlows = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arraySumOfCashFlows.push({fcfeSumOfCashFlows:response?.sumOfCashFlows ? parseFloat(response?.sumOfCashFlows).toFixed(2) : response.sumOfCashFlows === 0 ? 0 : ''})
+              const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
+              arraySumOfCashFlows.push({fcfeSumOfCashFlows:sumOfCashFlowsValue})
             })
             arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Cash Flows"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arraySumOfCashFlows.push({fcffSumOfCashFlows:response?.sumOfCashFlows ? parseFloat(response?.sumOfCashFlows).toFixed(2) : response.sumOfCashFlows === 0 ? 0 : ''})
+              const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
+              arraySumOfCashFlows.push({fcffSumOfCashFlows:sumOfCashFlowsValue})
             })
             arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Cash Flows"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arraySumOfCashFlows.push({excessEarningSumOfCashFlows:response?.sumOfCashFlows ? parseFloat(response?.sumOfCashFlows).toFixed(2) : response.sumOfCashFlows === 0 ? 0 : ''})
+              const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
+              arraySumOfCashFlows.push({excessEarningSumOfCashFlows:sumOfCashFlowsValue})
             })
             arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Cash Flows"});
           }
         })
         return arraySumOfCashFlows;
       });
-
+      
       hbs.registerHelper('cashEquvlnt', () => {
         let arrayCashEquivalents = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayCashEquivalents.push({fcfeCashEquivalents:response?.cashEquivalents ? parseFloat(response?.cashEquivalents).toFixed(2) : response.cashEquivalents === 0 ? 0 : ''})
+              const cashEquivalentsValue = this.formatPositiveAndNegativeValues(response?.cashEquivalents);
+              arrayCashEquivalents.push({fcfeCashEquivalents:cashEquivalentsValue})
             })
             arrayCashEquivalents.unshift({fcfeCashEquivalents:"Add: Cash & Cash Equivalents"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayCashEquivalents.push({fcffCashEquivalents:response?.cashEquivalents ? parseFloat(response?.cashEquivalents).toFixed(2) : response.cashEquivalents === 0 ? 0 : ''})
+              const cashEquivalentsValue = this.formatPositiveAndNegativeValues(response?.cashEquivalents);
+              arrayCashEquivalents.push({fcffCashEquivalents:cashEquivalentsValue})
             })
             arrayCashEquivalents.unshift({fcffCashEquivalents:"Add: Cash & Cash Equivalents"});
           }
         })
         return arrayCashEquivalents;
       });
-
+      
       hbs.registerHelper('surplusAsset', () => {
         let arraySurplusAssets = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arraySurplusAssets.push({fcfeSurplusAssets:response?.surplusAssets ? parseFloat(response?.surplusAssets).toFixed(2) : response.surplusAssets === 0 ? 0 : ''})
+              const surplusAssetsValue = this.formatPositiveAndNegativeValues(response?.surplusAssets);
+              arraySurplusAssets.push({fcfeSurplusAssets:surplusAssetsValue})
             })
             arraySurplusAssets.unshift({fcfeSurplusAssets:"Add: Surplus Assets/Investments"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arraySurplusAssets.push({fcffSurplusAssets:response?.surplusAssets ? parseFloat(response?.surplusAssets).toFixed(2) : response.surplusAssets === 0 ? 0 : ''})
+              const surplusAssetsValue = this.formatPositiveAndNegativeValues(response?.surplusAssets);
+              arraySurplusAssets.push({fcffSurplusAssets:surplusAssetsValue})
             })
             arraySurplusAssets.unshift({fcffSurplusAssets:"Add: Surplus Assets/Investments"});
           }
         })
         return arraySurplusAssets;
       });
-
+      
       hbs.registerHelper('otherAdjustment', () => {
         let arrayOtherAdj = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayOtherAdj.push({fcfeOtherAdj:response?.otherAdj ? parseFloat(response?.otherAdj).toFixed(2) : response.otherAdj === 0 ? 0 : ''})
+              const otherAdjValue = this.formatPositiveAndNegativeValues(response?.otherAdj);
+              arrayOtherAdj.push({fcfeOtherAdj:otherAdjValue})
             })
             arrayOtherAdj.unshift({fcfeOtherAdj:"Add/Less: Other Adjustments(if any)"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayOtherAdj.push({fcffOtherAdj:response?.otherAdj ? parseFloat(response?.otherAdj).toFixed(2) : response.otherAdj === 0 ? 0 : ''})
+              const otherAdjValue = this.formatPositiveAndNegativeValues(response?.otherAdj);
+              arrayOtherAdj.push({fcffOtherAdj:otherAdjValue})
             })
             arrayOtherAdj.unshift({fcffOtherAdj:"Add/Less: Other Adjustments(if any)"});
           }
@@ -1183,7 +1291,8 @@ export class ReportService {
           }
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayEquityValue.push({fcfeEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
+              const equityValue = this.formatPositiveAndNegativeValues(response?.equityValue);
+              arrayEquityValue.push({fcfeEquityValue:equityValue})
             })
             if(checkiIfStub){
               // arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
@@ -1195,7 +1304,8 @@ export class ReportService {
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayEquityValue.push({fcffEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
+              const equityValue = this.formatPositiveAndNegativeValues(response?.equityValue);
+              arrayEquityValue.push({fcffEquityValue:equityValue})
             })
             if(checkiIfStub){
               // arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
@@ -1207,7 +1317,8 @@ export class ReportService {
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arrayEquityValue.push({excessEarningEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
+              const equityValue = this.formatPositiveAndNegativeValues(response?.equityValue);
+              arrayEquityValue.push({excessEarningEquityValue:equityValue})
             })
             if(checkiIfStub){
               // arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
@@ -1262,19 +1373,22 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === MODEL[0]){
             result.valuationData.map((response:any)=>{
-              arrayStubValue.push({fcfeStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+              const stubAdjValue = this.formatPositiveAndNegativeValues(response?.stubAdjValue);
+              arrayStubValue.push({fcfeStubAdjValue:stubAdjValue})
             })
             arrayStubValue.unshift({fcfeStubAdjValue:"Add:Stub Period Adjustment"});
           }
           else if (result.model === MODEL[1]){
             result.valuationData.map((response:any)=>{
-              arrayStubValue.push({fcffStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+              const stubAdjValue = this.formatPositiveAndNegativeValues(response?.stubAdjValue);
+              arrayStubValue.push({fcffStubAdjValue:stubAdjValue})
             })
             arrayStubValue.unshift({fcffStubAdjValue:"Add:Stub Period Adjustment"});
           }
           else if (result.model ===MODEL[3]){
             result.valuationData.map((response:any)=>{
-              arrayStubValue.push({excessEarnStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+              const stubAdjValue = this.formatPositiveAndNegativeValues(response?.stubAdjValue);
+              arrayStubValue.push({excessEarnStubAdjValue:stubAdjValue})
             })
             arrayStubValue.unshift({excessEarnStubAdjValue:"Add:Stub Period Adjustment"});
           }
@@ -1286,69 +1400,78 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === MODEL[0]){
             result.valuationData.map((response:any)=>{
-              arrayProvisionalVal.push({fcfeequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+              const equityValueNew = this.formatPositiveAndNegativeValues(response?.equityValueNew);
+              arrayProvisionalVal.push({fcfeequityValueNew:equityValueNew})
             })
             arrayProvisionalVal.unshift({fcfeequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
           }
           else if (result.model === MODEL[1]){
             result.valuationData.map((response:any)=>{
-              arrayProvisionalVal.push({fcffequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+              const equityValueNew = this.formatPositiveAndNegativeValues(response?.equityValueNew);
+              arrayProvisionalVal.push({fcffequityValueNew:equityValueNew})
             })
             arrayProvisionalVal.unshift({fcffequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
           }
           else if (result.model ===MODEL[3]){
             result.valuationData.map((response:any)=>{
-              arrayProvisionalVal.push({excessEarnequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+              const equityValueNew = this.formatPositiveAndNegativeValues(response?.equityValueNew);
+              arrayProvisionalVal.push({excessEarnequityValueNew:equityValueNew})
             })
             arrayProvisionalVal.unshift({excessEarnequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
           }
         })
         return arrayProvisionalVal;
       })
-
+      
       hbs.registerHelper('shares', () => {
         let arrayNoOfShares = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayNoOfShares.push({fcfeNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
+              const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              arrayNoOfShares.push({fcfeNoOfShares:noOfSharesValue})
             })
             arrayNoOfShares.unshift({fcfeNoOfShares:"No. of Shares"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayNoOfShares.push({fcffNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
+              const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              arrayNoOfShares.push({fcffNoOfShares:noOfSharesValue})
             })
             arrayNoOfShares.unshift({fcffNoOfShares:"No. of Shares"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arrayNoOfShares.push({excessEarningNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
+              const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              arrayNoOfShares.push({excessEarningNoOfShares:noOfSharesValue})
             })
             arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of Shares"});
           }
         })
         return arrayNoOfShares;
       });
-
+      
       hbs.registerHelper('valuePrShare', () => {
         let arrayValuePerShare = [];
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              arrayValuePerShare.push({fcfeValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.valuePerShare);
+              arrayValuePerShare.push({fcfeValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({fcfeValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              arrayValuePerShare.push({fcffValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              arrayValuePerShare.push({fcffValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({fcffValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              arrayValuePerShare.push({excessEarningValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              arrayValuePerShare.push({excessEarningValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({excessEarningValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
@@ -1776,6 +1899,18 @@ export class ReportService {
       })
       return colspan + 1;  //add one since column starts from particulars
     })
+
+    hbs.registerHelper('isLineItemCheck',(value)=>{
+      if(`${value}`.includes('Equity Value as on')){
+        return false;
+      }
+      if(`${value}`.includes('Value per Share ')){
+        return false
+      }
+        if(REPORT_LINE_ITEM.includes(`${value}`))
+          return false;
+        return true;
+    })
     }
      
      catch(error){
@@ -1883,5 +2018,16 @@ export class ReportService {
         msg:'Report fetch from S3 failed'
       }
     }
+  }
+
+  formatPositiveAndNegativeValues(value) {
+    let formattedValue = '';
+  
+    if (value !== null && value !== undefined && value !== '') {
+      formattedValue = Math.abs(value) < 0.005 ? '0.00' : `${Math.abs(value).toFixed(2)}`;
+      formattedValue = Number(formattedValue).toLocaleString('en-IN');
+    }
+  
+    return value < 0 ? `(${formattedValue})` : formattedValue;
   }
 }
