@@ -15,7 +15,7 @@ import ConvertAPI from 'convertapi';
 import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
-import * as converter from 'number-to-words'
+import converter from 'number-to-words'
 
 @Injectable()
 export class ReportService {
