@@ -38,12 +38,13 @@ export class ProcessStatusManagerController {
     }
 
     @UseGuards(AuthGuard('jwt'))
-    @Get('paginate/:ids')
+    @Get('paginate')
     async getPaginatedValuations(
-      @Param('ids') ids: string,
+      @Request() req,
       @Query('page', ParseIntPipe) page: number = 1,
       @Query('pageSize', ParseIntPipe) pageSize: number = 10,
+      @Query('query') query: string | undefined
     ) :Promise<any>{
-      return this.utilsService.paginateValuationByUserId(ids,page,pageSize);
+      return this.utilsService.paginateValuationByUserId(page,pageSize, req,query);
     }
 }
