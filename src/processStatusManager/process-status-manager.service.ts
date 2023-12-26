@@ -200,4 +200,53 @@ export class ProcessStatusManagerService {
       }
     }
   }
+
+  async fetchActiveStage(processId) {
+    try {
+      const processStage = await this.processModel.findById({ _id : processId}).select('step processIdentifierId').exec();
+      return {
+        data:{
+          id:processStage._id,
+          processIdentifierId:processStage.processIdentifierId,
+          step:processStage.step
+        },
+        status:true,
+        msg:'Retrieve success'
+      }
+    }
+    catch(error) {
+      return {
+        error: error.message,
+        status: false,
+        msg: 'Process stage not found'
+      }
+    }
+  }
+
+  async updateActiveStage(processData) {
+    try{
+      const processStage = await this.processModel.findByIdAndUpdate(
+        { _id: processData.processId },
+        { step: parseInt(processData.step) },
+        { new: true }
+      );
+      return {
+        msg:'stage updated successfully',
+        status:true,
+        data:{
+          id:processStage._id,
+          processIdentifierId:processStage.processIdentifierId,
+          step:processStage.step
+        }
+      }
+
+    }
+    catch (error) {
+      return {
+        error:error.message,
+        msg:'Update stage fail',
+        status:false
+      }
+    }
+  }
 }

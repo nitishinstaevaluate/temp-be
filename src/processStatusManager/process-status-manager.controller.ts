@@ -38,6 +38,22 @@ export class ProcessStatusManagerController {
     }
 
     @UseGuards(AuthGuard('jwt'))
+    @Get('retrieveStage/:processId')
+    async fetchActiveStage(
+        @Param('processId') processId?: string
+        ) {
+      return await this.processStatusManagerService.fetchActiveStage(processId);
+    }
+    
+    @UseGuards(AuthGuard('jwt'))
+    @Put('updateStage')
+    async updateActiveStage(
+      @Body() processStage:any
+        ) {
+      return await this.processStatusManagerService.updateActiveStage(processStage);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
     @Get('paginate')
     async getPaginatedValuations(
       @Request() req,
