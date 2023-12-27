@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -33,128 +33,159 @@ export class ExcelSheetService {
           switchMap((workbook) => {
             return from(this.copyWorksheets(workbook,fileName)).pipe(
                 switchMap((response)=>{
-                if(sheetName !== 'Assessment of Working Capital'){
-                  if (!workbook.SheetNames.includes(sheetName)) {
-                    return throwError( {
-                      message: `${sheetName} Sheet not found`,
-                      status: false
-                    });
-                  }
-                  const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                  sheetData.forEach((row:any) => {
-                     for (let columns in row) {
-                       if (typeof row[columns] === 'string') {
-                         row[columns] = row[columns].replace(/\r\n/g, '');
-                     }
-                   
-                       if (typeof row[columns] === 'number') {
-                         row[columns] = parseFloat(row[columns].toFixed(2));
-                       }
-                       if (typeof columns === 'string') {
-                         const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-                         // const cleanedColumn = columns.replace(/^\s+/g, '');
-                         // console.log(cleanedColumn)
-                         if (columns !== cleanedColumn) {
-                           row[cleanedColumn] = row[columns];
-                           //   console.log(row[cleanedColumn])
-                           delete row[columns];
+                  switch(sheetName){
+                    case 'BS':
+                    case 'P&L':
+                      if (!workbook.SheetNames.includes(sheetName)) {
+                        return throwError( {
+                          message: `${sheetName} Sheet not found`,
+                          status: false
+                        });
+                      }
+                      const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                      sheetData.forEach((row:any) => {
+                         for (let columns in row) {
+                           if (typeof row[columns] === 'string') {
+                             row[columns] = row[columns].replace(/\r\n/g, '');
                          }
-                       }
-                     }
-                   });
-                   return from(this.transformData(sheetData)).pipe(
-                    switchMap((excelData)=>{
-                      return from(this.createStructure(excelData,sheetName)).pipe(
-                        switchMap((structure)=>{
-                          // return of(structure);
-                          return of({
-                            data:structure,
-                            msg:`Excel Sheet Fetched`,
-                            status:true
-                          });
-                        })
-                      )
-                    //  return of(excelData)
-                   }),
-                   catchError((error)=>{
-                    return throwError(error)
-                   })
-                   )
-                }
-                else{
-                  if(!workbook.SheetNames.includes(sheetName)){
-                     const workbookXLSX = xlsx.readFile(filePath);
-                     const worksheet1 = workbookXLSX.Sheets['P&L'];
-
-                     return from(getYearsList(worksheet1)).pipe(
-                      switchMap((years) => {
-
-                        const balanceSheet = workbookXLSX.Sheets['BS']
-                        // const assessmentSheet = workbookXLSX.Sheets['Assessment of Working Capital']
-                      return from(this.generatePayload(years,balanceSheet)).pipe(
-                        switchMap((data)=>{
-                          // console.log(data,"final opayload")
-                          return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
-                            switchMap((response) => {
-                              if (response) {
-                                return from(this.formatExcelResult(response)).pipe(
-                                  switchMap((excelData)=>{
-                                    return of({
-                                      data:excelData,
-                                      msg:"Assessment Sheet Fetched",
-                                      status:true
-                                    });
-                                  }),catchError((error)=>{
-                                    return throwError(error)
-                                  })
-                                )
-
-                              } else {
-                                return throwError('Error: Response not found');
-                              }
-                            }),
-                            catchError((error) => {
-                              return throwError(error);
+                       
+                           if (typeof row[columns] === 'number') {
+                             row[columns] = parseFloat(row[columns].toFixed(2));
+                           }
+                           if (typeof columns === 'string') {
+                             const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+                             // const cleanedColumn = columns.replace(/^\s+/g, '');
+                             // console.log(cleanedColumn)
+                             if (columns !== cleanedColumn) {
+                               row[cleanedColumn] = row[columns];
+                               //   console.log(row[cleanedColumn])
+                               delete row[columns];
+                             }
+                           }
+                         }
+                       });
+                       return from(this.transformData(sheetData)).pipe(
+                        switchMap((excelData)=>{
+                          return from(this.createStructure(excelData,sheetName)).pipe(
+                            switchMap((structure)=>{
+                              // return of(structure);
+                              return of({
+                                data:structure,
+                                msg:`Excel Sheet Fetched`,
+                                status:true
+                              });
                             })
-                          );
-                        }),catchError((error)=>{
+                          )
+                        //  return of(excelData)
+                       }),
+                       catchError((error)=>{
+                        return throwError(error)
+                       })
+                       )
+                    break;
+
+                    case 'Assessment of Working Capital':
+                      if(!workbook.SheetNames.includes(sheetName)){
+                        const workbookXLSX = xlsx.readFile(filePath);
+                        const worksheet1 = workbookXLSX.Sheets['P&L'];
+   
+                        return from(getYearsList(worksheet1)).pipe(
+                         switchMap((years) => {
+   
+                           const balanceSheet = workbookXLSX.Sheets['BS']
+                           // const assessmentSheet = workbookXLSX.Sheets['Assessment of Working Capital']
+                         return from(this.generatePayload(years,balanceSheet)).pipe(
+                           switchMap((data)=>{
+                             // console.log(data,"final opayload")
+                             return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
+                               switchMap((response) => {
+                                 if (response) {
+                                   return from(this.formatExcelResult(response)).pipe(
+                                     switchMap((excelData)=>{
+                                       return of({
+                                         data:excelData,
+                                         msg:"Assessment Sheet Fetched",
+                                         status:true
+                                       });
+                                     }),catchError((error)=>{
+                                       return throwError(error)
+                                     })
+                                   )
+   
+                                 } else {
+                                   return throwError('Error: Response not found');
+                                 }
+                               }),
+                               catchError((error) => {
+                                 return throwError(error);
+                               })
+                             );
+                           }),catchError((error)=>{
+                             return throwError(error)
+                           })
+                         )
+                       
+                         }),
+                         catchError((error) => {
+                           return throwError(error);
+                         })
+                       );
+                     }
+                     else{
+                       return from(this.appendSheetInExcel(filePath,[])).pipe(
+                         switchMap((response)=>{
+                           if(response){
+                             if (response) {
+                               return from(this.formatExcelResult(response)).pipe(
+                                 switchMap((excelData)=>{
+                                   return of({
+                                     data:excelData,
+                                     msg:"Assessment Sheet Fetched",
+                                     status:true
+                                   });
+                                 }),catchError((error)=>{
+                                   return throwError(error)
+                                 })
+                               )
+   
+                             } else {
+                               return throwError('Error: Response not found');
+                             }
+                           }
+                         }),catchError((error)=>{
+                             return throwError(error)
+                         })
+                       )
+                     }
+                    break;
+                    
+                    case 'Rule 11 UA':
+                      if (!workbook.SheetNames.includes(sheetName)) {
+                        return throwError( {
+                          message: `${sheetName} Sheet not found`,
+                          status: false
+                        });
+                      }
+                      const elevenUaSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                       return from(this.transformData(elevenUaSheetData)).pipe(
+                        switchMap((excelData)=>{
+                          return from(this.createStructure(excelData,sheetName)).pipe(
+                            switchMap((structure)=>{
+                              return of({
+                                data:structure,
+                                msg:`Excel Sheet Fetched`,
+                                status:true
+                              });
+                            })
+                          )
+                        }),
+                        catchError((error)=>{
                           return throwError(error)
                         })
-                      )
-                    
-                      }),
-                      catchError((error) => {
-                        return throwError(error);
-                      })
-                    );
-                  }
-                  else{
-                    return from(this.appendSheetInExcel(filePath,[])).pipe(
-                      switchMap((response)=>{
-                        if(response){
-                          if (response) {
-                            return from(this.formatExcelResult(response)).pipe(
-                              switchMap((excelData)=>{
-                                return of({
-                                  data:excelData,
-                                  msg:"Assessment Sheet Fetched",
-                                  status:true
-                                });
-                              }),catchError((error)=>{
-                                return throwError(error)
-                              })
-                            )
+                       )
 
-                          } else {
-                            return throwError('Error: Response not found');
-                          }
-                        }
-                      }),catchError((error)=>{
-                          return throwError(error)
-                      })
-                    )
+                    break;   
                   }
-                }
               }),
             catchError((error) => {
               console.log(error,"error")
@@ -1414,64 +1445,89 @@ export class ExcelSheetService {
 
   async modifyExcelSheet(data) {
     try {
-      if(data.excelSheet == 'P&L'){
-        const uploadDir = path.join(__dirname, '../../uploads');
-        const filePath = path.join(uploadDir, data.excelSheetId);
+      switch(data.excelSheet){
+        case 'P&L':
+          const uploadDirPl = path.join(__dirname, '../../uploads');
+          const filePathPl = path.join(uploadDirPl, data.excelSheetId);
 
-        const updateProfitAndLossExcel = await this.updateExcel(filePath,data,data.excelSheet);
-        return (
-          {
-            data:updateProfitAndLossExcel.data,
-            status:true,
-            msg:'Excel Updated Successfully',
-            originalFileName:updateProfitAndLossExcel.originalFileName,
-            modifiedFileName:updateProfitAndLossExcel.modifiedFileName
-          }
-        );
-      }
-      else if(data.excelSheet === 'BS'){
-        const uploadDir = path.join(__dirname, '../../uploads');
-        const filePath = path.join(uploadDir, data.excelSheetId);
-
-        const updateProfitAndLossExcel = await this.updateExcel(filePath,data,data.excelSheet);
-        return (
-          {
-            data:updateProfitAndLossExcel.data,
-            status:true,
-            msg:'Excel Updated Successfully',
-            originalFileName:updateProfitAndLossExcel.originalFileName,
-            modifiedFileName:updateProfitAndLossExcel.modifiedFileName
-          }
-        );
-      }
-      else if(data.excelSheet === 'Assessment of Working Capital'){
-        const uploadDir = path.join(__dirname, '../../uploads');
-        const filePath = path.join(uploadDir, data.excelSheetId);
-        // console.log(data,"data from modify excel")
-        const updatedExcel = await this.appendSheetInExcel(filePath,data);
-
-        if(updatedExcel.status){
-          const formatExcel = await this.formatExcelResult(updatedExcel);
+          const updateProfitAndLossExcel = await this.updateExcel(filePathPl,data,data.excelSheet);
           return (
             {
-              data:formatExcel,
+              data:updateProfitAndLossExcel.data,
               status:true,
               msg:'Excel Updated Successfully',
-              originalFileName:updatedExcel.originalFileName,
-              modifiedFileName:updatedExcel.modifiedFileName
+              originalFileName:updateProfitAndLossExcel.originalFileName,
+              modifiedFileName:updateProfitAndLossExcel.modifiedFileName
             }
           );
-        }
-        else{
-          return of(
+        break;
+
+        case 'BS':
+          const uploadDirBs = path.join(__dirname, '../../uploads');
+          const filePathBs = path.join(uploadDirBs, data.excelSheetId);
+  
+          const updateBalanceSheetExcel = await this.updateExcel(filePathBs,data,data.excelSheet);
+          return (
             {
-              msg:'Excel update failed',
-              updatedExcel
+              data:updateBalanceSheetExcel.data,
+              status:true,
+              msg:'Excel Updated Successfully',
+              originalFileName:updateBalanceSheetExcel.originalFileName,
+              modifiedFileName:updateBalanceSheetExcel.modifiedFileName
             }
-          )
-        }
-        
+          );
+        break;
+
+        case 'Assessment of Working Capital':
+          const uploadDirAssessmentSheet = path.join(__dirname, '../../uploads');
+          const filePathAssessmentSheet = path.join(uploadDirAssessmentSheet, data.excelSheetId);
+          const updatedExcelAssessment = await this.appendSheetInExcel(filePathAssessmentSheet,data);
+  
+          if(updatedExcelAssessment.status){
+            const formatExcel = await this.formatExcelResult(updatedExcelAssessment);
+            return (
+              {
+                data:formatExcel,
+                status:true,
+                msg:'Excel Updated Successfully',
+                originalFileName:updatedExcelAssessment.originalFileName,
+                modifiedFileName:updatedExcelAssessment.modifiedFileName
+              }
+            );
+          }
+          else{
+            return of(
+              {
+                msg:'Excel update failed',
+                updatedExcelAssessment
+              }
+            )
+          }
+        break;
+
+        case 'Rule 11 UA':
+          const uploadDirRuleElevenUa = path.join(__dirname, '../../uploads');
+          const filePathRuleElevenUa = path.join(uploadDirRuleElevenUa, data.excelSheetId);
+
+          const updateRuleElevenUaExcel = await this.updateExcel(filePathRuleElevenUa,data,data.excelSheet);
+          return (
+            {
+              data:updateRuleElevenUaExcel.data,
+              status:true,
+              msg:'Excel Updated Successfully',
+              originalFileName:updateRuleElevenUaExcel.originalFileName,
+              modifiedFileName:updateRuleElevenUaExcel.modifiedFileName
+            }
+          );
       }
+      // if(data.excelSheet == 'P&L'){
+        
+      // }
+      // else if(data.excelSheet === 'BS'){
+        
+      // }
+      // else if(data.excelSheet === 'Assessment of Working Capital'){
+      // }
      
     } catch (error) {
       return of({
@@ -1710,7 +1766,7 @@ export class ExcelSheetService {
     const workbook= new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filepath);
     let worksheet:any = workbook.getWorksheet(sheetName);
-    const structure:any = sheetName === 'P&L' ? PROFIT_LOSS : sheetName === 'BS' ? BALANCE_SHEET : '' 
+    const structure:any = sheetName === 'P&L' ? PROFIT_LOSS : sheetName === 'BS' ? BALANCE_SHEET : sheetName === 'Rule 11 UA' ? RULE_ELEVEN_UA : ''; 
 
     let  editedFilePath='';
           const uploadDir = path.join(__dirname, '../../uploads');
@@ -1744,7 +1800,7 @@ export class ExcelSheetService {
   
 await workbook.xlsx.writeFile(editedFilePath,sheetName);
 await this.updateFinancialSheet(editedFilePath);
-const evaluatedValues = await this.fetchProfitLossOrBalanceSheetData(editedFilePath,sheetName);
+const evaluatedValues = await this.fetchSheetData(editedFilePath,sheetName);
 return {
   msg:'Excel Updated Successfully',
   status:true,
@@ -1782,11 +1838,12 @@ return {
     });
     return result;
   }
-  async fetchProfitLossOrBalanceSheetData(filepath,sheetName){
+  async fetchSheetData(filepath,sheetName){
 
     const workBook = await this.readFile(filepath)
     const sheetData = xlsx.utils.sheet_to_json(workBook.Sheets[sheetName]);
 
+    if(sheetName === 'BS' || sheetName === 'P&L'){
       sheetData.forEach((row:any) => {
           for (let columns in row) {
             if (typeof row[columns] === 'string') {
@@ -1804,8 +1861,8 @@ return {
               }
             }
           }
-        });
-        
+        });   
+    }
         const modifiedData = await this.transformData(sheetData);
         const updateStructure = await this.createStructure(modifiedData,sheetName);
         // console.log(updateStructure,"new updated strucuture")
@@ -1867,7 +1924,6 @@ async generatePayload(years,balanceSheet){
   })
 
   const calculatedPayload = await this.assessmentCalculations(payload,balanceSheet);
-// console.log(calculatedPayload,"payload")
   const emptySpaceOne = calculatedPayload.findIndex(item=>item.Particulars === 'Operating Liabilities');
   if(emptySpaceOne !== -1){
     calculatedPayload.splice(emptySpaceOne,0,{Particulars: '  '})
@@ -2034,6 +2090,7 @@ async createStructure(data,sheetName){
   
   let balanceSheetStructure = [];
   let profitAndLossSheetStructure = [];
+  let ruleElevenUaStructure = [];
   if(sheetName === 'BS'){
       data.map((element)=>{
         const {Particulars,...rest} = element; 
@@ -2064,6 +2121,17 @@ async createStructure(data,sheetName){
       index++;
     }
     return profitAndLossSheetStructure;
+  }
+  else if(sheetName === 'Rule 11 UA'){
+    data.map((element)=>{
+      const {Particulars,...rest} = element; 
+      for (const lineItems of RULE_ELEVEN_UA){
+        if(element.Particulars === lineItems.lineEntry.particulars){
+          ruleElevenUaStructure.push({lineEntry:lineItems.lineEntry,...rest})
+        }
+      }
+    })
+    return ruleElevenUaStructure;
   }
 }
 

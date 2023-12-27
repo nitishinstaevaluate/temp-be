@@ -1,4 +1,4 @@
-export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV'];
+export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa'];
 
 export const INCOME_APPROACH = ['FCFE','FCFF'];
 export const NET_ASSET_VALUE_APPROACH = ['NAV'];
@@ -1189,6 +1189,534 @@ export const ASSESSMENT_DATA = [
           rowNumber:58,
           flaggedOff:true
           }
+    }
+  ]
+
+  export const RULE_ELEVEN_UA = [
+    {
+      "lineEntry": {
+          particulars : "Assets",
+          sysCode:4001,
+          editable:false,
+          header:true,
+          rowNumber:2
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Non-current Assets",
+        sysCode:4002,
+        editable:false,
+        header:true,
+        rowNumber:3
+      },
+    },
+    {
+      "lineEntry": {
+        particulars : "Tangible Assets",
+        sysCode:4003,
+        editable:true,
+        rowNumber:4
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Immovable Property",
+        sysCode:4004,
+        editable:true,
+        subHeader:true,
+        rowNumber:5
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Jewellery",
+        sysCode:4005,
+        editable:true,
+        subHeader:true,
+        rowNumber:6
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Artistic Work",
+        sysCode:4006,
+        editable:true,
+        subHeader:true,
+        rowNumber:7
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "-Shares & Securities",
+        sysCode:4007,
+        editable:true,
+        subHeader:true,
+        rowNumber:8
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other Tangible Assets",
+        sysCode:4008,
+        editable:true,
+        subHeader:true,
+        rowNumber:9
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Intangible Assets",
+        sysCode:4009,
+        editable:true,
+        rowNumber:10
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Right of use assets",
+        sysCode:4010,
+        editable:true,
+        rowNumber:11
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Investments",
+        sysCode:4011,
+        editable:false,
+        rowNumber:12
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Investments in Share & Securities",
+        sysCode:4012,
+        editable:true,
+        subHeader:true,
+        rowNumber:13
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other Investments",
+        sysCode:4013,
+        editable:true,
+        subHeader:true,
+        rowNumber:14
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Financial Assets",
+        sysCode:4014,
+        editable:true,
+        rowNumber:16
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Income Tax Assets (Net)",
+        sysCode:4015,
+        editable:true,
+        rowNumber:17
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Advance Tax",
+        sysCode:4016,
+        editable:true,
+        subHeader:true,
+        rowNumber:18
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Income Tax Refund",
+        sysCode:4017,
+        editable:true,
+        subHeader:true,
+        rowNumber:19
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Deferred Tax Assets (Net)",
+        sysCode:4018,
+        editable:true,
+        rowNumber:20
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other non-current assets",
+        sysCode:4019,
+        editable:true,
+        rowNumber:21
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Current Assets",
+        sysCode:4020,
+        editable:false,
+        header:true,
+        rowNumber:23
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Financial Assets ",
+        sysCode:4021,
+        editable:true,
+        rowNumber:24
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Current Investments",
+        sysCode:4022,
+        editable:true,
+        rowNumber:25
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Investments in Share & Securities ",
+        sysCode:4023,
+        editable:true,
+        subHeader:true,
+        rowNumber:26
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other Investments ",
+        sysCode:4024,
+        editable:true,
+        subHeader:true,
+        rowNumber:27
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Trade Receivables",
+        sysCode:4025,
+        editable:true,
+        rowNumber:28
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Cash & Cash Equivalents",
+        sysCode:4026,
+        editable:true,
+        rowNumber:29
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Bank balances other than above",
+        sysCode:4027,
+        editable:true,
+        rowNumber:30
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Loans",
+        sysCode:4028,
+        editable:true,
+        rowNumber:31
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other Financial assets",
+        sysCode:4029,
+        editable:true,
+        rowNumber:32
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Unbilled work in progress (contract assets)",
+        sysCode:4030,
+        editable:true,
+        rowNumber:33
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other Current Assets",
+        sysCode:4031,
+        editable:true,
+        rowNumber:34
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- TDS Receivable",
+        sysCode:4032,
+        editable:true,
+        subHeader:true,
+        rowNumber:35
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Advance Tax Paid",
+        sysCode:4033,
+        editable:true,
+        subHeader:true,
+        rowNumber:36
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Preliminary Expenses",
+        sysCode:4034,
+        editable:true,
+        subHeader:true,
+        rowNumber:37
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Pre-operative Expenses",
+        sysCode:4035,
+        editable:true,
+        subHeader:true,
+        rowNumber:38
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other Miscellaneous Expenses",
+        sysCode:4036,
+        editable:true,
+        subHeader:true,
+        rowNumber:39
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Assets",
+        sysCode:4037,
+        editable:false,
+        rowNumber:41,
+        dependent:[4004,4005,4006,4007,4008,4009,4010,4011,4012,4013,4014,4015,4016,4017,4018,4019,4021,4022,4023,4024,4025,4026,4027,4028,4029,4030,4031,4032,4033,4034,4035,4036],
+        formula:'currentOne5+currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne24+currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37+currentOne38+currentOne39',
+        header:true
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Equity & Liabilities",
+        sysCode:4038,
+        editable:false,
+        header:true,
+        rowNumber:43,
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Equity",
+        sysCode:4039,
+        header:true,
+        editable:false,
+        rowNumber:44
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Share Capital",
+        sysCode:4040,
+        editable:true,
+        rowNumber:45
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Reserve & Surplus",
+        sysCode:4041,
+        editable:true,
+        rowNumber:46
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Amount Set Apart for payment of Dividends",
+        sysCode:4042,
+        editable:true,
+        rowNumber:47
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Non-Current Liabilities",
+        sysCode:4043,
+        editable:false,
+        header:true,
+        rowNumber:49
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Financial Liabilities",
+        sysCode:4044,
+        editable:true,
+        rowNumber:50
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Borrowings",
+        sysCode:4045,
+        editable:true,
+        subHeader:true,
+        rowNumber:51
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Lease Liabilities",
+        sysCode:4046,
+        editable:true,
+        subHeader:true,
+        rowNumber:52
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Provisions",
+        sysCode:4047,
+        editable:true,
+        rowNumber:53
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Provision for Taxation",
+        sysCode:4048,
+        editable:true,
+        subHeader:true,
+        rowNumber:54
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other Provisions",
+        sysCode:4049,
+        editable:true,
+        subHeader:true,
+        rowNumber:55
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Deferred Tax Liabilites (net)",
+        sysCode:4050,
+        editable:true,
+        rowNumber:56
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other non-current liabilities",
+        sysCode:4051,
+        editable:true,
+        rowNumber:57
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Current Liabilities",
+        sysCode:4052,
+        editable:false,
+        header:true,
+        rowNumber:59
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Financial Liabilities ",
+        sysCode:4053,
+        editable:true,
+        rowNumber:60
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Borrowings ",
+        sysCode:4054,
+        editable:true,
+        subHeader:true,
+        rowNumber:61
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Lease Liabilities ",
+        sysCode:4055,
+        editable:true,
+        subHeader:true,
+        rowNumber:62
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Trade Payables",
+        sysCode:4056,
+        editable:true,
+        subHeader:true,
+        rowNumber:63
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other financial liabilities",
+        sysCode:4057,
+        editable:true,
+        subHeader:true,
+        rowNumber:64
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Provisions ",
+        sysCode:4058,
+        editable:true,
+        rowNumber:65
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Current Tax liabilities",
+        sysCode:4059,
+        editable:true,
+        rowNumber:66
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other Current liabilities",
+        sysCode:4060,
+        editable:true,
+        rowNumber:67
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Equity & Liabilities",
+        sysCode:4061,
+        editable:false,
+        header:true,
+        rowNumber:69,
+        dependent:[4040,4041,4042,4044,4045,4046,4047,4048,4049,4050,4051,4053,4054,4055,4056,4057,4058,4059,4060],
+        formula:'currentOne45+currentOne46+currentOne47+currentOne50+currentOne51+currentOne52+currentOne53+currentOne54+currentOne55+currentOne56+currentOne57+currentOne60+currentOne61+currentOne62+currentOne63+currentOne64+currentOne65+currentOne66+currentOne67'
+      }
     }
   ]
   
