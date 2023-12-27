@@ -4,6 +4,11 @@ import { Injectable } from '@nestjs/common';
 export class ElevenUaService {
 
     async upsertProcess(req,payload,id){
+        try{
 
+        }
+        catch(error){
+            
+        }
     }
 }
