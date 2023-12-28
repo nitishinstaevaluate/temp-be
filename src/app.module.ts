@@ -20,7 +20,7 @@ import { CalculationModule } from './calculation//calculation.module';
 import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
 import { ReportModule } from './report/report/report.module';
 import { ProcessStatusManagerModule } from './processStatusManager/process-status-manager.module';
-import { SnowflakeClientModule } from './snowflake/snowflake-client.module';
+import { CiqSpModule } from './ciq-sp/ciq-sp.module';
 require('dotenv').config();
 
 @Module({
@@ -29,12 +29,12 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule,ProcessStatusManagerModule,SnowflakeClientModule],
+   CalculationModule,ReportModule,ProcessStatusManagerModule,CiqSpModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,
     useClass: ExceptionsFilter,
-  },ExcelSheetService ], //ImportService
+  },ExcelSheetService], //ImportService
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
