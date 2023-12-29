@@ -2205,24 +2205,29 @@ async fetchFinancialSheetFromS3(fileName){
       }
 
      const fetchFinancialSheet = await axiosInstance.get(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${fileName}`,{headers})
-
      if(fetchFinancialSheet.status === 200){
       if(Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()){
         throw new Error('The specified key does not exist');
       }
       else{
         const uploadDir = path.join(__dirname, '../../uploads');
-  
-        const buffer = Buffer.from(fetchFinancialSheet.data, 'base64')
-  
+
+        const buffer = Buffer.from(fetchFinancialSheet.data, 'base64');
         const filePath = path.join(uploadDir, fileName);
-  
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        fs.writeFileSync(filePath, buffer);
-        
-        return filePath; 
+
+        const saveFile = async () => {
+          try {
+            if (!fs.existsSync(uploadDir)) {
+              await fs.promises.mkdir(uploadDir, { recursive: true });
+            }
+            await fs.promises.writeFile(filePath, buffer);
+            return filePath;
+          } catch (error) {
+            throw error;
+          }
+        };
+
+        return saveFile();
       }
      }
      else{
