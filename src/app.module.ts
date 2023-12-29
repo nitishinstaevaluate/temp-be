@@ -21,7 +21,7 @@ import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
 import { ReportModule } from './report/report/report.module';
 import { ProcessStatusManagerModule } from './processStatusManager/process-status-manager.module';
 import { SnowflakeClientModule } from './snowflake/snowflake-client.module';
-import { ElevenUa } from './elevenUA/schema/eleven-ua.schema';
+import { ElevenUaModule } from './elevenUA/eleven-ua.module';
 require('dotenv').config();
 
 @Module({
@@ -30,7 +30,7 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule,ProcessStatusManagerModule,SnowflakeClientModule,ElevenUa],
+   CalculationModule,ReportModule,ProcessStatusManagerModule,SnowflakeClientModule,ElevenUaModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,

@@ -19,7 +19,7 @@ export class ElevenUaController {
     async initElevenUaValuation(
         @Request() req,
         @Body() elevenUaData: ElevenUaDTO,
-        @Query('processId') elevenUaid?: string
+        @Query('ruleElevenUaId') elevenUaid?: string | undefined
         ) {
       return await this.elevenUaService.upsertProcess(req,elevenUaData,elevenUaid);
     }
