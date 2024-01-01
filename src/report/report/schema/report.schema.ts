@@ -10,7 +10,7 @@ export class modelWeightageValue{
     modelValue:[]
 }
 
-@Schema()
+@Schema({versionKey:false})
 export class Report {
     @Prop({ type: String })
     clientName: string;

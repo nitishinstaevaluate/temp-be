@@ -1,17 +1,17 @@
-import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsNumber, IsString, ArrayNotEmpty, IsBoolean, ValidateNested, isNotEmpty, IsAlphanumeric, IsArray, isString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, IsNumber, IsString, ArrayNotEmpty, IsBoolean, ValidateNested, isNotEmpty, IsAlphanumeric, IsArray, isString, IsObject, isNumber } from 'class-validator';
 
 export class ElevenUaDTO {
     @IsNotEmpty()
     @IsString()
-    company:String;
+    company:string;
 
     @IsNotEmpty()
-    valuationDate:Number;
+    valuationDate:number;
 
     @IsNotEmpty()
     @IsString()
-    location:String;
+    location:string;
 
     @IsNotEmpty()
     @IsArray()
@@ -19,41 +19,100 @@ export class ElevenUaDTO {
 
     @IsNotEmpty()
     @IsString()
-    excelSheetId:String;
+    excelSheetId:string;
 
     @IsNotEmpty()
     @IsString()
-    outstandingShares:String;
+    outstandingShares:string;
 
     @IsNotEmpty()
     @IsString()
-    currencyUnit:String;
+    currencyUnit:string;
 
     @IsNotEmpty()
     @IsString()
-    reportingUnit:String;
+    reportingUnit:string;
 
     @IsOptional()
     @IsString()
-    fileName:String;
+    fileName:string;
 
     @IsOptional()
     @IsString()
-    fairValueJewellery:String;
+    fairValueJewellery:string;
 
     @IsOptional()
     @IsString()
-    fairValueImmovableProp:String;
+    fairValueImmovableProp:string;
 
     @IsOptional()
     @IsString()
-    fairValueinvstShareSec:String;
+    fairValueinvstShareSec:string;
 
     @IsOptional()
     @IsString()
-    contingentLiability:String;
+    otherThanAscertainLiability:string;
 
     @IsOptional()
     @IsString()
-    status:String;
+    contingentLiability:string;
+
+    @IsOptional()
+    @IsString()
+    status:string;
+  }
+
+  export class FetchElevenUaDto {
+    @Expose({name:'_id'})
+    _id:String;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    bookValueOfAllAssets:number;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    totalIncomeTaxPaid:number;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    unamortisedAmountOfDeferredExpenditure:Number;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    bookValueOfLiabilities:String;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    paidUpCapital:number;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    paymentDividends:number;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber() 
+    reserveAndSurplus:number;
+
+    @Expose()
+    @IsNotEmpty()
+    @IsNumber()
+    provisionForTaxation:number;
+
+    @Expose()
+    @IsOptional()
+    @IsString()
+    userId:String;
+
+    @Expose()
+    @IsOptional()
+    @IsObject()
+    inputData:object;
   }

@@ -58,6 +58,14 @@ export class ReportController {
     const result = await this.reportService.createReport(data);
     return result;
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('rule-eleven-ua-report/:reportId')
+  async generateElevenUaReport(
+  @Param('reportId') reportId : string,
+  @Res() res) {
+    return await this.reportService.ruleElevenUaReport(reportId, res);
+  }
   
   @UseGuards(AuthGuard('jwt'))
   @Get('previewReport/:approach/:reportId')
@@ -67,6 +75,14 @@ export class ReportController {
     @Res() res) {
     const result = await this.reportService.previewReport(reportId, res,approach);
     return  result;
+  }
+  
+  @UseGuards(AuthGuard('jwt'))
+  @Get('preview-rule-eleven-ua-report/:reportId')
+  async previewElevenUa(
+    @Param('reportId') reportId : string='',
+    @Res() res) {
+    return await this.reportService.ruleElevenUaPreviewReport(reportId, res);
   }
 
   @Put('updateReportDoc/:reportId')

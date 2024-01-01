@@ -16,6 +16,7 @@ import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoin
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 import converter from 'number-to-words'
+import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 
 @Injectable()
 export class ReportService {
@@ -23,7 +24,9 @@ export class ReportService {
       @InjectModel('report')
     private readonly reportModel: Model<ReportDocument>,
     private fcfeService:FCFEAndFCFFService,
-    private calculationService:CalculationService){}
+    private calculationService:CalculationService,
+    private elevenUaService:ElevenUaService
+    ){}
 
     async getReport(id,res,approach){
       try {
@@ -198,6 +201,103 @@ export class ReportService {
       error: error.message
   };
 }
+ }
+
+ async ruleElevenUaReport(id,res){
+  try{
+    let htmlFilePath, pdfFilePath,docFilePath,pdf;
+
+    const reportDetails = await this.reportModel.findById(id);
+    const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(reportDetails.reportId);
+    htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
+
+    pdfFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.docx`);
+
+    if(reportDetails?.fileName){
+      const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`);
+      res.send(convertDocxToPdf);
+
+       return {
+            msg: "PDF download Success",
+            status: true,
+        };
+    }
+
+    this.loadElevenUaHelpers(elevenUaData);
+
+      const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+      const template = hbs.compile(htmlContent);
+      const html = template(elevenUaData);
+    
+      pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`);
+      res.send(pdf);
+
+      return {
+          msg: "PDF download Success",
+          status: true,
+      };
+  }
+  catch(error){
+    return {
+      error:error,
+      msg:"report generation failed",
+      status:false
+    }
+  }
+ }
+
+ async ruleElevenUaPreviewReport(id,res){
+  try{
+    let htmlFilePath, pdfFilePath,docFilePath,pdf;
+
+    const reportDetails = await this.reportModel.findById(id);
+    const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(reportDetails.reportId);
+    htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
+
+    pdfFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.docx`);
+
+    if(reportDetails?.fileName){
+      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
+
+      res.send(convertDocxToSfdt);
+
+      return {
+        msg: "Preview Success",
+        status: true,
+      };
+    }
+
+    this.loadElevenUaHelpers(elevenUaData);
+
+      const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+      const template = hbs.compile(htmlContent);
+      const html = template(elevenUaData);
+    
+      pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
+
+      await this.convertPdfToDocx(pdfFilePath,docFilePath)
+
+      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
+
+      res.send(convertDocxToSfdt);
+
+      return {
+          msg: "Preview Success",
+          status: true,
+      };
+  }
+  catch(error){
+    console.log(error)
+    throw error;
+  }
  }
 
  async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
@@ -2035,5 +2135,9 @@ export class ReportService {
     }
   
     return value < 0 ? `(${formattedValue})` : formattedValue;
+  }
+
+  loadElevenUaHelpers(elevenUaData){
+
   }
 }

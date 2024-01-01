@@ -7,6 +7,8 @@ import * as xlsx from 'xlsx';
 import { convertToNumberOrZero, getCellValue } from 'src/excelFileServices/common.methods';
 import { columnsList, sheet4_ruleElevenUaObj } from 'src/excelFileServices/excelSheetConfig';
 import { AuthenticationService } from 'src/authentication/authentication.service';
+import { plainToClass } from 'class-transformer';
+import { ElevenUaDTO, FetchElevenUaDto } from './dto/eleven-ua.dto';
 
 @Injectable()
 export class ElevenUaService {
@@ -133,6 +135,24 @@ export class ElevenUaService {
                 error:error,
                 status:false
             }
+        }
+    }
+
+    async fetchRuleElevenUa(id){
+        try{
+            const  data = plainToClass(FetchElevenUaDto,await this.ruleelevenuaModel.findById({_id:id}), {excludeExtraneousValues:true})
+            return {
+                data,
+                msg:"record found",
+                status:true
+            }
+        }
+        catch(error){
+            return {
+                error:error,
+                msg:'eleven ua record not found',
+                status:false
+            } 
         }
     }
 }
