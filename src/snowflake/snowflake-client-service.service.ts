@@ -16,6 +16,12 @@ const errorLog = path.join(logDir, 'error.log');
 @Injectable()
 export class SnowflakeClientServiceService {
     private connection: any;
+    connected = false;
+
+    constructor() {
+            this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
+            this.connectToSnowflake();
+      }
 
     private logger = WinstonModule.createLogger({
         transports: [
@@ -37,10 +43,15 @@ export class SnowflakeClientServiceService {
         timeZone: 'Asia/Kolkata',
     });
 
-    async onModuleInit() {
-        this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
-        await this.connectToSnowflake();
-    }
+
+    // async onModuleInit() {
+    //     // if (!this.connected) {
+    //         this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
+
+    //         await this.connectToSnowflake();
+    //         // this.connected = await this.isConnectionActive();
+    //     //   } 
+    // }
 
     
 
@@ -61,29 +72,43 @@ export class SnowflakeClientServiceService {
                 this.logger.error(`[${this.currentDateIST}] Error Response ${err.response.status} ${err.response.config?.method?.toUpperCase()} ${err.response.config?.url}  ${JSON.stringify({ error: err.response.config?.data })}`);
     
             } else {
-                // this.connected = true;
                 this.logger.log(`[${this.currentDateIST}] { "message" : "Snowflake connection initialized successfully" }`);
             }
         });
     // });
     }
     
-    isConnectionActive(): boolean {
-        return this.connection.isValidAsync();
+     isConnectionActive() {
+            return  this.connection.isValidAsync();
     }
 
-    executeSnowflakeQuery(sqlQuery: string): Promise<any> {
+     async executeSnowflakeQuery(sqlQuery: string){
+        if (!this.isConnectionActive() || !this.connection) {
+             await this.connectToSnowflake();
+        }
         return new Promise((resolve, reject) => {
+            const allRows = [];
+        
             this.connection.execute({
-                sqlText: sqlQuery,
-                streamResult:true,
-                complete: (err, stmt, rows) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(rows);
+                sqlText: `${sqlQuery}`,
+                complete: function (err, stmt, rows) {
+                    if (err) {
+                        this.logger.error(`[${this.currentDateIST}] Error Response ${err}`)
+                        reject(err); 
+                    }
+                    
+                    stmt.streamRows()
+                    .on('error', (err) => {
+                        this.logger.error(`[${this.currentDateIST}] Consumation Failed ${err}`)
+                        reject(err); 
+                    })
+                    .on('data', (row) => {
+                        allRows.push(row);
+                    })
+                    .on('end', () => {
+                        resolve(allRows);
+                    });
                 }
-                },
             });
         });
     }
