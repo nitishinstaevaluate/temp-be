@@ -20,6 +20,11 @@ import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 
 @Injectable()
 export class ReportService {
+    totalA=0;
+    totalB=0;
+    totalC=0;
+    totalD=0;
+    totalL=0;
     constructor( private valuationService:ValuationsService,
       @InjectModel('report')
     private readonly reportModel: Model<ReportDocument>,
@@ -2138,6 +2143,218 @@ export class ReportService {
   }
 
   loadElevenUaHelpers(elevenUaData){
+    hbs.registerHelper('companyName',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.inputData?.company;
+      return ''
+    })
 
+    hbs.registerHelper('strdate',()=>{
+      if(elevenUaData)
+        return this.formatDate(new Date(elevenUaData?.data?.inputData?.valuationDate));
+      return '';
+    })
+
+    hbs.registerHelper('currencyUnit',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.inputData?.currencyUnit;
+      return 'INR';
+    })
+    hbs.registerHelper('reportingUnit',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.inputData?.reportingUnit;
+      return 'Lakhs';
+    })
+
+    hbs.registerHelper('bookValueOfAllAssets',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.bookValueOfAllAssets ? elevenUaData.data?.bookValueOfAllAssets : '-';
+      return '-';
+    })
+
+    hbs.registerHelper('bookValueOfAllAssets',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.bookValueOfAllAssets ? elevenUaData.data?.bookValueOfAllAssets : '-';
+      return '-';
+    })
+
+    hbs.registerHelper('totalIncomeTaxPaid',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.totalIncomeTaxPaid ? elevenUaData.data?.totalIncomeTaxPaid : '-';
+      return '-';
+    })
+
+    hbs.registerHelper('unamortisedAmountOfDeferredExpenditure',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.unamortisedAmountOfDeferredExpenditure ? elevenUaData.data?.unamortisedAmountOfDeferredExpenditure : '-';
+      return '-';
+    })
+
+    hbs.registerHelper('totalA',()=>{
+      if(elevenUaData){
+        const totalIncomeTaxPaid = elevenUaData?.data?.totalIncomeTaxPaid;
+      const unamortisedAmountOfDeferredExpenditure = elevenUaData?.data?.unamortisedAmountOfDeferredExpenditure;
+      this.totalA = totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure;
+      return totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure;
+      }
+      return '-';
+    })
+
+    hbs.registerHelper('jewlleryAndArtisticWork',()=>{
+      let jewlleryAndArtisticWork = [];
+      if(elevenUaData){
+        const jewellery = elevenUaData.data?.inputData?.fairValueJewellery;
+        const artisticWork = elevenUaData.data?.inputData?.fairValueArtistic;
+        const jewelleryAndArtisticWorkArray = [
+          {
+            name:"Jewellery",
+            value:jewellery
+          },
+          {
+            name:"Artistic Work",
+            value:artisticWork
+          }
+        ]
+        
+        for(let i = 0; i <= jewelleryAndArtisticWorkArray.length; i++){
+          if(jewelleryAndArtisticWorkArray[i]?.name){
+              const romanNumeral = this.convertToRomanNumeral(i);
+              const obj = {
+                index:romanNumeral,
+                label:jewelleryAndArtisticWorkArray[i]?.name,
+                value:jewelleryAndArtisticWorkArray[i]?.value ? jewelleryAndArtisticWorkArray[i].value : '-' 
+              }
+              jewlleryAndArtisticWork.push(obj);
+            }
+          }
+          return jewlleryAndArtisticWork;
+      }
+    })
+
+    hbs.registerHelper('totalB',()=>{
+      if(elevenUaData){
+        const jewellery = !isNaN(parseFloat(elevenUaData.data?.inputData?.fairValueJewellery)) ? parseFloat(elevenUaData.data?.inputData?.fairValueJewellery) : 0;
+        const artisticWork =!isNaN(parseFloat(elevenUaData.data?.inputData?.fairValueArtistic)) ? parseFloat(elevenUaData.data?.inputData?.fairValueArtistic) : 0;
+        const totalValue = jewellery + artisticWork;
+        this.totalB = totalValue ? totalValue : 0;
+        return totalValue ? totalValue : '-';
+      }
+      return '-';
+    })
+
+    hbs.registerHelper('fairValueinvstShareSec',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.inputData?.fairValueinvstShareSec ? elevenUaData.data?.inputData?.fairValueinvstShareSec : '-';
+      return '-';
+    })
+
+    hbs.registerHelper('totalC',()=>{
+      if(elevenUaData){
+        this.totalC = elevenUaData.data?.inputData?.fairValueinvstShareSec ? parseFloat(elevenUaData.data?.inputData?.fairValueinvstShareSec) : 0; 
+        return elevenUaData.data?.inputData?.fairValueinvstShareSec ? elevenUaData.data?.inputData?.fairValueinvstShareSec: '-';
+      }
+      return '-'
+    })
+
+    hbs.registerHelper('fairValueImmovableProp',()=>{
+      if(elevenUaData)
+        return elevenUaData.data?.inputData?.fairValueImmovableProp ? elevenUaData.data?.inputData?.fairValueImmovableProp : '-';
+      return '-'
+    })
+    
+    hbs.registerHelper('totalD',()=>{
+      if(elevenUaData){
+        this.totalD = elevenUaData.data?.inputData?.fairValueImmovableProp ? parseFloat(elevenUaData.data?.inputData?.fairValueImmovableProp) : 0 
+        return elevenUaData.data?.inputData?.fairValueImmovableProp ? elevenUaData.data?.inputData?.fairValueImmovableProp : '-';
+      }
+    return '-'
+    })
+
+    hbs.registerHelper('bookValueOfLiabilities',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.bookValueOfLiabilities ? elevenUaData?.data?.bookValueOfLiabilities : '-';
+      return '-'
+    })
+
+    hbs.registerHelper('paidUpCapital',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.paidUpCapital ? elevenUaData?.data?.paidUpCapital : '-';
+      return '-'
+    })
+
+    hbs.registerHelper('paymentDividends',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.paymentDividends ? elevenUaData?.data?.paymentDividends : '-';
+      return '-'
+    })
+
+    hbs.registerHelper('reserveAndSurplus',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.reserveAndSurplus ? elevenUaData?.data?.reserveAndSurplus : '-';
+      return '-'
+    })
+
+    hbs.registerHelper('provisionForTaxation',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.provisionForTaxation ? elevenUaData?.data?.provisionForTaxation : '-';
+      return '-'
+    })
+
+    hbs.registerHelper('otherThanAscertainLiability',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.inputData?.otherThanAscertainLiability ? elevenUaData?.data?.inputData?.otherThanAscertainLiability : '-';
+      return '-'
+    })
+
+    hbs.registerHelper('contingentLiability',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.inputData?.contingentLiability ? elevenUaData?.data?.inputData?.contingentLiability : '-';
+      return '-'
+    })
+    hbs.registerHelper('totalL',()=>{
+      if(elevenUaData){
+          const paidUpCapital = elevenUaData.data?.paidUpCapital;
+          const paymentDividends = elevenUaData.data?.paymentDividends;
+          const reservAndSurplus = elevenUaData.data?.reserveAndSurplus;
+          const provisionForTaxation = elevenUaData.data?.provisionForTaxation;
+          const contingentLiabilities = isNaN(parseFloat(elevenUaData.data?.inputData?.contingentLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.contingentLiability);
+          const otherThanAscertainLiability = isNaN(parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability);
+          this.totalL = paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
+          return paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
+      }
+      return '-'
+    })
+
+    hbs.registerHelper('calculateAll',()=>{
+      return this.totalA + this.totalB + this.totalC + this.totalD + this.totalL;
+    })
+
+    hbs.registerHelper('phaseValue',()=>{
+      if(elevenUaData){
+        return elevenUaData?.data?.inputData?.phaseValue ? elevenUaData?.data?.inputData?.phaseValue : '-';
+      }
+      return '-';
+    })
+
+    hbs.registerHelper('unquotedEquityShare',()=>{
+      const phaseValue = !isNaN(parseFloat(elevenUaData?.data?.inputData?.phaseValue)) ? parseFloat(elevenUaData?.data?.inputData?.phaseValue) : 1;
+      const paidUpCapital = !isNaN(parseFloat(elevenUaData?.data?.paidUpCapital)) ? parseFloat(elevenUaData?.data?.paidUpCapital) : 1;
+
+      const totalSum = this.totalA + this.totalB + this.totalC + this.totalD + this.totalL;
+
+      const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
+
+      return result;
+    })
+}
+
+  convertToRomanNumeral(num:any) {
+    const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+  
+    if (num === undefined || num === null || num > romanNumerals.length) {
+      return '';
+    }
+  
+    return romanNumerals[num];
   }
 }

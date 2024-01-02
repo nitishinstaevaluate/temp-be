@@ -44,13 +44,13 @@ export class Report {
     @Prop({ required: false, type: modelWeightageValue }) 
     modelWeightageValue:modelWeightageValue;
 
-    @Prop({ required: true, type: String }) 
+    @Prop({ required: false, type: String }) 
     dateOfIncorporation:string;
 
-    @Prop({ required: true, type: String }) 
+    @Prop({ required: false, type: String }) 
     cinNumber:string;
 
-    @Prop({ required: true, type: String }) 
+    @Prop({ required: false, type: String }) 
     companyAddress:string;
     
     @Prop({ type:String,default:'' }) 
