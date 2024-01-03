@@ -5,17 +5,32 @@ import * as stream from 'stream';
 import * as ExcelJS from 'exceljs';
 import { columnsList } from './excelSheetConfig';
 import { AuthGuard } from '@nestjs/passport';
+import { MODEL } from 'src/constants/constants';
 
 @Controller('download')
 export class ExportTemplateController {
 
   // @UseGuards(AuthGuard('jwt'))
-  @Get('/template/:projectionYears')
+  @Get('/template/:projectionYears/:modelName')
   async download(
     @Param('projectionYears') projectionYears: number,
+    @Param('modelName') modelName: string | undefined,
     @Res() res: Response,
   ) {
    try{
+    if(modelName === MODEL[6]){
+      const filePath = `template/ruleElevenUaTemplate.xlsx`;
+      const buffer = fs.readFileSync(filePath);
+
+      res.setHeader('Content-Type', 'application/vnd.ms-excel');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename= Template-${new Date().getTime()}.xlsx`,
+      );
+    
+      res.send(buffer);
+    return;
+    }
     const filePath = `template/test-template.xlsx`;
 
     if (!fs.existsSync(filePath)) {
