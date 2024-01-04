@@ -15,7 +15,7 @@ import ConvertAPI from 'convertapi';
 import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
-import converter from 'number-to-words'
+import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 
 @Injectable()
@@ -232,7 +232,7 @@ export class ReportService {
         };
     }
 
-    this.loadElevenUaHelpers(elevenUaData);
+    this.loadElevenUaHelpers(elevenUaData,reportDetails);
 
       const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
       const template = hbs.compile(htmlContent);
@@ -280,7 +280,7 @@ export class ReportService {
       };
     }
 
-    this.loadElevenUaHelpers(elevenUaData);
+    this.loadElevenUaHelpers(elevenUaData,reportDetails);
 
       const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
       const template = hbs.compile(htmlContent);
@@ -476,30 +476,18 @@ export class ReportService {
           const pdf = await page.pdf({
             path: pdfFilePath,
             format: 'A4' as puppeteer.PaperFormat,
-            displayHeaderFooter: false,
+            displayHeaderFooter: true,
             printBackground: true,
             margin: {
-              top: "30px",
+              top: "10px",
               right: "0px",
-              bottom: "50px",
+              bottom: "10px",
               left: "0px"
           },
-          headerTemplate:`<table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-          <td style="width:100%;">
-            <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:3%;padding-right:3%">
-              <tr>
-                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of ABC Limited</i></td>
-              </tr>
-              <tr>
-                <td style="font-size: 11px">&nbsp;</td>
-              </tr>
-            </table>
-          </td>
-        </tr></table>`,
             footerTemplate: `<div style="width:100%;padding-left:3%;padding-right:3%">
-            <hr style="border:1px solid #bbccbb">
-            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span></span></span></span></h1>
+            <hr style="border: 1px solid rgba(187, 204, 187, 0.5);width:80%">
+            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:'Carlito', sans-serif;"> <i></i> </span><span style="font-weight:400 !important;float:right;font-size:13px;font-family:'Carlito', sans-serif;color:#cceecc;padding-right:10%;padding-top:1%;font-weight:bold !important;"> <span class="pageNumber" style="color:#6F2F9F;font-weight:400;"></span> &nbsp;&nbsp; | &nbsp;&nbsp; Page  </span></span></h1>
+            
             </div>`,
           });
 
@@ -797,7 +785,10 @@ export class ReportService {
                   return `Rupees ${converter.toWords(formattedNumber)} Only`;
                 }
                 if (response.model === models && models === 'NAV') {
-                  const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
+                  let formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
+                  if(`${formattedNumber}`.includes('-')){
+                    formattedNumber = Math.floor(10).toLocaleString('en-IN');
+                  }
                   return `Rupees ${converter.toWords(formattedNumber)} Only`;
                 }
                 return [];
@@ -2142,7 +2133,7 @@ export class ReportService {
     return value < 0 ? `(${formattedValue})` : formattedValue;
   }
 
-  loadElevenUaHelpers(elevenUaData){
+  loadElevenUaHelpers(elevenUaData,reportDetails){
     hbs.registerHelper('companyName',()=>{
       if(elevenUaData)
         return elevenUaData.data?.inputData?.company;
@@ -2345,6 +2336,77 @@ export class ReportService {
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
 
       return result;
+    })
+
+    hbs.registerHelper('reportDate',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  this.formatDate(new Date(reportDetails.reportDate));
+      return '';
+    })
+
+    hbs.registerHelper('registeredValuerName',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].registeredValuerName
+      return '';
+    })
+
+    hbs.registerHelper('registeredValuerAddress',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return reportDetails.registeredValuerDetails[0].registeredValuerGeneralAddress
+      return '';
+    })
+    hbs.registerHelper('registeredValuerCorporateAddress',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress ? reportDetails.registeredValuerDetails[0].registeredValuerCorporateAddress : reportDetails.registeredValuerDetails[0].registeredValuerGeneralAddress;
+      return '';
+    })
+
+    hbs.registerHelper('registeredValuerEmailId',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].registeredValuerEmailId; 
+      return '';
+    })
+
+    hbs.registerHelper('registeredValuerMobileNumber',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].registeredValuerMobileNumber; 
+      return '';
+    })
+    hbs.registerHelper('registeredValuerIbbiId',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].registeredValuerIbbiId; 
+      return '';
+    })
+    hbs.registerHelper('registeredValuerQualifications',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].registeredValuerQualifications; 
+      return '';
+    })
+    hbs.registerHelper('appointingAuthorityName',()=>{
+      if(reportDetails.appointeeDetails[0]) 
+          return  reportDetails.appointeeDetails[0].appointingAuthorityName; 
+      return '';
+    })
+    hbs.registerHelper('dateOfAppointment',()=>{
+      if(reportDetails)
+          return this.formatDate(new Date(reportDetails.appointeeDetails[0].dateOfAppointment));
+      return '';
+    })
+
+    hbs.registerHelper('dateOfIncorporation',()=>{
+      if(reportDetails.appointeeDetails[0])
+          return this.formatDate(new Date(reportDetails.dateOfIncorporation));
+      return '';
+    })
+    hbs.registerHelper('cinNumber',()=>{
+      if(reportDetails)
+          return reportDetails.cinNumber
+      return '';
+    })
+    hbs.registerHelper('companyAddress',()=>{
+      if(reportDetails)
+          return reportDetails.companyAddress;
+      return '';
     })
 }
 
