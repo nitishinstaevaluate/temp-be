@@ -21,6 +21,7 @@ import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
 import { ReportModule } from './report/report/report.module';
 import { ProcessStatusManagerModule } from './processStatusManager/process-status-manager.module';
 import { CiqSpModule } from './ciq-sp/ciq-sp.module';
+import { ElevenUaModule } from './elevenUA/eleven-ua.module';
 require('dotenv').config();
 
 @Module({
@@ -29,7 +30,7 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule,ProcessStatusManagerModule,CiqSpModule],
+   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,

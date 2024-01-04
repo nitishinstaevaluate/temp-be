@@ -19,8 +19,8 @@ export class SnowflakeClientServiceService {
     connected = false;
 
     constructor() {
-            this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
-            this.connectToSnowflake();
+            // this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
+            // this.connectToSnowflake();
       }
 
     private logger = WinstonModule.createLogger({
@@ -44,14 +44,14 @@ export class SnowflakeClientServiceService {
     });
 
 
-    // async onModuleInit() {
-    //     // if (!this.connected) {
-    //         this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
+    async onModuleInit() {
+        // if (!this.connected) {
+            this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
 
-    //         await this.connectToSnowflake();
-    //         // this.connected = await this.isConnectionActive();
-    //     //   } 
-    // }
+            await this.connectToSnowflake();
+            // this.connected = await this.isConnectionActive();
+        //   } 
+    }
 
     
 

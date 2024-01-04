@@ -93,3 +93,26 @@ export const sheet3_assWCObj={
     otherOperatingLiabilitiesRow : "20",
     totalOperatingLiabilitiesRow : "21"
 }
+
+export const sheet4_ruleElevenUaObj={
+    immovablePropertyRow : "5",
+    jewelleryRow : "6", 
+    artisticWorkRow : "7",
+    sharesAndSecuritiesRow : "8",
+    otherTangibleAssets : "9",
+    nonCurrentInvestmenInSharesAndSecuritesRow : "13",
+    advanceTaxRow : "18",
+    incomeTaxRefundRow : "19",
+    defferedTaxRow : "20",
+    currentInvestmentSharesAndSecuritesRow : "26",
+    advanceTaxPaidRow : "36",
+    preliminaryExpenseRow : "37",
+    preOperativeTaxRow : "38",
+    otherMiscllneousExpenseRow : "39",
+    totalAssetsRow : "41",
+    shareCapitalRow : "45",
+    reserveAndSurplusRow : "46",
+    paymentDividendsRow : "47",
+    provisionForTaxationRow : "54",
+    totalLiabilitiesRow: "69"
+}
