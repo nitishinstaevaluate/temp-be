@@ -19,8 +19,8 @@ export class SnowflakeClientServiceService {
     connected = false;
 
     constructor() {
-            // this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
-            // this.connectToSnowflake();
+        this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
+        this.connectToSnowflake();
       }
 
     private logger = WinstonModule.createLogger({
@@ -42,18 +42,6 @@ export class SnowflakeClientServiceService {
     private  currentDateIST = new Date().toLocaleString('en-US', {
         timeZone: 'Asia/Kolkata',
     });
-
-
-    async onModuleInit() {
-        // if (!this.connected) {
-            this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
-
-            await this.connectToSnowflake();
-            // this.connected = await this.isConnectionActive();
-        //   } 
-    }
-
-    
 
     async connectToSnowflake(): Promise<void> {
     // return new Promise((resolve, reject) => {
@@ -93,13 +81,14 @@ export class SnowflakeClientServiceService {
                 sqlText: `${sqlQuery}`,
                 complete: function (err, stmt, rows) {
                     if (err) {
-                        this.logger.error(`[${this.currentDateIST}] Error Response ${err}`)
+                        // this.logger.error(`[${this.currentDateIST}] Error Response ${err}`)
+                        console.log(err)
                         reject(err); 
                     }
                     
                     stmt.streamRows()
                     .on('error', (err) => {
-                        this.logger.error(`[${this.currentDateIST}] Consumation Failed ${err}`)
+                        // this.logger.error(`[${this.currentDateIST}] Consumation Failed ${err}`)
                         reject(err); 
                     })
                     .on('data', (row) => {

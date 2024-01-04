@@ -309,7 +309,7 @@ export class firstStageInput{
 //     navInput:navInput
 // }
 
-export class thirdStageInput{
+export class fourthStageInput{
     @Prop({type:[],required:false})
     appData:[];
 
@@ -331,7 +331,7 @@ export class totalWeightageModel{
     modelValue:[];
 }
 
-export class fourthStageInput{
+export class fifthStageInput{
     @Prop({type:String,required:false,default:''})
     valuationResultReportId:String;
 
@@ -340,7 +340,7 @@ export class fourthStageInput{
 }
 
 
-export class fifthStageInput{
+export class sixthStageInput{
     @Prop({type:String,required:false,default:''})
     clientName:String;
 
@@ -404,17 +404,20 @@ export class ProcessManager {
     @Prop({ type: firstStageInput })
     firstStageInput:firstStageInput;
 
-    @Prop({ type: [] })
-    secondStageInput:[];
+    @Prop({ type: Object,default:{} })
+    secondStageInput:object;
 
-    @Prop({ type: thirdStageInput,default:{},required:true})
-    thirdStageInput:thirdStageInput;
+    @Prop({ type: [], required:true})
+    thirdStageInput:[];
 
     @Prop({ type: fourthStageInput,default:{}})
     fourthStageInput:fourthStageInput;
 
     @Prop({ type: fifthStageInput,default:{}})
     fifthStageInput:fifthStageInput;
+
+    @Prop({ type: sixthStageInput,default:{}})
+    sixthStageInput:sixthStageInput;
 
     @Prop({ type: String })
     userId:String;

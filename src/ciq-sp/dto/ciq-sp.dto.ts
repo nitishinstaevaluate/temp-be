@@ -46,7 +46,7 @@ import { Expose,} from 'class-transformer';
     subParentId: number;
   }
   
-  export class CiqIndustryBasedCompanyDto {
+  export class CiqIndustryListDto {
     @Expose()
     @IsNumber()
     @IsNotEmpty()
