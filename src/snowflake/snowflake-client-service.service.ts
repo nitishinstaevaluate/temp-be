@@ -50,7 +50,7 @@ export class SnowflakeClientServiceService {
             username: process.env.SNOWFLAKE_USERNAME,
             password: process.env.SNOWFLAKE_PASSWORD,
             database: process.env.SNOWFLAKE_DATABASE,
-            warehouse: process.env.SNOWFLAKE_WAREHOUSE,
+            // warehouse: process.env.SNOWFLAKE_WAREHOUSE,
             schema: process.env.SNOWFLAKE_SCHEMA,
             streamResult: true
         });

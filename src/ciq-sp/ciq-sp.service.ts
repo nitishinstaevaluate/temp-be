@@ -98,4 +98,71 @@ export class CiqSpService {
          }
         }
       }
+
+      async fetchSPLevelFourIndustryBasedList(descriptor:string){
+        try{
+          const industryData = plainToClass(CiqindustryhierarchyDto, await this.ciqindustryhierarchymodel.findOne({GICSDescriptor:descriptor,childLevel:3}).select('subTypeId').exec(),{ excludeExtraneousValues: true});
+
+          const levelFourIndustyList = plainToClass(CiqindustryhierarchyDto, await this.ciqindustryhierarchymodel.find({subParentId:industryData.subTypeId,childLevel:4}).sort({GICSDescriptor:1}).exec(), { excludeExtraneousValues : true});
+
+          return {
+            data:levelFourIndustyList,
+            status:true,
+            msg:'Ciqsimpleindustry fetch success'
+          }
+        }
+        catch(err){
+          return {
+            error:err,
+            status:false,
+            msg:'Ciqsimpleindustry fetch failed'
+          }
+        }
+      }
+
+      async fetchSPIndustryListByLevelFourIndustries(data){
+        try{
+          let industryId = [];
+          
+          for await (const levelFourIndustry of data.levelFourIndustries){
+            if(levelFourIndustry){
+              const id = await this.ciqindustryhierarchymodel.findOne({GICSDescriptor:levelFourIndustry}).exec();
+              if(!id)  
+                return {
+                  msg:"level four industry does not exist",
+                  status:false
+                }
+              industryId.push(id.subTypeId);
+            }
+          }
+
+          await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
+          const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
+           `SELECT cmpny.*,cmpnyIndstry.*,industry.*
+            FROM ciqCompany AS cmpny
+            JOIN ciqCountryGeo AS geo ON geo.countryId = cmpny.countryId
+            JOIN ciqCompanyIndustry cmpnyIndstry ON cmpnyIndstry.companyId = cmpny.companyId
+            JOIN ciqsimpleindustry AS industry ON cmpny.simpleindustryid = industry.simpleindustryid
+            WHERE 1=1
+            AND geo.country = 'India'
+            AND cmpnyIndstry.industryid IN (${industryId})
+            LIMIT 20;`
+          );
+ 
+          const modifiedData = plainToClass(CiqIndustryListDto, ciqIndustryBasedCompany, {excludeExtraneousValues : true});
+
+          return {
+            data:modifiedData,
+            status:true,
+            msg:'SP industry fetch success',
+          }
+        }
+        catch(error){
+          return {
+            error:error,
+            msg:'Company based industry fetch failed',
+            status:false
+         }
+        }
+      }
 }
