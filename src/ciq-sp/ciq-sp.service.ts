@@ -4,7 +4,7 @@ import { plainToClass } from 'class-transformer';
 import { Model } from 'mongoose';
 import { CiqindustryhierarchyDto, CiqIndustryListDto } from './dto/ciq-sp.dto';
 import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-service.service';
-import { ciqindustryhierarchyDocument, ciqsimpleindustryDocument } from './schema/ciq-sp.chema';
+import { ciqcompanystatustypeDocument, ciqcompanytypeDocument, ciqindustryhierarchyDocument, ciqsimpleindustryDocument } from './schema/ciq-sp.chema';
 
 @Injectable()
 export class CiqSpService {
@@ -12,6 +12,10 @@ export class CiqSpService {
     private readonly ciqsimpleindustrymodel : Model<ciqsimpleindustryDocument>,
     @InjectModel('ciqindustryhierarchy')
     private readonly ciqindustryhierarchymodel: Model<ciqindustryhierarchyDocument>,
+    @InjectModel('ciqcompanystatustype') 
+    private readonly ciqcompanystatustypemodel: Model<ciqcompanystatustypeDocument>,
+    @InjectModel('ciqcompanytype') 
+    private readonly ciqcompanytypemodel: Model<ciqcompanytypeDocument>,
     private readonly snowflakeClientService: SnowflakeClientServiceService){}
 
     async fetchSPHierarchyBasedIndustry(){
@@ -163,6 +167,42 @@ export class CiqSpService {
             msg:'Company based industry fetch failed',
             status:false
          }
+        }
+      }
+
+      async fetchSPCompanyStatusType(){
+        try{
+          const companyStatusTypeData = await this.ciqcompanystatustypemodel.find().exec();
+          return {
+            data:companyStatusTypeData,
+            status:true,
+            msg:"company status type fetched successfully"
+          }
+        }
+        catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:"company status type fetch failed"
+          }
+        }
+      }
+
+      async fetchSPCompanyType(){
+        try{
+          const companyTypeData = await this.ciqcompanytypemodel.find().exec();
+          return {
+            data:companyTypeData,
+            status:true,
+            msg:"company type fetched successfully"
+          }
+        }
+        catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:"company status type fetch failed"
+          }
         }
       }
 }

@@ -44,7 +44,20 @@ export class CiqSpController {
   @UseGuards(AuthGuard('jwt'))
   @Post('sp-level-four-industry-list')
   async getSPIndustryListByLevelFourIndustries(@Body() levelFourIndustry:any) {
-    console.log(levelFourIndustry,"indsutrie")
     return this.capitalIqAndSPService.fetchSPIndustryListByLevelFourIndustries(levelFourIndustry);
+  }
+
+  // https://localhost:3000/ciq-sp/sp-company-status-type
+  @UseGuards(AuthGuard('jwt'))
+  @Get('sp-company-status-type')
+  async getSPCompanyStatusType() {
+    return this.capitalIqAndSPService.fetchSPCompanyStatusType();
+  }
+
+  // https://localhost:3000/ciq-sp/sp-company-type
+  @UseGuards(AuthGuard('jwt'))
+  @Get('sp-company-type')
+  async getSPCompanyType() {
+    return this.capitalIqAndSPService.fetchSPCompanyType();
   }
 }

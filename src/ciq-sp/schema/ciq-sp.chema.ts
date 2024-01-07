@@ -34,3 +34,27 @@ export class ciqindustryhierarchy {
 
 export type ciqindustryhierarchyDocument = ciqindustryhierarchy & Document;
 export const ciqindustryhierarchySchema = SchemaFactory.createForClass(ciqindustryhierarchy);
+
+@Schema()
+export class ciqcompanystatustype {
+  @Prop({type:Number,require:true})
+  companystatustypeid:number;
+
+  @Prop({type:String,require:true})
+  companystatustypename:string
+}
+
+export type ciqcompanystatustypeDocument = ciqcompanystatustype & Document;
+export const ciqcompanystatustypeSchema = SchemaFactory.createForClass(ciqcompanystatustype);
+
+@Schema()
+export class ciqcompanytype {
+  @Prop({type:Number,require:true})
+  companytypeid:number;
+
+  @Prop({type:String,require:true})
+  companytypename:string
+}
+
+export type ciqcompanytypeDocument = ciqcompanytype & Document;
+export const ciqcompanytypeSchema = SchemaFactory.createForClass(ciqcompanytype);
