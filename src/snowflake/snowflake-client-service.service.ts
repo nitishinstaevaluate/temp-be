@@ -71,6 +71,7 @@ export class SnowflakeClientServiceService {
     }
 
      async executeSnowflakeQuery(sqlQuery: string){
+        this.logger.log(`[${this.currentDateIST}] Snow Sql Query ${JSON.stringify({query:sqlQuery.replace(/\s+/g, ' ')})}`);
         if (!this.isConnectionActive() || !this.connection) {
              await this.connectToSnowflake();
         }

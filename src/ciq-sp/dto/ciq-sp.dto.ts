@@ -63,4 +63,8 @@ import { Expose,} from 'class-transformer';
     @Expose()
     @IsString()
     SIMPLEINDUSTRYDESCRIPTION: string;
+
+    @Expose()
+    @IsString()
+    CITY: string;
   }

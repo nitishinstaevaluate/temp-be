@@ -67,7 +67,7 @@ export class CiqSpService {
         }
       }
 
-      async fetchSPIndustryListByName(industryName:string,location:string){
+      async fetchSPIndustryListByName(industryName:string,location:string){ // redundant function (not in use)
         try{
           const decodeIndustry = industryName.replace(/%20/g, ' ');
           const decodeLocation = location.replace(/%20/g, ' ');
@@ -76,7 +76,7 @@ export class CiqSpService {
           
           await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
           const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
-           `SELECT company.companyid, company.companyname, industry.*
+           `SELECT company.companyid, company.companyname, industry.*, company.city
             FROM ciqCompany AS company
             JOIN ciqCountryGeo AS geo ON geo.countryId = company.countryId
             JOIN ciqsimpleindustry AS industry ON company.simpleindustryid = industry.simpleindustryid 
@@ -127,29 +127,92 @@ export class CiqSpService {
       async fetchSPIndustryListByLevelFourIndustries(data){
         try{
           let industryId = [];
-          
-          for await (const levelFourIndustry of data.levelFourIndustries){
-            if(levelFourIndustry){
-              const id = await this.ciqindustryhierarchymodel.findOne({GICSDescriptor:levelFourIndustry}).exec();
-              if(!id)  
-                return {
-                  msg:"level four industry does not exist",
-                  status:false
-                }
-              industryId.push(id.subTypeId);
+          let companyType = [];
+          let companyStatusType = [];
+          let decodeLocation, decodeIndustry, businessDescriptor;
+
+          //#region fetch by company status types
+          if(data?.companyStatusType){
+            for await (const companyStatusTypes of data.companyStatusType){
+              if(companyStatusTypes){
+                const id = await this.ciqcompanystatustypemodel.findOne({companystatustypename:companyStatusTypes}).exec();
+                if(!id)  
+                  return {
+                    msg:"Company Status type not exist",
+                    status:false
+                  }
+                  companyStatusType.push(id.companystatustypeid);
+              }
             }
           }
+          //#endregion
+
+          //#region fetch by company type
+          if(data?.companyType){
+            for await (const companyTypes of data.companyType){
+              if(companyTypes){
+                const id = await this.ciqcompanytypemodel.findOne({companytypename:companyTypes}).exec();
+                if(!id)  
+                  return {
+                    msg:"Company type not exist",
+                    status:false
+                  }
+                  companyType.push(id.companytypeid);
+              }
+            }
+          }
+          //#endregion
+
+          //#region fetch by Industries List [Level - 4]
+          if(data?.levelFourIndustries){
+            for await (const levelFourIndustry of data.levelFourIndustries){
+              if(levelFourIndustry){
+                const id = await this.ciqindustryhierarchymodel.findOne({GICSDescriptor:levelFourIndustry}).exec();
+                if(!id)  
+                  return {
+                    msg:"level four industry does not exist",
+                    status:false
+                  }
+                industryId.push(id.subTypeId);
+              }
+            }
+          }
+          //#endregion
+
+          // #region fetch by industry [Levek - 3 Industries]
+          if(data.industryName){
+            decodeIndustry= await this.ciqsimpleindustrymodel.findOne({simpleindustrydescription:data.industryName}).select('simpleindustryid').exec();
+          }
+          //#endregion
+
+          // #region fetch by location
+          if(data?.location){
+            decodeLocation = data.location;
+          }
+          //#endregion
+
+          //#region fetch by business descriptor
+          if(data?.businessDescriptor){
+            businessDescriptor = data.businessDescriptor;
+          }
+          //#endregion
 
           await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
           const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
-           `SELECT cmpny.*,cmpnyIndstry.*,industry.*
+           `SELECT DISTINCT cmpny.*, cmpnyIndstry.*, industry.*
             FROM ciqCompany AS cmpny
             JOIN ciqCountryGeo AS geo ON geo.countryId = cmpny.countryId
             JOIN ciqCompanyIndustry cmpnyIndstry ON cmpnyIndstry.companyId = cmpny.companyId
             JOIN ciqsimpleindustry AS industry ON cmpny.simpleindustryid = industry.simpleindustryid
+            JOIN ciqsegmentdescription AS cmpnyDesc ON cmpnyDesc.companyId = cmpny.companyId 
             WHERE 1=1
-            AND geo.country = 'India'
-            AND cmpnyIndstry.industryid IN (${industryId})
+            ${decodeLocation ? `AND geo.country = '${decodeLocation}'` : ''}
+            ${companyStatusType.length ? `AND cmpny.companystatustypeid IN (${companyStatusType})` : ''}
+            ${companyType.length ? `AND cmpny.companytypeid IN (${companyType})` : ''}
+            ${industryId.length ? `AND cmpnyIndstry.industryid IN (${industryId})` : ''}
+            ${decodeIndustry ? `AND cmpny.simpleindustryid = ${decodeIndustry.simpleindustryid}` : ''}
+            ${businessDescriptor ? `AND cmpnyDesc.segmentdescription  LIKE '%${businessDescriptor}%'` : ''}
+            AND cmpnyDesc.segmentdescription IS NOT NULL
             LIMIT 20;`
           );
  
