@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 import { CiqindustryhierarchyDto, CiqIndustryListDto } from './dto/ciq-sp.dto';
 import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-service.service';
 import { ciqcompanystatustypeDocument, ciqcompanytypeDocument, ciqindustryhierarchyDocument, ciqsimpleindustryDocument } from './schema/ciq-sp.chema';
+import { RedisService } from 'src/middleware/redisConfig';
+import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 
 @Injectable()
 export class CiqSpService {
@@ -16,7 +18,10 @@ export class CiqSpService {
     private readonly ciqcompanystatustypemodel: Model<ciqcompanystatustypeDocument>,
     @InjectModel('ciqcompanytype') 
     private readonly ciqcompanytypemodel: Model<ciqcompanytypeDocument>,
-    private readonly snowflakeClientService: SnowflakeClientServiceService){}
+    private readonly snowflakeClientService: SnowflakeClientServiceService,
+    private readonly redisService: RedisService,
+    private processStateManagerService:ProcessStatusManagerService
+    ){}
 
     async fetchSPHierarchyBasedIndustry(){
         try{
@@ -130,6 +135,13 @@ export class CiqSpService {
           let companyType = [];
           let companyStatusType = [];
           let decodeLocation, decodeIndustry, businessDescriptor;
+          let modifiedData;
+
+          //#region fetch process manager details
+          const processStateInfo = await this.processStateManagerService.fetchProcess(data.processStateId);
+          const stateOneIndustry = processStateInfo?.stateInfo?.firstStageInput?.industry;
+          const industryValueFromDb = await this.ciqsimpleindustrymodel.findOne({simpleindustrydescription:stateOneIndustry}).select('simpleindustryid').exec();
+          //#endregion
 
           //#region fetch by company status types
           if(data?.companyStatusType){
@@ -179,13 +191,13 @@ export class CiqSpService {
           }
           //#endregion
 
-          // #region fetch by industry [Levek - 3 Industries]
+          //#region fetch by industry [Levek - 3 Industries]
           if(data.industryName){
             decodeIndustry= await this.ciqsimpleindustrymodel.findOne({simpleindustrydescription:data.industryName}).select('simpleindustryid').exec();
           }
           //#endregion
 
-          // #region fetch by location
+          //#region fetch by location
           if(data?.location){
             decodeLocation = data.location;
           }
@@ -197,9 +209,20 @@ export class CiqSpService {
           }
           //#endregion
 
+          const redisCacheExist = await this.redisService.getValueByKey('initialvalue');
+
+          if(redisCacheExist && JSON.parse(redisCacheExist)?.length && industryValueFromDb === decodeIndustry){
+              const modifiedData = JSON.parse(redisCacheExist)
+              return {
+                data:modifiedData,
+                status:true,
+                msg:'SP industry fetch success',
+              }
+          }
+
           await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
           const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
-           `SELECT DISTINCT cmpny.*, cmpnyIndstry.*, industry.*
+            `SELECT DISTINCT cmpny.*, cmpnyIndstry.*, industry.*
             FROM ciqCompany AS cmpny
             JOIN ciqCountryGeo AS geo ON geo.countryId = cmpny.countryId
             JOIN ciqCompanyIndustry cmpnyIndstry ON cmpnyIndstry.companyId = cmpny.companyId
@@ -212,22 +235,22 @@ export class CiqSpService {
             ${industryId.length ? `AND cmpnyIndstry.industryid IN (${industryId})` : ''}
             ${decodeIndustry ? `AND cmpny.simpleindustryid = ${decodeIndustry.simpleindustryid}` : ''}
             ${businessDescriptor ? `AND cmpnyDesc.segmentdescription  LIKE '%${businessDescriptor}%'` : ''}
-            AND cmpnyDesc.segmentdescription IS NOT NULL
-            LIMIT 20;`
+            AND cmpnyDesc.segmentdescription IS NOT NULL;`
           );
- 
-          const modifiedData = plainToClass(CiqIndustryListDto, ciqIndustryBasedCompany, {excludeExtraneousValues : true});
 
+          modifiedData = plainToClass(CiqIndustryListDto, ciqIndustryBasedCompany, {excludeExtraneousValues : true});
+          await this.redisService.setKeyValue('initialvalue',JSON.stringify(modifiedData));
+              
           return {
             data:modifiedData,
             status:true,
-            msg:'SP industry fetch success',
+            msg:'SP industry list fetch success',
           }
         }
         catch(error){
           return {
             error:error,
-            msg:'Company based industry fetch failed',
+            msg:'SP industry list fetch failed',
             status:false
          }
         }
