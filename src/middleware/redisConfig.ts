@@ -17,13 +17,9 @@ const errorLog = path.join(logDir, 'error.log');
 @Injectable()
 export class RedisService {
   private readonly client:any = createClient( //redis cloud auth
-    // {
-    // password: process.env.REDIS_PASSWORD,
-    // socket: {
-    //     host: process.env.REDIS_HOST,
-    //     port: +process.env.REDIS_PORT
-    //   }
-    // }
+    {
+      url: process.env.REDISCONN
+    }
   );
   private readonly DEFAULT_EXPIRATION_TIME = 60 * 60 * 24;
   private readonly logger = WinstonModule.createLogger({
@@ -52,13 +48,11 @@ export class RedisService {
 
   async initializeRedisConnection(){
     this.client.on('connect', () => {
-      // this.logger.log(`[${this.currentDateIST}] Redis connection initialized on port ${process.env.REDIS_PORT}`);
-      this.logger.log(`[${this.currentDateIST}] Redis connection initialized on port 6379`);
+      console.log('connected to redis cloud')
     });
     
     this.client.on('error', (err) => {
-        // this.logger.error(`[${this.currentDateIST}] Redis connection failed on port ${process.env.REDIS_PORT} ${JSON.stringify({error:err})}`);
-        this.logger.error(`[${this.currentDateIST}] Redis connection failed on port 6379 ${JSON.stringify({error:err})}`);
+        console.log('Redis Connection Error')
     });
     
     await this.client.connect();
@@ -84,12 +78,11 @@ export class RedisService {
   
   async getValueByKey(key: string): Promise<any> {
     try {
-      this.logger.log(`[${this.currentDateIST}] Fetch request to Redis [cache-manager invoked] ${JSON.stringify({redisKey:key})}`);
       const value = await this.client.get(key);
       return value;
     } catch (error) {
         console.error('Error fetching value from Redis:', error);
         return null;
     }
-}
+  }
 }

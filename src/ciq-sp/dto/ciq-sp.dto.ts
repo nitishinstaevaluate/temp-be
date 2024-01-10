@@ -1,4 +1,4 @@
-import { IsAlpha, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsAlpha, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested, isBoolean } from 'class-validator';
 import { Expose,} from 'class-transformer';
 
   export class CiqsimpleindustryDto {
@@ -67,4 +67,16 @@ import { Expose,} from 'class-transformer';
     @Expose()
     @IsString()
     CITY: string;
+  }
+
+  export class CiqSegmentDescriptionDto {
+    @Expose()
+    @IsNumber()
+    @IsNotEmpty()
+    COMPANYID: number;
+
+    @Expose()
+    @IsString()
+    @IsNotEmpty()
+    SEGMENTDESCRIPTION: string;
   }
