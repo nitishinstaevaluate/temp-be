@@ -38,10 +38,6 @@ export class RedisService {
   ],
   });
 
-  private readonly currentDateIST = new Date().toLocaleString('en-US', {
-    timeZone: 'Asia/Kolkata',
-  });
-
   constructor() {
     this.initializeRedisConnection()
   }

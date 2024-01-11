@@ -7,6 +7,7 @@ import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-se
 import { ciqcompanystatustypeDocument, ciqcompanytypeDocument, ciqindustryhierarchyDocument, ciqsimpleindustryDocument } from './schema/ciq-sp.chema';
 import { RedisService } from 'src/middleware/redisConfig';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+require('dotenv').config();
 
 @Injectable()
 export class CiqSpService {
@@ -46,7 +47,7 @@ export class CiqSpService {
     
       async fetchAllSPIndustry(){
         try{
-          await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
+          await this.snowflakeClientService.executeSnowflakeQuery(`USE WAREHOUSE ${process.env.SNOWFLAKE_WAREHOUSE};`);
           const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
             `SELECT a.companyid, a.companyname, b.* 
              FROM ciqCompany a 
@@ -79,7 +80,7 @@ export class CiqSpService {
 
           const simpleIndustryDetails= await this.ciqsimpleindustrymodel.findOne({simpleindustrydescription:decodeIndustry}).select('simpleindustryid').exec();
           
-          await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
+          await this.snowflakeClientService.executeSnowflakeQuery(`USE WAREHOUSE ${process.env.SNOWFLAKE_WAREHOUSE};`);
           const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
            `SELECT company.companyid, company.companyname, industry.*, company.city
             FROM ciqCompany AS company
@@ -211,7 +212,7 @@ export class CiqSpService {
 
             if(businessDescriptor){
               for await(const descriptors of businessDescriptionArray ){
-                if(descriptors.SEGMENTDESCRIPTION.includes(businessDescriptor))
+                if(descriptors.SEGMENTDESCRIPTION.toLowerCase().includes(businessDescriptor.toLowerCase().trim()))
                 {
                   filteredDescriptorDetails.push(descriptors.COMPANYID)
                 }
@@ -305,11 +306,31 @@ export class CiqSpService {
 
     async saveBusinessDescription(){
       try{
-        const descriptionQuery = await this.snowflakeClientService.executeSnowflakeQuery(
-          `SELECT company.companyid, description.segmentdescription FROM ciqsegmentdescription AS description
-          JOIN ciqcompany AS company ON description.companyId = company.companyid
-          JOIN ciqCountryGeo AS geo ON geo.countryId = company.countryId
-          WHERE description.segmentdescription IS NOT NULL AND geo.country = 'India'` // default location as India
+        // let descriptionQuery;
+        await this.snowflakeClientService.executeSnowflakeQuery(`USE WAREHOUSE ${process.env.SNOWFLAKE_WAREHOUSE};`);
+
+        const isAdminConnectionActive = await this.snowflakeClientService.isLocalConnectionActive();
+        if(isAdminConnectionActive){
+          await this.executeDefaultAdminRights();
+        }
+        let descriptionQuery = await this.snowflakeClientService.executeSnowflakeQuery(
+          `SELECT 
+          company.companyid, 
+          description.segmentdescription 
+         FROM 
+          ${isAdminConnectionActive ? 'ciqsegmentdescriptionind' : 'ciqsegmentdescription'} AS description
+         JOIN 
+          ${isAdminConnectionActive ? 'ciqcompanyind' : 'ciqcompany'} AS company 
+         ON 
+          description.companyId = company.companyid
+         JOIN 
+          ciqCountryGeo AS geo 
+         ON 
+          geo.countryId = company.countryId
+         WHERE 
+          description.segmentdescription IS NOT NULL 
+         AND 
+          geo.country = 'India'` // default location as India
         )
   
         const businessDescriptorDetails = await plainToClass(CiqSegmentDescriptionDto, descriptionQuery, {excludeExtraneousValues:true});
@@ -333,43 +354,85 @@ export class CiqSpService {
 
     async fetchAggregateIndustryList(payload){
       try{
-        await this.snowflakeClientService.executeSnowflakeQuery('USE WAREHOUSE IFINLITE');
-          const ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
-            `SELECT DISTINCT cmpny.*, cmpnyIndstry.*, industry.*
-            FROM ciqCompany AS cmpny
-            JOIN ciqCountryGeo AS geo ON geo.countryId = cmpny.countryId
-            JOIN ciqCompanyIndustry cmpnyIndstry ON cmpnyIndstry.companyId = cmpny.companyId
-            JOIN ciqsimpleindustry AS industry ON cmpny.simpleindustryid = industry.simpleindustryid
+        await this.snowflakeClientService.executeSnowflakeQuery(`USE WAREHOUSE ${process.env.SNOWFLAKE_WAREHOUSE};`);
+        const isAdminConnectionActive = await this.snowflakeClientService.isLocalConnectionActive();
+
+        if(isAdminConnectionActive){
+          await this.executeDefaultAdminRights();
+        }
+          const locationCondition = payload.decodeLocation ? `AND geo.country = '${payload.decodeLocation}'` : '';
+          const companyStatusTypeCondition = payload.companyStatusType.length ? `AND cmpny.companystatustypeid IN (${payload.companyStatusType})` : '';
+          const companyTypeCondition = payload.companyType.length ? `AND cmpny.companytypeid IN (${payload.companyType})` : '';
+          const industryIdCondition = payload.industryId.length ? `AND cmpnyIndstry.industryid IN (${payload.industryId})` : '';
+          const decodeIndustryCondition = payload.decodeIndustry ? `AND cmpny.simpleindustryid = ${payload.decodeIndustry.simpleindustryid}` : '';
+
+          const formattedQuery = `
+            ${locationCondition}
+            ${companyStatusTypeCondition}
+            ${companyTypeCondition}
+            ${industryIdCondition}
+            ${decodeIndustryCondition}
+          `;
+
+          const companyIdArrayCondition = payload?.companyIdArray?.length
+            ? `AND 
+            cmpny.companyid IN 
+                (
+                  SELECT 
+                    company.companyId 
+                    FROM 
+                    ${isAdminConnectionActive ? 'ciqcompanyind' : 'ciqcompany'} AS company 
+                    JOIN 
+                    ${isAdminConnectionActive ? 'ciqsegmentdescriptionind' : 'ciqsegmentdescription'} AS businessDesc ON businessDesc.companyId = company.companyid 
+                    WHERE 
+                    company.companyid IN (${payload?.companyIdArray.join(',')}) 
+                      AND businessDesc.segmentdescription IS NOT NULL
+                )`
+            : '';
+
+          let ciqIndustryBasedCompany = await this.snowflakeClientService.executeSnowflakeQuery(
+            `SELECT 
+              cmpny.*, 
+              cmpnyIndstry.*, 
+              industry.*
+            FROM
+              ${isAdminConnectionActive ? 'ciqcompanyind' : 'ciqcompany'} AS cmpny
+            JOIN
+              ciqCountryGeo AS geo ON geo.countryId = cmpny.countryId
+            JOIN
+              ${isAdminConnectionActive ? 'ciqCompanyIndustryInd' : 'ciqCompanyIndustry'} AS cmpnyIndstry ON cmpnyIndstry.companyId = cmpny.companyId
+            JOIN
+              ciqsimpleindustry AS industry ON cmpny.simpleindustryid = industry.simpleindustryid
             WHERE 1=1
-            ${payload.decodeLocation ? `AND geo.country = '${payload.decodeLocation}'` : ''}
-            ${payload.companyStatusType.length ? `AND cmpny.companystatustypeid IN (${payload.companyStatusType})` : ''}
-            ${payload.companyType.length ? `AND cmpny.companytypeid IN (${payload.companyType})` : ''}
-            ${payload.industryId.length ? `AND cmpnyIndstry.industryid IN (${payload.industryId})` : ''}
-            ${payload.decodeIndustry ? `AND cmpny.simpleindustryid = ${payload.decodeIndustry.simpleindustryid}` : ''}
-            ${
-              payload?.companyIdArray?.length
-                ? `AND cmpny.companyid IN (SELECT company.companyId FROM ciqcompany AS company 
-                  JOIN ciqsegmentdescription ON ciqsegmentdescription.companyId = company.companyid 
-                  WHERE company.companyid IN (${payload?.companyIdArray.join(',')}) AND ciqsegmentdescription.segmentdescription IS NOT NULL)`
-                : ''
-            }
-            ${!payload.industryName ? `LIMIT 20` : ''};`
-          );
+              ${formattedQuery}
+              ${companyIdArrayCondition}
+              ${!payload.industryName ? `LIMIT 20` : ''};`
+            );
+
           const modifiedData = plainToClass(CiqIndustryListDto, ciqIndustryBasedCompany, {excludeExtraneousValues : true});
           
-          return {
-            data:modifiedData,
-            msg:"Industry list fetch success",
-            status:true
-          }
+        return {
+          data:modifiedData,
+          msg:"Industry list fetch success",
+          status:true
+        }
       }
       catch(error){
-        // console.log(error,"ERro")
         return {
           error:error,
           msg:"Industry list fetch failed",
           status:false
         }
+      }
+    }
+
+    async executeDefaultAdminRights(){
+      try{
+        await this.snowflakeClientService.executeSnowflakeQuery(`USE ROLE ${process.env.SNOWFLAKE_ROLE};`);
+        await this.snowflakeClientService.executeSnowflakeQuery(`USE DATABASE ${process.env.SNOWFLAKE__LOCAL_DATABASE};`);
+      }
+      catch(error){
+        return error
       }
     }
 }
