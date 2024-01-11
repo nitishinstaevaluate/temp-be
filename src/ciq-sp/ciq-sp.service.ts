@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToClass } from 'class-transformer';
 import { Model } from 'mongoose';
@@ -7,6 +7,10 @@ import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-se
 import { ciqcompanystatustypeDocument, ciqcompanytypeDocument, ciqindustryhierarchyDocument, ciqsimpleindustryDocument } from './schema/ciq-sp.chema';
 import { RedisService } from 'src/middleware/redisConfig';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { axiosInstance } from 'src/middleware/axiosConfig';
+import { CAPITALIQ_MARKET_BETA } from 'src/interfaces/api-endpoints.prod';
+import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
+import { throwError } from 'rxjs';
 require('dotenv').config();
 
 @Injectable()
@@ -433,6 +437,75 @@ export class CiqSpService {
       }
       catch(error){
         return error
+      }
+    }
+
+    async calculateBeta(data:any){
+      try{
+
+        if(!data.industryAggregateList)
+          throw new NotFoundException({
+            message: 'Data not found',
+            status: false,
+          })
+
+        const headers = {
+          'Content-Type': 'application/json'
+        }
+
+        const auth = {
+          username: process.env.CAPITALIQ_API_USERNAME,
+          password: process.env.CAPITALIQ_API_PASSWORD
+        }
+
+        const capBeta = await axiosInstance.post(CAPITALIQ_MARKET_BETA, await this.createBetaStructure(data.industryAggregateList), {headers, auth});
+
+        let totalBeta = 0;
+
+        if(capBeta.data){
+          let counter = 0;
+          capBeta.data?.GDSSDKResponse.map((data=>{  
+            if(!data.ErrMsg){
+              data?.Rows.map((innerRows)=>{
+                if(!isNaN(parseInt(innerRows.Row)) && !`${innerRows.Row}`.includes('-')){
+                  counter++
+                  totalBeta += convertToNumberOrZero(innerRows.Row[0])
+                }
+              })
+            }
+          }))
+
+          const total = totalBeta/counter;
+
+          return {
+            data:capBeta.data,
+            msg:"beta calculation success",
+            status:true,
+            total
+          }
+        }
+      }
+      catch(error){
+        return {
+          error:error,
+          msg:"beta calculation failed",
+          status:false
+        }
+      }
+    }
+
+    async createBetaStructure(data){
+      return {
+        "inputRequests":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":"IQ_CUSTOM_BETA",
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_CV"
+            }
+          }
+        })
       }
     }
 }

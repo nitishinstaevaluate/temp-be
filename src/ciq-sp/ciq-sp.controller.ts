@@ -60,4 +60,11 @@ export class CiqSpController {
   async getSPCompanyType() {
     return this.capitalIqAndSPService.fetchSPCompanyType();
   }
+
+  // https://localhost:3000/ciq-sp/calculate-sp-industry-beta
+  @UseGuards(AuthGuard('jwt'))
+  @Post('calculate-sp-industry-beta')
+  async calculateSPindustryBeta(@Body() payload: any) {
+    return this.capitalIqAndSPService.calculateBeta(payload)
+  }
 }
