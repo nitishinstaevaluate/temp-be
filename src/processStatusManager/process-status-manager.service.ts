@@ -249,4 +249,22 @@ export class ProcessStatusManagerService {
       }
     }
   }
+
+  async fetchStageWiseDetails(processId,stage){
+    try {
+      const processStage = await this.processModel.findById({ _id : processId}).select(`step processIdentifierId ${stage}`).exec();
+      return {
+        data:processStage,
+        status:true,
+        msg:'Retrieve success'
+      }
+    }
+    catch(error) {
+      return {
+        error: error.message,
+        status: false,
+        msg: 'Process stage wise rerieval failed'
+      }
+    }
+  }
 }

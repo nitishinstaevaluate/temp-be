@@ -1852,3 +1852,5 @@ export const DOCUMENT_UPLOAD_TYPE = {
 export const XML_FORMAT = /<("[^"]*"|'[^']*'|[^'">])*>/;
 
 export const REPORT_LINE_ITEM = ['PAT','Depn. and Amortn.','Other Non Cash items','Change in NCA','Change in Borrowings','Add/Less: Deferred Tax Assets(Net)','Net Cash Flow','Change in fixed assets','FCFE','Discounting Period','Discounting Factor','Present Value of FCFF','Present Value of FCFE','Sum of Cash Flows','Add: Cash & Cash Equivalents','Add: Surplus Assets/Investments','Add/Less: Other Adjustments(if any)','No. of Shares','FCFF','Add: Interest Adjusted Taxes','Particulars','Less: Debt as on Date'];
+
+export const BETA_SUB_TYPE = ['meanBeta', 'medianBeta'];

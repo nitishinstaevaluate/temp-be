@@ -11,6 +11,7 @@ import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CAPITALIQ_MARKET_BETA } from 'src/interfaces/api-endpoints.prod';
 import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { throwError } from 'rxjs';
+import { BETA_SUB_TYPE } from 'src/constants/constants';
 require('dotenv').config();
 
 @Injectable()
@@ -445,7 +446,7 @@ export class CiqSpService {
 
         if(!data.industryAggregateList)
           throw new NotFoundException({
-            message: 'Data not found',
+            message: 'Industry List not found',
             status: false,
           })
 
@@ -460,28 +461,51 @@ export class CiqSpService {
 
         const capBeta = await axiosInstance.post(CAPITALIQ_MARKET_BETA, await this.createBetaStructure(data.industryAggregateList), {headers, auth});
 
-        let totalBeta = 0;
+        let total, totalBeta = 0, medianBetaArray = [];
 
         if(capBeta.data){
-          let counter = 0;
-          capBeta.data?.GDSSDKResponse.map((data=>{  
-            if(!data.ErrMsg){
-              data?.Rows.map((innerRows)=>{
-                if(!isNaN(parseInt(innerRows.Row)) && !`${innerRows.Row}`.includes('-')){
-                  counter++
-                  totalBeta += convertToNumberOrZero(innerRows.Row[0])
-                }
-              })
-            }
-          }))
+          if(data.betaSubType === BETA_SUB_TYPE[0]){
+            let counter = 0;
+            capBeta.data?.GDSSDKResponse.map((axiosBetaResponse=>{  
+              if(!axiosBetaResponse.ErrMsg){
+                axiosBetaResponse?.Rows.map((innerRows)=>{
+                  if(!isNaN(parseInt(innerRows.Row[0])) && !`${innerRows.Row[0]}`.includes('-') && innerRows.Row[0] !== "0"){
+                    counter++
+                    totalBeta += convertToNumberOrZero(innerRows.Row[0])
+                  }
+                })
+              }
+            }))
+            total = totalBeta/counter;
+          }
+          else{
+            capBeta.data?.GDSSDKResponse.map((axiosBetaResponse=>{  
+              if(!axiosBetaResponse.ErrMsg){
+                axiosBetaResponse?.Rows.map((innerRows)=>{
+                  if(!isNaN(parseInt(innerRows.Row[0])) && !`${innerRows.Row[0]}`.includes('-') && innerRows.Row[0] !== "0"){
+                    medianBetaArray.push(parseFloat(innerRows.Row[0]))
+                  }
+                })
+              }
+            }))
 
-          const total = totalBeta/counter;
+            const sortedData = [...medianBetaArray].sort((a, b) => a - b);
+            const middleIndex = Math.floor(sortedData.length / 2);
+            
+            if (sortedData.length % 2 === 0) {
+              total =  (sortedData[middleIndex - 1] + sortedData[middleIndex]) / 2;
+            } 
+            else {
+              total =  sortedData[middleIndex];
+            }
+          }
 
           return {
             data:capBeta.data,
             msg:"beta calculation success",
             status:true,
-            total
+            total,
+            betaSubType:data.betaSubType
           }
         }
       }

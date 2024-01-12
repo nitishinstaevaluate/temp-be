@@ -63,4 +63,13 @@ export class ProcessStatusManagerController {
     ) :Promise<any>{
       return this.utilsService.paginateValuationByUserId(page,pageSize, req,query);
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('retrieve-particular-stage/filter')
+    async getStageWiseDetails(
+        @Query('processId') processId?: string,
+        @Query('stageDetails') stageDetails?: string,
+        ) {
+      return await this.processStatusManagerService.fetchStageWiseDetails(processId, stageDetails);
+    }
 }
