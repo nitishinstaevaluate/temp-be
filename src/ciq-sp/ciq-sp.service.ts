@@ -11,7 +11,7 @@ import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CAPITALIQ_MARKET_BETA } from 'src/interfaces/api-endpoints.prod';
 import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { throwError } from 'rxjs';
-import { BETA_SUB_TYPE } from 'src/constants/constants';
+import { BETA_SUB_TYPE, MNEMONIC_ENUMS } from 'src/constants/constants';
 require('dotenv').config();
 
 @Injectable()
@@ -518,12 +518,72 @@ export class CiqSpService {
       }
     }
 
+    async createPriceToBookValStructure(data){
+      return {
+        "inputRequests":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_PBV}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_CV"
+            }
+          }
+        })
+      }
+    }
+
+    async createPriceToSalesValStructure(data){
+      return {
+        "inputRequests":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_PRICE_SALES}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_CV"
+            }
+          }
+        })
+      }
+    }
+
+    async createEbitdaStructure(data){
+      return {
+        "inputRequests":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_TEV_EBITDA}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_CV"
+            }
+          }
+        })
+      }
+    }
+    
+    async createPriceToEquityStructure(data){
+      return {
+        "inputRequests":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_PE_EXCL_FWD_REUT}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_CV"
+            }
+          }
+        })
+      }
+    }
+
     async createBetaStructure(data){
       return {
         "inputRequests":data.map((elements)=>{
           return {
             "function":"GDSP",
-            "mnemonic":"IQ_CUSTOM_BETA",
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_CUSTOM_BETA}`,
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
               "periodType":"IQ_CV"
