@@ -599,7 +599,7 @@ export class CiqSpService {
     }
 
     async createPayloadStructure(data){
-      const payloadStruc = [...await this.calculateDebtInCurrentLiabilites(data), ...await this.calculateLongTermDebt(data), ...await this.calculateTotalBookValueOfPreferred(data), ...await this.calculatePricePerShare(data)];
+      const payloadStruc = [...await this.calculateDebtInCurrentLiabilites(data), ...await this.calculateLongTermDebt(data), ...await this.calculateTotalBookValueOfPreferred(data), ...await this.calculatePricePerShare(data), ...await this.calculateFullyDilutedWeightedAverage(data)];
       return {inputRequests:payloadStruc};
     }
 
@@ -624,6 +624,10 @@ export class CiqSpService {
       return iqPrefEquityDetails.data;
     }
 
+    async calculateFullyDilutedWeightedAverage(data:any){
+      const iqDilutedWeightageDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_DILUT_WEIGHT);
+      return iqDilutedWeightageDetails.data;
+    }
     async calculatePricePerShare(data:any){
       const iqLastSalePriceDetails =  await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_LASTSALEPRICE);
       return iqLastSalePriceDetails.data;
@@ -640,7 +644,11 @@ export class CiqSpService {
               "properties":{
                 "periodType":"IQ_FQ",
                 "restatementTypeId":"LFR",
-                // "asOfDate": '12/31/21'
+                "asOfDate": '12/31/21',
+                "currencyId":"INR",
+                "filingMode" : "P",
+                "consolidatedFlag":"CON",
+                "currencyConversionModeId" : "H",
               }
             }
           })
