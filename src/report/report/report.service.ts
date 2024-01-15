@@ -2311,13 +2311,13 @@ export class ReportService {
           const contingentLiabilities = isNaN(parseFloat(elevenUaData.data?.inputData?.contingentLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.contingentLiability);
           const otherThanAscertainLiability = isNaN(parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability);
           this.totalL = paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
-          return paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
+          return (paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability).toFixed(2);
       }
       return '-'
     })
 
     hbs.registerHelper('calculateAll',()=>{
-      return this.totalA + this.totalB + this.totalC + this.totalD + this.totalL;
+      return (this.totalA + this.totalB + this.totalC + this.totalD - this.totalL).toFixed(2);
     })
 
     hbs.registerHelper('phaseValue',()=>{
