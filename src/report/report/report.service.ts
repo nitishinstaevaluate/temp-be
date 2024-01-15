@@ -2331,7 +2331,7 @@ export class ReportService {
       const phaseValue = !isNaN(parseFloat(elevenUaData?.data?.inputData?.phaseValue)) ? parseFloat(elevenUaData?.data?.inputData?.phaseValue) : 1;
       const paidUpCapital = !isNaN(parseFloat(elevenUaData?.data?.paidUpCapital)) ? parseFloat(elevenUaData?.data?.paidUpCapital) : 1;
 
-      const totalSum = this.totalA + this.totalB + this.totalC + this.totalD + this.totalL;
+      const totalSum = this.totalA + this.totalB + this.totalC + this.totalD - this.totalL;
 
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
 
