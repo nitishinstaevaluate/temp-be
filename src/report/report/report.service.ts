@@ -2234,15 +2234,31 @@ export class ReportService {
     })
 
     hbs.registerHelper('fairValueinvstShareSec',()=>{
-      if(elevenUaData)
-        return elevenUaData.data?.inputData?.fairValueinvstShareSec ? elevenUaData.data?.inputData?.fairValueinvstShareSec : '-';
-      return '-';
+      if(elevenUaData){
+        let investment=0;
+        const investmentTotalFromExcel = elevenUaData?.data?.totalInvestmentSharesAndSecurities;
+        const elevenUaInvestment = elevenUaData.data?.inputData?.fairValueinvstShareSec;
+        investment = elevenUaInvestment;
+        if(!elevenUaInvestment){
+          investment =  investmentTotalFromExcel;
+        }
+        this.totalC = investment;
+        return investment ? investment : '-';
+      }
+      return '-'
     })
 
     hbs.registerHelper('totalC',()=>{
       if(elevenUaData){
-        this.totalC = elevenUaData.data?.inputData?.fairValueinvstShareSec ? parseFloat(elevenUaData.data?.inputData?.fairValueinvstShareSec) : 0; 
-        return elevenUaData.data?.inputData?.fairValueinvstShareSec ? elevenUaData.data?.inputData?.fairValueinvstShareSec: '-';
+        let investment=0;
+        const investmentTotalFromExcel = elevenUaData?.data?.totalInvestmentSharesAndSecurities;
+        const elevenUaInvestment = elevenUaData.data?.inputData?.fairValueinvstShareSec;
+        investment = elevenUaInvestment;
+        if(!elevenUaInvestment){
+          investment =  investmentTotalFromExcel;
+        }
+        this.totalC = investment;
+        return investment ? investment : '-';
       }
       return '-'
     })
@@ -2335,7 +2351,7 @@ export class ReportService {
 
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
 
-      return result;
+      return result.toFixed(2);
     })
 
     hbs.registerHelper('reportDate',()=>{
