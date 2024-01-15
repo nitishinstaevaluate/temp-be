@@ -255,7 +255,7 @@ export class CiqSpService {
             decodeLocation,
             companyIdArray:[]
           }
-           modifiedData = await this.fetchAggregateIndustryList(payload)
+           modifiedData = await this.fetchAggregateIndustryList(payload);
               
           return {
             data:modifiedData.data,
@@ -500,8 +500,13 @@ export class CiqSpService {
             }
           }
 
+          // uncomment this section for testing complex capital IQ beta calculations
+          const createPayloadStructure = await this.createPayloadStructure(data.industryAggregateList)
+          const allDetails = await axiosInstance.post(CAPITALIQ_MARKET_BETA, createPayloadStructure, {headers, auth});
+          // return allDetails.data
+
           return {
-            data:capBeta.data,
+            data:allDetails.data,
             msg:"beta calculation success",
             status:true,
             total,
@@ -587,6 +592,89 @@ export class CiqSpService {
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
               "periodType":"IQ_CV"
+            }
+          }
+        })
+      }
+    }
+
+    async createPayloadStructure(data){
+      const payloadStruc = [...await this.calculateDebtInCurrentLiabilites(data), ...await this.calculateLongTermDebt(data), ...await this.calculateTotalBookValueOfPreferred(data), ...await this.calculatePricePerShare(data)];
+      return {inputRequests:payloadStruc};
+    }
+
+    async calculateDebtInCurrentLiabilites(data:any){
+      const iqCurrentPortDetails = await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_CURRENT_PORT);
+      const iqStDebtDetails = await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_ST_DEBT);
+      const iqFinDivDebtCurrentDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_CURRENT);
+      const iqCurrentPortionLeaseLiabilitiesDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_CURRENT_PORTION_LEASE_LIABILITIES);
+      return [...iqCurrentPortDetails.data, ...iqStDebtDetails.data, ...iqFinDivDebtCurrentDetails.data, ...iqCurrentPortionLeaseLiabilitiesDetails.data]
+    }
+
+    async calculateLongTermDebt(data:any){
+      const iqLtDebtDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_LT_DEBT);
+      const iqCapitalLeaseDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_CAPITAL_LEASES);
+      const iqFinDivDebtLtDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_LT);
+      const iqLtPortionLeaseLiabilitiesDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_LT_PORTION_LEASE_LIABILITIES);
+      return [...iqLtDebtDetails.data, ...iqCapitalLeaseDetails.data, ...iqFinDivDebtLtDetails.data, ...iqLtPortionLeaseLiabilitiesDetails.data]
+    }
+
+    async calculateTotalBookValueOfPreferred(data:any){
+      const iqPrefEquityDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_PREF_EQUITY);
+      return iqPrefEquityDetails.data;
+    }
+
+    async calculatePricePerShare(data:any){
+      const iqLastSalePriceDetails =  await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_LASTSALEPRICE);
+      return iqLastSalePriceDetails.data;
+    }
+
+    async iqCreateStructure(data,mnemonic){
+      if(mnemonic === MNEMONIC_ENUMS.IQ_DILUT_WEIGHT)
+        return {
+          "data":data.map((elements)=>{
+            return {
+              "function":"GDSP",
+              "mnemonic":`${MNEMONIC_ENUMS.IQ_DILUT_WEIGHT}`,
+              "identifier":`IQ${elements.COMPANYID}`,
+              "properties":{
+                "periodType":"IQ_FQ",
+                "restatementTypeId":"LFR",
+                // "asOfDate": '12/31/21'
+              }
+            }
+          })
+        }
+
+      if(mnemonic === MNEMONIC_ENUMS.IQ_LASTSALEPRICE)
+        return {
+          "data":data.map((elements)=>{
+            return {
+              "function":"GDSP",
+              "mnemonic":`${MNEMONIC_ENUMS.IQ_LASTSALEPRICE}`,
+              "identifier":`IQ${elements.COMPANYID}`,
+              "properties":{
+                "currencyConversionModeId" : "H",
+                "currencyId" : "INR",
+                // "asOfDate": '12/31/21'
+              }
+            }
+          })
+        }
+
+      return {
+        "data":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${mnemonic}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_LTM",
+              "restatementTypeId":"LFR",
+              "filingMode" : "P",
+              "currencyConversionModeId" : "H",
+              "currencyId" : "INR",
+              // "asOfDate": '12/31/21'
             }
           }
         })
