@@ -20,8 +20,12 @@ export class ElevenUa {
 
   @Prop({ type: Number, required: true })
   paymentDividends: number;
+
   @Prop({ type: Number, required: true })
   reserveAndSurplus: number;
+
+  @Prop({ type: Number, required: true })
+  totalInvestmentSharesAndSecurities: number;
 
   @Prop({ type: Number, required: true })
   provisionForTaxation: number;

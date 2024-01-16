@@ -2234,15 +2234,31 @@ export class ReportService {
     })
 
     hbs.registerHelper('fairValueinvstShareSec',()=>{
-      if(elevenUaData)
-        return elevenUaData.data?.inputData?.fairValueinvstShareSec ? elevenUaData.data?.inputData?.fairValueinvstShareSec : '-';
-      return '-';
+      if(elevenUaData){
+        let investment=0;
+        const investmentTotalFromExcel = elevenUaData?.data?.totalInvestmentSharesAndSecurities;
+        const elevenUaInvestment = elevenUaData.data?.inputData?.fairValueinvstShareSec;
+        investment = elevenUaInvestment;
+        if(!elevenUaInvestment){
+          investment =  investmentTotalFromExcel;
+        }
+        this.totalC = investment;
+        return investment ? investment : '-';
+      }
+      return '-'
     })
 
     hbs.registerHelper('totalC',()=>{
       if(elevenUaData){
-        this.totalC = elevenUaData.data?.inputData?.fairValueinvstShareSec ? parseFloat(elevenUaData.data?.inputData?.fairValueinvstShareSec) : 0; 
-        return elevenUaData.data?.inputData?.fairValueinvstShareSec ? elevenUaData.data?.inputData?.fairValueinvstShareSec: '-';
+        let investment=0;
+        const investmentTotalFromExcel = elevenUaData?.data?.totalInvestmentSharesAndSecurities;
+        const elevenUaInvestment = elevenUaData.data?.inputData?.fairValueinvstShareSec;
+        investment = elevenUaInvestment;
+        if(!elevenUaInvestment){
+          investment =  investmentTotalFromExcel;
+        }
+        this.totalC = investment;
+        return investment ? investment : '-';
       }
       return '-'
     })
@@ -2311,13 +2327,13 @@ export class ReportService {
           const contingentLiabilities = isNaN(parseFloat(elevenUaData.data?.inputData?.contingentLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.contingentLiability);
           const otherThanAscertainLiability = isNaN(parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability);
           this.totalL = paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
-          return paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
+          return (paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability).toFixed(2);
       }
       return '-'
     })
 
     hbs.registerHelper('calculateAll',()=>{
-      return this.totalA + this.totalB + this.totalC + this.totalD + this.totalL;
+      return (this.totalA + this.totalB + this.totalC + this.totalD - this.totalL).toFixed(2);
     })
 
     hbs.registerHelper('phaseValue',()=>{
@@ -2331,11 +2347,11 @@ export class ReportService {
       const phaseValue = !isNaN(parseFloat(elevenUaData?.data?.inputData?.phaseValue)) ? parseFloat(elevenUaData?.data?.inputData?.phaseValue) : 1;
       const paidUpCapital = !isNaN(parseFloat(elevenUaData?.data?.paidUpCapital)) ? parseFloat(elevenUaData?.data?.paidUpCapital) : 1;
 
-      const totalSum = this.totalA + this.totalB + this.totalC + this.totalD + this.totalL;
+      const totalSum = this.totalA + this.totalB + this.totalC + this.totalD - this.totalL;
 
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
 
-      return result;
+      return result.toFixed(2);
     })
 
     hbs.registerHelper('reportDate',()=>{
