@@ -9,9 +9,9 @@ import { RedisService } from 'src/middleware/redisConfig';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CAPITALIQ_MARKET_BETA } from 'src/interfaces/api-endpoints.prod';
-import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
+import { convertToNumberOrOne, convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { throwError } from 'rxjs';
-import { BETA_SUB_TYPE, MNEMONIC_ENUMS } from 'src/constants/constants';
+import { BETA_SUB_TYPE, MNEMONICS_ARRAY, MNEMONIC_ENUMS } from 'src/constants/constants';
 require('dotenv').config();
 
 @Injectable()
@@ -441,7 +441,7 @@ export class CiqSpService {
       }
     }
 
-    async calculateBeta(data:any){
+    async calculateBetaAggregate(data:any){
       try{
 
         if(!data.industryAggregateList)
@@ -450,6 +450,13 @@ export class CiqSpService {
             status: false,
           })
 
+        if(!data.taxRate)
+          throw new NotFoundException({
+            message: 'Tax rate not found',
+            status: false,
+          })
+
+        const taxRate = data.taxRate?.includes('%') ? parseFloat(data.taxRate.replace("%", "")) : data.taxRate;
         const headers = {
           'Content-Type': 'application/json'
         }
@@ -500,13 +507,13 @@ export class CiqSpService {
             }
           }
 
-          // uncomment this section for testing complex capital IQ beta calculations
+          // Beta calculation based on different mnemonics
           const createPayloadStructure = await this.createPayloadStructure(data.industryAggregateList)
-          const allDetails = await axiosInstance.post(CAPITALIQ_MARKET_BETA, createPayloadStructure, {headers, auth});
-          // return allDetails.data
+          const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET_BETA, createPayloadStructure, {headers, auth});
+          const betaData = await this.calculateCapitalIqBeta(axiosBetaResponse, taxRate);
 
           return {
-            data:allDetails.data,
+            data:axiosBetaResponse.data,
             msg:"beta calculation success",
             status:true,
             total,
@@ -520,6 +527,294 @@ export class CiqSpService {
           msg:"beta calculation failed",
           status:false
         }
+      }
+    }
+
+    async createPayloadStructure(data){
+      const payloadStruc = [...await this.calculateDebtInCurrentLiabilites(data), ...await this.calculateLongTermDebt(data), ...await this.calculateTotalBookValueOfPreferred(data), ...await this.calculatePricePerShare(data), ...await this.calculateFullyDilutedWeightedAverage(data)];
+      return {inputRequests:payloadStruc};
+    }
+
+    async calculateDebtInCurrentLiabilites(data:any){
+      const iqCurrentPortDetails = await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_CURRENT_PORT);
+      const iqStDebtDetails = await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_ST_DEBT);
+      const iqFinDivDebtCurrentDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_CURRENT);
+      const iqCurrentPortionLeaseLiabilitiesDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_CURRENT_PORTION_LEASE_LIABILITIES);
+      return [...iqCurrentPortDetails.data, ...iqStDebtDetails.data, ...iqFinDivDebtCurrentDetails.data, ...iqCurrentPortionLeaseLiabilitiesDetails.data]
+    }
+
+    async calculateLongTermDebt(data:any){
+      const iqLtDebtDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_LT_DEBT);
+      const iqCapitalLeaseDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_CAPITAL_LEASES);
+      const iqFinDivDebtLtDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_LT);
+      const iqLtPortionLeaseLiabilitiesDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_LT_PORTION_LEASE_LIABILITIES);
+      return [...iqLtDebtDetails.data, ...iqCapitalLeaseDetails.data, ...iqFinDivDebtLtDetails.data, ...iqLtPortionLeaseLiabilitiesDetails.data]
+    }
+
+    async calculateTotalBookValueOfPreferred(data:any){
+      const iqPrefEquityDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_PREF_EQUITY);
+      return iqPrefEquityDetails.data;
+    }
+
+    async calculateFullyDilutedWeightedAverage(data:any){
+      const iqDilutedWeightageDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_DILUT_WEIGHT);
+      return iqDilutedWeightageDetails.data;
+    }
+
+    async calculatePricePerShare(data:any){
+      const iqLastSalePriceDetails =  await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_LASTSALEPRICE);
+      return iqLastSalePriceDetails.data;
+    }
+
+    async createBetaStructure(data){
+      return {
+        "inputRequests":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_CUSTOM_BETA}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_CV"
+            }
+          }
+        })
+      }
+    }
+
+    async calculateCapitalIqBeta(axiosBetaResponse, taxRate) {
+      try {
+        if (!axiosBetaResponse.data) {
+          throw new NotFoundException({
+            message: 'Axios beta list not found',
+            status: false,
+          });
+        }
+
+        const result = {};
+        let maxLength = 0
+        for await (const betaDetails of axiosBetaResponse.data.GDSSDKResponse) {
+          if (!betaDetails.ErrMsg) {
+            for await (const mnemonic of MNEMONICS_ARRAY) {
+              if (betaDetails.Headers.includes(mnemonic)) {
+                result[mnemonic] = result[mnemonic] || [];
+                result[mnemonic].push(...await this.extractValues(betaDetails, mnemonic));
+
+                const currentLength = result[mnemonic].length;
+                if (currentLength > maxLength) {
+                  maxLength = currentLength;
+                }
+              }
+            }
+          }
+          else{
+            result[betaDetails.Mnemonic] = [];
+          }
+        }
+        
+        const getDebtToCapitalAndMarketValue = await  this.calculateDebtToCapitalAndMarketValue(result, maxLength);
+
+        const unleveredBeta = await this.calculateUnleveredBeta(getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, taxRate, maxLength);
+        console.log(unleveredBeta,"unlevered beta")
+
+        const releveredBeta = await this.calculateReleveredBeta(unleveredBeta, getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, taxRate, maxLength);
+        console.log(releveredBeta,"relevered beta")
+        
+        return result;
+      } catch (error) {
+        console.error(error);
+        return {
+          error: error,
+          msg: "Error while fetching data from axios",
+          status: false,
+        };
+      }
+    }
+
+    async calculateUnleveredBeta(debtToCapital, equityToCapital, taxRate, maxLength){
+      try{
+        // Be4 = M12/(1+(1-L12)*J12/K12)
+        const tempLeveredBetaArray = [0.80, 1.82, 1.24, 1.46, 1.51, 1.44, 0.84, 0.96, 1.23, 0.543, 0.234, 1.23]; // array length should be equal to the total number of companies
+        let unleveredBetaArray = []
+        for (let i = 0; i < maxLength; i++){
+          unleveredBetaArray.push(
+            tempLeveredBetaArray[i] / (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i])
+          )
+        }
+        return unleveredBetaArray;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Beta unlever calculation for beta failed"
+        }
+      }
+    }
+
+    async calculateReleveredBeta(betaUnleveredArray,debtToCapital, equityToCapital, taxRate, maxLength){
+      try{
+        // Relevered Equity Beta = Be4 * (1 + (1-Tax Rate) * Debt to Equity)
+        let releveredBetaArray = []
+        for(let i = 0; i < maxLength; i++){
+          releveredBetaArray.push(
+            betaUnleveredArray[i] * (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i])
+          )
+        }
+        return releveredBetaArray;
+      }
+      catch(error){
+        return {
+          error:error,
+          msg:"Beta relever calculation for beta failed"
+        }
+      }
+    }
+
+    async calculateDebtToCapitalAndMarketValue(result ,maxLength){
+      try{
+        let calculateTotalDebtInCurrentLiabilities = [], calculateTotalLongTermDebt = [], calculateTotalBookValue = [], 
+          calculateTotalMarketValueOfEquity = [], calculateTotalMarketValueOfCapital = [], calculateTotalDebtToCapital = [], calculateTotalEquityToCapital = [];
+
+        for (let i = 0; i < maxLength; i++){
+
+          // calculate debt in current liabilities
+          calculateTotalDebtInCurrentLiabilities.push(
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_CURRENT_PORT][i]) + 
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_ST_DEBT][i]) + 
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_CURRENT][i]) - 
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_CURRENT_PORTION_LEASE_LIABILITIES][i])
+          ) 
+
+          // calculate long term debt
+          calculateTotalLongTermDebt.push(
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_LT_DEBT][i]) +
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_CAPITAL_LEASES][i]) +
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_LT][i]) -
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_LT_PORTION_LEASE_LIABILITIES][i])
+          )
+
+          // calculate total book value of debt
+          calculateTotalBookValue.push(
+            convertToNumberOrZero(calculateTotalDebtInCurrentLiabilities[i]) + 
+            convertToNumberOrZero(calculateTotalLongTermDebt[i])
+          )
+
+          // calculate total market value of equity 
+          calculateTotalMarketValueOfEquity.push(
+            convertToNumberOrOne(result[MNEMONIC_ENUMS.IQ_DILUT_WEIGHT][i]) *
+            convertToNumberOrOne(result[MNEMONIC_ENUMS.IQ_LASTSALEPRICE][i])
+          )
+
+          // calculate total market value of capital
+          calculateTotalMarketValueOfCapital.push(
+            calculateTotalBookValue[i] + 
+            convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_PREF_EQUITY][i]) + 
+            calculateTotalMarketValueOfEquity[i]
+          )
+
+          // calculate debt to capital
+          calculateTotalDebtToCapital.push(
+            (
+              (
+                calculateTotalBookValue[i] + convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_PREF_EQUITY][i])
+              ) / calculateTotalMarketValueOfCapital[i]
+            ) * 100
+          )
+
+          // calculate equity to capital
+          calculateTotalEquityToCapital.push(
+            (calculateTotalMarketValueOfEquity[i] / calculateTotalMarketValueOfCapital[i]) * 100
+          )
+          
+        }
+
+        return {
+          calculateTotalDebtToCapital,
+          calculateTotalEquityToCapital
+        }
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"calculation failed for debt to capital and market value functions"
+        }
+      }
+    }
+
+    async extractValues(betaDetails: any, mnemonic: any) {
+      try {
+        return betaDetails.Rows.map((innerBetaRows: any) => {
+          const value = innerBetaRows?.Row[0];
+          return !isNaN(parseInt(value)) && !`${value}`.includes('-') && value !== "0"
+            ? parseFloat(value)
+            : null;
+        });
+      } 
+      catch (error) {
+        return {
+          error: error,
+          status: false,
+          msg: `Beta extraction failed for ${mnemonic}`,
+        };
+      }
+    }
+
+    async iqCreateStructure(data,mnemonic){
+      if(mnemonic === MNEMONIC_ENUMS.IQ_DILUT_WEIGHT)
+        return {
+          "data":data.map((elements)=>{
+            return {
+              "function":"GDSP",
+              "mnemonic":`${MNEMONIC_ENUMS.IQ_DILUT_WEIGHT}`,
+              "identifier":`IQ${elements.COMPANYID}`,
+              "properties":{
+                "periodType":"IQ_FQ",
+                "restatementTypeId":"LFR",
+                // "asOfDate": '12/31/21',
+                "currencyId":"INR",
+                "filingMode" : "P",
+                "consolidatedFlag":"CON",
+                "currencyConversionModeId" : "H",
+              }
+            }
+          })
+        }
+
+      if(mnemonic === MNEMONIC_ENUMS.IQ_LASTSALEPRICE)
+        return {
+          "data":data.map((elements)=>{
+            return {
+              "function":"GDSP",
+              "mnemonic":`${MNEMONIC_ENUMS.IQ_LASTSALEPRICE}`,
+              "identifier":`IQ${elements.COMPANYID}`,
+              "properties":{
+                "currencyConversionModeId" : "H",
+                "currencyId" : "INR",
+                // "asOfDate": '12/31/21'
+              }
+            }
+          })
+        }
+
+        // periodType, asOfDate, currencyId, restatementTypeId, filingMode, consolidatedFlag, currencyConversionModeId
+
+      return {
+        "data":data.map((elements)=>{
+          return {
+            "function":"GDSP",
+            "mnemonic":`${mnemonic}`,
+            "identifier":`IQ${elements.COMPANYID}`,
+            "properties":{
+              "periodType":"IQ_LTM",
+              "restatementTypeId":"LFR",
+              "filingMode" : "P",
+              "currencyConversionModeId" : "H",
+              "currencyId" : "INR",
+              // "asOfDate": '12/31/21'
+            }
+          }
+        })
       }
     }
 
@@ -577,112 +872,6 @@ export class CiqSpService {
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
               "periodType":"IQ_CV"
-            }
-          }
-        })
-      }
-    }
-
-    async createBetaStructure(data){
-      return {
-        "inputRequests":data.map((elements)=>{
-          return {
-            "function":"GDSP",
-            "mnemonic":`${MNEMONIC_ENUMS.IQ_CUSTOM_BETA}`,
-            "identifier":`IQ${elements.COMPANYID}`,
-            "properties":{
-              "periodType":"IQ_CV"
-            }
-          }
-        })
-      }
-    }
-
-    async createPayloadStructure(data){
-      const payloadStruc = [...await this.calculateDebtInCurrentLiabilites(data), ...await this.calculateLongTermDebt(data), ...await this.calculateTotalBookValueOfPreferred(data), ...await this.calculatePricePerShare(data), ...await this.calculateFullyDilutedWeightedAverage(data)];
-      return {inputRequests:payloadStruc};
-    }
-
-    async calculateDebtInCurrentLiabilites(data:any){
-      const iqCurrentPortDetails = await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_CURRENT_PORT);
-      const iqStDebtDetails = await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_ST_DEBT);
-      const iqFinDivDebtCurrentDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_CURRENT);
-      const iqCurrentPortionLeaseLiabilitiesDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_CURRENT_PORTION_LEASE_LIABILITIES);
-      return [...iqCurrentPortDetails.data, ...iqStDebtDetails.data, ...iqFinDivDebtCurrentDetails.data, ...iqCurrentPortionLeaseLiabilitiesDetails.data]
-    }
-
-    async calculateLongTermDebt(data:any){
-      const iqLtDebtDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_LT_DEBT);
-      const iqCapitalLeaseDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_CAPITAL_LEASES);
-      const iqFinDivDebtLtDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_FIN_DIV_DEBT_LT);
-      const iqLtPortionLeaseLiabilitiesDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_LT_PORTION_LEASE_LIABILITIES);
-      return [...iqLtDebtDetails.data, ...iqCapitalLeaseDetails.data, ...iqFinDivDebtLtDetails.data, ...iqLtPortionLeaseLiabilitiesDetails.data]
-    }
-
-    async calculateTotalBookValueOfPreferred(data:any){
-      const iqPrefEquityDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_PREF_EQUITY);
-      return iqPrefEquityDetails.data;
-    }
-
-    async calculateFullyDilutedWeightedAverage(data:any){
-      const iqDilutedWeightageDetails = await this.iqCreateStructure(data, MNEMONIC_ENUMS.IQ_DILUT_WEIGHT);
-      return iqDilutedWeightageDetails.data;
-    }
-    async calculatePricePerShare(data:any){
-      const iqLastSalePriceDetails =  await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_LASTSALEPRICE);
-      return iqLastSalePriceDetails.data;
-    }
-
-    async iqCreateStructure(data,mnemonic){
-      if(mnemonic === MNEMONIC_ENUMS.IQ_DILUT_WEIGHT)
-        return {
-          "data":data.map((elements)=>{
-            return {
-              "function":"GDSP",
-              "mnemonic":`${MNEMONIC_ENUMS.IQ_DILUT_WEIGHT}`,
-              "identifier":`IQ${elements.COMPANYID}`,
-              "properties":{
-                "periodType":"IQ_FQ",
-                "restatementTypeId":"LFR",
-                "asOfDate": '12/31/21',
-                "currencyId":"INR",
-                "filingMode" : "P",
-                "consolidatedFlag":"CON",
-                "currencyConversionModeId" : "H",
-              }
-            }
-          })
-        }
-
-      if(mnemonic === MNEMONIC_ENUMS.IQ_LASTSALEPRICE)
-        return {
-          "data":data.map((elements)=>{
-            return {
-              "function":"GDSP",
-              "mnemonic":`${MNEMONIC_ENUMS.IQ_LASTSALEPRICE}`,
-              "identifier":`IQ${elements.COMPANYID}`,
-              "properties":{
-                "currencyConversionModeId" : "H",
-                "currencyId" : "INR",
-                // "asOfDate": '12/31/21'
-              }
-            }
-          })
-        }
-
-      return {
-        "data":data.map((elements)=>{
-          return {
-            "function":"GDSP",
-            "mnemonic":`${mnemonic}`,
-            "identifier":`IQ${elements.COMPANYID}`,
-            "properties":{
-              "periodType":"IQ_LTM",
-              "restatementTypeId":"LFR",
-              "filingMode" : "P",
-              "currencyConversionModeId" : "H",
-              "currencyId" : "INR",
-              // "asOfDate": '12/31/21'
             }
           }
         })
