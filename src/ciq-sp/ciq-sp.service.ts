@@ -456,7 +456,8 @@ export class CiqSpService {
             status: false,
           })
 
-        const taxRate = data.taxRate?.includes('%') ? parseFloat(data.taxRate.replace("%", "")) : data.taxRate;
+        const taxRate = parseFloat(data.taxRate?.replace("%", "")) ?? parseFloat(data.taxRate);
+        
         const headers = {
           'Content-Type': 'application/json'
         }
