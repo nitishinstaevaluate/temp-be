@@ -98,6 +98,11 @@ export class ElevenUaDTO {
 
     @Expose()
     @IsNotEmpty()
+    @IsNumber()
+    totalInvestmentSharesAndSecurities:number;
+
+    @Expose()
+    @IsNotEmpty()
     @IsNumber() 
     reserveAndSurplus:number;
 
