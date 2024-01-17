@@ -52,14 +52,14 @@ export class ElevenUaService {
                 const currentInvestmentAndSecurities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.currentInvestmentSharesAndSecuritesRow}`));
                 const nonCurrentInvestmentAndSecurities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.nonCurrentInvestmenInSharesAndSecuritesRow}`));
 
-                const bookValueOfAllAssets = totalAssets - immovableProperty - jewellery - artisticWork - sharesAndSecurities - currentInvestmentAndSecurities - nonCurrentInvestmentAndSecurities;
+                const bookValueOfAllAssets = (totalAssets - immovableProperty - jewellery - artisticWork - sharesAndSecurities - currentInvestmentAndSecurities - nonCurrentInvestmentAndSecurities).toFixed(2);
 
                 // calculate income tax refund claim b20+b21+b38
                 const advanceTax = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.advanceTaxRow}`));
                 const incomeTaxRefund = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.incomeTaxRefundRow}`));
                 const advanceTaxPaid = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.advanceTaxPaidRow}`));
 
-                const totalIncomeTaxPaid = advanceTax + incomeTaxRefund + advanceTaxPaid;
+                const totalIncomeTaxPaid = (advanceTax + incomeTaxRefund + advanceTaxPaid).toFixed(2);
             
                 // calculate unamortised amount of deffered expenditure b39 + b40 + b41+ b22
                 const preliminaryExpense = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.preliminaryExpenseRow}`));
@@ -67,27 +67,31 @@ export class ElevenUaService {
                 const otherMiscllneousExpense = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.otherMiscllneousExpenseRow}`));
                 const deferredTaxAssets = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.defferedTaxRow}`));
 
-                const unamortisedAmountOfDeferredExpenditure = preliminaryExpense + preOperativeExpense + otherMiscllneousExpense + deferredTaxAssets;
+                const unamortisedAmountOfDeferredExpenditure = (preliminaryExpense + preOperativeExpense + otherMiscllneousExpense + deferredTaxAssets).toFixed(2);
 
                 // calculate book value of liabilities
-                const bookValueOfLiabilities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.totalAssetsRow}`));
+                const bookValueOfLiabilities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.totalAssetsRow}`)).toFixed(2);
 
                 // calculate paid-up capital/share capital
-                const paidUpCapital = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.shareCapitalRow}`));
+                const paidUpCapital = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.shareCapitalRow}`)).toFixed(2);
 
                 // calculate amount set apart for payment of dividends
-                const paymentDividends = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.paymentDividendsRow}`));
+                const paymentDividends = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.paymentDividendsRow}`)).toFixed(2);
 
                 // calculate reserve and surplus
-                const reserveAndSurplus = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.reserveAndSurplusRow}`));
+                const reserveAndSurplus = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.reserveAndSurplusRow}`)).toFixed(2);
 
                 // calculate amount representing provision for taxation
-                const provisionForTaxation = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.provisionForTaxationRow}`));
+                const provisionForTaxation = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.provisionForTaxationRow}`)).toFixed(2);
+
+                // calculate current-investment (shares and securities) and non-current-investment (shares and securities)
+                const totalInvestmentSharesAndSecurities = (currentInvestmentAndSecurities + nonCurrentInvestmentAndSecurities).toFixed(2);
 
                 const createPayload = {
                     bookValueOfAllAssets,
                     totalIncomeTaxPaid,
                     unamortisedAmountOfDeferredExpenditure,
+                    totalInvestmentSharesAndSecurities,
                     bookValueOfLiabilities,
                     paidUpCapital,
                     paymentDividends,
