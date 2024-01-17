@@ -1855,6 +1855,8 @@ export const REPORT_LINE_ITEM = ['PAT','Depn. and Amortn.','Other Non Cash items
 
 export const BETA_SUB_TYPE = ['meanBeta', 'medianBeta'];
 
+export const BETA_TYPE = ['levered', 'unlevered'];
+
 export const MNEMONIC_ENUMS = {
   IQ_CUSTOM_BETA: 'IQ_CUSTOM_BETA',
   IQ_PBV: 'IQ_PBV',
@@ -1890,4 +1892,5 @@ export const MNEMONICS_ARRAY = [
   MNEMONIC_ENUMS.IQ_PREF_EQUITY,
   MNEMONIC_ENUMS.IQ_DILUT_WEIGHT,
   MNEMONIC_ENUMS.IQ_LASTSALEPRICE,
+  MNEMONIC_ENUMS.IQ_CUSTOM_BETA
 ];

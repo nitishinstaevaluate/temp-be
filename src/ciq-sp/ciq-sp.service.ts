@@ -10,8 +10,7 @@ import { ProcessStatusManagerService } from 'src/processStatusManager/process-st
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CAPITALIQ_MARKET_BETA } from 'src/interfaces/api-endpoints.prod';
 import { convertToNumberOrOne, convertToNumberOrZero } from 'src/excelFileServices/common.methods';
-import { throwError } from 'rxjs';
-import { BETA_SUB_TYPE, MNEMONICS_ARRAY, MNEMONIC_ENUMS } from 'src/constants/constants';
+import { BETA_SUB_TYPE, BETA_TYPE, MNEMONICS_ARRAY, MNEMONIC_ENUMS } from 'src/constants/constants';
 require('dotenv').config();
 
 @Injectable()
@@ -444,19 +443,15 @@ export class CiqSpService {
     async calculateBetaAggregate(data:any){
       try{
 
-        if(!data.industryAggregateList)
+        if(!data.industryAggregateList || !data.taxRate || !data.betaType || !data.betaSubType)
           throw new NotFoundException({
-            message: 'Industry List not found',
+            message: 'Incorrect input for beta calculation',
             status: false,
           })
 
-        if(!data.taxRate)
-          throw new NotFoundException({
-            message: 'Tax rate not found',
-            status: false,
-          })
-
-        const taxRate = parseFloat(data.taxRate?.replace("%", "")) ?? parseFloat(data.taxRate);
+        const taxRate = parseFloat(data.taxRate?.replace("%", ""))/100 ?? parseFloat(data.taxRate)/100;
+        const betaType = data.betaType;
+        const betaSubType = data.betaSubType;
         
         const headers = {
           'Content-Type': 'application/json'
@@ -467,59 +462,16 @@ export class CiqSpService {
           password: process.env.CAPITALIQ_API_PASSWORD
         }
 
-        const capBeta = await axiosInstance.post(CAPITALIQ_MARKET_BETA, await this.createBetaStructure(data.industryAggregateList), {headers, auth});
+        const createPayloadStructure = await this.createPayloadStructure(data.industryAggregateList)
+        const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET_BETA, createPayloadStructure, {headers, auth});
+        const betaData = await this.calculateCapitalIqBeta(axiosBetaResponse, taxRate, betaSubType, betaType);
 
-        let total, totalBeta = 0, medianBetaArray = [];
-
-        if(capBeta.data){
-          if(data.betaSubType === BETA_SUB_TYPE[0]){
-            let counter = 0;
-            capBeta.data?.GDSSDKResponse.map((axiosBetaResponse=>{  
-              if(!axiosBetaResponse.ErrMsg){
-                axiosBetaResponse?.Rows.map((innerRows)=>{
-                  if(!isNaN(parseInt(innerRows.Row[0])) && !`${innerRows.Row[0]}`.includes('-') && innerRows.Row[0] !== "0"){
-                    counter++
-                    totalBeta += convertToNumberOrZero(innerRows.Row[0])
-                  }
-                })
-              }
-            }))
-            total = totalBeta/counter;
-          }
-          else{
-            capBeta.data?.GDSSDKResponse.map((axiosBetaResponse=>{  
-              if(!axiosBetaResponse.ErrMsg){
-                axiosBetaResponse?.Rows.map((innerRows)=>{
-                  if(!isNaN(parseInt(innerRows.Row[0])) && !`${innerRows.Row[0]}`.includes('-') && innerRows.Row[0] !== "0"){
-                    medianBetaArray.push(parseFloat(innerRows.Row[0]))
-                  }
-                })
-              }
-            }))
-
-            const sortedData = [...medianBetaArray].sort((a, b) => a - b);
-            const middleIndex = Math.floor(sortedData.length / 2);
-            
-            if (sortedData.length % 2 === 0) {
-              total =  (sortedData[middleIndex - 1] + sortedData[middleIndex]) / 2;
-            } 
-            else {
-              total =  sortedData[middleIndex];
-            }
-          }
-
-          // Beta calculation based on different mnemonics
-          const createPayloadStructure = await this.createPayloadStructure(data.industryAggregateList)
-          const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET_BETA, createPayloadStructure, {headers, auth});
-          const betaData = await this.calculateCapitalIqBeta(axiosBetaResponse, taxRate);
-
-          return {
-            data:axiosBetaResponse.data,
-            msg:"beta calculation success",
-            status:true,
-            total,
-            betaSubType:data.betaSubType
-          }
+        return {
+          data:axiosBetaResponse.data,
+          msg:"beta calculation success",
+          status:true,
+          total:betaData,
+          betaSubType:data.betaSubType
         }
       }
       catch(error){
@@ -532,7 +484,14 @@ export class CiqSpService {
     }
 
     async createPayloadStructure(data){
-      const payloadStruc = [...await this.calculateDebtInCurrentLiabilites(data), ...await this.calculateLongTermDebt(data), ...await this.calculateTotalBookValueOfPreferred(data), ...await this.calculatePricePerShare(data), ...await this.calculateFullyDilutedWeightedAverage(data)];
+      const payloadStruc = [
+        ...await this.calculateDebtInCurrentLiabilites(data), 
+        ...await this.calculateLongTermDebt(data), 
+        ...await this.calculateTotalBookValueOfPreferred(data), 
+        ...await this.calculatePricePerShare(data), 
+        ...await this.calculateFullyDilutedWeightedAverage(data), 
+        ...await this.calculateBetaValue(data)
+      ];
       return {inputRequests:payloadStruc};
     }
 
@@ -567,22 +526,12 @@ export class CiqSpService {
       return iqLastSalePriceDetails.data;
     }
 
-    async createBetaStructure(data){
-      return {
-        "inputRequests":data.map((elements)=>{
-          return {
-            "function":"GDSP",
-            "mnemonic":`${MNEMONIC_ENUMS.IQ_CUSTOM_BETA}`,
-            "identifier":`IQ${elements.COMPANYID}`,
-            "properties":{
-              "periodType":"IQ_CV"
-            }
-          }
-        })
-      }
+    async calculateBetaValue(data:any){
+      const iqBetaDetails =  await this.iqCreateStructure(data,MNEMONIC_ENUMS.IQ_CUSTOM_BETA);
+      return iqBetaDetails.data;
     }
 
-    async calculateCapitalIqBeta(axiosBetaResponse, taxRate) {
+    async calculateCapitalIqBeta(axiosBetaResponse, taxRate, betSubType, betaType) {
       try {
         if (!axiosBetaResponse.data) {
           throw new NotFoundException({
@@ -613,15 +562,25 @@ export class CiqSpService {
         }
         
         const getDebtToCapitalAndMarketValue = await  this.calculateDebtToCapitalAndMarketValue(result, maxLength);
-
-        const unleveredBeta = await this.calculateUnleveredBeta(getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, taxRate, maxLength);
-        console.log(unleveredBeta,"unlevered beta")
-
-        const releveredBeta = await this.calculateReleveredBeta(unleveredBeta, getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, taxRate, maxLength);
-        console.log(releveredBeta,"relevered beta")
         
-        return result;
-      } catch (error) {
+        const calculateAdjstdBetaByMarshallBlume = await this.calculateAdjustedBeta(result,maxLength);
+
+        let calculateTotalAdjustedBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital;
+
+        calculateTotalAdjustedBeta =  await this.calculateBetaMetric(calculateAdjstdBetaByMarshallBlume, betSubType, maxLength);
+        calculateTotalDebtToCapital = await this.calculateBetaMetric(getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, betSubType, maxLength);
+        calculateTotalEquityToCapital = await this.calculateBetaMetric(getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital,  betSubType, maxLength);
+
+        if(betaType === BETA_TYPE[0]){
+          const unleveredBeta = await this.calculateUnleveredBeta(calculateTotalAdjustedBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength);
+          return await this.calculateReleveredBeta(unleveredBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength);
+        }
+        else{
+          return await this.calculateUnleveredBeta(calculateTotalAdjustedBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength);
+        }
+        
+      } 
+      catch (error) {
         console.error(error);
         return {
           error: error,
@@ -631,17 +590,90 @@ export class CiqSpService {
       }
     }
 
-    async calculateUnleveredBeta(debtToCapital, equityToCapital, taxRate, maxLength){
+    async calculateBetaMetric(data, method, maxLength) {
       try{
-        // Be4 = M12/(1+(1-L12)*J12/K12)
-        const tempLeveredBetaArray = [0.80, 1.82, 1.24, 1.46, 1.51, 1.44, 0.84, 0.96, 1.23, 0.543, 0.234, 1.23]; // array length should be equal to the total number of companies
-        let unleveredBetaArray = []
+        const result = (method === BETA_SUB_TYPE[0])
+        ? await this.calculateMean(data, maxLength)
+        : await this.calculateMedian(data);
+    
+        return result;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"beta median/mean calculation failed"
+        }
+      }
+    };
+
+    async calculateMean(data, maxLength){
+      try{
+        let total = 0
+        for await (const items of data){
+          total += convertToNumberOrZero(items);
+        }
+        return total/maxLength;
+      }
+      catch(error){
+        return {
+          error:error,
+          msg:"mean beta calculation failed",
+          status:false
+        }
+      }
+    }
+
+    async calculateMedian(data){
+      try{
+        let median;
+        const sortedData = [...data].sort((a, b) => a - b);
+        const middleIndex = Math.floor(sortedData.length / 2);
+        
+        if (sortedData.length % 2 === 0) {
+          median =  (sortedData[middleIndex - 1] + sortedData[middleIndex]) / 2;
+        } 
+        else {
+          median =  sortedData[middleIndex];
+        }
+        return median;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Median beta calculation failed"
+        }
+      }
+    }
+
+    async calculateAdjustedBeta(result,maxLength){
+      try{
+        // Adjusted beta with Marshall Blume formula ( Ba = 0.371+0.635*Bh)
+        let adjustedBetaArray = [];
+
         for (let i = 0; i < maxLength; i++){
-          unleveredBetaArray.push(
-            tempLeveredBetaArray[i] / (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i])
+          adjustedBetaArray.push(
+            0.371 + 0.635 * result[MNEMONIC_ENUMS.IQ_CUSTOM_BETA][i]
           )
         }
-        return unleveredBetaArray;
+        return adjustedBetaArray;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Adjusted beta calculation failed"
+        }
+      }
+    }
+    async calculateUnleveredBeta(adjustedBeta, debtToCapital, equityToCapital, taxRate, maxLength){
+      try{
+        // Be4 = M12/(1+(1-L12)*J12/K12)
+        
+        let unleveredBeta;
+        unleveredBeta =  adjustedBeta / (1 + (1 - taxRate) * debtToCapital/equityToCapital)
+        return unleveredBeta;
       }
       catch(error){
         return {
@@ -655,13 +687,10 @@ export class CiqSpService {
     async calculateReleveredBeta(betaUnleveredArray,debtToCapital, equityToCapital, taxRate, maxLength){
       try{
         // Relevered Equity Beta = Be4 * (1 + (1-Tax Rate) * Debt to Equity)
-        let releveredBetaArray = []
-        for(let i = 0; i < maxLength; i++){
-          releveredBetaArray.push(
-            betaUnleveredArray[i] * (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i])
-          )
-        }
-        return releveredBetaArray;
+        
+        let releveredBeta;
+        releveredBeta =  betaUnleveredArray * (1 + (1 - taxRate) * debtToCapital/equityToCapital)
+        return releveredBeta;
       }
       catch(error){
         return {
@@ -782,6 +811,24 @@ export class CiqSpService {
           })
         }
 
+      if(mnemonic === MNEMONIC_ENUMS.IQ_CUSTOM_BETA)
+        return {
+          "data":data.map((elements)=>{
+            return {
+              "function":"GDSP",
+              "mnemonic":`${MNEMONIC_ENUMS.IQ_CUSTOM_BETA}`,
+              "identifier":`IQ${elements.COMPANYID}`,
+              "properties":{
+                "asOfDate": `${this.getOneDayBeforeDate()}`,
+                "startDate": "01/01/2018",
+            //   "secondaryIdentifier": "^SPX",
+                "endDate": "12/31/2023",
+                "frequency": "Monthly"
+              }
+            }
+          })
+        }
+
       if(mnemonic === MNEMONIC_ENUMS.IQ_LASTSALEPRICE)
         return {
           "data":data.map((elements)=>{
@@ -798,7 +845,6 @@ export class CiqSpService {
           })
         }
 
-        // periodType, asOfDate, currencyId, restatementTypeId, filingMode, consolidatedFlag, currencyConversionModeId
 
       return {
         "data":data.map((elements)=>{
@@ -876,6 +922,24 @@ export class CiqSpService {
             }
           }
         })
+      }
+    }
+
+    getOneDayBeforeDate(){
+      try{
+        const currentDate = new Date();
+        const oneDayBefore = new Date(currentDate);
+        oneDayBefore.setDate(currentDate.getDate() - 1);
+        const formattedDate = `${(oneDayBefore.getMonth() + 1).toString().padStart(2, '0')}/${oneDayBefore.getDate().toString().padStart(2, '0')}/${oneDayBefore.getFullYear()}`;
+
+        return formattedDate
+      }
+      catch(error){
+        return{
+          error:error,
+          msg:"Date not found",
+          status:false
+        }
       }
     }
 }
