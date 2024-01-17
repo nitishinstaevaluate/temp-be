@@ -10,7 +10,6 @@ export class UtilController {
     @UseGuards(AuthGuard('jwt'))
     @Get('get-word-list/search')
     async getWordList(@Query('word') word:string) {
-        console.log(word,"word")
         return await this.utilService.getWordList(word);
     }
 }
