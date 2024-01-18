@@ -392,7 +392,8 @@ export class ReportService {
 
     async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
-          headless:"new"
+          headless:"new",
+          executablePath: process.env.PUPPETEERPATH
         });
         const page = await browser.newPage();
 
@@ -421,7 +422,8 @@ export class ReportService {
       
     async generateSebiReport(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
-          headless:"new"
+          headless:"new",
+          executablePath: process.env.PUPPETEERPATH
         });
         const page = await browser.newPage();
 
@@ -467,7 +469,8 @@ export class ReportService {
       }
     async generateTransferOfSharesReport(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
-          headless:"new"
+          headless:"new",
+          executablePath: process.env.PUPPETEERPATH
         });
         const page = await browser.newPage();
 
