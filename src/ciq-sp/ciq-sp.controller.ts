@@ -67,4 +67,11 @@ export class CiqSpController {
   async calculateSpBetaAggregate(@Body() payload: any) {
     return this.capitalIqAndSPService.calculateBetaAggregate(payload)
   }
+
+  // https://localhost:3000/ciq-sp/calculate-sp-companies-mean-median
+  @UseGuards(AuthGuard('jwt'))
+  @Post('calculate-sp-companies-mean-median')
+  async calculateSPCompaniesMeanMedianRatio(@Body() payload: any) {
+    return this.capitalIqAndSPService.calculateCompaniesMeanMedianRatio(payload)
+  }
 }

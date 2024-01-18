@@ -8,9 +8,9 @@ import { ciqcompanystatustypeDocument, ciqcompanytypeDocument, ciqindustryhierar
 import { RedisService } from 'src/middleware/redisConfig';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { axiosInstance } from 'src/middleware/axiosConfig';
-import { CAPITALIQ_MARKET_BETA } from 'src/interfaces/api-endpoints.prod';
+import { CAPITALIQ_MARKET } from 'src/interfaces/api-endpoints.prod';
 import { convertToNumberOrOne, convertToNumberOrZero } from 'src/excelFileServices/common.methods';
-import { BETA_SUB_TYPE, BETA_TYPE, MNEMONICS_ARRAY, MNEMONIC_ENUMS } from 'src/constants/constants';
+import { BETA_SUB_TYPE, BETA_TYPE, MNEMONICS_ARRAY, MNEMONICS_ARRAY_2, MNEMONIC_ENUMS, RATIO_TYPE } from 'src/constants/constants';
 require('dotenv').config();
 
 @Injectable()
@@ -440,6 +440,7 @@ export class CiqSpService {
       }
     }
 
+    //#region beta calculation starts
     async calculateBetaAggregate(data:any){
       try{
 
@@ -463,14 +464,15 @@ export class CiqSpService {
         }
 
         const createPayloadStructure = await this.createPayloadStructure(data.industryAggregateList)
-        const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET_BETA, createPayloadStructure, {headers, auth});
+        const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
         const betaData = await this.calculateCapitalIqBeta(axiosBetaResponse, taxRate, betaSubType, betaType);
 
         return {
           data:axiosBetaResponse.data,
           msg:"beta calculation success",
           status:true,
-          total:betaData,
+          total:betaData.beta,
+          deRatio:betaData.deRatio,
           betaSubType:data.betaSubType
         }
       }
@@ -571,12 +573,14 @@ export class CiqSpService {
         calculateTotalDebtToCapital = await this.calculateBetaMetric(getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, betSubType, maxLength);
         calculateTotalEquityToCapital = await this.calculateBetaMetric(getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital,  betSubType, maxLength);
 
+        const deRatio = calculateTotalDebtToCapital/calculateTotalEquityToCapital ?? 1;
+
         if(betaType === BETA_TYPE[0]){
           const unleveredBeta = await this.calculateUnleveredBeta(calculateTotalAdjustedBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength);
-          return await this.calculateReleveredBeta(unleveredBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength);
+          return {beta: await this.calculateReleveredBeta(unleveredBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength), deRatio};
         }
         else{
-          return await this.calculateUnleveredBeta(calculateTotalAdjustedBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength);
+          return {beta: await this.calculateUnleveredBeta(calculateTotalAdjustedBeta, calculateTotalDebtToCapital, calculateTotalEquityToCapital, taxRate, maxLength), deRatio};
         }
         
       } 
@@ -606,46 +610,6 @@ export class CiqSpService {
         }
       }
     };
-
-    async calculateMean(data, maxLength){
-      try{
-        let total = 0
-        for await (const items of data){
-          total += convertToNumberOrZero(items);
-        }
-        return total/maxLength;
-      }
-      catch(error){
-        return {
-          error:error,
-          msg:"mean beta calculation failed",
-          status:false
-        }
-      }
-    }
-
-    async calculateMedian(data){
-      try{
-        let median;
-        const sortedData = [...data].sort((a, b) => a - b);
-        const middleIndex = Math.floor(sortedData.length / 2);
-        
-        if (sortedData.length % 2 === 0) {
-          median =  (sortedData[middleIndex - 1] + sortedData[middleIndex]) / 2;
-        } 
-        else {
-          median =  sortedData[middleIndex];
-        }
-        return median;
-      }
-      catch(error){
-        return {
-          error:error,
-          status:false,
-          msg:"Median beta calculation failed"
-        }
-      }
-    }
 
     async calculateAdjustedBeta(result,maxLength){
       try{
@@ -771,6 +735,181 @@ export class CiqSpService {
         }
       }
     }
+    //#endregion beta calculation ends
+
+    async calculateCompaniesMeanMedianRatio(data){
+      try{
+        if(!data.industryAggregateList)
+          throw new NotFoundException({
+            message: 'Industry list for Pe Ratio calculation not found',
+            status: false,
+          })
+
+        const ratioType = data.ratioType;
+        const headers = {
+          'Content-Type': 'application/json'
+        }
+
+        const auth = {
+          username: process.env.CAPITALIQ_API_USERNAME,
+          password: process.env.CAPITALIQ_API_PASSWORD
+        }
+
+        const createPayloadStructure = await this.createRatioWisePayloadStructure(data.industryAggregateList);
+        const axiosResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
+        const ratioResponse = await this.calculateMeanMedian(axiosResponse,data.industryAggregateList, ratioType);
+
+        return {
+          data:ratioResponse,
+          msg:"mean and median calculation success",
+          status:true,
+          ratioType:ratioType
+        }
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:'mean and median calculation failed'
+        }
+      }
+    }
+
+    async createRatioWisePayloadStructure(data){
+      try{
+        const concatPayload = [
+          ...(await this.createPriceToBookValStructure(data)).data, 
+          ...(await this.createPriceToSalesValStructure(data)).data, 
+          ...(await this.createEbitdaStructure(data)).data, 
+          ...(await this.createPriceToEquityStructure(data)).data
+        ] 
+        return {inputRequests:concatPayload};
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Payload creation failed"
+        }
+      }
+    }
+
+    async calculateMeanMedian(axiosResponse,inputData,type){
+      try{
+        if (!axiosResponse.data) {
+          throw new NotFoundException({
+            message: 'Axios response not found',
+            status: false,
+          });
+        }
+
+        const result = {};
+        let maxLength = 0
+        for await (const details of axiosResponse.data.GDSSDKResponse) {
+          if (!details.ErrMsg) {
+            for await (const mnemonic of MNEMONICS_ARRAY_2) {
+              if (details.Headers.includes(mnemonic)) {
+                result[mnemonic] = result[mnemonic] || [];
+                result[mnemonic].push(...await this.extractValues(details, mnemonic));
+
+                const currentLength = result[mnemonic].length;
+                if (currentLength > maxLength) {
+                  maxLength = currentLength;
+                }
+              }
+            }
+          }
+          else{
+            result[details.Mnemonic] = [];
+          }
+        }
+        const serialiseRatio:any =await this.searializeRatioList(result, inputData, maxLength);
+
+        let meanRatio = {}, medianRatio = {};
+        const calculatePeRatio:any = await this.calculateRatioMetric(result[MNEMONIC_ENUMS.IQ_PE_NORMALIZED], type, maxLength);
+        const calculatePbvRatio:any = await this.calculateRatioMetric(result[MNEMONIC_ENUMS.IQ_PBV], type, maxLength);
+        const calculateEbitdaRatio:any = await this.calculateRatioMetric(result[MNEMONIC_ENUMS.IQ_TEV_EBITDA], type, maxLength);
+        const calculatePsRatio:any = await this.calculateRatioMetric(result[MNEMONIC_ENUMS.IQ_PRICE_SALES], type, maxLength);
+        
+        if(type === RATIO_TYPE[0]){
+          meanRatio = {
+            company: "Average",
+            peRatio: calculatePeRatio.mean,
+            pbRatio: calculatePbvRatio.mean, 
+            ebitda:  calculateEbitdaRatio.mean, 
+            sales: calculatePsRatio.mean
+          }
+          medianRatio = {
+            company: "Median",
+            peRatio: calculatePeRatio.median, 
+            pbRatio: calculatePbvRatio.median, 
+            ebitda: calculateEbitdaRatio.median, 
+            sales: calculatePsRatio.median
+          }
+          return [...serialiseRatio,meanRatio, medianRatio]
+        }
+        else{
+          meanRatio = {
+            company: "Average",
+            peRatio: calculatePeRatio.mean,
+            pbRatio: calculatePbvRatio.mean, 
+            ebitda:  calculateEbitdaRatio.mean, 
+            sales: calculatePsRatio.mean
+          }
+          return [...serialiseRatio,meanRatio]
+        }
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"mean and median computaion failed"
+        }
+      }
+    }
+
+    async searializeRatioList(data, inputList, maxLength){
+      try{
+        let array = [];
+        for(let i = 0; i < maxLength; i++){
+          array.push(
+            {
+              company: inputList[i].COMPANYNAME,
+              companyId: inputList[i].COMPANYID,
+              peRatio: data[MNEMONIC_ENUMS.IQ_PE_NORMALIZED][i],
+              pbRatio: data[MNEMONIC_ENUMS.IQ_PBV][i],
+              sales: data[MNEMONIC_ENUMS.IQ_PRICE_SALES][i],
+              ebitda: data[MNEMONIC_ENUMS.IQ_TEV_EBITDA][i],
+            }
+          )
+        }
+        return array;
+      }
+      catch(error){
+        return{
+          error:error,
+          status:false,
+          msg:"Serialisation failed"
+        }
+      }
+    }
+
+    async calculateRatioMetric(data, method, maxLength){
+      try{
+        const result = (method === RATIO_TYPE[0])
+        ? {mean: await this.calculateMean(data, maxLength), median: await this.calculateMedian(data)}
+        : {mean: await this.calculateMean(data, maxLength)};
+    
+        return result;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"beta median/mean calculation failed"
+        }
+      }
+    }
 
     async extractValues(betaDetails: any, mnemonic: any) {
       try {
@@ -865,15 +1004,15 @@ export class CiqSpService {
       }
     }
 
-    async createPriceToBookValStructure(data){
+    async createPriceToBookValStructure(data:any){
       return {
-        "inputRequests":data.map((elements)=>{
+        "data":data.map((elements)=>{
           return {
             "function":"GDSP",
             "mnemonic":`${MNEMONIC_ENUMS.IQ_PBV}`,
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
-              "periodType":"IQ_CV"
+              "periodType":"IQ_CY"
             }
           }
         })
@@ -882,13 +1021,13 @@ export class CiqSpService {
 
     async createPriceToSalesValStructure(data){
       return {
-        "inputRequests":data.map((elements)=>{
+        "data":data.map((elements)=>{
           return {
             "function":"GDSP",
             "mnemonic":`${MNEMONIC_ENUMS.IQ_PRICE_SALES}`,
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
-              "periodType":"IQ_CV"
+              "periodType":"IQ_CY"
             }
           }
         })
@@ -897,13 +1036,13 @@ export class CiqSpService {
 
     async createEbitdaStructure(data){
       return {
-        "inputRequests":data.map((elements)=>{
+        "data":data.map((elements)=>{
           return {
             "function":"GDSP",
             "mnemonic":`${MNEMONIC_ENUMS.IQ_TEV_EBITDA}`,
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
-              "periodType":"IQ_CV"
+              "periodType":"IQ_CY"
             }
           }
         })
@@ -912,16 +1051,56 @@ export class CiqSpService {
     
     async createPriceToEquityStructure(data){
       return {
-        "inputRequests":data.map((elements)=>{
+        "data":data.map((elements)=>{
           return {
             "function":"GDSP",
-            "mnemonic":`${MNEMONIC_ENUMS.IQ_PE_EXCL_FWD_REUT}`,
+            "mnemonic":`${MNEMONIC_ENUMS.IQ_PE_NORMALIZED}`,
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
-              "periodType":"IQ_CV"
+              "periodType":"IQ_CY"
             }
           }
         })
+      }
+    }
+
+    async calculateMean(data, maxLength){
+      try{
+        let total = 0
+        for await (const items of data){
+          total += convertToNumberOrZero(items);
+        }
+        return total/maxLength;
+      }
+      catch(error){
+        return {
+          error:error,
+          msg:"mean calculation failed",
+          status:false
+        }
+      }
+    }
+
+    async calculateMedian(data){
+      try{
+        let median;
+        const sortedData = [...data].sort((a, b) => convertToNumberOrZero(a) - convertToNumberOrZero(b));
+        const middleIndex = Math.floor(sortedData.length / 2);
+        
+        if (sortedData.length % 2 === 0) {
+          median =  (sortedData[middleIndex - 1] + sortedData[middleIndex]) / 2;
+        } 
+        else {
+          median =  sortedData[middleIndex];
+        }
+        return median;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Median calculation failed"
+        }
       }
     }
 
