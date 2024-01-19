@@ -274,7 +274,7 @@ export class CiqSpService {
 
       async fetchSPCompanyStatusType(){
         try{
-          const companyStatusTypeData = await this.ciqcompanystatustypemodel.find().exec();
+          const companyStatusTypeData = await this.ciqcompanystatustypemodel.find({ 'isactive': true }).exec();
           return {
             data:companyStatusTypeData,
             status:true,
@@ -292,7 +292,7 @@ export class CiqSpService {
 
       async fetchSPCompanyType(){
         try{
-          const companyTypeData = await this.ciqcompanytypemodel.find().exec();
+          const companyTypeData = await this.ciqcompanytypemodel.find({ 'isactive': true }).exec();
           return {
             data:companyTypeData,
             status:true,
