@@ -83,4 +83,17 @@ export class AuthenticationService {
           msg:"Extraction successful"
         };
       };
+
+      async extractBearer(req){
+          const token = req.headers.authorization;
+          if (!token || !token.startsWith('Bearer ')) {
+            return { status:false, msg: 'Unauthorized' };
+          }
+
+          return {
+            token,
+            status:true,
+            msg:"token found"
+          }
+      }
 }

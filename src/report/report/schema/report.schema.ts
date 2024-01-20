@@ -54,7 +54,10 @@ export class Report {
     companyAddress:string;
     
     @Prop({ type:String,default:'' }) 
-    fileName:string; 
+    fileName:string;
+
+    @Prop({ type:String,default:'' }) 
+    processStateId:string;
 }
 
 export type ReportDocument = Report & Document;

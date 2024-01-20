@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CiqSpService } from './ciq-sp.service';
 import { AuthGuard } from '@nestjs/passport';
+import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto } from './dto/ciq-sp.dto';
 
 @Controller('ciq-sp')
 export class CiqSpController {
@@ -64,14 +65,21 @@ export class CiqSpController {
   // https://localhost:3000/ciq-sp/calculate-sp-beta-aggregate
   @UseGuards(AuthGuard('jwt'))
   @Post('calculate-sp-beta-aggregate')
-  async calculateSpBetaAggregate(@Body() payload: any) {
+  async calculateSpBetaAggregate(@Body(ValidationPipe) payload: ciqGetMarketBetaDto) {
     return this.capitalIqAndSPService.calculateBetaAggregate(payload)
   }
 
   // https://localhost:3000/ciq-sp/calculate-sp-companies-mean-median
   @UseGuards(AuthGuard('jwt'))
   @Post('calculate-sp-companies-mean-median')
-  async calculateSPCompaniesMeanMedianRatio(@Body() payload: any) {
+  async calculateSPCompaniesMeanMedianRatio(@Body(ValidationPipe) payload: ciqGetCompanyMeanMedianDto) {
     return this.capitalIqAndSPService.calculateCompaniesMeanMedianRatio(payload)
+  }
+
+  // https://localhost:3000/ciq-sp/calculate-sp-financial-data
+  @UseGuards(AuthGuard('jwt'))
+  @Post('calculate-sp-financial-data')
+  async calculateSPFinancialData(@Body(ValidationPipe) payload: ciqGetFinancialDto) {
+    return this.capitalIqAndSPService.calculateFinancialData(payload)
   }
 }

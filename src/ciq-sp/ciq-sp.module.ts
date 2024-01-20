@@ -15,9 +15,12 @@ import { UsersModule } from 'src/users/users.module';
 import { ProcessManagerSchema } from 'src/processStatusManager/schema/process-status-manager.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ValuationSchema } from 'src/valuationProcess/schema/valuation.schema';
+import { CiqSpFinancialService } from './ciq-sp-financial.service';
+import { ciqSpBetaService } from './ciq-sp-beta.service';
+import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.service';
 
 @Module({
-  providers: [CiqSpService,SnowflakeClientServiceService,RedisService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService],
+  providers: [CiqSpService,SnowflakeClientServiceService,RedisService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService],
   controllers: [CiqSpController],
   imports:[MongooseModule.forFeature([
     {name: 'ciqsimpleindustry', schema : ciqsimpleindustrySchema},

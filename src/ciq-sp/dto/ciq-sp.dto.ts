@@ -1,5 +1,5 @@
-import { IsAlpha, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested, isBoolean } from 'class-validator';
-import { Expose,} from 'class-transformer';
+import { IsAlpha, IsArray, IsBoolean, IsDate, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested, ValidationOptions, isBoolean } from 'class-validator';
+import { Expose, Type,} from 'class-transformer';
 
   export class CiqsimpleindustryDto {
     @Expose({name:'_id'})
@@ -79,4 +79,42 @@ import { Expose,} from 'class-transformer';
     @IsString()
     @IsNotEmpty()
     SEGMENTDESCRIPTION: string;
+  }
+
+  export class ciqGetFinancialDto {
+    @IsNotEmpty({ message: 'Valuation date cannot be empty' })
+    @IsString({ message: 'Valuation date should be of format mm/dd/yyyy and must be string' })
+    valuationDate: number;
+
+    @IsArray({ message: 'Industry aggregate list must be an array' })
+    @ValidateNested({ each: true })
+    industryAggregateList: [];
+  }
+
+  export class ciqGetMarketBetaDto {
+    @IsNotEmpty({ message: 'beta sub type cannot be empty' })
+    @IsString({ message: 'beta sub type is required eg.meanBeta,medianBeta' })
+    betaSubType: string;
+
+    @IsNotEmpty({ message: 'beta type cannot be empty' })
+    @IsString({ message: 'beta type is required eg.levered,unlevered' })
+    betaType: string;
+
+    @IsNotEmpty({ message: 'Tax rate cannot be empty' })
+    @IsString({ message: 'tax rate is required' })
+    taxRate: string;
+
+    @IsArray({ message: 'Industry aggregate list must be an array' })
+    @ValidateNested({ each: true })
+    industryAggregateList: [];
+  }
+
+  export class ciqGetCompanyMeanMedianDto {
+    @IsNotEmpty({ message: 'ratio type cannot be empty' })
+    @IsString({ message: 'ratio type is required eg.Company based' })
+    ratioType: string;
+
+    @IsArray({ message: 'Industry aggregate list must be an array' })
+    @ValidateNested({ each: true })
+    industryAggregateList: [];
   }
