@@ -121,6 +121,22 @@ export class HistoricalReturnsService {
       }
     }
   }
+
+  async getHistoricalBSE500Date(date){
+    try{
+      const newAsOnDate = (date/1000 + 24*60*60) * 1000;
+      let valuationDate = new Date(newAsOnDate);
+
+      return await this.historicalBSE500ReturnsModel.findOne({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"historical BSE500 date not found"
+      }
+    }
+  }
 }
 
 // Indian Treasury Yield Service

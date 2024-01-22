@@ -5,6 +5,7 @@ import { XML_FORMAT } from 'src/constants/constants';
 import { transports,format } from 'winston';
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 
 const logDir = './logs';
 if (!fs.existsSync(logDir)) {
@@ -47,11 +48,11 @@ const setupAxiosInterceptor = (axiosInstance: AxiosInstance) => {
         timeZone: 'Asia/Kolkata',
       });
       if (error.response) {
-        logger.error(`[${currentDateIST}] Error Response ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url}`);
+        logger.error(`[${currentDateIST}] Error Response ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
       } else if (error.request) {
-        logger.error(`[${currentDateIST}] Request Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.request}`);
+        logger.error(`[${currentDateIST}] Request Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.request} ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
       } else {
-        logger.error(`[${currentDateIST}] Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.message}`);
+        logger.error(`[${currentDateIST}] Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.message} ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
       }
       return Promise.reject(error);
     }
@@ -65,4 +66,8 @@ const createAxiosInstance = (): AxiosInstance => {
 };
 
 const axiosInstance = createAxiosInstance();
-export {axiosInstance};
+
+const axiosRejectUnauthorisedAgent = new https.Agent({
+  rejectUnauthorized: false, // Set to false to accept self-signed certificates
+});
+export {axiosInstance, axiosRejectUnauthorisedAgent};

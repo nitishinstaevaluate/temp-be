@@ -5,6 +5,7 @@ import {
     Param,
     Post,
     Put,
+    Req,
     Res,
     UploadedFile,
     UseGuards,
@@ -32,10 +33,11 @@ export class ReportController {
   async getReport(
     @Param('reportId') reportId : string,
     @Param('approach') approach : string,
-    @Res() res
+    @Res() res,
+    @Req() req
   ) {
     try {
-      const result = await this.reportService.getReport(reportId, res,approach);
+      const result = await this.reportService.getReport(reportId, res, req, approach);
       if (result.status) {
          return result;
       } else {
@@ -72,8 +74,9 @@ export class ReportController {
   async previewReport(
     @Param('reportId') reportId : string='',
     @Param('approach') approach : string='',
-    @Res() res) {
-    const result = await this.reportService.previewReport(reportId, res,approach);
+    @Res() res,
+    @Req() req) {
+    const result = await this.reportService.previewReport(reportId, res,req, approach);
     return  result;
   }
   

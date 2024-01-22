@@ -241,3 +241,11 @@ export function convertToNumberOrZero(value: any): number {
     return 0;
   }
 }
+export function convertToNumberOrOne(value: any): number {
+  if (typeof value === 'string' || typeof value === 'number') {
+    const num:any = Number(value);
+    return isNaN(num) ? 0 : num;
+  } else {
+    return 1;
+  }
+}

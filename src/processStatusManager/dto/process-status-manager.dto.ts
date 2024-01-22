@@ -323,7 +323,7 @@ export class ExcessEarningInputDTO {
     shareApplicationMoney: string;
   }
 
-export class SecondStageInputDTO {
+export class ThirdStageInputDTO {
     @ValidateNested()
     @Type(() => FcfeInputDTO)
     fcfeInput: FcfeInputDTO;
@@ -341,7 +341,7 @@ export class SecondStageInputDTO {
     navInput: NavInputDTO;
   }
 
-  export class ThirdStageInputDTO {
+  export class FourthStageInputDTO {
     @IsOptional()
     appData:[];
 
@@ -369,7 +369,7 @@ export class SecondStageInputDTO {
 
   }
 
-  export class FourthStageInputDTO {
+  export class FifthStageInputDTO {
     @IsOptional()
     @IsString()
     valuationResultReportId:String;
@@ -380,7 +380,7 @@ export class SecondStageInputDTO {
     totalWeightageModel:TotalWeightageModelDTO;
   }
 
-  export class FifthStageInputDTO {
+  export class SixthStageInputDTO {
     @IsOptional()
     @IsString()
     clientName:string;
@@ -463,7 +463,7 @@ export class ProcessStatusManagerDTO {
     firstStageInput: FirstStageInputDTO;
 
     @IsOptional()
-    secondStageInput: [];
+    secondStageInput: object;
 
     @IsOptional()
     @IsNotEmpty()
@@ -472,9 +472,14 @@ export class ProcessStatusManagerDTO {
     @IsOptional()
     @IsNotEmpty()
     fourthStageInput:FourthStageInputDTO;
+
     @IsOptional()
     @IsNotEmpty()
     fifthStageInput:FifthStageInputDTO;
+
+    @IsOptional()
+    @IsNotEmpty()
+    sixthStageInput:SixthStageInputDTO;
 
     @IsNotEmpty()
     @IsString()
