@@ -23,6 +23,7 @@ import { ProcessStatusManagerModule } from './processStatusManager/process-statu
 import { CiqSpModule } from './ciq-sp/ciq-sp.module';
 import { ElevenUaModule } from './elevenUA/eleven-ua.module';
 import { UtilsModule } from './utils/utils.module';
+import { CiqElasticSearchModule } from './ciq-elastic-search/ciq-elastic-search.module';
 require('dotenv').config();
 
 @Module({
@@ -31,7 +32,7 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule],
+   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,

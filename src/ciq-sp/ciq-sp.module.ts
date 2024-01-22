@@ -4,7 +4,6 @@ import { CiqSpController } from './ciq-sp.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-service.service';
 import { ciqsimpleindustrySchema, ciqindustryhierarchySchema, ciqcompanystatustypeSchema, ciqcompanytypeSchema } from './schema/ciq-sp.chema';
-import { RedisService } from 'src/middleware/redisConfig';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { AuthenticationService } from 'src/authentication/authentication.service';
@@ -20,7 +19,7 @@ import { ciqSpBetaService } from './ciq-sp-beta.service';
 import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.service';
 
 @Module({
-  providers: [CiqSpService,SnowflakeClientServiceService,RedisService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService],
+  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService],
   controllers: [CiqSpController],
   imports:[MongooseModule.forFeature([
     {name: 'ciqsimpleindustry', schema : ciqsimpleindustrySchema},

@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CiqSpService } from './ciq-sp.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto } from './dto/ciq-sp.dto';
+import { axiosInstance } from 'src/middleware/axiosConfig';
+import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/interfaces/api-endpoints.local';
 
 @Controller('ciq-sp')
 export class CiqSpController {
@@ -44,8 +46,9 @@ export class CiqSpController {
   // https://localhost:3000/ciq-sp/sp-level-four-industry-list
   @UseGuards(AuthGuard('jwt'))
   @Post('sp-level-four-industry-list')
-  async getSPIndustryListByLevelFourIndustries(@Body() levelFourIndustry:any) {
-    return this.capitalIqAndSPService.fetchSPIndustryListByLevelFourIndustries(levelFourIndustry);
+  async getSPIndustryListByLevelFourIndustries(@Body() levelFourIndustry:any, @Req() req) {
+    // return this.capitalIqAndSPService.fetchSPIndustryListByLevelFourIndustries(levelFourIndustry);
+    return this.capitalIqAndSPService.fetchListedCompanyListDetails(levelFourIndustry, req);
   }
 
   // https://localhost:3000/ciq-sp/sp-company-status-type
