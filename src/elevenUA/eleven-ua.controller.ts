@@ -4,15 +4,18 @@ import {
     UseGuards,
     Put,
     Query,
-    Request
+    Request,
   } from '@nestjs/common';
 import { ElevenUaService } from './eleven-ua.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ElevenUaDTO } from './dto/eleven-ua.dto';
+import { utilsService } from 'src/utils/utils.service';
 
 @Controller('eleven-ua')
 export class ElevenUaController {
-    constructor(private readonly elevenUaService:ElevenUaService){}
+    constructor(private readonly elevenUaService:ElevenUaService,
+      private utilsService: utilsService
+      ){}
 
     @UseGuards(AuthGuard('jwt'))
     @Put('init-elevenUa-valuation')

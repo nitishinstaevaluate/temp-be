@@ -24,28 +24,28 @@ export class ProcessStatusManagerService {
       if (processId && isValidObjectId(processId)) {
         alreadyExistingRecord = await this.processModel.findOne({ _id: processId });
 
-        if (process?.secondStageInput) {
+        if (process?.thirdStageInput) {
           const modelExists = await this.processModel.exists({
             _id: processId,
-            'secondStageInput.model': { $in: process.secondStageInput.map((obj) => obj.model) },
+            'thirdStageInput.model': { $in: process.thirdStageInput.map((obj) => obj.model) },
           });
 
           if (modelExists) {
-            for await (const obj of process.secondStageInput) {
+            for await (const obj of process.thirdStageInput) {
               if (obj) {
                 try {
                   existingRecord = await this.processModel.updateOne(
-                    { _id: processId, 'secondStageInput.model': obj.model },
+                    { _id: processId, 'thirdStageInput.model': obj.model },
                     {
                       $set: {
-                        'secondStageInput.$': obj,
+                        'thirdStageInput.$': obj,
                         step: parseInt(step) + 1,
                       },
                     }
                   );
                 } catch (err) {
                   this.logger.log({
-                    message: `Second stage creation failed`,
+                    message: `Third stage creation failed`,
                     error: err,
                     status: false,
                   });
@@ -63,8 +63,8 @@ export class ProcessStatusManagerService {
                 { _id: processId },
                 {
                   $push: {
-                    secondStageInput: {
-                      $each: process.secondStageInput,
+                    thirdStageInput: {
+                      $each: process.thirdStageInput,
                     },
                   },
                   $set: {
@@ -75,32 +75,32 @@ export class ProcessStatusManagerService {
               );
             } catch (err) {
               this.logger.log({
-                message: `Second stage insertion failed`,
+                message: `Third stage insertion failed`,
                 error: err,
                 status: false
               });
             }
           }
 
-          if (step === 2) {
+          if (step === 3) {
 
             const stageOneDetails = existingRecord?.firstStageInput;
-            const stageTwoDetails = existingRecord?.secondStageInput;
+            const stageThreeDetails = existingRecord?.thirdStageInput;
 
-            if (stageOneDetails && stageTwoDetails) {
+            if (stageOneDetails && stageThreeDetails) {
               const orgModels = stageOneDetails.model;
 
-              for await (let secondStageDetails of stageTwoDetails) {
-                const modelExist = orgModels.some((model) => model === secondStageDetails.model);
+              for await (let thirdStageDetails of stageThreeDetails) {
+                const modelExist = orgModels.some((model) => model === thirdStageDetails.model);
                 if (!modelExist) {
                   existingRecord = await this.processModel.findOneAndUpdate(
                     { _id: processId },
                     {
                       $pull:
                       {
-                        secondStageInput:
+                        thirdStageInput:
                         {
-                          model: `${secondStageDetails.model}`
+                          model: `${thirdStageDetails.model}`
                         }
                       }
                     },
@@ -197,6 +197,73 @@ export class ProcessStatusManagerService {
         error: error.message,
         status: false,
         msg: 'Process retrieve failed'
+      }
+    }
+  }
+
+  async fetchActiveStage(processId) {
+    try {
+      const processStage = await this.processModel.findById({ _id : processId}).select('step processIdentifierId').exec();
+      return {
+        data:{
+          id:processStage._id,
+          processIdentifierId:processStage.processIdentifierId,
+          step:processStage.step
+        },
+        status:true,
+        msg:'Retrieve success'
+      }
+    }
+    catch(error) {
+      return {
+        error: error.message,
+        status: false,
+        msg: 'Process stage not found'
+      }
+    }
+  }
+
+  async updateActiveStage(processData) {
+    try{
+      const processStage = await this.processModel.findByIdAndUpdate(
+        { _id: processData.processId },
+        { step: parseInt(processData.step) },
+        { new: true }
+      );
+      return {
+        msg:'stage updated successfully',
+        status:true,
+        data:{
+          id:processStage._id,
+          processIdentifierId:processStage.processIdentifierId,
+          step:processStage.step
+        }
+      }
+
+    }
+    catch (error) {
+      return {
+        error:error.message,
+        msg:'Update stage fail',
+        status:false
+      }
+    }
+  }
+
+  async fetchStageWiseDetails(processId,stage){
+    try {
+      const processStage = await this.processModel.findById({ _id : processId}).select(`step processIdentifierId ${stage}`).exec();
+      return {
+        data:processStage,
+        status:true,
+        msg:'Retrieve success'
+      }
+    }
+    catch(error) {
+      return {
+        error: error.message,
+        status: false,
+        msg: 'Process stage wise rerieval failed'
       }
     }
   }

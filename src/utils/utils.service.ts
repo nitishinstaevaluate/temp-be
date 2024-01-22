@@ -5,6 +5,8 @@ import { ValuationDocument } from 'src/valuationProcess/schema/valuation.schema'
 import { catchError, forkJoin, from, of, switchMap } from 'rxjs';
 import { ProcessManagerDocument } from 'src/processStatusManager/schema/process-status-manager.schema';
 import { AuthenticationService } from 'src/authentication/authentication.service';
+import * as fs from 'fs';
+import * as wordListPath from 'word-list';
 //Valuations Service
 @Injectable()
 export class utilsService {
@@ -81,5 +83,22 @@ export class utilsService {
       ];
     }
     return baseQuery;
+  }
+
+  async getWordList(wordTyped){
+    try{
+      const wordArray = fs.readFileSync(wordListPath, 'utf8').split('\n');
+      const newArray = wordArray
+      .filter(word => word.toLowerCase().indexOf(wordTyped.toLowerCase()) === 0)
+      .slice(0, 10);
+      return newArray;
+    }
+    catch(error){
+      return{
+        error:error,
+        status:false,
+        msg:"Autocomplete list error"
+      }
+    }
   }
   }

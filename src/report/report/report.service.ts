@@ -13,10 +13,16 @@ import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
 import ConvertAPI from 'convertapi';
 import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
-import { axiosInstance } from 'src/middleware/axiosConfig';
+import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
+import { CIQ_FINANCIAL_SEGMENT } from 'src/interfaces/api-endpoints.local';
+import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
+import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { AuthenticationService } from 'src/authentication/authentication.service';
+import { HistoricalReturnsService } from 'src/data-references/data-references.service';
+import { formatDateToMMDDYYYY } from 'src/ciq-sp/ciq-common-functions';
 
 @Injectable()
 export class ReportService {
@@ -30,10 +36,13 @@ export class ReportService {
     private readonly reportModel: Model<ReportDocument>,
     private fcfeService:FCFEAndFCFFService,
     private calculationService:CalculationService,
-    private elevenUaService:ElevenUaService
+    private elevenUaService:ElevenUaService,
+    private processStateManagerService:ProcessStatusManagerService,
+    private authenticationService: AuthenticationService,
+    private historicalReturnsService:HistoricalReturnsService
     ){}
 
-    async getReport(id,res,approach){
+    async getReport(id,res, req,approach){
       try {
           const transposedData = [];
           let  getCapitalStructure;
@@ -65,6 +74,10 @@ export class ReportService {
               };
           }
 
+          if(valuationResult.inputData[0].model.length === 1 && valuationResult.inputData[0].model.includes(MODEL[2])){
+            const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
+            this.loadFinancialTable(financialSegmentDetails);
+          }
 
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
             const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
@@ -121,7 +134,7 @@ export class ReportService {
       }
   }
 
- async previewReport(id,res,approach){
+ async previewReport(id,res, req, approach){
   try {
     const transposedData = [];
     let  getCapitalStructure;
@@ -151,6 +164,10 @@ export class ReportService {
       };
     }
 
+    if(valuationResult.inputData[0].model.length === 1 && valuationResult.inputData[0].model.includes(MODEL[2])){
+      const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req)
+      this.loadFinancialTable(financialSegmentDetails);
+    }
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
       const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
@@ -548,7 +565,8 @@ export class ReportService {
         dateOfIncorporation:data?.dateOfIncorporation,
         cinNumber:data?.cinNumber,
         companyAddress:data?.companyAddress,
-        modelWeightageValue:data.finalWeightedAverage
+        modelWeightageValue:data.finalWeightedAverage,
+        processStateId:data.processStateId
       }
       try {
         const filter = { reportId: data?.reportId };
@@ -2429,6 +2447,32 @@ export class ReportService {
     })
 }
 
+  loadFinancialTable(financialData){
+    hbs.registerHelper('financialSegment',()=>{
+      if(financialData){
+        return financialData;
+      }
+      return [];
+    })
+
+    hbs.registerHelper('fiancialMean',()=>{
+      let mean = 0;
+      if(financialData){
+        financialData.map((elements)=>{
+          mean += convertToNumberOrZero(elements.evByRevenue);
+        })
+        return (mean/financialData.length).toFixed(2);
+      }
+      return 0;
+    })
+
+    hbs.registerHelper('fixDecimalUptoTwo',(val)=>{
+      if(typeof val === 'number' && val)
+        return val.toFixed(2);
+      return '-';
+    })
+  }
+
   convertToRomanNumeral(num:any) {
     const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
   
@@ -2437,5 +2481,49 @@ export class ReportService {
     }
   
     return romanNumerals[num];
+  }
+
+  async getFinancialSegment(reportDetails, valuationResult, request){
+    try{
+      const fetchStageThreeDetails = await this.processStateManagerService.fetchStageWiseDetails(reportDetails.processStateId,'thirdStageInput');
+
+      let industryList = []
+      if(fetchStageThreeDetails.data){
+        fetchStageThreeDetails.data.thirdStageInput.map((stateThreeDetails:any)=>{
+            stateThreeDetails?.companies.map((companyDetails:any,i:number)=>{
+              if(companyDetails.companyId){
+                industryList.push({COMPANYID:companyDetails.companyId,COMPANYNAME:companyDetails.company})
+              }
+            })
+        })
+      }
+
+      const getHistoricalData:any = await this.historicalReturnsService.getHistoricalBSE500Date(valuationResult.inputData[0].valuationDate);
+      const date = formatDateToMMDDYYYY(getHistoricalData.Date) || formatDateToMMDDYYYY(valuationResult.inputData[0].valuationDate);
+
+      const payload = {
+        industryAggregateList:industryList,
+        valuationDate:date
+      }
+      const bearerToken = await this.authenticationService.extractBearer(request);
+
+      if(!bearerToken.status)
+        return bearerToken;
+
+      const headers = { 
+        'Authorization':`${bearerToken.token}`,
+        'Content-Type': 'application/json'
+      }
+      
+      const financialSegmentDetails = await axiosInstance.post(`${CIQ_FINANCIAL_SEGMENT}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+      return financialSegmentDetails.data.data;
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"financial segment calculation failed"
+      }
+    }
   }
 }

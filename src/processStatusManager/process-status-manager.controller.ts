@@ -38,6 +38,22 @@ export class ProcessStatusManagerController {
     }
 
     @UseGuards(AuthGuard('jwt'))
+    @Get('retrieveStage/:processId')
+    async fetchActiveStage(
+        @Param('processId') processId?: string
+        ) {
+      return await this.processStatusManagerService.fetchActiveStage(processId);
+    }
+    
+    @UseGuards(AuthGuard('jwt'))
+    @Put('updateStage')
+    async updateActiveStage(
+      @Body() processStage:any
+        ) {
+      return await this.processStatusManagerService.updateActiveStage(processStage);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
     @Get('paginate')
     async getPaginatedValuations(
       @Request() req,
@@ -46,5 +62,14 @@ export class ProcessStatusManagerController {
       @Query('query') query: string | undefined
     ) :Promise<any>{
       return this.utilsService.paginateValuationByUserId(page,pageSize, req,query);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('retrieve-particular-stage/filter')
+    async getStageWiseDetails(
+        @Query('processId') processId?: string,
+        @Query('stageDetails') stageDetails?: string,
+        ) {
+      return await this.processStatusManagerService.fetchStageWiseDetails(processId, stageDetails);
     }
 }

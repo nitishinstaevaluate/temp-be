@@ -1,0 +1,1 @@
+export const CIQ_FINANCIAL_SEGMENT = 'https://localhost:3000/ciq-sp/calculate-sp-financial-data'

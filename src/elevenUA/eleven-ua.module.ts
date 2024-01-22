@@ -14,13 +14,16 @@ import { UsersService } from 'src/users/users.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { UsersModule } from 'src/users/users.module';
+import { utilsService } from 'src/utils/utils.service';
+import { ProcessManagerSchema } from 'src/processStatusManager/schema/process-status-manager.schema';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService],
+  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },
     { name: 'valuation', schema: ValuationSchema },
+    { name: 'processManager', schema: ProcessManagerSchema }
   ]),
   UsersModule,
   JwtModule.register({
