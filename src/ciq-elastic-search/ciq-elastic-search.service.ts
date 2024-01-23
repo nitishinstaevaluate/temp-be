@@ -16,7 +16,9 @@ export class CiqElasticSearchService {
                 data:aggregateCompanyList.data,
                 status:true,
                 msg:"elastic search success",
-                total: aggregateCompanyList.data.length
+                total: aggregateCompanyList.listCount,
+                pageStart: data?.pageStart ?? 0,
+                pageSize: data.size ?? 10 
             }
         }
         catch(error){
@@ -45,5 +47,21 @@ export class CiqElasticSearchService {
         }
     }
 
-    
+    async searchEntityByCompanyId(companyId){
+        try{
+            const companyDetails = await this.ciqElasticSearchAggregateService.findByCompanyId(companyId);
+            return {
+                data: companyDetails,
+                status:true,
+                msg:"elastic search based on company id fetched successfully"
+            };
+        }
+        catch(error){
+            return{
+                error:error,
+                status:false,
+                msg:"elastic search based on company id not found"
+            }
+        }
+    }
 }

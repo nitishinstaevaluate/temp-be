@@ -418,7 +418,7 @@ export class CiqSpService {
 
       async fetchSPCompanyStatusType(){
         try{
-          const companyStatusTypeData = await this.ciqcompanystatustypemodel.find({ 'isactive': true }).exec();
+          const companyStatusTypeData = await this.ciqcompanystatustypemodel.find({ 'isactive': true }).sort({'companystatustypename':1}).exec();
           return {
             data:companyStatusTypeData,
             status:true,
@@ -436,7 +436,7 @@ export class CiqSpService {
 
       async fetchSPCompanyType(){
         try{
-          const companyTypeData = await this.ciqcompanytypemodel.find({ 'isactive': true }).exec();
+          const companyTypeData = await this.ciqcompanytypemodel.find({ 'isactive': true }).sort({'companytypename':1}).exec();
           return {
             data:companyTypeData,
             status:true,
@@ -642,7 +642,9 @@ export class CiqSpService {
             industryName:data.industryName,
             industryId,
             decodeLocation,
-            businessDescriptor
+            businessDescriptor,
+            pageStart: data?.pageStart,
+            size: data?.size
           }
 
           const bearerToken = await this.authenticationService.extractBearer(req);
