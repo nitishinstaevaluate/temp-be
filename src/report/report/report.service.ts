@@ -22,7 +22,7 @@ import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
-import { formatDateToMMDDYYYY } from 'src/ciq-sp/ciq-common-functions';
+import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from 'src/ciq-sp/ciq-common-functions';
 
 @Injectable()
 export class ReportService {
@@ -74,7 +74,7 @@ export class ReportService {
               };
           }
 
-          if(valuationResult.inputData[0].model.length === 1 && valuationResult.inputData[0].model.includes(MODEL[2])){
+          if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
             this.loadFinancialTable(financialSegmentDetails);
           }
@@ -164,8 +164,8 @@ export class ReportService {
       };
     }
 
-    if(valuationResult.inputData[0].model.length === 1 && valuationResult.inputData[0].model.includes(MODEL[2])){
-      const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req)
+    if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
+      const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
       this.loadFinancialTable(financialSegmentDetails);
     }
 
@@ -2490,11 +2490,13 @@ export class ReportService {
       let industryList = []
       if(fetchStageThreeDetails.data){
         fetchStageThreeDetails.data.thirdStageInput.map((stateThreeDetails:any)=>{
+          if(stateThreeDetails.model === MODEL[2]){
             stateThreeDetails?.companies.map((companyDetails:any,i:number)=>{
               if(companyDetails.companyId){
                 industryList.push({COMPANYID:companyDetails.companyId,COMPANYNAME:companyDetails.company})
-              }
+              } 
             })
+          }
         })
       }
 

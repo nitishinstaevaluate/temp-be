@@ -1,4 +1,4 @@
-import { MNEMONIC_ENUMS } from "src/constants/constants"
+import { MNEMONIC_ENUMS, MODEL } from "src/constants/constants"
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
 
     export async function iqCreateStructure(data,mnemonic){
@@ -191,4 +191,30 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
         const year = date.getFullYear();
 
         return `${month}/${day}/${year}`;
+      }
+
+     export function isNotRuleElevenUaAndNav(modelArray:any){
+        if (modelArray?.length === 1 &&
+          (
+            modelArray?.includes(MODEL[6]) ||
+            modelArray?.includes(MODEL[5])
+          ))
+          {
+          return false;
+          }
+          else if(modelArray?.length === 2 && (
+            modelArray?.includes(MODEL[6]) &&
+            modelArray?.includes(MODEL[5])
+          )){
+            return false;
+          }
+          else if(modelArray?.length  > 1 && (
+            modelArray?.includes(MODEL[6]) ||
+            modelArray?.includes(MODEL[5])
+          )){
+            return true;
+          }
+          else{
+            return true;
+          }
       }
