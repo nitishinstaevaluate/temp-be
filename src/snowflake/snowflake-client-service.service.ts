@@ -19,8 +19,8 @@ export class SnowflakeClientServiceService {
     connected = false;
 
     constructor() {
-        this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
-        this.establishLocalDataSnowflakeConnection();
+        // this.logger.log(`[${this.currentDateIST}] { "message" : "Please wait, initializing snowflake connection" }`);
+        // this.establishLocalDataSnowflakeConnection();
       }
 
     private logger = WinstonModule.createLogger({
