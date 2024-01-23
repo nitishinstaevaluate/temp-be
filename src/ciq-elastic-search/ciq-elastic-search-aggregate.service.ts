@@ -21,10 +21,19 @@ export class ciqElasticSearchAggregateService{
                         filteredDescriptorDetails.push(descriptors.COMPANYID);
                     }
                 }
+                if(filteredDescriptorDetails.length === 0){
+                    return {
+                        data:[],
+                        status:true,
+                        msg:"data not found",
+                        listCount:0
+                    }
+                }
             }
             else{
-                const listedCompanyList:any = await this.GICSBasedCompanyList();
-                filteredDescriptorDetails.push(...listedCompanyList)
+                // const listedCompanyList:any = await this.GICSBasedCompanyList();
+                // filteredDescriptorDetails.push(...listedCompanyList)
+                filteredDescriptorDetails = []
             }
         
             const payload = {
@@ -34,7 +43,9 @@ export class ciqElasticSearchAggregateService{
                 industryName:body.industryName,
                 industryId: body.industryId,
                 decodeLocation: body.decodeLocation,
-                companyIdArray:filteredDescriptorDetails
+                companyIdArray:filteredDescriptorDetails,
+                size: body.size,
+                pageStart: body.pageStart
             }
 
             const companyList = await this.fetchCompanyList(payload); // only filter through ciqCompanyId table by listed companies
@@ -54,6 +65,7 @@ export class ciqElasticSearchAggregateService{
         try{
             let queryArray = [];
             let listedCompanyList = [];
+            let pageStart = 0, size = 10, totalListCount;
 
             if(payload.companyType.length){
                 queryArray.push({terms: {"COMPANYTYPEID": payload.companyType}});
@@ -71,7 +83,19 @@ export class ciqElasticSearchAggregateService{
             if(payload?.companyIdArray.length){
                 queryArray.push({terms: {"COMPANYID": payload.companyIdArray}});
             }
+
+            // if(queryArray.length === 0){
+            //     totalListCount = await this.elasticSearchClientService.countTotal('ciqcompanyindustryind');
+            // }
             
+            if(payload?.pageStart){
+                pageStart = payload.pageStart;
+            }
+
+            if(payload?.size){
+                size = payload.size;
+            }
+
             queryArray.push({"exists": {"field": "SIMPLEINDUSTRYID"}}); // null check filter to remove null simpleindustryid records 
 
             const criteria = {
@@ -80,10 +104,12 @@ export class ciqElasticSearchAggregateService{
                         must: queryArray
                     }
                 },
-                size: 10000,
                 _source: {
                     includes: ['COMPANYID', 'COMPANYNAME', 'SIMPLEINDUSTRYID', 'CITY'],
                 },
+                from: `${pageStart}`,
+                size: `${size}`,
+                track_total_hits: true,
             };
             
             const companyList = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
@@ -92,7 +118,7 @@ export class ciqElasticSearchAggregateService{
                 await this.fetchSimpleIndustry();
             }
 
-            for await (const companyDetails of companyList) {
+            for await (const companyDetails of companyList.data) {
                 for await (const simpleIndustry of this.simpleIndustryList) {
                     if (companyDetails.SIMPLEINDUSTRYID === simpleIndustry.SIMPLEINDUSTRYID) {
                         listedCompanyList.push({ ...companyDetails, SIMPLEINDUSTRYDESCRIPTION: simpleIndustry.SIMPLEINDUSTRYDESCRIPTION });
@@ -101,11 +127,12 @@ export class ciqElasticSearchAggregateService{
             }
 
             const modifiedCompanyList = plainToClass(CiqIndustryListDto, listedCompanyList, {excludeExtraneousValues:true})
-
             return {
                 data:modifiedCompanyList,
                 status:true,
-                msg:"ciq company list fetched"
+                msg:"ciq company list fetched",
+                // listCount:totalListCount ? totalListCount.count :  companyList.total
+                listCount: companyList.total
             }
         }
         catch(error){
@@ -133,7 +160,7 @@ export class ciqElasticSearchAggregateService{
 
             let listedCompanyIdArray = [];
             
-            listedCompanyIdArray = companyIndustryList.map((elements)=>{
+            listedCompanyIdArray = companyIndustryList.data.map((elements)=>{
                 return elements.COMPANYID;
             })
 
@@ -162,7 +189,7 @@ export class ciqElasticSearchAggregateService{
 
             const descriptionQuery = await this.elasticSearchClientService.search('ciqsegmentdescriptionind', criteria);
 
-            const businessDescriptorDetails = await plainToClass(CiqSegmentDescriptionDto, descriptionQuery, {excludeExtraneousValues:true});
+            const businessDescriptorDetails = await plainToClass(CiqSegmentDescriptionDto, descriptionQuery.data, {excludeExtraneousValues:true});
 
             this.redisClientService.setKeyValue('businessdescriptor',JSON.stringify(businessDescriptorDetails));
         }
@@ -188,7 +215,7 @@ export class ciqElasticSearchAggregateService{
             };
 
             const descriptionQuery = await this.elasticSearchClientService.search('ciqsegmentdescriptionind', criteria);
-            return descriptionQuery;
+            return descriptionQuery.data;
 
         }
         catch(error){
@@ -209,7 +236,7 @@ export class ciqElasticSearchAggregateService{
                 size: 10000
             };
 
-            this.simpleIndustryList = await this.elasticSearchClientService.search('ciqsimpleindustry', criteria);
+            this.simpleIndustryList = (await this.elasticSearchClientService.search('ciqsimpleindustry', criteria)).data;
             return this.simpleIndustryList;
         }
         catch(error){
@@ -217,6 +244,34 @@ export class ciqElasticSearchAggregateService{
                 error:error,
                 status:false,
                 msg:"elastic search simple industry failed"
+            }
+        }
+    }
+
+    async findByCompanyId(data){
+        try{
+            const criteria = {
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                term:{
+                                    "COMPANYID":data.companyId
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+
+            const companyData = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
+            return companyData.data;
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"elastic search company-id failed"
             }
         }
     }

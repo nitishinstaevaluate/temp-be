@@ -64,8 +64,8 @@ export class ElasticSearchService {
             index,
             body: query,
           });
-    
-          return hits.hits.map((hit) => hit._source);
+          const data = hits.hits.map((hit) =>  hit._source);
+          return {data, total:hits.total.value}
         } catch (error) {
           this.logger.error(`[${this.currentDateIST}] Elastic search error response  ${JSON.stringify({ error: error.message })}`)
         }
@@ -84,8 +84,18 @@ export class ElasticSearchService {
     
           return hits.hits.map((hit) => hit._source)
         } catch (error) {
-          console.error('Elasticsearch Error:', error.message);
+          this.logger.error(`[${this.currentDateIST}] Elastic search method Search All error response  ${JSON.stringify({ error: error.message })}`)
           throw new Error('Failed to perform search.');
+        }
+      }
+
+      async countTotal(index: string){
+        try{
+          const data = await this.connection.count({ index: index});
+          return data;
+        }
+        catch(error){
+          this.logger.error(`[${this.currentDateIST}] Elastic search method Count error response  ${JSON.stringify({ error: error.message })}`)
         }
       }
 }

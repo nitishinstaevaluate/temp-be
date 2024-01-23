@@ -642,7 +642,9 @@ export class CiqSpService {
             industryName:data.industryName,
             industryId,
             decodeLocation,
-            businessDescriptor
+            businessDescriptor,
+            pageStart: data?.pageStart,
+            size: data?.size
           }
 
           const bearerToken = await this.authenticationService.extractBearer(req);
