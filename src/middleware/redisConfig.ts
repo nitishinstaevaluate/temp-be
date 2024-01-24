@@ -39,7 +39,7 @@ export class RedisService {
   });
 
   constructor() {
-    this.initializeRedisConnection()
+    // this.initializeRedisConnection()
   }
 
   async initializeRedisConnection(){
