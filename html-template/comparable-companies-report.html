@@ -503,6 +503,21 @@
             vertical-align: top;
             overflow: visible;
         }
+        .container-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 16px;
+            
+        }
+        .column {
+            width: 50%; /* Adjust the width as needed */
+            /* padding: 10px; */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -511,8 +526,8 @@
     <div style="page-break-before: always;    padding-left: 3%;
     padding-top: 9%;padding-right: 3%;">
 
-<p style="padding-bottom: 1pt;padding-left: 10pt;text-indent: 0pt;text-align: left;"><span
-    class="h1" style="font-size: 15px;">VALUATION REPORT OF <span style="text-transform: uppercase;">{{natureOfInstrument}}</span> OF </span><span class="s1"
+<p style="padding-bottom: 1pt;padding-left: 4%;text-indent: 0pt;text-align: left;"><span
+    class="h1" style="font-size: 15px;">VALUATION REPORT ON FAIR VALUATION OF<span style="text-transform: uppercase;">{{natureOfInstrument}}</span> OF </span><span class="s1"
     style="text-transform: uppercase;font-size: 15px;">{{companyName}}</span><span class="h1" style="font-size: 15px;"> AS OF </span><span class="s1"
     style="font-size: 15px;">{{strdate}}</span></p>
        <div style="padding-top: 16%;">
@@ -527,8 +542,16 @@
         </p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerAddress}}</span>
         </p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerEmailId}}</span></p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerMobileNumber}}</span></p>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;">
+        <span style="font-weight: 400;">
+            <span style="font-weight: bold;">Email-Id :</span>{{registeredValuerEmailId}}
+        </span>
+    </p>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;">
+        <span style="font-weight: 400;">
+            <span style="font-weight: bold;">Mob No. :</span>{{registeredValuerMobileNumber}}
+        </span>
+    </p>
     <!-- <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">Notice to the Reader</span></p> -->
        </div>
     </div>
@@ -549,11 +572,14 @@
                 <span class="s4">{{strdate}}</span><span class="p">.</span></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 155%;">
-            <span class="p">The purpose of this valuation is
-                solely to provide an independent opinion to the management of the Company- (hereinafter as the “Management”)
-                on the fair value of the </span><span class="s4" >{{natureOfInstrument}}</span><span
-                class="p"> of the Company. We understand that the fair value of the {{natureOfInstrument}} of the Company is required
-                to comply with the relevant provisions of the </span><span class="s4">{{reportPurpose}}</span><span class="p">.</span></p>
+                <span class="p">The purpose of
+                    valuation is solely to provide an independent opinion to the management of 
+                </span>
+                <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span>
+                <span class="s4" >(hereinafter the “Management”) on
+                    the fair value of {{natureOfInstrument}} of the Company in accordance with provisions of section {{reportSection}} of the {{reportPurpose}}.
+                </span>
+            </p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 155%">In rendering the aforementioned advisory
             services, we reviewed and relied upon various materials/information provided by the Management. Our report is
@@ -585,18 +611,17 @@
                 report. This report is not to be copied or made available to any persons without the express written consent
                 of me.</span></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <p style="padding-top: 4pt;padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 2%;"><span style="font-weight: bold;">{{registeredValuerName}}</span></p>
-        <p style="padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 0%;"><span 
-                style="font-weight: bold;">Registered Valuer- Securities and Financial Assets</span></p>
-        <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
-        <p style="padding-left: 300pt;text-indent: 0pt;text-align: left;padding-top: 0%;"><span 
-                style="font-weight: bold;"> IBBI Registration No.: {{registeredValuerIbbiId}}</span></p>
-        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <p style="padding-top: 4pt;padding-left: 33pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s1"
-                style="font-weight: bold;">Date: </span><span 
-                style="font-weight: bold;">{{reportDate}}</span></p>
-        <p style="padding-left: 33pt;text-indent: 0pt;text-align: left;"><span class="s1"
-                style="font-weight: bold;">Place:______________</span></p>
+        <div class="container-top" style="padding-top: 25%;padding-left: 20pt;">
+            <div class="column">
+                <p>Date: {{reportDate}}</p>
+                <p style="padding-top: 5px;">Place: ______________</p>
+            </div>
+            <div class="column">
+                <p><strong>{{registeredValuerName}}</strong> </p>
+                <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
+                <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+            </div>
+        </div>
         </div>
 
         <!-- page 4 html -->
@@ -715,9 +740,9 @@
                         name="bookmark0" style="font-weight: bold;">INTRODUCTION</a><a name="bookmark6">&zwnj;</a></h1>
                 <ol id="l2" style="padding-left: 2%;">
                     <li data-list-text="A.">
-                        <h1
-                            style="padding-top: 13pt;padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;">
-                            <a name="bookmark1" style="font-weight: bold;">Disclaimer Clause</a><a name="bookmark7">&zwnj;</a></h1>
+                        <p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;padding-top: 2%;">
+                            <a name="bookmark1" style="font-weight: bold;">Disclaimer Clause</a>
+                        </p>
                         <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">
@@ -733,8 +758,11 @@
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     </li>
                     <li data-list-text="B.">
-                        <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
-                                name="bookmark2" style="font-weight: bold;">Limitation of Verification</a><a name="bookmark8">&zwnj;</a></h1>
+                        <!-- <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
+                                name="bookmark2" style="font-weight: bold;">Limitation of Verification</a><a name="bookmark8">&zwnj;</a></h1> -->
+                        <p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;">
+                            <a name="bookmark2" style="font-weight: bold;">Limitation of Verification</a>
+                        </p>
                         <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 150%;">
@@ -772,8 +800,11 @@
                         </li> -->
                         <!-- page 6 html -->
                         <li data-list-text="C." style="">
-                            <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
-                                    name="bookmark3" style="font-weight: bold;">Industry and Market Data</a><a name="bookmark9">&zwnj;</a></h1>
+                            <!-- <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
+                                    name="bookmark3" style="font-weight: bold;">Industry and Market Data</a><a name="bookmark9">&zwnj;</a></h1> -->
+                                    <p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;">
+                                        <a name="bookmark3" style="font-weight: bold;">Industry and Market Data</a>
+                                    </p>
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 150%;">
@@ -786,8 +817,12 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         </li>
                         <li data-list-text="D.">
-                            <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
-                                    name="bookmark4" style="font-weight: bold;">Scope of Work</a><a name="bookmark10">&zwnj;</a></h1>
+                            <!-- <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
+                                    name="bookmark4" style="font-weight: bold;">Scope of Work</a><a name="bookmark10">&zwnj;</a></h1> -->
+
+                            <p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;">
+                                <a name="bookmark4" style="font-weight: bold;">Scope of Work</a>
+                            </p>
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;">
@@ -810,8 +845,13 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         </li>
                         <li data-list-text="E." style="page-break-before: always;padding-top: 10%;">
-                            <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
-                                    name="bookmark4" style="font-weight: bold;">Information Relied Upon</a><a name="bookmark10">&zwnj;</a></h1>
+                            <!-- <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
+                                    name="bookmark4" style="font-weight: bold;">Information Relied Upon</a><a name="bookmark10">&zwnj;</a></h1> -->
+                                    <p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;">
+                                        <a name="bookmark4" style="font-weight: bold;">
+                                            Information Relied Upon
+                                        </a>
+                                    </p>
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;">
@@ -826,7 +866,7 @@
                                 <li data-list-text="i.">
                                     <p style="padding-top: 4pt;padding-left: 50pt;text-indent: -24pt;text-align: left;line-height: 150%;"><span
                                             class="p">Management Certified financial statements of the Company for the
-                                        </span><span class="s4">year ended ________________</span><span class="p">.</span></p>
+                                        </span><span class="s4">year ended __________</span><span class="p">.</span></p>
                                 </li>
                                 <li data-list-text="ii.">
                                     <p style="padding-left: 50pt;text-indent: -27pt;text-align: left;line-height: 150%;">Comparable Companies data
@@ -869,11 +909,9 @@
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <ol id="l2" style="padding-left: 3%;">
                     <li data-list-text="A.">
-                        <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -24pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
-                                name="bookmark13" style="font-weight: bold;">Company History and Background</a><a name="bookmark15">&zwnj;</a></h1>
-                        <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
-                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                        <p class="s2" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;">
+                            <a name="bookmark13" style="font-weight: bold;">Company History and Background</a>
+                        </p>
                     </li>
                 </ol>
             </li>
@@ -1004,14 +1042,6 @@
                                                     to preference shareholders, principal repayment and additional funds
                                                     raised from lenders/preference shareholders are considered.</p>
 
-                                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                                <p style="padding-left: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;page-break-before: always;padding-top: 10%;padding-right: 2%;">Appropriate Discount Rate -
-                                                    Discount Rate is the return expected by a market participant from a particular investment and
-                                                    shall reflect not only the time value of money but also the risk inherent in the asset being
-                                                    valued as well as the risk inherent in achieving the future cash flows. In discounting the FCFF
-                                                    the appropriate discount rate is the weighted average cost of capital, which results in the
-                                                    enterprise value of the Company. Whereas, in the case of FCFE the appropriate discount rate is
-                                                    the cost of equity, which results in the equity value of the Company.</p>
                                             </li>
                                         </ol>
                                     </li>
@@ -1021,6 +1051,15 @@
                          
                        <!-- page 9 html -->
                        <div style="">
+                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;page-break-before: always;padding-top: 10%;">Appropriate Discount Rate -
+                            Discount Rate is the return expected by a market participant from a particular investment and
+                            shall reflect not only the time value of money but also the risk inherent in the asset being
+                            valued as well as the risk inherent in achieving the future cash flows. In discounting the FCFF
+                            the appropriate discount rate is the weighted average cost of capital, which results in the
+                            enterprise value of the Company. Whereas, in the case of FCFE the appropriate discount rate is
+                            the cost of equity, which results in the equity value of the Company.</p>
+                            <p></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Terminal value – It represents
                             the present value at the end of explicit forecast period of all subsequent cash flows to the end
                             of the life of the asset or into perpetuity if the asset has an indefinite life. There are
@@ -1090,7 +1129,7 @@
                                 name="bookmark21">&zwnj;</a></h1>
                         <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                        <ol id="l12" style="padding-right: 2%;">
+                        <ol id="l12" style="">
                             <li data-list-text="1.">
                                 <h1 style="padding-top: 4pt;padding-left: 5pt;text-align: left;">About
                                     the Method</h1>
@@ -1666,18 +1705,17 @@
         entirety.</p>
 
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 4pt;padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 2%;"><span style="font-weight: bold;">{{registeredValuerName}}</span></p>
-    <p style="padding-left: 300pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 0%;"><span 
-            style="font-weight: bold;">Registered Valuer- Securities and Financial Assets</span></p>
-    <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
-    <p style="padding-left: 300pt;text-indent: 0pt;text-align: left;padding-top: 0%;"><span 
-            style="font-weight: bold;"> IBBI Registration No.: {{registeredValuerIbbiId}}</span></p>
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 4pt;padding-left: 33pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s1"
-            style="font-weight: bold;">Date: </span><span 
-            style="font-weight: bold;">{{reportDate}}</span></p>
-    <p style="padding-left: 33pt;text-indent: 0pt;text-align: left;"><span class="s1"
-            style="font-weight: bold;">Place:______________</span></p>
+    <div class="container-top" style="padding-top: 25%;padding-left: 20pt;">
+        <div class="column">
+            <p>Date: {{reportDate}}</p>
+            <p style="padding-top: 5px;">Place: ______________</p>
+        </div>
+        <div class="column">
+            <p><strong>{{registeredValuerName}}</strong> </p>
+            <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
+            <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+        </div>
+    </div>
     </div>
 
     <div style="padding-top: 6%;padding-left: 3%;padding-right:3%;page-break-before: always;">
