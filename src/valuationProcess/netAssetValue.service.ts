@@ -115,8 +115,8 @@ export class NetAssetValueService {
 
           deferredTaxAssetObj = {
             fieldName: "Deffered Tax Assets",
-            bookValue : deferredTaxAssetValAtBook,
-            fairValue: deferredTaxAssetVal,
+            bookValue : deferredTaxAssetValAtBook ?? 0,
+            fairValue: deferredTaxAssetVal ?? 0,
             type: resp.type
           }
 
@@ -130,8 +130,8 @@ export class NetAssetValueService {
 
           inventoriesObj = {
             fieldName: "Inventories",
-            bookValue: inventoriesValAtBook,
-            fairValue : inventoriesVal,
+            bookValue: inventoriesValAtBook ?? 0,
+            fairValue : inventoriesVal ?? 0,
             type: resp.type
           }
 
@@ -220,8 +220,8 @@ export class NetAssetValueService {
 
           shortTermBorrowingsObj = {
             fieldName: "Short term Borrowings",
-            bookValue: shortTermBorrowingsValAtBook,
-            fairValue: shortTermBorrowingsVal,
+            bookValue: shortTermBorrowingsValAtBook ?? 0,
+            fairValue: shortTermBorrowingsVal ?? 0,
             type: resp.type
           }
 
