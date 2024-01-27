@@ -7,7 +7,7 @@ import { ProcessManagerDocument } from 'src/processStatusManager/schema/process-
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import * as fs from 'fs';
 import * as wordListPath from 'word-list';
-//Valuations Service
+
 @Injectable()
 export class utilsService {
   constructor(

@@ -732,7 +732,7 @@
                             style="width:303pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                             <p
                                 style="padding-top: 6pt;padding-left: 72pt;padding-right: 64pt;text-indent: 0pt;text-align: center;">
-                                <span class="s7">{{appointingAuthorityName}}</span></p>
+                                <span class="s7">{{appointingAuthorityName}} of {{companyName}}</span></p>
                         </td>
                     </tr>
                     <tr style="height:27pt">
@@ -823,13 +823,16 @@
                 </td>
                 <td
                     style="width:313pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="text-indent: 0pt;text-align: center;">{{companyAddress}}</p>
+                    <p style="text-indent: 0pt;text-align: center;padding-top: 6pt;">{{companyAddress}}</p>
                 </td>
             </tr>
         </table>
     </div>
     <div style="line-height: 180% !important;margin-right: 10%;">
     <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;padding-bottom: 3%;padding-top: 1%;">Nature of business of the Subject Company:</h2>
+    <div style="padding-left: 3%;padding-right: 8%;height: 50px;">
+        <div style="padding-top: 2%;color: #f2f2f2;">Start here</div>
+    </div>
     <h2 style="padding-left: 13pt;text-indent: 0pt;text-align: left;padding-bottom: 1%;">Procedures adopted in carrying out the Valuation
     </h2>
     <ul id="l4" >
@@ -1477,7 +1480,7 @@
                                 class="p">Based on my Valuation Analysis as per the information provided by the management
                                 of Company, in my assessment, the Net Asset Value of Equity shares of the Company as on
                             </span><span class="s9" >{{strdate}}</span><span class="p"> is
-                            </span><span class="s2" >{{currencyUnit}}. {{modelValuePerShare 'NAV'}} ({{modelValuePerShareNumbersToWords 'NAV'}})</span><span
+                            </span><span class="s2">{{currencyUnit}}. {{modelValuePerShare 'NAV'}} <span style="text-transform: capitalize;">({{modelValuePerShareNumbersToWords 'NAV'}})</span></span><span
                                 class="h2">.</span></p>
                     </li>
                     <li data-list-text="7.2" style="page-break-before: always;padding-top: 8%;">
@@ -1560,21 +1563,21 @@
         <h2 style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><a name="bookmark9">Net Asset Valuation of {{companyName}}</a><span style="float: right;"><i>Amount ({{currencyUnit}})</i></span></h2>
         <!-- <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%">Valuation as per Net Asset Value
             Method <span style="float: right;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></h3> -->
-        <table style="border-collapse:collapse;margin-left:8pt;width: 100%;" cellspacing="0">
+        <table style="border-collapse:collapse;margin-left:8pt;width: 100%;padding-top: 2%;" cellspacing="0">
             <tr style="height:14pt">
                 <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#001F5F">
-                    <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">
+                    <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
                         Particulars</p>
                 </td>
                 <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#001F5F">
-                    <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">
+                    <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
                         Book Value</p>
                 </td>
                 <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#001F5F">
-                    <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">
+                    <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
                         Fair Value</p>
                 </td>
             </tr>
@@ -1587,60 +1590,60 @@
                     {{#if (checkHead fieldName "")}}
                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                         bgcolor="#001F5F">
-                        <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{fieldName}}</p>
+                        <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">{{fieldName}}</p>
                         </td>
                     {{else}}
                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                             bgcolor="#001F5F">
-                            <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{fieldName}}</p>
+                            <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">{{fieldName}}</p>
                         </td>
                     {{/if}}
                     <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#001F5F">
-                        <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">{{bookValue}}
+                        <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">{{bookValue}}
                         </p>
                     </td>
                     <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#001F5F">
                         
-                        <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">{{fairValue}}
+                        <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">{{fairValue}}
                         </p>
                     </td>
                 {{else}}
                 {{#if (checkSubHead fieldName "")}}
                      {{#if (checkSubHead fieldName "")}}
                         <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;">{{fieldName}}</p>
+                            <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;">{{fieldName}}</p>
                         </td>
                     {{else}}
                         <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;">{{fieldName}}</p>
+                            <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;">{{fieldName}}</p>
                         </td>
                     {{/if}}
                     
                     <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s17" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">{{bookValue}}</p>
+                        <p class="s17" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">{{bookValue}}</p>
                     </td>
                 
                     <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s17" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">{{fairValue}}</p>
+                        <p class="s17" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">{{fairValue}}</p>
                     </td>
                 {{else}}
                     {{#if (checkHead fieldName "")}}
                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s15" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;">{{fieldName}}</p>
+                            <p class="s15" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;">{{fieldName}}</p>
                         </td>
                     {{else}}
                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s15" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;">{{fieldName}}</p>
+                            <p class="s15" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;">{{fieldName}}</p>
                         </td>
                     {{/if}}
                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">{{bookValue}}</p>
+                            <p class="s16" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">{{bookValue}}</p>
                         </td>
 
                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;">{{fairValue}}</p>
+                            <p class="s16" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">{{fairValue}}</p>
                         </td>
                     {{/if}}
                 {{/if}}
