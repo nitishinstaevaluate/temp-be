@@ -31,6 +31,7 @@ export class ReportService {
     totalC=0;
     totalD=0;
     totalL=0;
+    unqotedEquityShareVal=0;
     constructor( private valuationService:ValuationsService,
       @InjectModel('report')
     private readonly reportModel: Model<ReportDocument>,
@@ -2208,8 +2209,8 @@ export class ReportService {
       if(elevenUaData){
         const totalIncomeTaxPaid = elevenUaData?.data?.totalIncomeTaxPaid;
       const unamortisedAmountOfDeferredExpenditure = elevenUaData?.data?.unamortisedAmountOfDeferredExpenditure;
-      this.totalA = totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure;
-      return totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure;
+      this.totalA = elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure);
+      return elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure);
       }
       return '-';
     })
@@ -2347,10 +2348,20 @@ export class ReportService {
           const paymentDividends = elevenUaData.data?.paymentDividends;
           const reservAndSurplus = elevenUaData.data?.reserveAndSurplus;
           const provisionForTaxation = elevenUaData.data?.provisionForTaxation;
-          const contingentLiabilities = isNaN(parseFloat(elevenUaData.data?.inputData?.contingentLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.contingentLiability);
-          const otherThanAscertainLiability = isNaN(parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability);
-          this.totalL = paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability;
-          return (paidUpCapital + paymentDividends + reservAndSurplus + provisionForTaxation + contingentLiabilities + otherThanAscertainLiability).toFixed(2);
+          // const contingentLiabilities = isNaN(parseFloat(elevenUaData.data?.inputData?.contingentLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.contingentLiability);
+          // const otherThanAscertainLiability = isNaN(parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability);
+          this.totalL = convertToNumberOrZero(elevenUaData?.data?.bookValueOfLiabilities) - (convertToNumberOrZero(paidUpCapital) + convertToNumberOrZero(paymentDividends) + convertToNumberOrZero(reservAndSurplus) + convertToNumberOrZero(provisionForTaxation) + convertToNumberOrZero(elevenUaData.data?.inputData?.contingentLiability) + convertToNumberOrZero(elevenUaData.data?.inputData?.otherThanAscertainLiability));
+          return (
+            convertToNumberOrZero(elevenUaData?.data?.bookValueOfLiabilities) -  
+          (
+            convertToNumberOrZero(paidUpCapital) + 
+            convertToNumberOrZero(paymentDividends) + 
+            convertToNumberOrZero(reservAndSurplus) + 
+            convertToNumberOrZero(provisionForTaxation) + 
+            convertToNumberOrZero(elevenUaData.data?.inputData?.contingentLiability) + 
+            convertToNumberOrZero(elevenUaData.data?.inputData?.otherThanAscertainLiability)
+          )
+          ).toFixed(2);
       }
       return '-'
     })
@@ -2373,8 +2384,16 @@ export class ReportService {
       const totalSum = this.totalA + this.totalB + this.totalC + this.totalD - this.totalL;
 
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
+      this.unqotedEquityShareVal = result
 
       return result.toFixed(2);
+    })
+
+    hbs.registerHelper('elevenUaPerShare',()=>{
+      if(this.unqotedEquityShareVal){
+        return this.unqotedEquityShareVal.toFixed(2);
+      }
+      return '-'
     })
 
     hbs.registerHelper('reportDate',()=>{
