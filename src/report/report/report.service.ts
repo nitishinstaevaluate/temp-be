@@ -1581,14 +1581,14 @@ export class ReportService {
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              const valuePerShare = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.valuePerShare);
               arrayValuePerShare.push({fcffValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({fcffValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              const valuePerShare = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.valuePerShare);
               arrayValuePerShare.push({excessEarningValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({excessEarningValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
@@ -1635,7 +1635,6 @@ export class ReportService {
              navData.splice(firmValueInd,0,emptyObj);
              navData.splice(netCurrentAssetInd,0,emptyObj);
 
-             console.log(navData,"nav data")
              navData = navData.map((indNav)=>{
               return {
                 fieldName:indNav.fieldName,
@@ -2030,6 +2029,13 @@ export class ReportService {
         if(REPORT_LINE_ITEM.includes(`${value}`))
           return false;
         return true;
+    })
+
+    hbs.registerHelper('marketApproachHeaderCheck',(value)=>{
+      if(value === 'Value of Equity' || value === 'Enterprise Value' || value === 'Fair Value of Equity'){
+        return true;
+      }
+      return false;
     })
     }
      
