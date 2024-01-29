@@ -1635,7 +1635,6 @@ export class ReportService {
              navData.splice(firmValueInd,0,emptyObj);
              navData.splice(netCurrentAssetInd,0,emptyObj);
 
-             console.log(navData,"nav data")
              navData = navData.map((indNav)=>{
               return {
                 fieldName:indNav.fieldName,
@@ -2030,6 +2029,13 @@ export class ReportService {
         if(REPORT_LINE_ITEM.includes(`${value}`))
           return false;
         return true;
+    })
+
+    hbs.registerHelper('marketApproachHeaderCheck',(value)=>{
+      if(value === 'Value of Equity' || value === 'Enterprise Value' || value === 'Fair Value of Equity'){
+        return true;
+      }
+      return false;
     })
     }
      
