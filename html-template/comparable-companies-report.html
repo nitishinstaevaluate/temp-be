@@ -1388,28 +1388,53 @@
                 </tr>
 
                 {{#each (priceToSalesRatioCalculation data)}}
-                <tr>
-                    <td
-                        style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s16"
-                            style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;">
-                            {{particular}}</p>
-                    </td>
+                    {{#if (marketApproachHeaderCheck particular)}}
+                        <tr>
+                            <td
+                                style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">
+                                    {{particular}}</p>
+                            </td>
 
-                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;">
-                            {{avg}}
-                        </p>
-                     </td>
-                
-                {{#if (checkPreferenceRatio)}}
-                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;">
-                            {{med}}
-                        </p>
-                    </td>
-                {{/if}}
-                </tr>
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                    {{avg}}
+                                </p>
+                            </td>
+                        
+                        {{#if (checkPreferenceRatio)}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                    {{med}}
+                                </p>
+                            </td>
+                        {{/if}}
+                        </tr>
+                    {{else}}
+                        <tr>
+                            <td
+                                style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
+                                    {{particular}}</p>
+                            </td>
+
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                    {{avg}}
+                                </p>
+                            </td>
+                        
+                        {{#if (checkPreferenceRatio)}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                    {{med}}
+                                </p>
+                            </td>
+                        {{/if}}
+                        </tr>
+                    {{/if}}
                 {{/each}}
             </table>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1457,28 +1482,53 @@
                 </tr>
 
                 {{#each (evEbitaRatioCalculation data)}}
-                    <tr>
-                        <td
-                            style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16"
-                                style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;">
-                                {{particular}}</p>
-                        </td>
+                    {{#if (marketApproachHeaderCheck particular)}}
+                        <tr>
+                            <td
+                                style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">
+                                    {{particular}}</p>
+                            </td>
 
-                        <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;">
-                                {{avg}}
-                            </p>
-                         </td>
-                    
-                    {{#if (checkPreferenceRatio)}}
-                        <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;">
-                                {{med}}
-                            </p>
-                        </td>
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                    {{avg}}
+                                </p>
+                            </td>
+                        
+                        {{#if (checkPreferenceRatio)}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                    {{med}}
+                                </p>
+                            </td>
+                        {{/if}}
+                        </tr>
+                    {{else}}
+                        <tr>
+                            <td
+                                style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
+                                    {{particular}}</p>
+                            </td>
+
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                    {{avg}}
+                                </p>
+                            </td>
+                        
+                        {{#if (checkPreferenceRatio)}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                    {{med}}
+                                </p>
+                            </td>
+                        {{/if}}
+                        </tr>
                     {{/if}}
-                    </tr>
                 {{/each}}
             </table>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1524,25 +1574,47 @@
             {{/if}}
         </tr>
         {{#each (pbRatioCalculation data)}}
-        <tr>
-            <td
-                style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s16"
-                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
-                    {{particular}}</p>
-            </td>
-            <td
-                style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s16"
-                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
-                    {{avg}}</p>
-            </td>
-            {{#if (checkPreferenceRatio)}}
-            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important"> {{med}}</p>
-            </td>
+            {{#if (marketApproachHeaderCheck particular)}}
+                <tr>
+                    <td
+                        style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s16"
+                            style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">
+                            {{particular}}</p>
+                    </td>
+                    <td
+                        style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s16"
+                            style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                            {{avg}}</p>
+                    </td>
+                    {{#if (checkPreferenceRatio)}}
+                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;"> {{med}}</p>
+                    </td>
+                    {{/if}}
+                </tr>
+            {{else}}
+                <tr>
+                    <td
+                        style="width:20% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s16"
+                            style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
+                            {{particular}}</p>
+                    </td>
+                    <td
+                        style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s16"
+                            style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                            {{avg}}</p>
+                    </td>
+                    {{#if (checkPreferenceRatio)}}
+                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important"> {{med}}</p>
+                    </td>
+                    {{/if}}
+                </tr>
             {{/if}}
-        </tr>
         {{/each}}
     </table>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1582,27 +1654,51 @@
                 {{/if}}
             </tr>
             {{#each (peRatioCalculation data)}}
-            <tr>
-                <td
-                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s16" style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
-                        {{particular}}
-                    </p>
-                </td>
-                <td
-                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{avg}}
-                </p>
-            </td>
-            {{#if (checkPreferenceRatio)}}
-                <td
-                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s16"
-                        style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{med}}
-                    </p>
-                </td>
-            {{/if}}
-            </tr>
+                    {{#if (marketApproachHeaderCheck particular)}}
+                        <tr>
+                            <td
+                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">
+                                    {{particular}}
+                                </p>
+                            </td>
+                            <td
+                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">{{avg}}
+                            </p>
+                        </td>
+                        {{#if (checkPreferenceRatio)}}
+                            <td
+                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">{{med}}
+                                </p>
+                            </td>
+                        {{/if}}
+                        </tr>
+                    {{else}}
+                        <tr>
+                            <td
+                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
+                                    {{particular}}
+                                </p>
+                            </td>
+                            <td
+                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{avg}}
+                            </p>
+                         </td>
+                         {{#if (checkPreferenceRatio)}}
+                            <td
+                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{med}}
+                                </p>
+                            </td>
+                            {{/if}}
+                        </tr>
+                    {{/if}}
             {{/each}}
         </table>
         <div>

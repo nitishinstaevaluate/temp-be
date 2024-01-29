@@ -1581,14 +1581,14 @@ export class ReportService {
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
-              const valuePerShare = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.valuePerShare);
               arrayValuePerShare.push({fcffValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({fcffValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
-              const valuePerShare = this.formatPositiveAndNegativeValues(response?.noOfShares);
+              const valuePerShare = this.formatPositiveAndNegativeValues(response?.valuePerShare);
               arrayValuePerShare.push({excessEarningValuePerShare:valuePerShare})
             })
             arrayValuePerShare.unshift({excessEarningValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
