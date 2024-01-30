@@ -680,13 +680,11 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('riskFreeRate',()=>{
-        // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0].riskFreeRate;
         return '';
       })
       hbs.registerHelper('expMarketReturn',()=>{
-        // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0]?.expMarketReturn.toFixed(2);
         return '';
@@ -770,7 +768,6 @@ export class ReportService {
                 return [];
               });
             });
-            // console.log(formattedValues, "value per share");
             return formattedValues[0];
           }
           else{
@@ -816,7 +813,6 @@ export class ReportService {
                 return [];
               });
             });
-            console.log(formattedValues, "converted value");
             return formattedValues[0];
           }
           else{
@@ -1721,7 +1717,6 @@ export class ReportService {
           let pat:any = [],eps:any=[],marketPrice:any=[],totalPeRatio:any=[];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
-              // console.log(data.valuationData)
               if(data.model === MODEL[2] || data.model === MODEL[4]){
               data.valuationData.valuation.map((valuationDetails)=>{
                   if(valuationDetails.particular === 'peRatio'){
