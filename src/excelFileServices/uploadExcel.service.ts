@@ -890,19 +890,19 @@ export class ExcelSheetService {
               result.valuationData.map((response:any)=>{
                 arrayNoOfShares.push({fcfeNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
               })
-              arrayNoOfShares.unshift({fcfeNoOfShares:"No. of Shares"});
+              arrayNoOfShares.unshift({fcfeNoOfShares:"No. of o/s Shares"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
                 arrayNoOfShares.push({fcffNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
               })
-              arrayNoOfShares.unshift({fcffNoOfShares:"No. of Shares"});
+              arrayNoOfShares.unshift({fcffNoOfShares:"No. of o/s Shares"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
                 arrayNoOfShares.push({excessEarningNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
               })
-              arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of Shares"});
+              arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of o/s Shares"});
             }
           })
           return arrayNoOfShares;

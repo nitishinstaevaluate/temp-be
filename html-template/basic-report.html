@@ -1100,11 +1100,13 @@
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;padding-top: 2%;"><span
                                     class="p">The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of
                                 </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as of {{strdate}}</span><span
-                                    class="p"> to comply with the relevant provisions in relation to provisions of section {{reportSection}} of {{reportPurpose}}.</span></p>
+                                    class="p"> 
+                                    <!-- to comply with the relevant provisions in relation to provisions of  -->
+                                    as per section {{reportSection}} of {{reportPurpose}}.</span></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;"><span
                                     class="p">The valuation date for this valuation exercise is taken to be </span><span
-                                    class="s2" style="">{{strdate}}</span><span class="p"></span></p>
+                                    class="s2" style="">{{strdate}}.</span><span class="p"></span></p>
                             </li>
                         </ol>
                     </li>
@@ -1444,7 +1446,7 @@
                     </li>
                     <li data-list-text="ii.">
                         <p style="padding-left: 45pt;text-indent: -27pt;text-align: left;padding-top: 1%;"><span
-                                class="p">Management Certificated Provisional Financials for the period ended 
+                                class="p">Management Certificate Provisional Financials for the period ended 
                             </span><span class="s2" style=" ">________________</span></p>
                     </li>
                     <li data-list-text="iii.">
@@ -1452,11 +1454,12 @@
                                 Financial Statements for the years ending March 31,
                             </span><span class="s2" style=" ">2023</span><span class="p">
                                 through March 31, </span><span class="s2"
-                                style=" ">{{projectedYear}}</span><span class="p">.</span></p>
+                                style=" ">{{projectedYear}}</span><span class="p">.</span>
+                            </p>
                     </li>
                     <li data-list-text="iv.">
                         <p style="padding-left: 45pt;text-indent: -30pt;text-align: left;padding-top: 1%;">A detailed note on the
-                            background of the Company including all its divisions.</p>
+                            background of the Company.</p>
                     </li>
                     <li data-list-text="v.">
                         <p style="padding-left: 45pt;text-indent: -27pt;text-align: left;padding-top: 1%;">Data extracted from
@@ -1968,7 +1971,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px">{{costOfEquity}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{costOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1992,7 +1995,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px">{{adjustedCostOfEquity}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{adjustedCostOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -2157,16 +2160,19 @@
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s5"
                                             style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
-                                            {{#if (checkIfFcff)}}
-                                                WACC Rate/Cost of Equity
-                                            {{else}}
-                                              Cost of Equity
-                                            {{/if}}
+                                            Discount Rate
                                         </p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         >
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">{{costOfEquity}}%</p>
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                            {{#if (checkIfFcff)}}
+                                                {{wacc}}%
+                                            {{else}}
+                                              
+                                              {{costOfEquity}}%
+                                            {{/if}}
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -2178,7 +2184,7 @@
                                         </td>
                                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                     <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"> -->
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">{{terminalValue}}</p>
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{terminalValue}}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -3131,7 +3137,7 @@
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;padding-top: 2%;line-height: 145%;"><span class="h1">Based on our study and
             analytical review procedures, and subject to the limitations expressed within this report, our opinion of
             fair value of </span><span class="s1" style="">{{natureOfInstrument}} of
-            {{companyName}}</span><span class="h1"> , to comply with the relevant provisions of the Companies Act, 2013 in relation
+            {{companyName}}</span><span class="h1">, to comply with the relevant provisions of the Companies Act, 2013 in relation
             to proposed issuance of {{natureOfInstrument}}, as of </span><span class="s1"
             style="">{{strdate}}</span><span class="h1">:</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>

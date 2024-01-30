@@ -834,14 +834,14 @@ export class ReportService {
         let equityPerShare = [];
         if(reportDetails?.modelWeightageValue){
           const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
-          return `${number.replace(/,/g, ',')}/-`
+          return `${number.replace(/,/g, ',')}`
         }
         if(transposedData[0]?.data.transposedResult[1])
           valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
             const number = Math.floor(response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
             if(number){
-              equityPerShare.push( `${number.replace(/,/g, ',')}/-`);
+              equityPerShare.push( `${number.replace(/,/g, ',')}`);
             }
           }
         });
@@ -1316,21 +1316,21 @@ export class ReportService {
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({fcfeSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Cash Flows"});
+            arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Discounted Cash Flows"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({fcffSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Cash Flows"});
+            arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Discounted Cash Flows"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({excessEarningSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Cash Flows"});
+            arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Discounted Cash Flows"});
           }
         })
         return arraySumOfCashFlows;
@@ -1549,21 +1549,21 @@ export class ReportService {
               const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
               arrayNoOfShares.push({fcfeNoOfShares:noOfSharesValue})
             })
-            arrayNoOfShares.unshift({fcfeNoOfShares:"No. of Shares"});
+            arrayNoOfShares.unshift({fcfeNoOfShares:"No. of o/s Shares"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
               arrayNoOfShares.push({fcffNoOfShares:noOfSharesValue})
             })
-            arrayNoOfShares.unshift({fcffNoOfShares:"No. of Shares"});
+            arrayNoOfShares.unshift({fcffNoOfShares:"No. of o/s Shares"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
               const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
               arrayNoOfShares.push({excessEarningNoOfShares:noOfSharesValue})
             })
-            arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of Shares"});
+            arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of o/s Shares"});
           }
         })
         return arrayNoOfShares;
@@ -1611,6 +1611,20 @@ export class ReportService {
           }
         })
             if(checkiIfprovisional){
+              return options.fn(this)
+            }
+            else{
+              return options.inverse(this);
+            }
+        })
+      hbs.registerHelper('ifStub',(options)=>{
+        let checkIfStub = false;
+          valuationResult.modelResults.forEach((result)=>{
+            if(Array.isArray(result.valuationData) && result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+              checkIfStub = true;
+            }
+          })
+            if(checkIfStub){
               return options.fn(this)
             }
             else{
@@ -1894,7 +1908,7 @@ export class ReportService {
                   }
                   if(valuationDetails.particular === 'result'){
                     avgValuePerShare = {
-                      particular:`Value per Share ${valuationResult.inputData[0].currencyUnit}`,
+                      particular:`Value per Share (${valuationResult.inputData[0].currencyUnit})`,
                       fairValOfEquity:'', //selected fair value of equity for average calculation
                       weights:'',
                       weightedVal: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.fairValuePerShareAvg * 100) / 100) //selected fair value of equity for average calculation
@@ -1912,6 +1926,15 @@ export class ReportService {
           if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
             return true;
           return false;
+        })
+
+        hbs.registerHelper('navCurrencyAndReportingUnit',()=>{
+          if(valuationResult?.inputData[0]?.reportingUnit === 'absolute'){
+            return `Amount (${valuationResult?.inputData[0]?.currencyUnit})`
+          }
+          else{
+            return `(${valuationResult?.inputData[0]?.currencyUnit} in ${valuationResult?.inputData[0]?.reportingUnit})`
+          }
         })
 
         hbs.registerHelper('industryName',()=>{
