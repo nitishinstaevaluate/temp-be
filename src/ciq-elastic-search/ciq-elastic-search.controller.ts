@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CiqElasticSearchService } from './ciq-elastic-search.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
+import { ciqFetchPriceEquityDto } from './dto/ciq-elastic-search.dto';
 
 @Controller('ciq-elastic-search')
 export class CiqElasticSearchController {
@@ -19,5 +19,12 @@ export class CiqElasticSearchController {
     @Get('ciq-elastic-search-company-details/:companyId')
     async searchCiqEntityByCompanyId(@Param() companyId : any) {
         return await this.ciqElasticSearchService.searchEntityByCompanyId(companyId)
+    }
+
+    // https://localhost:3000/ciq-elastic-search/ciq-elastic-search-price-equity
+    @UseGuards(AuthGuard('jwt'))
+    @Post('ciq-elastic-search-price-equity')
+    async searchCiqEntityByPriceEquity(@Body(ValidationPipe) companyDetails : ciqFetchPriceEquityDto) {
+        return await this.ciqElasticSearchService.searchEntityByPriceEquity(companyDetails)
     }
 }

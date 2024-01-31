@@ -35,7 +35,7 @@ export class CiqSpService {
     private ciqSpBetaService: ciqSpBetaService,
     private ciqSpCompanyMeanMedianService: ciqSpCompanyMeanMedianService,
     private ciqSpfinancialService: CiqSpFinancialService,
-    private authenticationService:AuthenticationService
+    private authenticationService: AuthenticationService
     ){}
 
     async fetchSPHierarchyBasedIndustry(){
@@ -644,7 +644,8 @@ export class CiqSpService {
             decodeLocation,
             businessDescriptor,
             pageStart: data?.pageStart,
-            size: data?.size
+            size: data?.size,
+            valuationDate:data.valuationDate
           }
 
           const bearerToken = await this.authenticationService.extractBearer(req);

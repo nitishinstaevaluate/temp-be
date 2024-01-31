@@ -249,3 +249,24 @@ export function convertToNumberOrOne(value: any): number {
     return 1;
   }
 }
+export function formatDateHyphenToDDMMYYYY(inputDate: string): string {
+    const date = new Date(inputDate);
+    
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+
+export function convertUnixTimestampToDateString(timestamp: number): string {
+  const date = new Date(timestamp);
+  
+  const year = date.getUTCFullYear();
+  const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
+  const day = ('0' + (date.getUTCDate() + 1)).slice(-2);
+
+  const formattedDate = `${year}-${month}-${day}T00:00:00.000`;
+
+  return formattedDate;
+}

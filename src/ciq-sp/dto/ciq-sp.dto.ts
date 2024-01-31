@@ -56,9 +56,9 @@ import { Expose, Type,} from 'class-transformer';
     @IsString()
     COMPANYNAME: string;
   
-    @Expose()
-    @IsNumber()
-    SIMPLEINDUSTRYID: number;
+    // @Expose()
+    // @IsNumber()
+    // SIMPLEINDUSTRYID: number;
   
     @Expose()
     @IsString()
@@ -67,6 +67,18 @@ import { Expose, Type,} from 'class-transformer';
     @Expose()
     @IsString()
     CITY: string;
+    
+    @Expose()
+    @IsNumber()
+    MARKETCAP: number;
+
+    @Expose()
+    @IsNumber()
+    SHARESOUTSTANDING: number;
+
+    // @Expose()
+    // @IsString()
+    // PRICINGDATE: number;
   }
 
   export class CiqSegmentDescriptionDto {

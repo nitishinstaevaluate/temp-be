@@ -3,12 +3,17 @@ import { plainToClass } from "class-transformer";
 import { CiqIndustryListDto, CiqSegmentDescriptionDto } from "src/ciq-sp/dto/ciq-sp.dto";
 import { ElasticSearchService } from "src/elasticSearch/elastic-search-client.service";
 import { RedisService } from "src/middleware/redisConfig";
+import { CiqPriceEquityDto } from "./dto/ciq-elastic-search.dto";
+import { ciqElasticCompanyListSearchService } from "./ciq-elastic-company-list-search.service";
+import { ciqElasticPriceEquityService } from "./ciq-elastic-price-equity.service";
 
 @Injectable()
 export class ciqElasticSearchAggregateService{
     simpleIndustryList = [];
         constructor(private readonly elasticSearchClientService: ElasticSearchService,
-            private readonly redisClientService: RedisService){}
+            // private readonly redisClientService: RedisService,
+            private readonly ciqElasticCompanyListSearchService:ciqElasticCompanyListSearchService,
+            private readonly ciqElasticPriceEquityService:ciqElasticPriceEquityService){}
 
     async elasticSearchAggregate(body){
         try{
@@ -45,10 +50,11 @@ export class ciqElasticSearchAggregateService{
                 decodeLocation: body.decodeLocation,
                 companyIdArray:filteredDescriptorDetails,
                 size: body.size,
-                pageStart: body.pageStart
+                pageStart: body.pageStart,
+                valuationDate:body.valuationDate
             }
 
-            const companyList = await this.fetchCompanyList(payload); // only filter through ciqCompanyId table by listed companies
+            const companyList = await this.ciqElasticCompanyListSearchService.fetchCompanyList(payload); // only filter through ciqCompanyId table by listed companies
 
             return companyList;
         }
@@ -61,146 +67,66 @@ export class ciqElasticSearchAggregateService{
         }
     }
 
-    async fetchCompanyList(payload){
-        try{
-            let queryArray = [];
-            let listedCompanyList = [];
-            let pageStart = 0, size = 10, totalListCount;
+    //Sanket (31-01-2024) - Uncomment this function to get only listed companies 
+    // async GICSBasedCompanyList(){
+    //     try{
+    //         const criteria = {
+    //             query: {
+    //                 match_all:{}
+    //             },
+    //             size: 10000,
+    //             _source: {
+    //                 includes: ['COMPANYID'],
+    //             },
+    //         };
 
-            if(payload.companyType.length){
-                queryArray.push({terms: {"COMPANYTYPEID": payload.companyType}});
-            }
+    //         const companyIndustryList = await this.elasticSearchClientService.search('ciqcompanyindustryind', criteria);
 
-            if(payload.companyStatusType.length){
-                queryArray.push({terms: {"COMPANYSTATUSTYPEID": payload.companyStatusType}});
-            }
-
-            if(payload?.decodeIndustry?.simpleindustryid){
-                queryArray.push({terms: {"SIMPLEINDUSTRYID": [+payload.decodeIndustry.simpleindustryid]}});
-                
-            }
-
-            if(payload?.companyIdArray.length){
-                queryArray.push({terms: {"COMPANYID": payload.companyIdArray}});
-            }
-
-            // if(queryArray.length === 0){
-            //     totalListCount = await this.elasticSearchClientService.countTotal('ciqcompanyindustryind');
-            // }
+    //         let listedCompanyIdArray = [];
             
-            if(payload?.pageStart){
-                pageStart = payload.pageStart;
-            }
+    //         listedCompanyIdArray = companyIndustryList.data.map((elements)=>{
+    //             return elements.COMPANYID;
+    //         })
 
-            if(payload?.size){
-                size = payload.size;
-            }
+    //         return listedCompanyIdArray;
+    //     }
+    //     catch(error){
+    //         return {
+    //             error:error,
+    //             status:false,
+    //             msg:"Company filtering based on GICS failed"
+    //         }
+    //     }
+    // }
 
-            queryArray.push({"exists": {"field": "SIMPLEINDUSTRYID"}}); // null check filter to remove null simpleindustryid records 
+    
+    //Sanket (31-01-2024) - Uncomment this function to store business descriptor data into redis manager
+    // async saveBusinessDescriptor(){
+    //     try{
+    //         const criteria = {
+    //             query: {
+    //                 match_all:{}
+    //             },
+    //             size: 10000,
+    //             _source: {
+    //                 includes: ['COMPANYID', 'SEGMENTDESCRIPTION'],
+    //             },
+    //         };
 
-            const criteria = {
-                query: {
-                    bool: {
-                        must: queryArray
-                    }
-                },
-                _source: {
-                    includes: ['COMPANYID', 'COMPANYNAME', 'SIMPLEINDUSTRYID', 'CITY'],
-                },
-                from: `${pageStart}`,
-                size: `${size}`,
-                track_total_hits: true,
-            };
-            
-            const companyList = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
+    //         const descriptionQuery = await this.elasticSearchClientService.search('ciqsegmentdescriptionind', criteria);
 
-            if(!this.simpleIndustryList.length){
-                await this.fetchSimpleIndustry();
-            }
+    //         const businessDescriptorDetails = await plainToClass(CiqSegmentDescriptionDto, descriptionQuery.data, {excludeExtraneousValues:true});
 
-            for await (const companyDetails of companyList.data) {
-                for await (const simpleIndustry of this.simpleIndustryList) {
-                    if (companyDetails.SIMPLEINDUSTRYID === simpleIndustry.SIMPLEINDUSTRYID) {
-                        listedCompanyList.push({ ...companyDetails, SIMPLEINDUSTRYDESCRIPTION: simpleIndustry.SIMPLEINDUSTRYDESCRIPTION });
-                    }
-                }
-            }
-
-            const modifiedCompanyList = plainToClass(CiqIndustryListDto, listedCompanyList, {excludeExtraneousValues:true})
-            return {
-                data:modifiedCompanyList,
-                status:true,
-                msg:"ciq company list fetched",
-                // listCount:totalListCount ? totalListCount.count :  companyList.total
-                listCount: companyList.total
-            }
-        }
-        catch(error){
-            return {
-                error:error,
-                status:false,
-                msg:"company list while elastic search not found"
-            }
-        }
-    }
-
-    async GICSBasedCompanyList(){
-        try{
-            const criteria = {
-                query: {
-                    match_all:{}
-                },
-                size: 10000,
-                _source: {
-                    includes: ['COMPANYID'],
-                },
-            };
-
-            const companyIndustryList = await this.elasticSearchClientService.search('ciqcompanyindustryind', criteria);
-
-            let listedCompanyIdArray = [];
-            
-            listedCompanyIdArray = companyIndustryList.data.map((elements)=>{
-                return elements.COMPANYID;
-            })
-
-            return listedCompanyIdArray;
-        }
-        catch(error){
-            return {
-                error:error,
-                status:false,
-                msg:"Company filtering based on GICS failed"
-            }
-        }
-    }
-
-    async saveBusinessDescriptor(){
-        try{
-            const criteria = {
-                query: {
-                    match_all:{}
-                },
-                size: 10000,
-                _source: {
-                    includes: ['COMPANYID', 'SEGMENTDESCRIPTION'],
-                },
-            };
-
-            const descriptionQuery = await this.elasticSearchClientService.search('ciqsegmentdescriptionind', criteria);
-
-            const businessDescriptorDetails = await plainToClass(CiqSegmentDescriptionDto, descriptionQuery.data, {excludeExtraneousValues:true});
-
-            this.redisClientService.setKeyValue('businessdescriptor',JSON.stringify(businessDescriptorDetails));
-        }
-        catch(error){
-            return {
-                error:error,
-                status:false,
-                msg:"redis descriptor key creation failed"
-            }
-        }
-    }
+    //         this.redisClientService.setKeyValue('businessdescriptor',JSON.stringify(businessDescriptorDetails));
+    //     }
+    //     catch(error){
+    //         return {
+    //             error:error,
+    //             status:false,
+    //             msg:"redis descriptor key creation failed"
+    //         }
+    //     }
+    // }
 
     async fetchBusinessDescriptor(){
         try{
@@ -227,26 +153,7 @@ export class ciqElasticSearchAggregateService{
         }
     }
 
-    async fetchSimpleIndustry(){
-        try{
-            const criteria = {
-                query: {
-                    match_all:{}
-                },
-                size: 10000
-            };
-
-            this.simpleIndustryList = (await this.elasticSearchClientService.search('ciqsimpleindustry', criteria)).data;
-            return this.simpleIndustryList;
-        }
-        catch(error){
-            return{
-                error:error,
-                status:false,
-                msg:"elastic search simple industry failed"
-            }
-        }
-    }
+    
 
     async findByCompanyId(data){
         try{
@@ -272,6 +179,21 @@ export class ciqElasticSearchAggregateService{
                 error:error,
                 status:false,
                 msg:"elastic search company-id failed"
+            }
+        }
+    }
+
+    
+
+    async elasticSearchPriceEquityAggregate(body){
+        try{
+            return this.ciqElasticPriceEquityService.calculatePriceEquityAggregate(body);
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"ciq price equity fetch failed"
             }
         }
     }
