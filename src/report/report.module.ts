@@ -21,9 +21,12 @@ import { ValuationSchema } from 'src/valuationProcess/schema/valuation.schema';
 import { utilsService } from 'src/utils/utils.service';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { HistoricalBSE500ReturnsSchema, HistoricalReturnsSchema } from 'src/data-references/schema/data-references.schema';
+import { sebiReportService } from './sebi-report.service';
+import { AuthenticationModule } from 'src/authentication/authentication.module';
+import { thirdPartyReportService } from './third-party-report.service';
 
 @Module({
-  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService],
+  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, thirdPartyReportService],
   controllers: [ReportController],
   imports:[ValuationProcessModule,LoggerModule,
     MongooseModule.forFeature(
@@ -41,7 +44,9 @@ import { HistoricalBSE500ReturnsSchema, HistoricalReturnsSchema } from 'src/data
     secret: process.env.JWT_SECRET,
     signOptions: { expiresIn: '24h' },
   }),
-  ElevenUaModule
+  ElevenUaModule,
+  ValuationProcessModule,
+  AuthenticationModule
   ]
 })
 export class ReportModule {}
