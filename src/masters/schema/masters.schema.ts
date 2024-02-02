@@ -181,13 +181,25 @@ export const COEMethodSchema = SchemaFactory.createForClass(COEMethod);
 @Schema()
 export class RiskFreeRate {
   @Prop({ required: true })
-  label: string;
+  date: Date;
 
   @Prop({ required: true })
-  type: string;
+  beta1: number;
+  
+  @Prop({ required: true })
+  beta0: number;
 
-  @Prop({ default: true })
-  isActive: boolean;
+  @Prop({ required: true })
+  beta2: number;
+
+  @Prop({ required: true })
+  beta3: number;
+
+  @Prop({ required: true })
+  tau1: number;
+
+  @Prop({ required: true })
+  tau2: number;
 
   @Prop({ default: () => new Date() })
   modifiedAt: Date;

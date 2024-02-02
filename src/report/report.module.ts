@@ -24,6 +24,7 @@ import { HistoricalBSE500ReturnsSchema, HistoricalReturnsSchema } from 'src/data
 import { sebiReportService } from './sebi-report.service';
 import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { thirdPartyReportService } from './third-party-report.service';
+import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
 
 @Module({
   providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, thirdPartyReportService],
@@ -37,6 +38,7 @@ import { thirdPartyReportService } from './third-party-report.service';
         { name: 'valuation', schema: ValuationSchema },
         { name: 'historicalReturns', schema : HistoricalReturnsSchema},
           { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
+          { name: 'riskFreeRate', schema : RiskFreeRateSchema},
       ]
     ),
     UsersModule,

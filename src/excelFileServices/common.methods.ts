@@ -266,7 +266,7 @@ export function convertUnixTimestampToDateString(timestamp: number): string {
   const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
   const day = ('0' + (date.getUTCDate() + 1)).slice(-2);
 
-  const formattedDate = `${year}-${month}-${day}T00:00:00.000`;
+  const formattedDate = `${year}-${month}-${day}T00:00:00.000Z`;
 
   return formattedDate;
 }
