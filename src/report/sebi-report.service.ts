@@ -345,10 +345,9 @@ export class sebiReportService {
             let finalProjYear;
             finalYearColumn.map((elements)=>{
               if(elements.model === MODEL[0] || elements.model === MODEL[1]){
-                finalProjYear = elements.valuationData[elements.valuationData.length - 2].particular;
+                finalProjYear = elements.valuationData[elements.valuationData.length - 2].particulars;
               }
             })
-            console.log(finalProjYear,"projected year")
             if(finalProjYear)
               return `20${finalProjYear.split('-')[1]}`;
             return '2028';
