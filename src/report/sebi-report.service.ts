@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
-import { formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
+import { convertEpochToPlusOneDate, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
 import { GET_MULTIPLIER_UNITS, MODEL, NATURE_OF_INSTRUMENT, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdPartyReportService } from "./third-party-report.service";
 require('dotenv').config()
@@ -200,6 +200,19 @@ export class sebiReportService {
           hbs.registerHelper('strdate',()=>{
             if(valuationResult.inputData[0].valuationDate)
               return formatDate(new Date(valuationResult.inputData[0].valuationDate));
+            return '';
+          })
+          
+          hbs.registerHelper('relevantDate',()=>{
+            if(valuationResult.inputData[0].valuationDate)
+              return convertEpochToPlusOneDate(new Date(valuationResult.inputData[0].valuationDate));
+            return '';
+          })
+
+          hbs.registerHelper('riskFreeRateYears',()=>{
+            if(valuationResult.inputData[0].riskFreeRateYears){
+              return valuationResult.inputData[0].riskFreeRateYears;
+            }
             return '';
           })
     

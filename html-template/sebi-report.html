@@ -529,10 +529,12 @@
     <div style="page-break-before: always;padding-left: 5%;padding-right: 5%;padding-top: 6%;">
         <p style="padding-top: 3pt;text-indent: 0pt;text-align: justify;line-height: 190%;"><span class="h1">Valuation of
             equity shares of </span><span class="s1" >{{companyName}}</span><span
-            class="h1"> for compliance with </span><span class="s1" style=" background-color: #FF0;">Regulation
-            166A</span><span class="h1"> of Securities and Exchange Board of India (Issue of Capital and Disclosure
-            Requirements) Regulations, 2018 as amended by Securities and Exchange Board of India (Issue of Capital and
-            Disclosure Requirements) (Amendment) Regulations, 2022</span></p>
+            class="h1"> for compliance with </span>
+                <span class="h1"> {{reportSection}}
+            as amended by Securities and Exchange Board of India (Issue of Capital and
+            Disclosure Requirements) (Amendment) Regulations, 2022
+        </span>
+    </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 11pt;text-indent: 0pt;text-align: left;"><span class="s1">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;padding-top: 30%;"><br /></p>
@@ -569,6 +571,7 @@
             <span class="s3">{{registeredValuerName}}</span><span class="p">’ or ‘Independent Valuer’) has been
             appointed to determine fair value of equity shares of </span>
             <span class="s3">{{companyName}}</span><span class="p"> for compliance with </span>
+
             <span class="s3" >{{reportSection}}</span><span class="p"> of the {{purposeOfReport}} (as
             amended) read with </span><span class="s3" style=" background-color: #FF0;">Rule 13</span><span class="p">
             of the Companies (Share Capital and Debenture) Rules, 2014, and </span><span class="s3"
@@ -581,8 +584,8 @@
     <p style="padding-top: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">The relevant
             date, as informed to us by the Management of </span><span class="s3">{{companyName}}</span><span class="p">(‘the Management’), for the purpose of
             calculation of the price per share under the SEBI ICDR Regulations for issuance of equity shares is
-        </span><span class="s3" >{{strdate}}</span><span class="p"> (‘</span><span
-            class="s3" style=" background-color: #FF0;">Relevant Date</span><span class="p">’). The Valuation Date as
+        </span><span class="s3" >{{relevantDate}}</span><span class="p"> (‘</span><span
+            class="s3" >Relevant Date</span><span class="p">’). The Valuation Date as
             informed to us by the Management for computation of equity value per share of </span><span class="s3">{{companyName}}</span><span class="p"> is as on close of trading hours of the date
             preceding the relevant date i.e. </span><span class="s3">{{strdate}}</span><span class="p"> (‘Valuation Date’).</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1175,11 +1178,16 @@
                     the present value (PV) of FCFEs.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">For
-                        Calculation of Cost of Equity, I have used risk free rate as </span><span class="s3"
-                        style=" background-color: #FF0;">Yield of 10 Yr. Indian</span><span class="p"> </span><span
-                        class="s3" style=" background-color: #FF0;">Govt. Securities</span><span class="p"> as on date of
-                        valuation.</span></p>
+                <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">
+                    <span class="p">For
+                        Calculation of Cost of Equity, I have used risk free rate as 
+                        {{#if (riskFreeRateYears)}}
+                        Yield of {{riskFreeRateYears}} Yr. Indian Govt. Securities  as on date of valuation.
+                        {{else}}
+                        _______________
+                        {{/if}}
+                    </span>
+                        </p>
             </li>
         </ul>
     </div>
