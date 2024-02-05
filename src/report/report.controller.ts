@@ -68,6 +68,24 @@ export class ReportController {
   @Res() res) {
     return await this.reportService.ruleElevenUaReport(reportId, res);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('sebi-report/:reportId')
+  async generateSebiReport(
+  @Param('reportId') reportId : string,
+  @Res() res,
+  @Req() req) {
+    return await this.reportService.sebiReport(reportId, res, req);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('preview-sebi-report/:reportId')
+  async previewSebiReport(
+  @Param('reportId') reportId : string,
+  @Res() res,
+  @Req() req) {
+    return await this.reportService.previewSebiReport(reportId, res, req);
+  }
   
   @UseGuards(AuthGuard('jwt'))
   @Get('previewReport/:approach/:reportId')

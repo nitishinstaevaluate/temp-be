@@ -23,6 +23,8 @@ import { ProcessStatusManagerService } from 'src/processStatusManager/process-st
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from 'src/ciq-sp/ciq-common-functions';
+import { sebiReportService } from './sebi-report.service';
+import { thirdPartyReportService } from './third-party-report.service';
 
 @Injectable()
 export class ReportService {
@@ -40,7 +42,9 @@ export class ReportService {
     private elevenUaService:ElevenUaService,
     private processStateManagerService:ProcessStatusManagerService,
     private authenticationService: AuthenticationService,
-    private historicalReturnsService:HistoricalReturnsService
+    private historicalReturnsService:HistoricalReturnsService,
+    private sebiReportService:sebiReportService,
+    private thirdPartyReportService:thirdPartyReportService
     ){}
 
     async getReport(id,res, req,approach){
@@ -77,7 +81,7 @@ export class ReportService {
 
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
-            this.loadFinancialTable(financialSegmentDetails);
+            this.loadFinancialTableHelper(financialSegmentDetails);
           }
 
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -106,9 +110,10 @@ export class ReportService {
                 pdf = await this.generatePdf(html, pdfFilePath);
                 // pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
               }
-              else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
-                pdf = await this.generateSebiReport(html, pdfFilePath);
-              }
+              // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+              //   pdf = await this.generateSebiReport(html, pdfFilePath);
+              //   // pdf = await this.sebiReportService.computeSEBIReport(html, pdfFilePath, req, valuationResult, reportDetails)
+              // }
   
               res.setHeader('Content-Type', 'application/pdf');
               res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
@@ -167,7 +172,7 @@ export class ReportService {
 
     if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
       const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
-      this.loadFinancialTable(financialSegmentDetails);
+      this.loadFinancialTableHelper(financialSegmentDetails);
     }
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -195,9 +200,11 @@ export class ReportService {
         if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
           pdf = await this.generatePdf(html, pdfFilePath);
         }
-        else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
-          pdf = await this.generateSebiReport(html, pdfFilePath);
-        }
+        // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+        //   pdf = await this.sebiReportService.computeSEBIReport(html, pdfFilePath, req, valuationResult, reportDetails)
+          
+        //   // pdf = await this.generateSebiReport(html, pdfFilePath);
+        // }
 
         await this.convertPdfToDocx(pdfFilePath,docFilePath)
         
@@ -323,6 +330,74 @@ export class ReportService {
   }
  }
 
+ async sebiReport(id,res, req){
+  try{
+    let htmlFilePath, pdfFilePath,docFilePath,pdf;
+
+    const reportDetails = await this.reportModel.findById(id);
+    const valuationResultDetails:any = await this.valuationService.getValuationById(reportDetails.reportId);
+    const companyName = valuationResultDetails.inputData[0].company;
+    htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+
+    pdfFilePath = path.join(process.cwd(), 'pdf', `${companyName}-${reportDetails.id}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `${companyName}-${reportDetails.id}.docx`);
+
+    if(reportDetails?.fileName){
+      const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`);
+      res.send(convertDocxToPdf);
+
+       return {
+            msg: "PDF download Success",
+            status: true,
+        };
+    }
+      pdf =  await this.sebiReportService.computeSEBIReport(htmlFilePath, pdfFilePath, req, valuationResultDetails, reportDetails);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`);
+      res.send(pdf);
+
+      return {
+          msg: "PDF download Success",
+          status: true,
+      };
+  }
+  catch(error){
+    return {
+      error:error,
+      msg:"sebi report generation failed",
+      status:false
+    }
+  }
+ }
+
+ async previewSebiReport(id, res, req){
+  try{
+    const reportDetails = await this.reportModel.findById(id);
+
+    let htmlFilePath, pdfFilePath,docFilePath,pdf;
+    const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+
+    
+    htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+
+    pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+    docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
+    
+    return await this.sebiReportService.computeSEBIpreviewReport(reportDetails, valuationResult,res, req, docFilePath, htmlFilePath,pdfFilePath)
+  }
+  catch(error){
+    return{
+      error:error,
+      status:false,
+      msg:"sebi report preview failed"
+    }
+  }
+ }
+
  async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
   try{
     if(fileExist){
@@ -371,7 +446,6 @@ export class ReportService {
       { $set: { fileName: file.filename } },
       { new: true }
     );
-
     if(report.id)
       await this.pushUpdatedReportIntoS3(file);
     
@@ -680,13 +754,11 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('riskFreeRate',()=>{
-        // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0].riskFreeRate;
         return '';
       })
       hbs.registerHelper('expMarketReturn',()=>{
-        // console.log(valuationResult.inputData[0],"data")
         if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0]?.expMarketReturn.toFixed(2);
         return '';
@@ -770,7 +842,6 @@ export class ReportService {
                 return [];
               });
             });
-            // console.log(formattedValues, "value per share");
             return formattedValues[0];
           }
           else{
@@ -816,7 +887,6 @@ export class ReportService {
                 return [];
               });
             });
-            console.log(formattedValues, "converted value");
             return formattedValues[0];
           }
           else{
@@ -834,14 +904,14 @@ export class ReportService {
         let equityPerShare = [];
         if(reportDetails?.modelWeightageValue){
           const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
-          return `${number.replace(/,/g, ',')}/-`
+          return `${number.replace(/,/g, ',')}`
         }
         if(transposedData[0]?.data.transposedResult[1])
           valuationResult.modelResults.map((response)=>{
           if(response.model===MODEL[0] || response.model === MODEL[1]){
             const number = Math.floor(response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
             if(number){
-              equityPerShare.push( `${number.replace(/,/g, ',')}/-`);
+              equityPerShare.push( `${number.replace(/,/g, ',')}`);
             }
           }
         });
@@ -854,6 +924,7 @@ export class ReportService {
       })
       hbs.registerHelper('projectedYear',()=>{
         const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 2][0];
+        console.log(projYear,"projected year")
         if(transposedData)
           return `20${projYear.split('-')[1]}`;
         return '2028';
@@ -1316,21 +1387,21 @@ export class ReportService {
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({fcfeSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Cash Flows"});
+            arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Discounted Cash Flows"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({fcffSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Cash Flows"});
+            arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Discounted Cash Flows"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({excessEarningSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Cash Flows"});
+            arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Discounted Cash Flows"});
           }
         })
         return arraySumOfCashFlows;
@@ -1549,21 +1620,21 @@ export class ReportService {
               const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
               arrayNoOfShares.push({fcfeNoOfShares:noOfSharesValue})
             })
-            arrayNoOfShares.unshift({fcfeNoOfShares:"No. of Shares"});
+            arrayNoOfShares.unshift({fcfeNoOfShares:"No. of o/s Shares"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
               arrayNoOfShares.push({fcffNoOfShares:noOfSharesValue})
             })
-            arrayNoOfShares.unshift({fcffNoOfShares:"No. of Shares"});
+            arrayNoOfShares.unshift({fcffNoOfShares:"No. of o/s Shares"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
               const noOfSharesValue = this.formatPositiveAndNegativeValues(response?.noOfShares);
               arrayNoOfShares.push({excessEarningNoOfShares:noOfSharesValue})
             })
-            arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of Shares"});
+            arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of o/s Shares"});
           }
         })
         return arrayNoOfShares;
@@ -1611,6 +1682,20 @@ export class ReportService {
           }
         })
             if(checkiIfprovisional){
+              return options.fn(this)
+            }
+            else{
+              return options.inverse(this);
+            }
+        })
+      hbs.registerHelper('ifStub',(options)=>{
+        let checkIfStub = false;
+          valuationResult.modelResults.forEach((result)=>{
+            if(Array.isArray(result.valuationData) && result.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+              checkIfStub = true;
+            }
+          })
+            if(checkIfStub){
               return options.fn(this)
             }
             else{
@@ -1707,7 +1792,6 @@ export class ReportService {
           let pat:any = [],eps:any=[],marketPrice:any=[],totalPeRatio:any=[];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
-              // console.log(data.valuationData)
               if(data.model === MODEL[2] || data.model === MODEL[4]){
               data.valuationData.valuation.map((valuationDetails)=>{
                   if(valuationDetails.particular === 'peRatio'){
@@ -1894,7 +1978,7 @@ export class ReportService {
                   }
                   if(valuationDetails.particular === 'result'){
                     avgValuePerShare = {
-                      particular:`Value per Share ${valuationResult.inputData[0].currencyUnit}`,
+                      particular:`Value per Share (${valuationResult.inputData[0].currencyUnit})`,
                       fairValOfEquity:'', //selected fair value of equity for average calculation
                       weights:'',
                       weightedVal: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.fairValuePerShareAvg * 100) / 100) //selected fair value of equity for average calculation
@@ -1912,6 +1996,15 @@ export class ReportService {
           if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
             return true;
           return false;
+        })
+
+        hbs.registerHelper('navCurrencyAndReportingUnit',()=>{
+          if(valuationResult?.inputData[0]?.reportingUnit === 'absolute'){
+            return `Amount (${valuationResult?.inputData[0]?.currencyUnit})`
+          }
+          else{
+            return `(${valuationResult?.inputData[0]?.currencyUnit} in ${valuationResult?.inputData[0]?.reportingUnit})`
+          }
         })
 
         hbs.registerHelper('industryName',()=>{
@@ -2002,12 +2095,12 @@ export class ReportService {
       return false;
     })
 
-    hbs.registerHelper('isSection165',()=>{
-      if(reportDetails.reportSection.includes(`165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018`) && reportDetails.reportSection.length === 1){
-        return true;
-      }
-      return false;
-    })
+    // hbs.registerHelper('isSection165',()=>{
+    //   if(reportDetails.reportSection.includes(`165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018`) && reportDetails.reportSection.length === 1){
+    //     return true;
+    //   }
+    //   return false;
+    // })
 
     hbs.registerHelper('calculateColspan',()=>{
       let colspan;
@@ -2063,7 +2156,8 @@ export class ReportService {
 
     async pushUpdatedReportIntoS3(formData){
       try{
-        const uploadDir = path.join(__dirname, '../../../pdf');
+        const uploadDir = path.join(process.cwd(),'pdf');
+
         const filePath = path.join(uploadDir, formData.filename);
         let file = fs.readFileSync(filePath).toString('base64');
         return await this.upsertReportInS3(file,formData.filename);
@@ -2084,7 +2178,7 @@ export class ReportService {
         'x-api-key': process.env.AWS_S3_API_KEY,
         "Content-Type": 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       }
-    
+      
       const upsertReport = await axiosInstance.put(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${filename}`,data,{headers});
       if(upsertReport.status === 200){
       return { filename } 
@@ -2119,7 +2213,7 @@ export class ReportService {
           throw new Error('The specified key does not exist');
         } else {
 
-          const uploadDir = path.join(__dirname, '../../../pdf');
+          const uploadDir = path.join(process.cwd(),'pdf');;
   
           const buffer = Buffer.from(fetchReport.data, 'base64')
   
@@ -2474,7 +2568,7 @@ export class ReportService {
     })
 }
 
-  loadFinancialTable(financialData){
+  loadFinancialTableHelper(financialData){
     hbs.registerHelper('financialSegment',()=>{
       if(financialData){
         return financialData;
@@ -2556,4 +2650,8 @@ export class ReportService {
       }
     }
   }
+
+  
+
+  
 }

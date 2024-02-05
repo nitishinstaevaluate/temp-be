@@ -690,10 +690,10 @@
     <p style="padding-top: 4pt;padding-left: 20pt;text-indent: 0pt;text-align: left;line-height: 140%;"><span class="h1">Based on our
         study and analytical review procedures, and subject to the limitations expressed within this report, our
         opinion of fair value of </span><span class="s1" style=" font-weight: bold;">{{natureOfInstrument}}</span><span class="h1"> of </span><span class="s1" ><span style=" font-weight: bold;">{{companyName}}</span>, as of
-        {{reportDate}}</span><span class="h1">:-</span></p>
+        {{strdate}}</span><span class="h1">:-</span></p>
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <p style="text-indent: 0pt;text-align: center;padding-top: 2%;line-height: 150%;"><span class="s3">Fair Value of <span style="font-weight: bold;">{{companyName}}</span></span><span class="h1"> </span><span class="s1" style=" font-weight: bold;"></span></p>
-<p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}}</p>
+<p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}} {{reportingUnit}}</p>
 <p><br></p>
 <p style="text-indent: 0pt;text-align: center;padding-top: 2%;line-height: 150%;"><span class="s3">Fair Value per Equity Share
         (Rounded) </span><span class="h1"> </span><span class="s1" style=""></span></p>
@@ -845,8 +845,9 @@
                                 the Management of </span><span class="s2" style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span><span
                                 class="p"> for determining the fair value of </span><span class="s2"
                                 style="">{{natureOfInstrument}}</span><span class="p"> of the Company.
-                                We understand that the fair value of {{natureOfInstrument}} of the Company is required to comply with
-                                the relevant provisions of the </span><span class="s2"
+                                We understand that the fair value of {{natureOfInstrument}} of the Company is required 
+                                to comply with the relevant provisions 
+                                of the </span><span class="s2"
                                 style="">Companies Act, 2013</span><span class="p"> in relation to
                                 proposed issuance of </span><span class="s2" style="">{{natureOfInstrument}}</span><span class="p">. The valuation date for this exercise is </span><span
                                 class="s2" style=" ">{{strdate}}</span><span class="p">.</span></p>
@@ -942,11 +943,13 @@
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;"><span
                                     class="p">The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of
                                 </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as of {{strdate}}</span><span
-                                    class="p"> to comply with the relevant provisions in relation to provisions of {{reportSection}} of {{reportPurpose}}.</span></p>
+                                    class="p">
+                                    <!-- to comply with the relevant provisions in relation to provisions -->
+                                     as per section {{reportSection}} of {{reportPurpose}}.</span></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;"><span
                                     class="p">The valuation date for this valuation exercise is taken to be </span><span
-                                    class="s2" style="">{{strdate}}</span><span class="p"></span></p>
+                                    class="s2" style="">{{strdate}}.</span><span class="p"></span></p>
                             </li>
                         </ol>
                     </li>
@@ -1194,7 +1197,7 @@
                     </li>
                     <li data-list-text="ii.">
                         <p style="padding-left: 45pt;text-indent: -27pt;text-align: left;padding-top: 1%;"><span
-                                class="p">Management Certificated Provisional Financials for the period ended 
+                                class="p">Management Certificate Provisional Financials for the period ended 
                             </span><span class="s2" style=" ">____________</span></p>
                     </li>
                     {{#modelIncludes 'INCOME_APPROACH'}}
@@ -1205,7 +1208,7 @@
                     </li>
                     <li data-list-text="iv.">
                         <p style="padding-left: 45pt;text-indent: -30pt;text-align: left;padding-top: 1%;">A detailed note on the
-                            background of the Company including all its divisions.</p>
+                            background of the Company.</p>
                     </li>
                     <li data-list-text="v.">
                         <p style="padding-left: 45pt;text-indent: -27pt;text-align: left;padding-top: 1%;">Data extracted from
@@ -1223,7 +1226,7 @@
                     {{else}}
                     <li data-list-text="iii.">
                         <p style="padding-left: 45pt;text-indent: -30pt;text-align: left;padding-top: 1%;">A detailed note on the
-                            background of the Company including all its divisions.</p>
+                            background of the Company.</p>
                     </li>
                     <li data-list-text="iv.">
                         <p style="padding-left: 45pt;text-indent: -27pt;text-align: left;padding-top: 1%;">Data extracted from
@@ -1513,13 +1516,13 @@
                                     {{/modelIncludes}}
                                 </li>
                                 <li data-list-text="2." style="page-break-before: always;padding-top: 9%;">
-                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Valuation Methodology
-                                    </h1>
+                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Valuation Methodology</h1>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">For the purpose of fair
                                         valuation of the Company we have considered it appropriate to apply the Discounted Free
-                                        Cash Flow Method, which is an internationally accepted valuation method.</p>
+                                        Cash Flow (DCF) Method,Comparable Companies Method (CCM) and Net Asset Value (NAV) Method which is an internationally accepted valuation method.</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;padding-bottom: 2%;">Discounted Cash Flow Method</h1>
                                     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">Based on the assumptions
                                         and business plan of the Company for all the divisions shared with us by the Management,
                                         the fair value of the Company has been determined as per DCF Method as follows:</p>
@@ -1762,7 +1765,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px">{{costOfEquity}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{costOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                                 <tr style="height:16pt">
@@ -1786,7 +1789,7 @@
                                                     </td>
                                                     <td
                                                         style="width:99pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px">{{adjustedCostOfEquity}}%</p>
+                                                        <p style="text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{adjustedCostOfEquity}}%</p>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -1949,16 +1952,18 @@
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s5"
                                             style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
-                                            {{#if (checkIfFcff)}}
-                                                WACC Rate/Cost of Equity
-                                            {{else}}
-                                              Cost of Equity
-                                            {{/if}}
+                                            Discount Rate
                                         </p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         >
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">{{costOfEquity}}%</p>
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                            {{#if (checkIfFcff)}}
+                                                {{wacc}}%
+                                            {{else}}
+                                              {{adjustedCostOfEquity}}%
+                                            {{/if}}
+                                        </p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
@@ -1970,7 +1975,7 @@
                                         </td>
                                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                     <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"> -->
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">{{terminalValue}}</p>
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{terminalValue}}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -2921,10 +2926,11 @@
 
     {{#modelIncludes 'MARKET_PRICE_APPROACH'}}
     <!--Start Page 18,19,19.5 from RV Report Format_Basic - DCF+CCM.docx -->
-    <div style="page-break-before: always;padding-top: 8%;padding-left: 4%;padding-right: 4%;">
+    <div style="page-break-before: always;padding-top: 5%;padding-left: 4%;padding-right: 4%;">
+        <h1 style="padding-left: 25pt;text-indent: -18pt;text-align: left;padding-bottom: 2%;">Comparable Companies Method</h1>
         <li data-list-text="3.">
         <p style="padding-left: 5pt;text-indent: 0pt;text-align: justify;line-height: 160%;">
-            In order to value <span style="text-transform: capitalize;">{{companyName}}</span>, we identified <span>{{numberOfSubindustry}}</span> comparable publicly traded (listed) companies, 
+            In order to value <span style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span>, we identified <span>{{numberOfSubindustry}}</span> comparable publicly traded (listed) companies, 
             which are engaged in the <span style="text-transform: capitalize;font-weight: bold;">{{industryName}}</span> (“Guideline Public Companies”). Based on the nature of 
             the business of <span style="text-transform: capitalize;">{{companyName}}</span> we selected Price/Sales (P/S), Price/Book Value (P/BV), 
             Enterprise Value/EBITDA (EV/EBITDA), Price/Earnings per Share (P/E)  multiples as an appropriate valuation benchmark. 
@@ -3670,9 +3676,9 @@
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;padding-top: 2%;line-height: 150%;"><span class="h1">Based on our study and
             analytical review procedures, and subject to the limitations expressed within this report, our opinion of
             fair value of </span><span class="s1" style="">{{natureOfInstrument}} of
-            {{companyName}}</span><span class="h1"> , to comply with the relevant provisions of the Companies Act, 2013 in relation
+            {{companyName}}</span><span class="h1">, to comply with the relevant provisions of the Companies Act, 2013 in relation
             to proposed issuance of {{natureOfInstrument}}, as of </span><span class="s1"
-            style="">{{reportDate}}</span><span class="h1">:</span></p>
+            style="">{{strdate}}</span><span class="h1">:</span></p>
 
 
             <table style="border-collapse:collapse;margin-left:auto;margin-right: auto;margin-top: 4%;width: 70%;" cellspacing="0">
@@ -3726,7 +3732,7 @@
         </span><span class="s17" style=" ">{{companyName}} </span><span
             class="s3"></span><span class="h1"> </span><span class="s1"
             style=" "></span></p>
-    <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}}</p>
+    <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{equityPerShare}} {{reportingUnit}}</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top:3%;text-align: center;line-height: 150%;"><span class="s3">Fair Value per Equity Share
             (Rounded)</span><span class="h1"> </span><span class="s1" style=" "></span></p>

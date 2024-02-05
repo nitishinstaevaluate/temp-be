@@ -223,7 +223,9 @@ export class ExcelSheetService {
 
       
       async copyWorksheets(workbook, fileName) {
-        const uploadDir = path.join(__dirname, '../../uploads');
+        // const uploadDir = path.join(__dirname, '../../uploads');
+        const uploadDir = path.join(process.cwd(),'uploads');
+
         const filePath = path.join(uploadDir, fileName);
         const newWorkbook = xlsx.utils.book_new();            
         for (const sheetName in workbook.Sheets) {
@@ -890,19 +892,19 @@ export class ExcelSheetService {
               result.valuationData.map((response:any)=>{
                 arrayNoOfShares.push({fcfeNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
               })
-              arrayNoOfShares.unshift({fcfeNoOfShares:"No. of Shares"});
+              arrayNoOfShares.unshift({fcfeNoOfShares:"No. of o/s Shares"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
                 arrayNoOfShares.push({fcffNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
               })
-              arrayNoOfShares.unshift({fcffNoOfShares:"No. of Shares"});
+              arrayNoOfShares.unshift({fcffNoOfShares:"No. of o/s Shares"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
                 arrayNoOfShares.push({excessEarningNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
               })
-              arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of Shares"});
+              arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of o/s Shares"});
             }
           })
           return arrayNoOfShares;
@@ -1448,7 +1450,8 @@ export class ExcelSheetService {
     try {
       switch(data.excelSheet){
         case 'P&L':
-          const uploadDirPl = path.join(__dirname, '../../uploads');
+          // const uploadDirPl = path.join(__dirname, '../../uploads');
+          const uploadDirPl = path.join(process.cwd(),'uploads');
           const filePathPl = path.join(uploadDirPl, data.excelSheetId);
 
           const updateProfitAndLossExcel = await this.updateExcel(filePathPl,data,data.excelSheet);
@@ -1464,7 +1467,8 @@ export class ExcelSheetService {
         break;
 
         case 'BS':
-          const uploadDirBs = path.join(__dirname, '../../uploads');
+          // const uploadDirBs = path.join(__dirname, '../../uploads');
+          const uploadDirBs = path.join(process.cwd(),'uploads');
           const filePathBs = path.join(uploadDirBs, data.excelSheetId);
   
           const updateBalanceSheetExcel = await this.updateExcel(filePathBs,data,data.excelSheet);
@@ -1480,7 +1484,8 @@ export class ExcelSheetService {
         break;
 
         case 'Assessment of Working Capital':
-          const uploadDirAssessmentSheet = path.join(__dirname, '../../uploads');
+          // const uploadDirAssessmentSheet = path.join(__dirname, '../../uploads');
+          const uploadDirAssessmentSheet = path.join(process.cwd(),'uploads');
           const filePathAssessmentSheet = path.join(uploadDirAssessmentSheet, data.excelSheetId);
           const updatedExcelAssessment = await this.appendSheetInExcel(filePathAssessmentSheet,data);
   
@@ -1507,7 +1512,8 @@ export class ExcelSheetService {
         break;
 
         case 'Rule 11 UA':
-          const uploadDirRuleElevenUa = path.join(__dirname, '../../uploads');
+          // const uploadDirRuleElevenUa = path.join(__dirname, '../../uploads');
+          const uploadDirRuleElevenUa = path.join(process.cwd(),'uploads');
           const filePathRuleElevenUa = path.join(uploadDirRuleElevenUa, data.excelSheetId);
 
           const updateRuleElevenUaExcel = await this.updateExcel(filePathRuleElevenUa,data,data.excelSheet);
@@ -1660,7 +1666,8 @@ export class ExcelSheetService {
         }
         else{
           let  editedFilePath='';
-          const uploadDir = path.join(__dirname, '../../uploads');
+          // const uploadDir = path.join(__dirname, '../../uploads');
+          const uploadDir = path.join(process.cwd(),'uploads');
           if(data?.excelSheetId.includes('edited')){
              editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
           }
@@ -1770,7 +1777,8 @@ export class ExcelSheetService {
     const structure:any = sheetName === 'P&L' ? PROFIT_LOSS : sheetName === 'BS' ? BALANCE_SHEET : sheetName === 'Rule 11 UA' ? RULE_ELEVEN_UA : ''; 
 
     let  editedFilePath='';
-          const uploadDir = path.join(__dirname, '../../uploads');
+          // const uploadDir = path.join(__dirname, '../../uploads');
+          const uploadDir = path.join(process.cwd(),'uploads');
           if(data?.excelSheetId.includes('edited')){
              editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
           }
@@ -2157,7 +2165,8 @@ async updateFinancialSheet(filepath){
 
 async pushInitialFinancialSheet(formData){
   try{
-    const uploadDir = path.join(__dirname, '../../uploads');
+    // const uploadDir = path.join(__dirname, '../../uploads');
+    const uploadDir = path.join(process.cwd(),'uploads');
     const filePath = path.join(uploadDir, formData.filename);
 
     let file = fs.readFileSync(filePath).toString('base64');
@@ -2211,7 +2220,8 @@ async fetchFinancialSheetFromS3(fileName){
         throw new Error('The specified key does not exist');
       }
       else{
-        const uploadDir = path.join(__dirname, '../../uploads');
+        // const uploadDir = path.join(__dirname, '../../uploads');
+        const uploadDir = path.join(process.cwd(),'uploads');
 
         const buffer = Buffer.from(fetchFinancialSheet.data, 'base64');
         const filePath = path.join(uploadDir, fileName);
