@@ -35,7 +35,7 @@ export class CiqSpService {
     private ciqSpBetaService: ciqSpBetaService,
     private ciqSpCompanyMeanMedianService: ciqSpCompanyMeanMedianService,
     private ciqSpfinancialService: CiqSpFinancialService,
-    private authenticationService:AuthenticationService
+    private authenticationService: AuthenticationService
     ){}
 
     async fetchSPHierarchyBasedIndustry(){
@@ -644,7 +644,8 @@ export class CiqSpService {
             decodeLocation,
             businessDescriptor,
             pageStart: data?.pageStart,
-            size: data?.size
+            size: data?.size,
+            valuationDate:data.valuationDate
           }
 
           const bearerToken = await this.authenticationService.extractBearer(req);
@@ -669,6 +670,36 @@ export class CiqSpService {
           error:error,
           status:false,
           msg:"company list payload creation failed"
+        }
+      }
+    }
+
+    async calculateStockBeta(data){
+      try{
+        const headers = {
+          'Content-Type': 'application/json'
+        }
+
+        const auth = {
+          username: process.env.CAPITALIQ_API_USERNAME,
+          password: process.env.CAPITALIQ_API_PASSWORD
+        }
+
+        const createPayloadStructure = await this.ciqSpBetaService.createStockBetaPayloadStructure(data);
+        const axiosStockBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
+        const betaData = await this.ciqSpBetaService.calculateStockBeta(axiosStockBetaResponse);
+
+        return {
+          data:axiosStockBetaResponse.data,
+          msg:"stock beta calculation success",
+          status:true,
+        }
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Stock beta calculation failed"
         }
       }
     }

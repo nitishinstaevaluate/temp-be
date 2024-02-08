@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { convertUnixTimestampToDateString } from 'src/excelFileServices/common.methods';
 import { CapitalStruc, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
 import { CustomLogger } from 'src/loggerService/logger.service';
+import { RiskFreeRateDocument } from 'src/masters/schema/masters.schema';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import * as XLSX from 'xlsx';
 
@@ -13,6 +17,8 @@ export class CalculationService {
   constructor(
     // @InjectModel('indianTreasuryYield')
     // private readonly indianTresauryYieldModel: Model<IndianTreasuryYieldDocument>
+    @InjectModel('riskFreeRate')
+    private readonly riskFreeRateModel: Model<RiskFreeRateDocument>,
     private customLogger: CustomLogger
   ) { }
 
@@ -131,5 +137,42 @@ export class CalculationService {
           status: false
         }
       }
+   }
+
+   async calculateRiskFreeRate(maturityYears, date){
+    try{
+      const maturityYrs = parseInt(maturityYears);
+      const decodeDate = convertUnixTimestampToDateString(parseInt(date));
+
+      const details:any = await this.riskFreeRateModel.findOne({ date: new Date(decodeDate) }).exec();
+
+      const riskFreeRate =
+        details.beta0 +
+        (details.beta1 + details.beta2) *
+          ((1 - Math.exp(-maturityYrs / details.tau1)) /
+            (maturityYrs / details.tau1)) -
+        details.beta2 * Math.exp(-maturityYrs / details.tau1) +
+        details.beta3 *
+          ((1 - Math.exp(-maturityYrs / details.tau2)) /
+            (maturityYrs / details.tau2)) -
+        details.beta3 * Math.exp(-maturityYrs / details.tau2);
+
+       return {
+        riskFreeRate,
+        status:true,
+        msg:"Risk-free rate calculation success"
+       }
+      
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'Risk-free rate calculation failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
    }
 }

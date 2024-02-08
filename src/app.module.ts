@@ -18,7 +18,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { DataReferencesModule } from './data-references/data-references.module';
 import { CalculationModule } from './calculation//calculation.module';
 import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
-import { ReportModule } from './report/report/report.module';
+import { ReportModule } from './report/report.module';
 import { ProcessStatusManagerModule } from './processStatusManager/process-status-manager.module';
 import { CiqSpModule } from './ciq-sp/ciq-sp.module';
 import { ElevenUaModule } from './elevenUA/eleven-ua.module';

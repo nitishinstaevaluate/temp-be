@@ -10,7 +10,6 @@ export class CiqElasticSearchService {
 
     async searchEntities(data){
         try{
-
             const aggregateCompanyList = await this.ciqElasticSearchAggregateService.elasticSearchAggregate(data);
             return {
                 data:aggregateCompanyList.data,
@@ -61,6 +60,26 @@ export class CiqElasticSearchService {
                 error:error,
                 status:false,
                 msg:"elastic search based on company id not found"
+            }
+        }
+    }
+
+    async searchEntityByPriceEquity(data){
+        try{
+            const priceEquityDetail = await this.ciqElasticSearchAggregateService.elasticSearchPriceEquityAggregate(data);
+            return {
+                data: priceEquityDetail.data,
+                total:priceEquityDetail.total,
+                status:true,
+                msg:"Ciq price equity fetched successfully"    
+            }
+
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"Ciq "
             }
         }
     }

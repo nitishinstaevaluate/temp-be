@@ -12,7 +12,7 @@
             padding: 0;
             text-indent: 0;
             font-family: 'Roboto', sans-serif !important;
-            font-size: 15px ;
+            font-size: 15px !important;
         }
 
         .h1 {
@@ -528,55 +528,51 @@
 <body>
     <div style="page-break-before: always;padding-left: 5%;padding-right: 5%;padding-top: 6%;">
         <p style="padding-top: 3pt;text-indent: 0pt;text-align: justify;line-height: 190%;"><span class="h1">Valuation of
-            equity shares of </span><span class="s1" style=" background-color: #FF0;">ABC LIMITED</span><span
-            class="h1"> for compliance with </span><span class="s1" style=" background-color: #FF0;">Regulation
-            166A</span><span class="h1"> of Securities and Exchange Board of India (Issue of Capital and Disclosure
-            Requirements) Regulations, 2018 as amended by Securities and Exchange Board of India (Issue of Capital and
-            Disclosure Requirements) (Amendment) Regulations, 2022</span></p>
+            equity shares of </span><span class="s1" >{{companyName}}</span><span
+            class="h1"> for compliance with </span>
+                <span class="h1"> {{reportSection}}
+            as amended by Securities and Exchange Board of India (Issue of Capital and
+            Disclosure Requirements) (Amendment) Regulations, 2022
+        </span>
+    </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 11pt;text-indent: 0pt;text-align: left;"><span class="s1"
-            style=" background-color: #FF0;">XX.XX.XXXX(Date of Report)</span></p>
+    <p style="padding-top: 11pt;text-indent: 0pt;text-align: left;"><span class="s1">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;padding-top: 30%;"><br /></p>
-    <p style="padding-top: 8%;text-indent: 0pt;line-height: 20pt;text-align: right;"><span class="h2"
-            style=" background-color: #FF0;">Name of Valuer</span></p>
+    <p style="padding-top: 8%;text-indent: 0pt;line-height: 20pt;text-align: right;"><span class="h2">{{registeredValuerName}}</span></p>
     <p style="text-indent: 0pt;line-height: 20pt;text-align: right;"><span class="s2"
-            style=" background-color: #FF0;">Registered Valuer (Securities or Financial Assets) with IBBI</span></p>
-    <p style="text-indent: 0pt;text-align: right;"><span class="s2" style=" background-color: #FF0;">Registration
-            No.:</span></p>
+            >{{registeredValuerQualifications}}</span></p>
+    <p style="text-indent: 0pt;text-align: right;"><span class="s2">{{registeredValuerIbbiId}}</span></p>
     </div>
 
     <!-- page 2 html -->
     <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;padding-top: 1%;">
-        <p style="padding-top: 3pt;padding-left: 423pt;text-indent: 0pt;text-align: left;"><span class="s3"
-            style=" background-color: #FF0;">Date: XX.XX.XXXX</span></p>
+        <p style="padding-top: 3pt;padding-left: 423pt;text-indent: 0pt;text-align: left;"><span class="s3">{{reportDate}}</span></p>
     <p class="s4" style="padding-top: 6pt;text-indent: 0pt;text-align: left;">To,</p>
-    <p style="text-indent: 0pt;text-align: left;"><span class="s5"
-            style=" background-color: #FF0;">The Board of Directors</span><span class="s4"> </span><span class="s5"
-            style=" background-color: #FF0;">ABC Limited</span></p>
-    <p style="text-indent: 0pt;line-height: 15pt;text-align: left;"><span class="s5"
-            style=" background-color: #FF0;">Address:</span></p>
+    <p style="text-indent: 0pt;text-align: left;"><span class="s5">{{appointingAuthorityName}} of </span><span class="s4" style="text-transform: capitalize;font-weight: bold;">{{companyName}} </span></p>
+    {{#if (companyAddress)}}
+    <p style="text-indent: 0pt;line-height: 15pt;text-align: left;"><span class="s5">{{companyAddress}}</span></p>
+    {{else}}
+    <p style="text-indent: 0pt;line-height: 15pt;text-align: left;"><span class="s5">Add.</span></p>
+    {{/if}}
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 10pt;text-indent: 0pt;text-align: left;">Dear Sir,</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="text-indent: 0pt;text-align: left;" />
     <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="h3">Sub: Valuation of
-        </span><span class="s6" style=" background-color: #FF0;">equity shares </span><span class="h3">of </span><span
-            class="s6" style=" background-color: #FF0;">ABC Limited</span></p>
+        </span><span class="s6">{{natureOfInstrument}} </span><span class="h3">of </span><span class="s6">{{companyName}}</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;line-height: 150%;"><span class="s5"
-            style=" background-color: #FF0;">ABC Limited </span><span class="s3" style=" background-color: #FF0;">(“ABC”
-            or “the Company”)</span><span class="p"> intends to issue </span><span class="s3"
-            style=" background-color: #FF0;">share warrants</span><span class="p"> to its proposed investors in
+    <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;line-height: 150%;"><span class="s5" >{{companyName}} </span><span class="s3">(“{{companyName}}”
+            or “the Company”)</span><span class="p"> intends to issue </span><span class="s3">{{natureOfInstrument}}</span><span class="p"> to its proposed investors in
             compliance with applicable laws.</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 4pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">In this regard,
-        </span><span class="s3" style=" background-color: #FF0;">Name of Valuer</span><span class="p">, Registered
-            Valuer with IBBI Registration No. </span><span class="s3"
-            style=" background-color: #FF0;">IBBI/RV/xx/xxxx/xxxxx</span><span class="p"> (‘</span><span class="s3"
-            style=" background-color: #FF0;">Name of Valuer</span><span class="p">’ or ‘Independent Valuer’) has been
-            appointed to determine fair value of equity shares of </span><span class="s3"
-            style=" background-color: #FF0;">ABC</span><span class="p"> for compliance with </span><span class="s3"
-            style=" background-color: #FF0;">Section 62(1)(c)</span><span class="p"> of the Companies Act, 2013 (as
+        </span><span class="s3">{{registeredValuerName}}</span><span class="p">, Registered
+            Valuer with IBBI Registration No. </span><span class="s3">{{registeredValuerIbbiId}}</span><span class="p"> (‘</span>
+            <span class="s3">{{registeredValuerName}}</span><span class="p">’ or ‘Independent Valuer’) has been
+            appointed to determine fair value of equity shares of </span>
+            <span class="s3">{{companyName}}</span><span class="p"> for compliance with </span>
+
+            <span class="s3" >{{reportSection}}</span><span class="p"> of the {{purposeOfReport}} (as
             amended) read with </span><span class="s3" style=" background-color: #FF0;">Rule 13</span><span class="p">
             of the Companies (Share Capital and Debenture) Rules, 2014, and </span><span class="s3"
             style=" background-color: #FF0;">Regulation 160</span><span class="p"> of the Securities and Exchange Board
@@ -586,15 +582,12 @@
             Requirements) (Amendment) Regulations, 2022 vide Notification No. SEBI/LAD-NRO/GN/2022/63 (‘Valuation
             Purpose’).</span></p>
     <p style="padding-top: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">The relevant
-            date, as informed to us by the Management of </span><span class="s3"
-            style=" background-color: #FF0;">ABC</span><span class="p">(‘the Management’), for the purpose of
+            date, as informed to us by the Management of </span><span class="s3">{{companyName}}</span><span class="p">(‘the Management’), for the purpose of
             calculation of the price per share under the SEBI ICDR Regulations for issuance of equity shares is
-        </span><span class="s3" style=" background-color: #FF0;">XX.XX.XXXX</span><span class="p"> (‘</span><span
-            class="s3" style=" background-color: #FF0;">Relevant Date</span><span class="p">’). The Valuation Date as
-            informed to us by the Management for computation of equity value per share of </span><span class="s3"
-            style=" background-color: #FF0;">ABC</span><span class="p"> is as on close of trading hours of the date
-            preceding the relevant date i.e. </span><span class="s3"
-            style=" background-color: #FF0;">XX.XX.XXXX</span><span class="p"> (‘Valuation Date’).</span></p>
+        </span><span class="s3" >{{relevantDate}}</span><span class="p"> (‘</span><span
+            class="s3" >Relevant Date</span><span class="p">’). The Valuation Date as
+            informed to us by the Management for computation of equity value per share of </span><span class="s3">{{companyName}}</span><span class="p"> is as on close of trading hours of the date
+            preceding the relevant date i.e. </span><span class="s3">{{strdate}}</span><span class="p"> (‘Valuation Date’).</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 9pt;text-indent: 0pt;text-align: left;">This Report is structured under
         the following broad heads:</p>
@@ -635,7 +628,7 @@
                     <a name="bookmark0" style="font-size: 18px;">BACKGROUND</a>
                 </p>
             <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;"><span class="h3">The Shareholding
-                    Pattern of ABC as of </span><span class="s4" style=" background-color: #FF0;">XX.XX.XXXX</span><span
+                    Pattern of {{companyName}} as of </span><span class="s4">{{strdate}}</span><span
                     class="h3">is as under:</span></p>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <table style="border-collapse:collapse;margin: auto;width: 100%;" cellspacing="0">
@@ -722,17 +715,15 @@
             <ul id="l2">
                 <li data-list-text="●">
                     <p style="padding-top: 11pt;padding-left: 20pt;text-indent: -18pt;text-align: left;line-height: 150%;"><span class="p">Equity
-                            shares of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> are
-                            listed on </span><span class="s3" style=" background-color: #FF0;">National Stock Exchange of India
-                            Limited</span><span class="p"> (“NSE”) and </span><span class="s3"
-                            style=" background-color: #FF0;">BSE Limited (&quot;BSE&quot;)</span><span class="p">;</span></p>
+                            shares of </span><span class="s3">{{companyName}}</span><span class="p"> are
+                            listed on ___________;</span>
+                        </p>
                     <p style="text-indent: 0pt;text-align: left;" />
                 </li>
                 <li data-list-text="●">
                     <p style="padding-top: 5pt;padding-left: 20pt;text-indent: -18pt;text-align: left;line-height: 150%;"><span class="p">The
-                            shareholding pattern of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span
-                            class="p"> as of </span><span class="s3" style=" background-color: #FF0;">31st March,
-                            2023</span><span class="p"> is as under:</span></p>
+                            shareholding pattern of </span><span class="s3">{{companyName}}</span><span
+                            class="p"> as of </span><span class="s3">{{strdate}}</span><span class="p"> is as under:</span></p>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     <table style="border-collapse:collapse;margin: auto;width: 100%;" cellspacing="0">
                         <tr style="height:28pt">
@@ -988,15 +979,12 @@
         </p>
             <p style="padding-top: 11pt;text-align: left;line-height: 150%;"><span class="p">We have
                     relied on the following sources of information and documents as provided to us by the Management of
-                </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> (‘the Management’)
+                </span><span class="s3" style="text-transform: capitalize;">{{companyName}}</span><span class="p"> (‘the Management’)
                     and available in public domain:</span></p>
         <ul id="l2">
             <li data-list-text="●">
                 <p style="padding-top: 5pt;text-align: left;line-height: 150%;padding-top: 1%;padding-bottom: 1%;"><span class="p">Audited
-                        Consolidated Financial Statement for the year ended </span><span class="s3"
-                        style=" background-color: #FF0;">31</span><span class="s10"
-                        style=" background-color: #FF0;">st</span><span class="s3" style=" background-color: #FF0;"> March
-                        2023</span><span class="p">;</span></p>
+                        Consolidated Financial Statement for the year ended _______</span></p>
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 5pt;text-align: left;line-height: 150%;padding-top: 1%;padding-bottom: 1%;">Other relevant publicly
@@ -1005,7 +993,7 @@
             <li data-list-text="●">
                 <p style="padding-top: 5pt;text-align: left;line-height: 150%;padding-top: 1%;padding-bottom: 1%;"><span class="p">Our
                         regular discussions with management representatives of </span><span class="s3"
-                        style=" background-color: #FF0;">ABC</span><span class="p">;</span></p>
+                        style="text-transform: capitalize;">{{companyName}}</span><span class="p">;</span></p>
                 <p style="text-indent: 0pt;text-align: left;" />
             </li>
             <li data-list-text="●">
@@ -1054,7 +1042,7 @@
                             <p
                                 style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">
                                 <span class="p">Obtained and analysed market prices and other data involving equity shares of
-                                </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> and of
+                                </span><span class="s3">{{companyName}}</span><span class="p"> and of
                                     comparable companies, as applicable and relevant</span></p>
                         </li>
                         <li data-list-text="o">
@@ -1063,8 +1051,7 @@
                         </li>
                         <li data-list-text="o">
                             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;"><span
-                                    class="p">Determination of value per equity share of </span><span class="s3"
-                                    style=" background-color: #FF0;">ABC</span><span class="p">, as relevant</span></p>
+                                    class="p">Determination of value per equity share of </span><span class="s3">{{companyName}}</span><span class="p">, as relevant</span></p>
                         </li>
                         <li data-list-text="o">
                             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">Preparation
@@ -1129,8 +1116,8 @@
         <li data-list-text="●">
             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">
                 We have been informed by the Management that the report date as per the SEBI ICDR Regulations, for the 
-                purpose of calculation of the price per share of ABC for the proposed preferential issue of shares is XX.XX.XXXX. 
-                Since the latest financial data available is till XX.XX.XXXX. Therefore, we have considered the same for our valuation purposes.
+                purpose of calculation of the price per share of {{companyName}} for the proposed preferential issue of shares is ___________. 
+                Since the latest financial data available is till ____________. Therefore, we have considered the same for our valuation purposes.
             </p>
         </li>
     </ul>
@@ -1170,8 +1157,7 @@
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -19pt;padding-left: 18pt;">
-                    <span class="p">Management has provided with cash flow projections till </span><span class="s3"
-                        style=" background-color: #FF0;">FY XX</span><span class="p"> which as per management is a
+                    <span class="p">Management has provided with cash flow projections till </span><span class="s3">FY {{projectedYear}}</span><span class="p"> which as per management is a
                         representative time frame of a business cycle of the Company.</span></p>
                 <p style="text-indent: 0pt;text-align: left;" />
             </li>
@@ -1192,11 +1178,16 @@
                     the present value (PV) of FCFEs.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">For
-                        Calculation of Cost of Equity, I have used risk free rate as </span><span class="s3"
-                        style=" background-color: #FF0;">Yield of 10 Yr. Indian</span><span class="p"> </span><span
-                        class="s3" style=" background-color: #FF0;">Govt. Securities</span><span class="p"> as on date of
-                        valuation.</span></p>
+                <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">
+                    <span class="p">For
+                        Calculation of Cost of Equity, I have used risk free rate as 
+                        {{#if (riskFreeRateYears)}}
+                        Yield of {{riskFreeRateYears}} Yr. Indian Govt. Securities  as on date of valuation.
+                        {{else}}
+                        _______________
+                        {{/if}}
+                    </span>
+                        </p>
             </li>
         </ul>
     </div>
@@ -1214,17 +1205,14 @@
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">Beta
-                        of the company is considered as the </span><span class="s3" style=" background-color: #FF0;">stock
-                        beta/average beta of the comparable</span><span class="p"> </span><span class="s3"
-                        style=" background-color: #FF0;">companies/from Aswath Damodaran Database of “</span><span
-                        class="s12"> </span><span class="s3" style=" background-color: #FF0;">” Industry, market
-                        beta</span><span class="p">.</span></p>
+                        of the company is considered as the </span><span class="s3">stock
+                        beta/average beta of the comparable companies.</span>(Source: S&P - Capital IQ)</p>
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">The
                         terminal growth rate is the rate at which the cash flows of the company are expected to increase
                         beyond the explicit forecast period and intermediate period, till infinity. A terminal growth rate
-                        of </span><span class="s3" style=" background-color: #FF0;">3.00%</span><span class="p"> has been
+                        of </span><span class="s3">{{terminalGrowthRate}}%</span><span class="p"> has been
                         considered.</span></p>
             </li>
             <li data-list-text="●">
@@ -1347,27 +1335,27 @@
                 and other such customary parameters for valuation, and such valuation is required to be certified by independent valuer).
             </p>
             <p style="padding-top: 4pt;text-align: justify;line-height: 140%;">
-                Since, ABC is a listed company and equity shares of ABC are listed on BSE and are infrequently traded, therefore we have not 
-                considered the Market Price Method to determine the value of equity shares of ABC. 
+                Since, {{companyName}} is a listed company and equity shares of {{companyName}} are listed on BSE and are infrequently traded, therefore we have not 
+                considered the Market Price Method to determine the value of equity shares of {{companyName}}. 
             </p>
         {{else}}
         <p style="padding-top: 11pt;text-align: justify;line-height: 140%;"><span class="p">Since,
-            </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> is a listed company
-                and equity shares of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span
+            </span><span class="s3" >{{companyName}}</span><span class="p"> is a listed company
+                and equity shares of </span><span class="s3" >{{companyName}}</span><span
                 class="p"> are traded on </span><span class="s3" style=" background-color: #FF0;">BSE</span><span
                 class="p"> and </span><span class="s3" style=" background-color: #FF0;">NSE</span><span class="p">
                 over a reasonable period, we have considered Market Price method to determine the value of equity
-                shares of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p">. We
+                shares of </span><span class="s3" >{{companyName}}</span><span class="p">. We
                 have been informed by the Management that the relevant date as per the SEBI ICDR Regulations, for
                 the purpose of calculation of the price per share of </span><span class="s3"
-                style=" background-color: #FF0;">ABC</span><span class="p"> for the proposed preferential issue of
+                >{{companyName}}</span><span class="p"> for the proposed preferential issue of
                 shares is </span><span class="s3" style=" background-color: #FF0;">XX.XX.XXXX</span><span
                 class="p">. We have considered this as the cut-off date to determine the price for the proposed
                 preferential allotment of equity shares of </span><span class="s3"
-                style=" background-color: #FF0;">ABC</span><span class="p"> under </span><span class="s3"
+                >{{companyName}}</span><span class="p"> under </span><span class="s3"
                 style=" background-color: #FF0;">Regulation 166A</span><span class="p"> of SEBI ICDR Regulations. We
                 have considered the stock prices of </span><span class="s3"
-                style=" background-color: #FF0;">ABC</span><span class="p"> from NSE for calculating the fair market
+                >{{companyName}}</span><span class="p"> from NSE for calculating the fair market
             value of equity shares of the Company.</span></p>
         {{/if}}
     </div>
@@ -1396,16 +1384,10 @@
                         confirmed to us that there are four listed comparable companies appropriate to the business profile,
                         size, etc. of the Company. We have therefore considered CCM method for the said Valuation.</p>
                     <p style="padding-top: 11pt;text-align: justify;line-height: 150%;padding-left: 13pt;"><span class="p">For
-                            arriving at the value per equity share of ABC and considering valuation inputs available for
-                            determining valuation under </span><span class="s3" style=" background-color: #FF0;">Net Asset Value
-                            method, Discounted Cash Flow Method, CCM</span><span class="p"> </span><span class="s3"
-                            style=" background-color: #FF0;">and 
-                            {{#if (isSection165)}}
-                            <!-- do not display -->
-                            {{else}}
-                            Market Price Method
-                            {{/if}}
-                        </span><span class="p"> we have applied
+                            arriving at the value per equity share of <span style="text-transform: capitalize;">{{companyName}}</span> and considering valuation inputs available for
+                            determining valuation under {{{displayValuationHeader}}}</span>
+                            
+                        <span class="p"> we have applied
                         </span><span class="s3" style=" background-color: #FF0;">NIL, 25%, 25% and 
                             {{#if (isSection165)}}
                             <!-- do not display -->
@@ -1413,8 +1395,7 @@
                             50%
                             {{/if}}    
                         </span><span class="p">
-                            weights respectively to arrive at the value per equity share of </span><span class="s3"
-                            style=" background-color: #FF0;">ABC</span><span class="p">.</span></p>
+                            weights respectively to arrive at the value per equity share of </span><span class="s3">{{companyName}}</span><span class="p">.</span></p>
                 </li>
         </ul>
     </div>
@@ -1439,9 +1420,8 @@
                         owe responsibility to only the management of the client that has retained us and nobody else. We do
                         not accept any liability to any third party in relation to the issue of this valuation report. Our
                         valuation report cannot be used for any other purpose. This report has been prepared only for the
-                        sole use and information of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span
-                        class="p">. Without limiting the foregoing, we understand that </span><span class="s3"
-                        style=" background-color: #FF0;">ABC</span><span class="p"> may be required to submit this report to
+                        sole use and information of </span><span class="s3">{{companyName}}</span><span
+                        class="p">. Without limiting the foregoing, we understand that </span><span class="s3">{{companyName}}</span><span class="p"> may be required to submit this report to
                         the regulatory authorities / stock exchanges in connection with the Proposed Transaction.</span></p>
             </li>
             <li data-list-text="●">
@@ -1500,32 +1480,26 @@
         <ul id="l2">
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">The
-                        value per equity share of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span
+                        value per equity share of </span><span class="s3">{{companyName}}</span><span
                         class="p"> are based on the various approaches / methods explained herein earlier and various
                         qualitative factors relevant to each company and the business dynamics and growth potential of the
                         businesses of the Companies, having regard to information base, key underlying assumptions and
                         limitations. We have independently applied methods discussed above, as considered appropriate, i.e.,
-                    </span><span class="s3" style=" background-color: #FF0;">
-
-                        {{#if (isSection165)}}
-                        <!-- do not display -->
-                        {{else}}
-                        Market Price method,
-                        {{/if}}
-                        
-                         Comparable Companies
-                        Method, Discounted Cash Flow</span><span class="p"> </span><span class="s3"
-                        style=" background-color: #FF0;">Method and Net Asset Value method</span><span class="p"> for determining
-                        value per share of the Company.</span></p>
+                    </span><span class="s3" >
+                        {{displayValuationHeader}}
+                    </span>
+                    <span class="p"> for determining
+                        value per share of the Company.</span>
+                    </p>
                 <p style="text-indent: 0pt;text-align: left;" />
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">In
                         light of the above and on consideration of all the relevant factors and circumstances as discussed
                         and outlined hereinabove referred to earlier in this Report for the proposed transaction, in our
-                        opinion, we recommend the fair value of equity shares of </span><span class="s3"
-                        style=" background-color: #FF0;">ABC</span><span class="p"> at </span><span class="s5"
-                        style=" background-color: #FF0;">INR XX</span><span class="s4"> per equity share</span><span
+                        opinion, we recommend the fair value of equity shares of </span><span class="s3">{{companyName}}</span><span class="p"> at </span><span class="s5">{{currencyUnit}} 
+                        {{combinedValuePerShare}}
+                    </span><span class="s4"> per equity share</span><span
                         class="p">.</span></p>
             </li>
         </ul>
@@ -1557,7 +1531,7 @@
                 <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#001F5F">
                     <p class="s14" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Weighted</p>
-                    <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Value (INR)
+                    <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: left;">Value ({{currencyUnit}})
                     </p>
                 </td>
             </tr>
@@ -1668,7 +1642,7 @@
                 <td style="width:344pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="4" bgcolor="#FFFF00">
                     <p class="s16" style="padding-left: 96pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Weighted
-                        Value per Share (INR)</p>
+                        Value per Share ({{currencyUnit}})</p>
                 </td>
                 <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     bgcolor="#FFFF00">
@@ -1680,38 +1654,35 @@
 
         <!-- phase value for section 165 starts -->
         <!-- * As per the provisions of Companies Act, 2013, a company cannot issue shares less than its face value. Since 
-            the Fair Value per share comes out to be less than face value per share of INR 10. Therefore, the face value becomes its fair value. -->
+            the Fair Value per share comes out to be less than face value per share of {{currencyUnit}} 10. Therefore, the face value becomes its fair value. -->
         <!-- phase value for section 165 ends -->
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;">Yours faithfully,</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s5"
-                style=" background-color: #FF0;">Name of Valuer</span><span class="s4"> </span>
+        <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s5">{{registeredValuerName}}</span><span class="s4"> </span>
             </p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s17">Registered Valuer</span></p>
-        <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s17">IBBI Reg. No.:</span></p>
-        <p style="text-indent: 0pt;text-align: left;">Place:</p>
-        <p style="text-indent: 0pt;text-align: left;">Date:</p>
+        <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s17">{{registeredValuerIbbiId}}</span></p>
+        <p style="text-indent: 0pt;text-align: left;">Date: {{reportDate}}</p>
+        <p style="text-indent: 0pt;text-align: left;">Place: _____________</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p class="s18" style="text-indent: 0pt;text-align: left;">Enclosed:</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 4pt;text-indent: 0pt;line-height: 150%;text-align: left;"><span
                 class="s18">Annexure I: </span><span class="s17">Determination of value per equity shares of </span><span
-                class="s19" style=" background-color: #FF0;">ABC</span><span class="s17"> using Book Value method;</span>
+                class="s19">{{companyName}}</span><span class="s17"> using Book Value method;</span>
         </p>
         <p style="text-indent: 0pt;line-height: 115%;text-align: left;line-height: 150%;"><span class="s18">Annexure II:
-            </span><span class="s17">Determination of value per equity share of </span><span class="s19"
-                style=" background-color: #FF0;">ABC</span><span class="s17"> using Discounted Cash Flow method:</span></p>
+            </span><span class="s17">Determination of value per equity share of </span><span class="s19">{{companyName}}</span><span class="s17"> using Discounted Cash Flow method:</span></p>
         <p style="text-indent: 0pt;line-height: 115%;text-align: left;line-height: 150%;"><span class="s18">Annexure III:
-            </span><span class="s17">Determination of value per equity share of </span><span class="s19"
-                style=" background-color: #FF0;">ABC</span><span class="s17"> using Comparable Companies method</span></p>
+            </span><span class="s17">Determination of value per equity share of </span><span class="s19">{{companyName}}</span><span class="s17"> using Comparable Companies method</span></p>
 
         {{#if (isSection165)}}
 
         {{else}}
         <p style="text-indent: 0pt;line-height: 113%;text-align: left;line-height: 150%;">
             <span class="s18">Annexure IV:</span>
-            <span class="s17">Computation of share price of </span><span class="s19" style=" background-color: #FF0;">ABC</span>
+            <span class="s17">Computation of share price of </span><span class="s19">{{companyName}}</span>
             <span class="s17"> under </span><span class="s19" style=" background-color: #FF0;">Regulation 164(1)</span>
             <span class="s17"> of ICDR Regulations</span><span
                 class="s18">.</span>
@@ -1723,17 +1694,17 @@
     <!-- page 14 starts -->
     <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="h3">Annexure I –
-            Determination of value of equity shares of </span><span class="s6" style=" background-color: #FF0;">ABC
+            Determination of value of equity shares of </span><span class="s6">{{companyName}}
         </span><span class="h3">using Book Value</span><span class="s4"> </span><span class="h3">method</span></p>
     <p style="padding-top: 5pt;text-indent: 0pt;text-align: left;"><span class="p">The value of
-            equity shares of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> using
-            Book Value method is </span><span class="s4">INR </span><span class="s5"
-            style=" background-color: #FF0;">XX</span><span class="s4"> per equity share</span><span class="p">.</span>
+            equity shares of </span><span class="s3">{{companyName}}</span><span class="p"> using
+            Book Value method is </span><span class="s4">{{currencyUnit}} {{combinedValuePerShare}}</span>
+            <span class="s4"> per equity share.</span>
     </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="text-indent: 0pt;text-align: left;" />
     <p style="text-indent: 0pt;text-align: left;" />
-    <p class="s20" style="text-indent: 0pt;text-align: right;">(INR lakhs)</p>
+    <p class="s20" style="text-indent: 0pt;text-align: right;">({{currencyUnit}} lakhs)</p>
     <table style="border-collapse:collapse;margin-left:128.546pt" cellspacing="0">
         <tr style="height:10pt">
             <td style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
@@ -1892,357 +1863,7 @@
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
             </td>
         </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Current
-                    Investments</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">1,314.93
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Trade
-                    Receivables</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">10,672.56
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Cash &amp;
-                    Cash Equivalents</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">1,726.65
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Bank
-                    balances other than above</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">964.98
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Loans</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">916.43
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Other
-                    Financial assets</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">260.87
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Unbilled
-                    work in progress(contract assets)</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 12pt;text-indent: 0pt;line-height: 8pt;text-align: right;">-</p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Other
-                    Current Assets</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">1,873.51
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">17,729.93
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Total
-                    Assets</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">29,671.88
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Liabilities
-                </p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Non-Current
-                    Liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Financial
-                    Liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Borrowings
-                </p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">259.47
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Lease
-                    Liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">104.29
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Provisions
-                </p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 2pt;text-indent: 0pt;line-height: 8pt;text-align: right;">35.77</p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Deferred
-                    Tax Liabilites (net)</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 12pt;text-indent: 0pt;line-height: 8pt;text-align: right;">-</p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Other
-                    non-current liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">101.99
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">501.52
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s22" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Current
-                    Liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Financial
-                    Liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Borrowings
-                </p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">1,654.38
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Lease
-                    Liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 2pt;text-indent: 0pt;line-height: 8pt;text-align: right;">96.81</p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Trade
-                    Payables</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">-total
-                    outstanding dues of micro and small enterprises</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">397.00
-                </p>
-            </td>
-        </tr>
-        <tr style="height:20pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;text-align: left;">-total outstanding dues of
-                    trade payables other than micro and</p>
-                <p class="s23"
-                    style="padding-top: 1pt;padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">small
-                    enterprises</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">4,009.88
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 7pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Other
-                    financial liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">195.63
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Provisions
-                </p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">120.24
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Current Tax
-                    liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">1,339.26
-                </p>
-            </td>
-        </tr>
-        <tr style="height:10pt">
-            <td
-                style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Other
-                    Current liabilities</p>
-            </td>
-            <td
-                style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s23" style="padding-right: 3pt;text-indent: 0pt;line-height: 8pt;text-align: right;">1,409.82
-                </p>
-            </td>
-        </tr>
+        
         <tr style="height:10pt">
             <td
                 style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -2327,7 +1948,7 @@
             <td
                 style="width:240pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p class="s22" style="padding-left: 1pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Value per
-                    Share (INR)</p>
+                    Share ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:64pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -2341,14 +1962,14 @@
     <!-- page 15 starts -->
     <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="h3">Annexure II-
-            Determination of value of equity shares of </span><span class="s6" style=" background-color: #FF0;">ABC
+            Determination of value of equity shares of </span><span class="s6">{{companyName}}
         </span><span class="h3">using Discounted</span><span class="s4"> </span><span class="h3">Cash Flow method</span>
     </p>
     <p style="padding-top: 5pt;text-indent: 0pt;text-align: left;"><span class="p">The value of
-            equity shares of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> using
-            Discounted Cash Flow method is </span><span class="s5" style=" background-color: #FF0;">INR XX</span><span
+            equity shares of </span><span class="s3">{{companyName}}</span><span class="p"> using
+            Discounted Cash Flow method is </span><span class="s5" style=" background-color: #FF0;">{{currencyUnit}} XX</span><span
             class="s4"> per equity share</span><span class="p">.</span></p>
-    <p class="s24" style="padding-top: 8pt;text-indent: 0pt;text-align: right;">(INR Crore)</p>
+    <p class="s24" style="padding-top: 8pt;text-indent: 0pt;text-align: right;">({{currencyUnit}} Crore)</p>
     <table style="border-collapse:collapse;margin:auto;width:100%" cellspacing="0">
         <tr style="height:13pt">
             <td style="width:199pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
@@ -2702,7 +2323,7 @@
             <td
                 style="width:199pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p class="s27" style="padding-left: 1pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Value per
-                    share (INR Rupees)</p>
+                    share ({{currencyUnit}} Rupees)</p>
             </td>
             <td
                 style="width:54pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -2773,12 +2394,12 @@
     <!-- page 16 starts -->
     <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="h3">Annexure III-
-            Determination of value of equity shares of </span><span class="s6" style=" background-color: #FF0;">ABC
+            Determination of value of equity shares of </span><span class="s6">{{companyName}}
         </span><span class="h3">using Comparable</span><span class="s4"> </span><span class="h3">Companies method</span>
     </p>
     <p style="padding-top: 5pt;text-indent: 0pt;text-align: left;"><span class="p">The value of
-            equity shares of </span><span class="s3" style=" background-color: #FF0;">ABC</span><span class="p"> using
-            Comparable Company method is </span><span class="s4">INR </span><span class="s5"
+            equity shares of </span><span class="s3">{{companyName}}</span><span class="p"> using
+            Comparable Company method is </span><span class="s4">{{currencyUnit}} </span><span class="s5"
             style=" background-color: #FF0;">XX</span><span class="s4">per equity share</span><span class="p">.</span>
     </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -2791,7 +2412,7 @@
             </td>
             <td style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                 bgcolor="#001F5F">
-                <p class="s28" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">INR lakhs
+                <p class="s28" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{currencyUnit}} lakhs
                 </p>
             </td>
         </tr>
@@ -2892,7 +2513,7 @@
             <td
                 style="width:148pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p class="s30" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Value Per
-                    share (INR)</p>
+                    share ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -2911,7 +2532,7 @@
             </td>
             <td style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                 bgcolor="#001F5F">
-                <p class="s28" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">INR lakhs
+                <p class="s28" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{currencyUnit}} lakhs
                 </p>
             </td>
         </tr>
@@ -2978,7 +2599,7 @@
             <td
                 style="width:148pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p class="s30" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Value Per
-                    share (INR)</p>
+                    share ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -2993,7 +2614,7 @@
             <td
                 style="width:148pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p class="s30" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Value per
-                    Share (INR)</p>
+                    Share ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -3028,7 +2649,7 @@
             <td
                 style="width:148pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p class="s30" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Average
-                    Value per share (INR)</p>
+                    Value per share ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:81pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -3039,8 +2660,8 @@
     </table>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="text-indent: 0pt;text-align: left;" />
-    <p class="s31" style="padding-top: 3pt;text-indent: 0pt;text-align: right;">(INR in Lakhs)</p>
-    <table style="border-collapse:collapse;margin:auto;width: 100%;" cellspacing="0">
+    <p class="s31" style="padding-top: 3pt;text-indent: 0pt;text-align: right;">({{currencyUnit}} in Lakhs)</p>
+    <!-- <table style="border-collapse:collapse;margin:auto;width: 100%;" cellspacing="0">
         <tr style="height:22pt">
             <td style="width:88pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                 bgcolor="#001F5F">
@@ -3486,14 +3107,14 @@
                 <p class="s34" style="padding-right: 1pt;text-indent: 0pt;line-height: 9pt;text-align: right;">1.94</p>
             </td>
         </tr>
-    </table>
+    </table> -->
     </div>
     <!-- page 16 ends -->
 
     <!-- page 17 starts -->
     <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
         <p style="text-indent: 0pt;text-align: left;"><span class="h3">Annexure IVA – Determination of
-            value per equity share of </span><span class="s6" style=" background-color: #FF0;">ABC </span><span
+            value per equity share of </span><span class="s6">{{companyName}} </span><span
             class="h3">under</span><span class="s4"> </span><span class="h3">Regulation 164(1) of SEBI ICDR
             Regulations</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -3502,8 +3123,7 @@
             <td style="width:451pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                 colspan="5">
                 <p style="padding-top: 5pt;padding-left: 5pt;text-indent: 0pt;text-align: left;"><span
-                        class="s7">Valuation of equity shares of </span><span class="s9"
-                        style=" background-color: #FF0;">ABC</span><span class="s7"> using Market Price method</span>
+                        class="s7">Valuation of equity shares of </span><span class="s9">{{companyName}}</span><span class="s7"> using Market Price method</span>
                 </p>
             </td>
         </tr>
@@ -3579,8 +3199,8 @@
                 colspan="5">
                 <p style="padding-top: 5pt;padding-left: 5pt;text-indent: 0pt;text-align: left;"><span class="s35">Based
                         on the above computation, we understand that the value of equity shares of </span><span
-                        class="s8" style=" background-color: #FF0;">ABC</span><span class="s35"> can be considered at
-                    </span><span class="s7">INR </span><span class="s9"
+                        class="s8">{{companyName}}</span><span class="s35"> can be considered at
+                    </span><span class="s7">{{currencyUnit}} </span><span class="s9"
                         style=" background-color: #FF0;">127.14</span><span class="s7"> </span><span class="s35">per
                         equity share.</span></p>
             </td>
@@ -3592,8 +3212,7 @@
     <!-- page 18 starts -->
     <div style="page-break-before: always;padding-right: 8%;padding-left: 7%;">
         <p style="padding-top: 4pt;text-indent: 0pt;line-height: 15pt;text-align: left;"><span
-            class="h3">Annexure IVB – Computation of share price of </span><span class="s6"
-            style=" background-color: #FF0;">ABC </span><span class="h3">shares under Regulation 164</span></p>
+            class="h3">Annexure IVB – Computation of share price of </span><span class="s6">{{companyName}}</span><span class="h3">shares under Regulation 164</span></p>
     <p style="text-indent: 0pt;text-align: left;" />
     <p style="text-indent: 0pt;line-height: 15pt;text-align: left;"><span class="h3">(1) of SEBI ICDR
             Regulations, as per historical trading prices on </span><span class="s6"
@@ -3612,6 +3231,89 @@
             </td>
         </tr>
         <tr style="height:15pt">
+            <!-- <td
+                style="width:6pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+            <td
+                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p class="s36"
+                    style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">
+                    S.No.</p>
+            </td>
+            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                >
+                <p class="s36"
+                    style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Date
+                </p>
+            </td>
+            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                >
+                <p class="s36"
+                    style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">
+                    Volume of traded shares</p>
+            </td>
+            <td
+                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p class="s36"
+                    style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">
+                    Total Turnover (Rs.)</p>
+            </td>
+            <!-- <td
+                style="width:6pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+        </tr>
+        {{#each (sharePriceData data)}}
+       
+
+        <tr style="height:15pt">
+            <!-- <td
+                style="width:6pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+            <td
+                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p class="s37"
+                    style="padding-top: 1pt;padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">{{SERIALNO}}
+                </p>
+            </td>
+            <!-- <td
+                style="width:52pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right: 1px solid black;"
+                >
+                <p class="s37" style="padding-top: 1pt;text-indent: 0pt;line-height: 12pt;text-align: center;">{{updateDateFormat PRICINGDATE}}
+                </p>
+            </td>
+            <!-- <td
+                style="width:5pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+            <!-- <td
+                style="width:127pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                <p class="s37" style="padding-top: 1pt;text-indent: 0pt;line-height: 12pt;text-align: center;">{{VOLUME}}</p>
+            </td>
+            <!-- <td
+                style="width:6pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+            <td
+                style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="padding-top: 1pt;padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">
+                    <span class="s38" >{{totalRevenue VWAP VOLUME}}</span></p>
+            </td>
+            <!-- <td
+                style="width:6pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            </td> -->
+        </tr>
+        {{/each}}
+        <!-- <tr style="height:15pt">
             <td
                 style="width:6pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -5296,9 +4998,9 @@
                 style="width:6pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
             </td>
-        </tr>
+        </tr> -->
     </table>
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <table style="border-collapse:collapse;margin:auto;width:100%" cellspacing="0">
         <tr style="height:15pt">
             <td
@@ -7322,9 +7024,9 @@
         </tr>
     </table>
     <p style="text-indent: 0pt;text-align: left;" />
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
     <table style="border-collapse:collapse;margin:auto;width:100%" cellspacing="0">
-        <tr style="height:15pt">
+        <!-- <tr style="height:15pt">
             <td
                 style="width:6pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -7447,7 +7149,7 @@
                 style="width:5pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
             </td>
-        </tr>
+        </tr> -->
         <tr style="height:15pt">
             <td
                 style="width:6pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -7457,7 +7159,7 @@
                 colspan="5">
                 <p class="s36"
                     style="padding-top: 1pt;padding-left: 80pt;text-indent: 0pt;line-height: 12pt;text-align: left;">
-                    VWAP of 90 trading days (INR)</p>
+                    VWAP of 90 trading days ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:127pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -7480,7 +7182,7 @@
                 colspan="8">
                 <p style="padding-top: 5pt;padding-left: 5pt;padding-right: 4pt;text-indent: 0pt;text-align: justify;">
                     <span class="s7">Volume weighted average price (VWAP) of the equity shares of </span><span
-                        class="s9" style=" background-color: #FF0;">ABC</span><span class="s7"> quoted on the NSE
+                        class="s9">{{companyName}}</span><span class="s7"> quoted on the NSE
                         (Relevant Stock Exchange) during the 10 trading days preceding the relevant date (considering
                         relevant date as </span><span class="s9"
                         style=" background-color: #FF0;">30-Jun-2023</span><span class="s7">)</span></p>
@@ -7911,7 +7613,7 @@
                 colspan="5">
                 <p class="s36"
                     style="padding-top: 1pt;padding-left: 80pt;text-indent: 0pt;line-height: 12pt;text-align: left;">
-                    VWAP of 10 trading days (INR)</p>
+                    VWAP of 10 trading days ({{currencyUnit}})</p>
             </td>
             <td
                 style="width:127pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">

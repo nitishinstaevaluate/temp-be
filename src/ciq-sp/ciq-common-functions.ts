@@ -91,6 +91,19 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
         }
     }
 
+    export async function ciqStockBetaCreateStructure(data, mnemonic) {
+        return {
+                "function":"GDSP",
+                "mnemonic":`${mnemonic}`,
+                "identifier":`IQ${data.COMPANYID}`,
+                "properties":{
+                    "periodType":"IQ_LTM",
+                    "currencyConversionModeId" : "H",
+                    "currencyId" : "INR",
+                    // "asOfDate": '12/31/21'
+                }
+        }
+    }
     export async function extractValues(betaDetails: any, mnemonic: any) {
         try {
         return betaDetails.Rows.map((innerBetaRows: any) => {
@@ -129,7 +142,8 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
     export async function calculateMedian(data){
         try{
         let median;
-        const sortedData = [...data].sort((a, b) => convertToNumberOrZero(a) - convertToNumberOrZero(b));
+        const validData = data.filter(value => convertToNumberOrZero(value) > 0);
+        const sortedData = [...validData].sort((a, b) => convertToNumberOrZero(a) - convertToNumberOrZero(b));
         const middleIndex = Math.floor(sortedData.length / 2);
         
         if (sortedData.length % 2 === 0) {
@@ -181,6 +195,21 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
             }
         })
         }
+    }
+
+    export async function  ciqSharePriceCreateStructure(data:any, mnemonic){
+        return {
+            "data":data.map((elements)=>{
+                return {
+                "function":"GDSP",
+                "mnemonic":`${mnemonic}`,
+                "identifier":`IQ${elements.COMPANYID}`,
+                "properties":{
+                    "periodType":"IQ_CY"
+                }
+                }
+            })
+            }
     }
 
     export function formatDateToMMDDYYYY(input: Date | number): string {

@@ -13,6 +13,15 @@ export class CalculationController {
   createPost(@Body() body: valuationWeightage) {
     return this.calculationService.calculateWeightedVal(body);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('risk-free-rate/:maturityYears/:date')
+  async calculateRiskFreeRate(
+    @Param('maturityYears') maturityYears: string,
+    @Param('date') date: string,
+    ) {
+    return await this.calculationService.calculateRiskFreeRate(maturityYears, date)
+  }
 }
 
 

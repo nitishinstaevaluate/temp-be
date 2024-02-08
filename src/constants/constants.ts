@@ -1851,7 +1851,7 @@ export const DOCUMENT_UPLOAD_TYPE = {
 
 export const XML_FORMAT = /<("[^"]*"|'[^']*'|[^'">])*>/;
 
-export const REPORT_LINE_ITEM = ['PAT','Depn. and Amortn.','Other Non Cash items','Change in NCA','Change in Borrowings','Add/Less: Deferred Tax Assets(Net)','Net Cash Flow','Change in fixed assets','FCFE','Discounting Period','Discounting Factor','Present Value of FCFF','Present Value of FCFE','Sum of Cash Flows','Add: Cash & Cash Equivalents','Add: Surplus Assets/Investments','Add/Less: Other Adjustments(if any)','No. of Shares','FCFF','Add: Interest Adjusted Taxes','Particulars','Less: Debt as on Date'];
+export const REPORT_LINE_ITEM = ['PAT','Depn. and Amortn.','Other Non Cash items','Change in NCA','Change in Borrowings','Add/Less: Deferred Tax Assets(Net)','Net Cash Flow','Change in fixed assets','FCFE','Discounting Period','Discounting Factor','Present Value of FCFF','Present Value of FCFE','Sum of Discounted Cash Flows','Add: Cash & Cash Equivalents','Add: Surplus Assets/Investments','Add/Less: Other Adjustments(if any)','No. of Shares','FCFF','Add: Interest Adjusted Taxes','Particulars','Less: Debt as on Date','No. of o/s Shares','Add:Stub Period Adjustment'];
 
 export const BETA_SUB_TYPE = ['meanBeta', 'medianBeta'];
 
@@ -1885,7 +1885,9 @@ export const MNEMONIC_ENUMS = {
   IQ_CASH_EQUIV: 'IQ_CASH_EQUIV',
   IQ_SECURED_DEBT: 'IQ_SECURED_DEBT',
   IQ_TEV: 'IQ_TEV',
-  IQ_TOTAL_REV_AS_REPORTED: 'IQ_TOTAL_REV_AS_REPORTED'
+  IQ_TOTAL_REV_AS_REPORTED: 'IQ_TOTAL_REV_AS_REPORTED',
+  IQ_VOLUME: 'IQ_VOLUME',
+  IQ_VWAP: 'IQ_VWAP'
 }
 
 export const MNEMONICS_ARRAY = [
@@ -1918,6 +1920,15 @@ export const MNEMONICS_ARRAY_3 = [
   MNEMONIC_ENUMS.IQ_SECURED_DEBT,
   MNEMONIC_ENUMS.IQ_TEV,
   MNEMONIC_ENUMS.IQ_TOTAL_REV_AS_REPORTED
+]
+
+export const MNEMONICS_ARRAY_4 = [
+  MNEMONIC_ENUMS.IQ_VWAP,
+  MNEMONIC_ENUMS.IQ_VOLUME
+]
+
+export const MNEMONICS_ARRAY_5 = [
+  MNEMONIC_ENUMS.IQ_CUSTOM_BETA
 ]
 
 export const RATIO_TYPE = ['Company Based', 'Industry Based']

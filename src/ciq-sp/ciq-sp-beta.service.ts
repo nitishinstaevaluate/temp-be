@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { MNEMONIC_ENUMS, MNEMONICS_ARRAY, BETA_TYPE, BETA_SUB_TYPE } from "src/constants/constants";
+import { MNEMONIC_ENUMS, MNEMONICS_ARRAY, BETA_TYPE, BETA_SUB_TYPE, MNEMONICS_ARRAY_5 } from "src/constants/constants";
 import { convertToNumberOrZero, convertToNumberOrOne } from "src/excelFileServices/common.methods";
-import { iqCreateStructure, extractValues, calculateMean, calculateMedian } from "./ciq-common-functions";
+import { iqCreateStructure, extractValues, calculateMean, calculateMedian, ciqStockBetaCreateStructure } from "./ciq-common-functions";
 
 
 @Injectable()
@@ -231,4 +231,64 @@ export class ciqSpBetaService {
         }
       }
       //#endregion beta calculation ends
+
+      //#region stock beta calculation starts
+      async createStockBetaPayloadStructure(data){
+        try{
+          const finalPayload = [];
+
+          const payload = await ciqStockBetaCreateStructure(data, MNEMONIC_ENUMS.IQ_CUSTOM_BETA);
+          finalPayload.push(payload);
+
+          return {inputRequests:finalPayload};
+        }
+        catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:"Stock beta payload creation failed"
+          }
+        }
+      }
+
+      async calculateStockBeta(axiosStockBetaResponse){
+        try{
+          if (!axiosStockBetaResponse.data) {
+            throw new NotFoundException({
+              message: 'Axios response not found',
+              status: false,
+            });
+          }
+
+        const result = {};
+        let maxLength = 0
+        for await (const details of axiosStockBetaResponse.data.GDSSDKResponse) {
+          if (!details.ErrMsg) {
+            for await (const mnemonic of MNEMONICS_ARRAY_5) {
+              if (details.Headers.includes(mnemonic)) {
+                result[mnemonic] = result[mnemonic] || [];
+                result[mnemonic].push(...await extractValues(details, mnemonic));
+
+                const currentLength = result[mnemonic].length;
+                if (currentLength > maxLength) {
+                  maxLength = currentLength;
+                }
+              }
+            }
+          }
+          else{
+            result[details.Mnemonic] = [];
+          }
+        }
+        return result;
+        }
+        catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:"Stock beta calculation failed"
+          }
+        }
+      }
+      //#endregion stock beta calculation ends
 }
