@@ -72,6 +72,13 @@ export class CiqSpController {
     return this.capitalIqAndSPService.calculateBetaAggregate(payload)
   }
 
+  // https://localhost:3000/ciq-sp/calculate-sp-stock-beta
+  @UseGuards(AuthGuard('jwt'))
+  @Post('calculate-sp-stock-beta')
+  async calculateSpStockBeta(@Body() payload: any) {
+    return this.capitalIqAndSPService.calculateStockBeta(payload)
+  }
+
   // https://localhost:3000/ciq-sp/calculate-sp-companies-mean-median
   @UseGuards(AuthGuard('jwt'))
   @Post('calculate-sp-companies-mean-median')
