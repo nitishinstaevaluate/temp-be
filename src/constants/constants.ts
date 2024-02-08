@@ -1927,4 +1927,8 @@ export const MNEMONICS_ARRAY_4 = [
   MNEMONIC_ENUMS.IQ_VOLUME
 ]
 
+export const MNEMONICS_ARRAY_5 = [
+  MNEMONIC_ENUMS.IQ_CUSTOM_BETA
+]
+
 export const RATIO_TYPE = ['Company Based', 'Industry Based']

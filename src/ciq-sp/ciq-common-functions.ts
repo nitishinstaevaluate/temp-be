@@ -91,6 +91,19 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
         }
     }
 
+    export async function ciqStockBetaCreateStructure(data, mnemonic) {
+        return {
+                "function":"GDSP",
+                "mnemonic":`${mnemonic}`,
+                "identifier":`IQ${data.COMPANYID}`,
+                "properties":{
+                    "periodType":"IQ_LTM",
+                    "currencyConversionModeId" : "H",
+                    "currencyId" : "INR",
+                    // "asOfDate": '12/31/21'
+                }
+        }
+    }
     export async function extractValues(betaDetails: any, mnemonic: any) {
         try {
         return betaDetails.Rows.map((innerBetaRows: any) => {

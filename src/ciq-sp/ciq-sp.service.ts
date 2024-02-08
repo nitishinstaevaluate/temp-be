@@ -673,4 +673,34 @@ export class CiqSpService {
         }
       }
     }
+
+    async calculateStockBeta(data){
+      try{
+        const headers = {
+          'Content-Type': 'application/json'
+        }
+
+        const auth = {
+          username: process.env.CAPITALIQ_API_USERNAME,
+          password: process.env.CAPITALIQ_API_PASSWORD
+        }
+
+        const createPayloadStructure = await this.ciqSpBetaService.createStockBetaPayloadStructure(data);
+        const axiosStockBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
+        const betaData = await this.ciqSpBetaService.calculateStockBeta(axiosStockBetaResponse);
+
+        return {
+          data:axiosStockBetaResponse.data,
+          msg:"stock beta calculation success",
+          status:true,
+        }
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"Stock beta calculation failed"
+        }
+      }
+    }
 }
