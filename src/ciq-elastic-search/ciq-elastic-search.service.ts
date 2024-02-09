@@ -79,7 +79,27 @@ export class CiqElasticSearchService {
             return {
                 error:error,
                 status:false,
-                msg:"Ciq "
+                msg:"Ciq price equity search failed"
+            }
+        }
+    }
+
+    async searchEntitiesAllListedCompanies(){
+        try{
+            const listedCompaniesList = await this.ciqElasticSearchAggregateService.fetchAllListedCompanies();
+
+            return {
+                data:listedCompaniesList,
+                status:true,
+                msg:"listed companies list"
+            }
+        
+        }
+        catch(error){
+            return{
+                error:error,
+                status:false,
+                msg:"Listed companies search failed"
             }
         }
     }

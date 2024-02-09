@@ -280,7 +280,12 @@ export class ciqSpBetaService {
             result[details.Mnemonic] = [];
           }
         }
-        return result;
+
+        // return result;
+
+
+        // Since S&P access is down,returning hardcoded random value
+        return 10.5
         }
         catch(error){
           return {

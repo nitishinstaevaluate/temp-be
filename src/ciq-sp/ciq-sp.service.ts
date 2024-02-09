@@ -691,6 +691,7 @@ export class CiqSpService {
 
         return {
           data:axiosStockBetaResponse.data,
+          total:betaData,
           msg:"stock beta calculation success",
           status:true,
         }
