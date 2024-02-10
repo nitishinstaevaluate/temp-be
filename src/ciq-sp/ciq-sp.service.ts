@@ -11,12 +11,13 @@ import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axio
 import { CAPITALIQ_MARKET } from 'src/interfaces/api-endpoints.prod';
 import { convertToNumberOrOne, convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { BETA_SUB_TYPE, BETA_TYPE, MNEMONICS_ARRAY, MNEMONICS_ARRAY_2, MNEMONIC_ENUMS, RATIO_TYPE } from 'src/constants/constants';
-import { calculateMean, calculateMedian, extractValues, iqCreateStructure } from './ciq-common-functions';
+import { calculateMean, calculateMedian, extractValues, formatDateToMMDDYYYY, iqCreateStructure } from './ciq-common-functions';
 import { ciqSpBetaService } from './ciq-sp-beta.service';
 import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.service';
 import { CiqSpFinancialService } from './ciq-sp-financial.service';
 import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/interfaces/api-endpoints.local';
 import { AuthenticationService } from 'src/authentication/authentication.service';
+import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 require('dotenv').config();
 
 @Injectable()
@@ -35,7 +36,8 @@ export class CiqSpService {
     private ciqSpBetaService: ciqSpBetaService,
     private ciqSpCompanyMeanMedianService: ciqSpCompanyMeanMedianService,
     private ciqSpfinancialService: CiqSpFinancialService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private historicalReturnsService:HistoricalReturnsService
     ){}
 
     async fetchSPHierarchyBasedIndustry(){
@@ -684,6 +686,9 @@ export class CiqSpService {
           username: process.env.CAPITALIQ_API_USERNAME,
           password: process.env.CAPITALIQ_API_PASSWORD
         }
+        
+        const date:any = await this.historicalReturnsService.getHistoricalBSE500Date(data.valuationDate);
+        data.valuationDate = formatDateToMMDDYYYY(date.Date) || formatDateToMMDDYYYY(data.valuationDate);
 
         const createPayloadStructure = await this.ciqSpBetaService.createStockBetaPayloadStructure(data);
         const axiosStockBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
@@ -691,7 +696,9 @@ export class CiqSpService {
 
         return {
           data:axiosStockBetaResponse.data,
-          total:betaData,
+          total:betaData.result,
+          isStockBetaPositive:betaData.isStockBetaPositive,
+          negativeBeta:betaData.value,
           msg:"stock beta calculation success",
           status:true,
         }
