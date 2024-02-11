@@ -27,4 +27,11 @@ export class CiqElasticSearchController {
     async searchCiqEntityByPriceEquity(@Body(ValidationPipe) companyDetails : ciqFetchPriceEquityDto) {
         return await this.ciqElasticSearchService.searchEntityByPriceEquity(companyDetails)
     }
+
+    // https://localhost:3000/ciq-elastic-search/ciq-elastic-search-all-listed-companies
+    @UseGuards(AuthGuard('jwt'))
+    @Get('ciq-elastic-search-all-listed-companies')
+    async searchCiqEntitiesAllListedCompanies() {
+        return await this.ciqElasticSearchService.searchEntitiesAllListedCompanies();
+    }
 }

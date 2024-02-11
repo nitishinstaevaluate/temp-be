@@ -1887,7 +1887,8 @@ export const MNEMONIC_ENUMS = {
   IQ_TEV: 'IQ_TEV',
   IQ_TOTAL_REV_AS_REPORTED: 'IQ_TOTAL_REV_AS_REPORTED',
   IQ_VOLUME: 'IQ_VOLUME',
-  IQ_VWAP: 'IQ_VWAP'
+  IQ_VWAP: 'IQ_VWAP',
+  IQ_BETA: 'IQ_BETA'
 }
 
 export const MNEMONICS_ARRAY = [
@@ -1928,7 +1929,7 @@ export const MNEMONICS_ARRAY_4 = [
 ]
 
 export const MNEMONICS_ARRAY_5 = [
-  MNEMONIC_ENUMS.IQ_CUSTOM_BETA
+  MNEMONIC_ENUMS.IQ_BETA
 ]
 
 export const RATIO_TYPE = ['Company Based', 'Industry Based']

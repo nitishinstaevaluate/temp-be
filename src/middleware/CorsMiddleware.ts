@@ -38,6 +38,18 @@ export class CorsMiddleware implements NestMiddleware {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     res.header('Access-Control-Allow-Credentials', 'true');
+    
+    // new headers
+    res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    res.header('X-Content-Type-Options', 'nosniff');
+    res.header('X-Frame-Options', 'DENY');
+    res.header('X-XSS-Protection', '1; mode=block');
+    res.header('Content-Security-Policy', 'default-src \'self\'');
+    res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+    res.header('Feature-Policy', 'geolocation \'self\'; midi \'self\'; sync-xhr \'self\'');
+    res.header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    res.header('X-Permitted-Cross-Domain-Policies', 'none');
+    res.header('Expect-CT', 'enforce, max-age=31536000');
 
     const currentDateIST = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Kolkata',
