@@ -68,36 +68,36 @@ export class ciqElasticSearchAggregateService{
     }
 
     //Sanket (31-01-2024) - Uncomment this function to get only listed companies 
-    // async GICSBasedCompanyList(){
-    //     try{
-    //         const criteria = {
-    //             query: {
-    //                 match_all:{}
-    //             },
-    //             size: 10000,
-    //             _source: {
-    //                 includes: ['COMPANYID'],
-    //             },
-    //         };
+    async GICSBasedCompanyList(){
+        try{
+            const criteria = {
+                query: {
+                    match_all:{}
+                },
+                size: 10000,
+                _source: {
+                    includes: ['COMPANYID'],
+                },
+            };
 
-    //         const companyIndustryList = await this.elasticSearchClientService.search('ciqcompanyindustryind', criteria);
+            const companyIndustryList = await this.elasticSearchClientService.search('ciqcompanyindustryind', criteria);
 
-    //         let listedCompanyIdArray = [];
+            let listedCompanyIdArray = [];
             
-    //         listedCompanyIdArray = companyIndustryList.data.map((elements)=>{
-    //             return elements.COMPANYID;
-    //         })
+            listedCompanyIdArray = companyIndustryList.data.map((elements)=>{
+                return elements.COMPANYID;
+            })
 
-    //         return listedCompanyIdArray;
-    //     }
-    //     catch(error){
-    //         return {
-    //             error:error,
-    //             status:false,
-    //             msg:"Company filtering based on GICS failed"
-    //         }
-    //     }
-    // }
+            return listedCompanyIdArray;
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"Company filtering based on GICS failed"
+            }
+        }
+    }
 
     
     //Sanket (31-01-2024) - Uncomment this function to store business descriptor data into redis manager
@@ -183,8 +183,6 @@ export class ciqElasticSearchAggregateService{
         }
     }
 
-    
-
     async elasticSearchPriceEquityAggregate(body){
         try{
             return this.ciqElasticPriceEquityService.calculatePriceEquityAggregate(body);
@@ -194,6 +192,41 @@ export class ciqElasticSearchAggregateService{
                 error:error,
                 status:false,
                 msg:"ciq price equity fetch failed"
+            }
+        }
+    }
+
+    async fetchAllListedCompanies(){
+        try{
+            const listedCompaniesId = await this.GICSBasedCompanyList();
+
+            const criteria = {
+                query: {
+                    bool: {
+                        must: {
+                            terms: { 
+                                "COMPANYID": listedCompaniesId
+                            }
+                        }
+                    }
+                },
+                _source: {
+                    includes: ['COMPANYID', 'COMPANYNAME'],
+                },
+                size: 10000,
+                track_total_hits: true,
+            };
+            
+            const ciqCompanyList = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
+            
+            return ciqCompanyList.data;
+
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"elastic search listed companies found"
             }
         }
     }

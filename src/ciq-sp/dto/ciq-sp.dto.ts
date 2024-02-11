@@ -103,6 +103,16 @@ import { Expose, Type,} from 'class-transformer';
     industryAggregateList: [];
   }
 
+  export class ciqGetStockBetaDto {
+    @IsNotEmpty({ message: 'valuationDate cannot be empty' })
+    @IsNumber({}, { message: 'valuationDate should be a number eg.1703961000000' })
+    valuationDate: number;
+
+    @IsNotEmpty({ message: 'companyId cannot be empty' })
+    @IsNumber({}, { message: 'companyId should be a number eg.874487' })
+    companyId: number;
+  }
+
   export class ciqGetMarketBetaDto {
     @IsNotEmpty({ message: 'beta sub type cannot be empty' })
     @IsString({ message: 'beta sub type is required eg.meanBeta,medianBeta' })

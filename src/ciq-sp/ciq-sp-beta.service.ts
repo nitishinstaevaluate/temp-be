@@ -237,7 +237,7 @@ export class ciqSpBetaService {
         try{
           const finalPayload = [];
 
-          const payload = await ciqStockBetaCreateStructure(data, MNEMONIC_ENUMS.IQ_CUSTOM_BETA);
+          const payload = await ciqStockBetaCreateStructure(data, MNEMONIC_ENUMS.IQ_BETA);
           finalPayload.push(payload);
 
           return {inputRequests:finalPayload};
@@ -260,27 +260,24 @@ export class ciqSpBetaService {
             });
           }
 
-        const result = {};
-        let maxLength = 0
-        for await (const details of axiosStockBetaResponse.data.GDSSDKResponse) {
-          if (!details.ErrMsg) {
-            for await (const mnemonic of MNEMONICS_ARRAY_5) {
-              if (details.Headers.includes(mnemonic)) {
-                result[mnemonic] = result[mnemonic] || [];
-                result[mnemonic].push(...await extractValues(details, mnemonic));
-
-                const currentLength = result[mnemonic].length;
-                if (currentLength > maxLength) {
-                  maxLength = currentLength;
+          let result, isStockBetaPositive = true, value;
+          for await (const details of axiosStockBetaResponse.data.GDSSDKResponse) {
+            if (!details.ErrMsg) {
+                if (details.Headers.includes(MNEMONIC_ENUMS.IQ_BETA)) {
+                  [result] = await extractValues(details, MNEMONIC_ENUMS.IQ_BETA);
+                  details.Rows.map((innerBetaRows: any) => {
+                    const betaValue = +innerBetaRows?.Row[0];
+                    if(`${betaValue}`.includes('-')){
+                      isStockBetaPositive = false;
+                      value = betaValue
+                    }
+                });
+                  break;
                 }
-              }
             }
           }
-          else{
-            result[details.Mnemonic] = [];
-          }
-        }
-        return result;
+
+          return { result, isStockBetaPositive, value };
         }
         catch(error){
           return {

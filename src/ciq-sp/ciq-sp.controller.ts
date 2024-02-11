@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { CiqSpService } from './ciq-sp.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto } from './dto/ciq-sp.dto';
+import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto, ciqGetStockBetaDto } from './dto/ciq-sp.dto';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/interfaces/api-endpoints.local';
 
@@ -75,7 +75,7 @@ export class CiqSpController {
   // https://localhost:3000/ciq-sp/calculate-sp-stock-beta
   @UseGuards(AuthGuard('jwt'))
   @Post('calculate-sp-stock-beta')
-  async calculateSpStockBeta(@Body() payload: any) {
+  async calculateSpStockBeta(@Body(ValidationPipe) payload: ciqGetStockBetaDto) {
     return this.capitalIqAndSPService.calculateStockBeta(payload)
   }
 

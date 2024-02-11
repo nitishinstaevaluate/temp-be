@@ -17,9 +17,11 @@ import { ValuationSchema } from 'src/valuationProcess/schema/valuation.schema';
 import { CiqSpFinancialService } from './ciq-sp-financial.service';
 import { ciqSpBetaService } from './ciq-sp-beta.service';
 import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.service';
+import { HistoricalBSE500ReturnsSchema, HistoricalReturnsSchema } from 'src/data-references/schema/data-references.schema';
+import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 
 @Module({
-  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService],
+  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService, HistoricalReturnsService],
   controllers: [CiqSpController],
   imports:[MongooseModule.forFeature([
     {name: 'ciqsimpleindustry', schema : ciqsimpleindustrySchema},
@@ -27,7 +29,9 @@ import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.serv
     {name:'ciqcompanystatustype', schema : ciqcompanystatustypeSchema},
     {name:'ciqcompanytype', schema : ciqcompanytypeSchema},
     {name: 'processManager', schema: ProcessManagerSchema},
-    {name: 'valuation', schema: ValuationSchema}
+    {name: 'valuation', schema: ValuationSchema},
+    { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
+    { name: 'historicalReturns', schema : HistoricalReturnsSchema}
   ]),
   ProcessStatusManagerModule,
   AuthenticationModule,
