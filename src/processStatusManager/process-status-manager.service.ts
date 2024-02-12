@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ProcessManagerDocument } from './schema/process-status-manager.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
@@ -265,6 +265,76 @@ export class ProcessStatusManagerService {
         status: false,
         msg: 'Process stage wise rerieval failed'
       }
+    }
+  }
+
+  async getExcelStatus(processStateId){
+    try{
+      const processStage = await this.processModel.findById({ _id : processStateId}).select(`processIdentifierId firstStageInput`).exec();
+      return {
+        isExcelModifiedStatus:processStage.firstStageInput?.isExcelModified,
+        excelSheetId:processStage.firstStageInput?.modifiedExcelSheetId || processStage.firstStageInput?.excelSheetId,
+        status:true,
+        processIdentifierId:processStage.processIdentifierId,
+        msg:'excel status retrieve success'
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'excel status not found',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async updateEditedExcelStatus(processState){
+    try{
+      const stateOne = await this.processModel.findById({ _id : processState.processStateId}).select(`processIdentifierId firstStageInput`).exec();
+
+      const createEditedExcelId = `edited-${stateOne.firstStageInput?.excelSheetId}`;
+
+      if(stateOne.firstStageInput.isExcelModified){
+        return {
+          isExcelModifiedStatus:stateOne.firstStageInput?.isExcelModified,
+          modifiedExcelSheetId:createEditedExcelId,
+          processIdentifierId:stateOne.processIdentifierId,
+          status:true,
+          msg:'excel status already updated successfully'
+        }
+      }
+
+      const processStage = await this.processModel.findByIdAndUpdate(
+        processState.processStateId,
+        { 
+          $set: { 
+          'firstStageInput.isExcelModified': true,
+          'firstStageInput.modifiedExcelSheetId':createEditedExcelId
+          }
+        },
+        { new: true }
+    );
+    
+      return {
+        isExcelModifiedStatus:processStage.firstStageInput?.isExcelModified,
+        modifiedExcelSheetId:createEditedExcelId,
+        processIdentifierId:processStage.processIdentifierId,
+        status:true,
+        msg:'excel status updated successfully'
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'excel id not found',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
