@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { date } from 'joi';
 import { Model } from 'mongoose';
+import { formatDateToMMDDYYYY } from 'src/ciq-sp/ciq-common-functions';
+import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { convertUnixTimestampToDateString } from 'src/excelFileServices/common.methods';
 import { CapitalStruc, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -19,7 +22,8 @@ export class CalculationService {
     // private readonly indianTresauryYieldModel: Model<IndianTreasuryYieldDocument>
     @InjectModel('riskFreeRate')
     private readonly riskFreeRateModel: Model<RiskFreeRateDocument>,
-    private customLogger: CustomLogger
+    private customLogger: CustomLogger,
+    private historicalReturnsService: HistoricalReturnsService
   ) { }
 
   async adjCOE(riskFreeRate, expMarketReturn, beta, riskPremium, coeMethod): Promise<any> {
@@ -142,9 +146,10 @@ export class CalculationService {
    async calculateRiskFreeRate(maturityYears, date){
     try{
       const maturityYrs = parseInt(maturityYears);
-      const decodeDate = convertUnixTimestampToDateString(parseInt(date));
 
-      const details:any = await this.riskFreeRateModel.findOne({ date: new Date(decodeDate) }).exec();
+      const getHistoricalData:any = await this.historicalReturnsService.getHistoricalBSE500Date(date);
+
+      const details:any = await this.riskFreeRateModel.findOne({ date: new Date(getHistoricalData.Date) }).exec();
 
       const riskFreeRate =
         details.beta0 +
