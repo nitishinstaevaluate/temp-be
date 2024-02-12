@@ -72,4 +72,20 @@ export class ProcessStatusManagerController {
         ) {
       return await this.processStatusManagerService.fetchStageWiseDetails(processId, stageDetails);
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('excel-status/:processStateId')
+    async getExcelModificationStatus(
+      @Param('processStateId') processStateId: string,
+    ) {
+      return await this.processStatusManagerService.getExcelStatus(processStateId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Put('update-edited-excel-status/:processStateId')
+    async updateEditedExcelStatus(
+      @Param() processStateId:any
+        ) {
+      return await this.processStatusManagerService.updateEditedExcelStatus(processStateId);
+    }
 }
