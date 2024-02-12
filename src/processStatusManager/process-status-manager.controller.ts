@@ -75,7 +75,7 @@ export class ProcessStatusManagerController {
 
     @UseGuards(AuthGuard('jwt'))
     @Get('excel-status/:processStateId')
-    async getExcelModificationStatus(
+    async fetchExcelStatus(
       @Param('processStateId') processStateId: string,
     ) {
       return await this.processStatusManagerService.getExcelStatus(processStateId);
