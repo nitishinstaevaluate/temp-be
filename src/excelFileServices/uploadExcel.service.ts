@@ -19,7 +19,6 @@ import { IFIN_FINANCIAL_SHEETS } from 'src/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 
-
 @Injectable()
 export class ExcelSheetService {
   constructor( private valuationService:ValuationsService,private fcfeService:FCFEAndFCFFService){}
@@ -2149,10 +2148,9 @@ async updateFinancialSheet(filepath){
     const base64 = await fs.readFileSync(filepath).toString('base64');
       const fileName = filepath.split('\\');
       const data = {
-        filename : `${fileName[fileName.length-1]}`,
+        filename: path.basename(`${fileName[fileName.length-1]}`),
         base64Document: base64
       }
-
       return await this.upsertExcelInS3(data.base64Document,data.filename)
   }catch(error){
     return {
@@ -2183,12 +2181,10 @@ async pushInitialFinancialSheet(formData){
 
 async upsertExcelInS3(data,filename){
   try{
-
     const headers = {
       'x-api-key': process.env.AWS_S3_API_KEY,
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     }
-  
    const upsertExcel = await axiosInstance.put(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${filename}`,data,{headers});
   
    if(upsertExcel.status === 200){
