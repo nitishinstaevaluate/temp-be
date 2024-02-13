@@ -2151,7 +2151,6 @@ async updateFinancialSheet(filepath){
         filename: path.basename(`${fileName[fileName.length-1]}`),
         base64Document: base64
       }
-      console.log('Modified Filename is ',data.filename);
       return await this.upsertExcelInS3(data.base64Document,data.filename)
   }catch(error){
     return {
