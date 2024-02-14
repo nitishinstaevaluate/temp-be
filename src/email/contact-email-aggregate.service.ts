@@ -24,11 +24,11 @@ export class contactEmailAggregateService{
             const templateHtml = fs.readFileSync(path.join(process.cwd(), 'src', 'email', 'contact-email.html'), 'utf8');
             const template = handlebars.compile(templateHtml);
 
+            await this.loadEmailHelper(data);
+
             const emailHtml = template(data);
 
             const filePath = path.join(process.cwd(), 'images', 'logo.jpg');
-            
-            this.loadEmailHelper(data);
             
             return await this.sendContactEmail(data, emailHtml, filePath);
         }
@@ -44,7 +44,7 @@ export class contactEmailAggregateService{
         }
     }
 
-    loadEmailHelper(data){
+    async loadEmailHelper(data){
         try{
             handlebars.registerHelper('name',()=>{
                 if(data.name)
@@ -71,16 +71,16 @@ export class contactEmailAggregateService{
               })
 
             handlebars.registerHelper('company',()=>{
-                if(data.company)
-                  return data.company;
-                return '';
-              })
-
+              if(data.company)
+                return data.company;
+              return '';
+            })
+          
             handlebars.registerHelper('mobileNumber',()=>{
-                if(data.mobileNumber)
-                  return data.mobileNumber;
-                return '';
-              })
+              if(data.mobileNumber)
+                return data.mobileNumber;
+              return '';
+            })
         }
         catch(error){
             throw new HttpException(
