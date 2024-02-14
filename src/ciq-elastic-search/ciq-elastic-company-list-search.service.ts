@@ -154,7 +154,7 @@ export class ciqElasticCompanyListSearchService {
                     }
                 }
             }
-            const companyMarketData = await this.elasticSearchClientService.search('ciqmarketcapind', criteria);
+            const companyMarketData = await this.elasticSearchClientService.search('ciqmarketcap', criteria);
 
             for await(const individualCompanyDetails of companyList){
                 let marketCapFound = false;
