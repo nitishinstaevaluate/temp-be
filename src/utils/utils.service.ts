@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ValuationDocument } from 'src/valuationProcess/schema/valuation.schema';
@@ -8,11 +8,14 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import * as fs from 'fs';
 import * as wordListPath from 'word-list';
 
+import { DataCheckListDocument } from './schema/dataCheckList.schema';
+import { nanoid } from 'nanoid';
 @Injectable()
 export class utilsService {
   constructor(
     @InjectModel('valuation') private readonly valuationModel: Model<ValuationDocument>,
     @InjectModel('processManager') private readonly processModel: Model<ProcessManagerDocument>,
+    @InjectModel('dataChecklist') private readonly dataChecklistModel: Model<DataCheckListDocument>,
     private readonly authenticationService:AuthenticationService
   ) {}
   async paginateValuationByUserId(page: number, pageSize: number,req, query):Promise<any> {
@@ -99,6 +102,55 @@ export class utilsService {
         status:false,
         msg:"Autocomplete list error"
       }
+    }
+  }
+
+  async generateUniqueLink() {
+    try{
+
+    const uniqueLink = nanoid();
+    const expirationDate = new Date();
+
+    expirationDate.setHours(expirationDate.getHours() + 24);
+    await this.dataChecklistModel.create({ uniqueLinkId: uniqueLink, expirationDate });
+    
+    return {
+      uniqueLink,
+      status:true,
+      msg:"Unique link id generated sucessfully"
+    };
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'unique link id generation failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async isValidUniqueLink(link){
+    try{
+      const existingLink = await this.dataChecklistModel.findOne({ uniqueLinkId: link.linkId });
+      const linkStatus =  existingLink ? true : false;
+      return {
+        status:true,
+        linkValid:linkStatus,
+        msg:"unique id status fetched success"
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'unique link id not found',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   }
