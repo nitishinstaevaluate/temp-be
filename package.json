@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.0",
+    "@nestjs-modules/mailer": "^1.10.3",
     "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.3.1",
@@ -54,7 +55,9 @@
     "moment": "^2.29.4",
     "mongoose": "^7.6.7",
     "multer": "^1.4.5-lts.1",
+    "nanoid": "^3.3.4",
     "nest-winston": "^1.9.4",
+    "nodemailer": "^6.9.9",
     "npm": "^10.2.4",
     "number-to-words": "^1.2.4",
     "passport": "^0.6.0",

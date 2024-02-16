@@ -19,6 +19,7 @@ import { ciqSpBetaService } from './ciq-sp-beta.service';
 import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.service';
 import { HistoricalBSE500ReturnsSchema, HistoricalReturnsSchema } from 'src/data-references/schema/data-references.schema';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
+import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 
 @Module({
   providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService, HistoricalReturnsService],
@@ -31,7 +32,8 @@ import { HistoricalReturnsService } from 'src/data-references/data-references.se
     {name: 'processManager', schema: ProcessManagerSchema},
     {name: 'valuation', schema: ValuationSchema},
     { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
-    { name: 'historicalReturns', schema : HistoricalReturnsSchema}
+    { name: 'historicalReturns', schema : HistoricalReturnsSchema},
+    { name: 'dataChecklist', schema: DataCheckListSchema }
   ]),
   ProcessStatusManagerModule,
   AuthenticationModule,

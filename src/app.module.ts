@@ -26,6 +26,7 @@ import { UtilsModule } from './utils/utils.module';
 import { CiqElasticSearchModule } from './ciq-elastic-search/ciq-elastic-search.module';
 import { ContactSalesModule } from './contact-sales/contact-sales.module';
 import { FuseSearchModule } from './fuse-search/fuse-search.module';
+import { EmailModule } from './email/email.module';
 require('dotenv').config();
 
 @Module({
@@ -34,7 +35,7 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule],
+   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule, EmailModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService, {
     provide: APP_FILTER,

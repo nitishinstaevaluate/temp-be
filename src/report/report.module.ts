@@ -25,6 +25,7 @@ import { sebiReportService } from './sebi-report.service';
 import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { thirdPartyReportService } from './third-party-report.service';
 import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
+import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 
 @Module({
   providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, thirdPartyReportService],
@@ -39,6 +40,7 @@ import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
         { name: 'historicalReturns', schema : HistoricalReturnsSchema},
           { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
           { name: 'riskFreeRate', schema : RiskFreeRateSchema},
+          { name: 'dataChecklist', schema: DataCheckListSchema }
       ]
     ),
     UsersModule,

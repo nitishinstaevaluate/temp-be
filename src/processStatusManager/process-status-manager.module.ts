@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
 import { utilsService } from 'src/utils/utils.service';
 import { ValuationSchema } from 'src/valuationProcess/schema/valuation.schema';
+import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 require('dotenv').config();
 
 @Module({
@@ -17,7 +18,7 @@ require('dotenv').config();
   controllers: [ProcessStatusManagerController],
   imports:[
     MongooseModule.forFeature([{ name: 'processManager', schema: ProcessManagerSchema }]),
-    MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
+    MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema },{ name: 'dataChecklist', schema: DataCheckListSchema }]),
     AuthenticationModule,
     UsersModule,
     JwtModule.register({
