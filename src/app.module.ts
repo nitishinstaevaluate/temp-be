@@ -14,7 +14,7 @@ import { IndustryModule } from './industry/industry.module';
 import { ExportTemplateController } from './excelFileServices/exportTemplate.controller';
 import {LoggerModule} from './loggerService/logger.module'
 import { ExceptionsFilter } from './middleware/exceptions.middleware';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { DataReferencesModule } from './data-references/data-references.module';
 import { CalculationModule } from './calculation//calculation.module';
 import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
@@ -37,12 +37,9 @@ require('dotenv').config();
     DataReferencesModule,
    CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule, EmailModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
-  providers: [AppService, {
-    provide: APP_FILTER,
-    useClass: ExceptionsFilter,
-  },ExcelSheetService], //ImportService
+  providers: [AppService,ExcelSheetService]//ImportService
 })
-export class AppModule implements NestModule {
+export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CorsMiddleware)
