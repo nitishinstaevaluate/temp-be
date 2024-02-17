@@ -40,18 +40,6 @@ async function bootstrap() {
     ),
   );
   
-  app.enableCors({
-    origin: [
-      'http://10.250.1.99:9100',
-      'http://10.250.1.99',
-      'http://10.250.1.99:9020',
-      'https://app.ifinworth.com',
-      'localhost',
-      'https://localhost:4000',
-      'https://localhost:4200'
-    ],
-  });
-
   const port = process.env.PORT || 443;
   await app.listen(port);
 }

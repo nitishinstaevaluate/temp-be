@@ -37,9 +37,9 @@ const setupAxiosInterceptor = (axiosInstance: AxiosInstance) => {
         timeZone: 'Asia/Kolkata',
       });
           if (XML_FORMAT.test(response.data)) {
-            logger.error(`[${currentDateIST}] Error Response ${response.config.method?.toUpperCase()} ${response.config.url} ${response.status} ${JSON.stringify({ error: response.data })}`);
+            logger.error(`[${currentDateIST}] | Axios Error Response | [${response.config.method?.toUpperCase()}] | ${response.config.url} | ${response.status} | ${JSON.stringify({ error: response.data })}`);
           } else {
-            logger.log(`[${currentDateIST}] Response ${response.config.method?.toUpperCase()} ${response.config.url} ${response.status}`);
+            logger.log(`[${currentDateIST}] | Axios Request | [${response.config.method?.toUpperCase()}] | ${response.config.url} | ${response.status}`);
           }
       return response;
     },
@@ -48,11 +48,11 @@ const setupAxiosInterceptor = (axiosInstance: AxiosInstance) => {
         timeZone: 'Asia/Kolkata',
       });
       if (error.response) {
-        logger.error(`[${currentDateIST}] Error Response ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
+        logger.error(`[${currentDateIST}] | Axios Response Error | ${error.response.status} | ${error.config.method?.toUpperCase()} | ${error.config.url} | ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
       } else if (error.request) {
-        logger.error(`[${currentDateIST}] Request Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.request} ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
+        logger.error(`[${currentDateIST}] | Axios Request Error | ${error.response.status} | ${error.config.method?.toUpperCase()} | ${error.config.url} | ${error.request} | ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
       } else {
-        logger.error(`[${currentDateIST}] Error ${error.response.status} ${error.config.method?.toUpperCase()} ${error.config.url} ${error.message} ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
+        logger.error(`[${currentDateIST}] | Axios Error | ${error.response.status} | ${error.config.method?.toUpperCase()} | ${error.config.url} | ${error.message} | ${error.response?.data ? JSON.stringify({error:error.response?.data}) : {}}`);
       }
       return Promise.reject(error);
     }
