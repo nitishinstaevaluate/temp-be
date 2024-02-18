@@ -14,7 +14,7 @@ import { IndustryModule } from './industry/industry.module';
 import { ExportTemplateController } from './excelFileServices/exportTemplate.controller';
 import {LoggerModule} from './loggerService/logger.module'
 import { ExceptionsFilter } from './middleware/exceptions.middleware';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { DataReferencesModule } from './data-references/data-references.module';
 import { CalculationModule } from './calculation//calculation.module';
 import { ExcelSheetService } from './excelFileServices/uploadExcel.service';
@@ -26,6 +26,7 @@ import { UtilsModule } from './utils/utils.module';
 import { CiqElasticSearchModule } from './ciq-elastic-search/ciq-elastic-search.module';
 import { ContactSalesModule } from './contact-sales/contact-sales.module';
 import { FuseSearchModule } from './fuse-search/fuse-search.module';
+import { EmailModule } from './email/email.module';
 require('dotenv').config();
 
 @Module({
@@ -34,14 +35,11 @@ require('dotenv').config();
     AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
     ConfigModule.forRoot(),
     DataReferencesModule,
-   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule],
+   CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule, EmailModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
-  providers: [AppService, {
-    provide: APP_FILTER,
-    useClass: ExceptionsFilter,
-  },ExcelSheetService], //ImportService
+  providers: [AppService,ExcelSheetService]//ImportService
 })
-export class AppModule implements NestModule {
+export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(CorsMiddleware)

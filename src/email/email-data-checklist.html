@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Input Form</title>
+    <style>
+        body {
+            font-family: "AR One Sans", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 190%;
+            margin-bottom: 10px;
+            font-family: 'Google Sans';
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"] {
+            padding: 7px;
+        }
+
+        textarea {
+            resize: vertical horizontal;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: justify;
+            font-size: 14px;
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container-top,.submit-container-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 13px;
+            border-radius: 5px;
+            border: 1px solid #e2e2e2;
+            padding: 3%;
+            margin-bottom: 2%;
+            background-color: #ccfdf114;
+            box-shadow: 1px 2px 8px #e1e1e1 !important;
+        }
+
+        .column-left {
+            width: 50%;
+        }
+
+        .column-right {
+            width: 50%;
+        }
+
+        textarea {
+            height: 100px;
+        }
+        .upload-button{
+            background-color: #0a6cce;
+            padding: 0px;
+            font-weight: 400;
+            font-family: "Poppins";
+            margin: 9px 0px;
+            color: #ffffff;
+            font-size: 13px;
+            border-radius: 5px;
+            width: 44%;
+            border: 1px solid #545454;
+        }
+        .submit-button{
+            box-shadow: 1px 2px 15px #d1d1d1;
+            color: #ffffff !important;
+            background-color: #0cd18f !important;
+            border-radius: 8px;
+            position: relative;
+            font-family: 'AR One Sans', sans-serif;
+            font-weight: 500;
+            padding: 1%;
+            font-weight: bold;
+            width: 45%;
+        }
+        .outer-main-wrapper{
+            background-image: linear-gradient(to bottom, rgba(218, 225, 255, 0.2), rgba(234, 234, 234, 0.2));
+            max-width: 100%;
+            border-radius: 20px;
+            margin-top: 0px;
+        }
+        .form-outer-wrapper{
+            padding: 2%;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+        }
+        .header-column-left img {
+            height: 35px;
+            margin-right: 20px;
+            width: auto; 
+            mix-blend-mode: multiply;
+            opacity: 0.8;
+            display: inline-block;
+        }
+        .header-container-top{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 13px;
+            border-radius: 15px;
+            background-image: linear-gradient(to right, rgba(75, 109, 243, 0.2), rgba(11, 197, 135, 0.1));
+        }
+        .header-column-left{
+            width: 30%;
+        }
+        .header-column-right{
+            width: 50%;
+        }
+        .header-column-right h1{
+            font-size: 22px;
+            color: #696969;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: sans-serif;
+        }
+
+        .media-header{
+            display: none;
+        }
+
+        .upload-column-right{
+            width: 50%;
+        }
+        .upload-column-left{
+            width: 50%;
+        }
+        .footer-l1{
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .img{
+            padding-top: 5%;
+            padding-left: 3%;
+        }
+        @media only screen and (min-width: 320px) and (max-width: 599px) {
+                    .container-top,.submit-container-top {
+                        padding: 2%;
+                        margin: 0 auto;
+                        display: block;
+                        border-radius: 5px;
+                        border: 1px solid #e2e2e2;
+                        padding-top: 3%;
+                        padding-bottom: 3%;
+                        margin-bottom: 2%;
+                        background-color: #ccfdf114;
+                        box-shadow: 1px 2px 8px #e1e1e1 !important;
+                    }
+                
+                    .column-left {
+                        width: 100% !important;
+                        padding-top: 2%;
+                        padding-bottom: 2%;
+                    }
+                    .header-column-left {
+                        width: 100%;
+                        text-align:center;
+                    }
+                    .header-column-right {
+                        display: none;
+                    }
+                    .img{
+                        padding-top: 2%;
+                        padding-left: 3%;
+                    }
+                    .column-right {
+                        width: 100% !important;
+                        padding-top: 2%;
+                        padding-bottom: 2%;
+                    }
+                    p {
+                        font-size: 10px !important;
+                    }
+                    .media-header{
+                        display:block;
+                        width: 100%;
+                    }
+                    .upload-column-left{
+                        width: 100% !important;
+                        padding-top: 1%;
+                        padding-bottom: 1%;
+                    }
+                    .media-header h1{
+                        font-size:13px;
+                        text-align:center;
+                        padding-top:5%;
+                        padding-bottom:5%;
+                    }
+                    .h3{
+                        font-size: 10px !important;
+                        padding-top: 2%;
+                        padding-bottom: 2%;
+                    }
+                    label{
+                        font-size: 8px;
+                    }
+                    .upload-column-right{
+                        width: 100% !important;
+                        margin-top: 3% !important;
+                        padding-bottom: 1%;
+                    }
+                    #excelTemplate{
+                        font-size: 8px !important;
+                    }
+                    input,select,textarea{
+                        height: 25px !important;
+                        width: 95% !important;
+                    }
+                    .submit-button{
+                        font-size: 8px;
+                        width: 100% !important;
+                        text-align: center;
+                        padding: 1% !important;
+                    }
+                    select{
+                        font-size: 7px !important;
+                    }
+                    .footer{
+                        font-size: 8px !important;
+                        padding: 20px;
+                    }
+                }
+    </style>
+</head>
+<body>
+    
+    <div class="header-container-top">
+        <div class="header-column-left">
+            <img src="cid:logo" alt="Logo" class="img">
+        </div>
+        <div class="header-column-right">
+            <h1 >Valuation Input Form</h1>
+        </div>
+    </div>
+    <div class="media-header">
+        <h1 class="h1">Valuation Input Form</h1>
+    </div>
+    <div class="container outer-main-wrapper">
+        <p class="mb-4">Dear valued user,</p>
+        <p class="mb-4">Thank you for choosing to provide us with your information. Your cooperation is essential for us to serve you better.</p>
+        <p class="mb-4">To facilitate your submission, please fill out the following form and attach the requested Excel template for valuation purposes.</p>
+        <p class="mb-4 mt-4" style="color: #d04040;">*We assume no responsibility for the accuracy or completeness of the data provided in the Excel template. Additionally, we do not hold any liability for decisions made based on this information.</p>
+        <p class="mb-4">Please provide the following details:</p>
+        <div class="form-outer-wrapper">
+            <form id="userInputForm" enctype="multipart/form-data" method="post" action="https://localhost:3000/email/submit-form">
+                <!-- User Details Column -->
+            <h3 class="h3">Report Related Details</h3>
+                <div class="container-top">
+                    <div class="column-left">
+                            <label for="dateOfReport">Date of Report:</label>
+                            <input type="date" style="width: 70%;border-radius: 5px;" class="form-control" id="dateOfReport" name="dateOfReport" required>
+                    </div>
+                    <div class="column-right">
+                        <label for="appointingAuthority">Appointing Authority:</label>
+                        <input type="text" style="width: 70%;border-radius: 5px;" id="appointingAuthority" name="appointingAuthority" required>
+                    </div>
+                </div>
+                <div class="container-top">
+                    <div class="column-left">
+                        <label for="dateOfAppointment">Date Of Appointment:</label>
+                        <input type="date" style="width: 70%;border-radius: 5px;" id="dateOfAppointment" name="dateOfAppointment" required>
+                    </div>
+                    <div class="column-right">
+                        <label for="cinNumber">CIN Number:</label>
+                    <input type="number" style="width: 70%;border-radius: 5px;" id="cinNumber" name="cinNumber" required>
+                    </div>
+                </div>
+                <div class="container-top">
+                    <div class="column-left">
+                        <label for="dateOfIncorporation">Date of Incorporation:</label>
+                        <input type="date" style="width: 70%;border-radius: 5px;" id="dateOfIncorporation" name="dateOfIncorporation" required>
+                    </div>
+                    <div class="column-right">
+                        <label for="companyAddress">Company Address:</label>
+                        <textarea type="text" style="width: 70%;border-radius: 5px;height: 50px !important;" id="companyAddress" name="companyAddress" required></textarea>
+                    </div>
+                </div>
+    
+                <div class="container-top">
+                    <div class="column-left">
+                        <label for="name">Nature Of Instrument:</label>
+                    <select id="natureOfInstrument" name="natureOfInstrument" style="width: 70%;border-radius: 5px;" class="form-control" required>
+                        <option value="">Select Nature Of Instrument</option>
+                        <option value="equityShares" class="option">Equity Shares</option>
+                        <option value="equitySharesAndCcps" class="option">Equity Shares & Compulsorily Convertible Preference Shares</option>
+                        <option value="ccps">Compulsorily Convertible Preference Shares</option>
+                        <option value="ccds">Compulsorily Convertible Debentures</option>
+                        <option value="ocds">Optionally Convertible Debentures</option>
+                        <option value="ocrps">Optionally Convertible Redeemable Preference Shares</option>
+                        <option value="rps">Redeemable Preference Shares</option>
+                        <option value="safe">Simple Agreement for Future Equity</option>
+                        <option value="convertibleNotes">Convertible Notes</option>
+                    </select>
+                    </div>
+                    <div class="column-right">
+                        <label for="purposeOfReport">Purpose Of Report:</label>
+                    <select id="purposeOfReport" style="width: 70%;border-radius: 5px;" name="purposeOfReport" class="form-control" required>
+                        <option value="">Select purpose of Report</option>
+                        <option value="companiesAct">Companies Act, 2013</option>
+                        <option value="ita1961">Income Tax Act, 1961</option>
+                        <option value="fema">Foreign Exchange Management Act</option>
+                        <option value="sebiRegulations">SEBI Regulations</option>
+                    </select>
+                    </div>
+                </div>
+
+                <div class="container-top">
+                    <div class="column-left">
+                        <label for="section">Section/Regulation Reference:</label>
+                        <input type="text" style="width: 70%;border-radius: 5px;" id="section" name="section" required>
+                    </div>
+                </div>
+                <hr>
+                    
+                    <!-- Form Details start -->
+                    <h3 class="h3">Valuation Related Details</h3>
+                    <div class="container-top">
+                        <div class="column-left">
+                            <label for="taxRate">Tax Rate:</label>
+                            <input type="text" style="width: 70%;border-radius: 5px;" class="form-control" type="text" id="taxRate" name="taxRate" required>
+                        </div>
+                        <div class="column-right">
+                            <label for="outstandingShares">Outstanding Shares:</label>
+                            <input id="outstandingShares" style="width: 70%;border-radius: 5px;" name="outstandingShares" type="number" required></input>
+                        </div>
+                    </div>
+                    <div class="container-top">
+                        <div class="column-left">
+                            <label for="valuationDate">Valuation Date:</label>
+                            <input id="valuationDate" style="width: 70%;border-radius: 5px;" name="valuationDate" type="date" required></input>
+                        </div>
+                    </div>
+                    <hr>
+
+                <!-- Excel Template Column -->
+                <div class="submit-container-top">
+                    <div class="upload-column-left">
+                        <label for="excelTemplate">Attach Excel Template:</label>
+                        <input type="file" style="background-color: #0a6cce;color: #ffffff;font-size: 13px;border-radius: 5px;" id="excelTemplate" name="excelTemplate" accept=".xlsx,.xls" required>
+                    </div>
+                    <div class="upload-column-right" style="padding-top: 2%;text-align: center;">
+                        <button type="submit" id="submitLink" class="submit-button" style="cursor: pointer;">
+                            <!-- <a href="https://localhost:3000/email/submit-form?dateOfReport=" target="_blank"> -->
+                                Submit Information
+                        </button>
+                    </div>
+                </div>
+        </form>
+        <p class="mb-4">Thank you for your cooperation.</p>
+        <p class="mb-4" style="font-weight: 500;">-By submitting this form, you agree to our terms and conditions:</p>
+        </div>
+    </div>
+    <div class="footer">
+        <p class="mb-4 footer-l1" style="color: #c0c0c0;">&copy; 2024 Ifinworth Advisors Private Limited. All rights reserved.</p>
+    </div>
+</body>
+</html>

@@ -46,7 +46,7 @@ export class ciqElasticPriceEquityService {
                     "size": 90
                   }
             
-                  const companyData = await this.elasticSearchClientService.search('ciqpriceequityind', criteria);
+                  const companyData = await this.elasticSearchClientService.search('ciqpriceequity', criteria);
 
                   const priceEquityDetails:any = plainToClass(CiqPriceEquityDto, companyData.data, {excludeExtraneousValues:true});
 

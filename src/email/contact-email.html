@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Contact Form Submission</title>
+              <style>
+                  body {
+                      font-family: 'AR One Sans', sans-serif !important;
+                      margin: 0;
+                      padding: 0;
+                      background-color: #f4f4f4;
+                      color: #333;
+                  }
+          
+                  .column-1 img {
+                      height: 33px;
+                      margin-right: 20px;
+                      width: auto; 
+                      mix-blend-mode: multiply;
+                      opacity: 0.8;
+                      display: inline-block;
+                  }
+          
+                  h1 {
+                      color: #333;
+                      margin: 0;
+                      font-size: 23px;
+                  }
+          
+                  .content {
+                      padding: 2%;
+                      background-color: #fff;
+                      border-radius: 5px;
+                      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                      background-image: linear-gradient(to bottom, rgba(227, 230, 246, 0.3), rgba(220, 220, 220, 0.2));
+                  }
+          
+                  p {
+                      margin: 10px 0;
+                      font-size: 17px;
+                      line-height: 190%;
+                      padding-top: 1%;
+                  }
+          
+                  .footer {
+                      background-color: #333;
+                      color: #fff;
+                      text-align: center;
+                      padding: 20px;
+                  }
+          
+                  .container-top {
+                      display: flex;
+                      flex-wrap: wrap;
+                      justify-content: space-between;
+                      font-size: 13px;
+                      background-image: linear-gradient(to right, rgba(75, 109, 243, 0.2), rgba(11, 197, 135, 0.1));
+                      border-radius: 10px;
+                      padding: 2%;
+                  }
+          
+                  .column {
+                      width: 50%;
+                  }
+          
+                  .column-1 {
+                      width: 28%;
+                  }
+                  .media{
+                    display:none;
+                   }
+
+                  @media only screen and (min-width: 320px) and (max-width: 599px) {
+                    .container-top {
+                        padding: 2%;
+                        margin: 0 auto;
+                    }
+                
+                    .column {
+                        display:none;
+                    }
+                
+                    .column-1 {
+                        width: 100%;
+                        text-align:center;
+                    }
+                
+                    .column h1,
+                    p {
+                        font-size: 10px !important;
+                    }
+                    .media{
+                        display:block;
+                    }
+                    .media h1{
+                        font-size:13px;
+                        text-align:center;
+                        padding-top:5%;
+                        padding-bottom:5%;
+                    }
+                }
+              </style>
+          </head>
+          <body>
+          
+          <div class="container-top">
+              <div class="column-1">
+                  <img src="cid:logo" alt="Logo">
+              </div>
+              <div class="column">
+                  <h1>Contact Form Submission</h1>
+              </div>
+          </div>
+
+          <div class="media">
+            <h1>Contact Form Submission</h1>
+          </div>
+          
+          <div class="content">
+              <p><strong>Name:</strong> {{name}}</p>
+              <p><strong>Email:</strong> {{email}}</p>
+              <p><strong>Mobile Number:</strong> {{mobileNumber}}</p>
+              <p><strong>Company:</strong> {{company}}</p>
+              <p><strong>Subject:</strong> {{subject}}</p>
+              <hr>
+              <p><strong>Message:</strong></p>
+              <p>{{message}}</p>
+          </div>
+          
+          <div class="footer">
+              <p>&copy; 2024 Ifinworth Advisors Private Limited. All rights reserved.</p>
+          </div>
+          </body>
+          </html>

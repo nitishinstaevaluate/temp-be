@@ -16,6 +16,7 @@ import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { UsersModule } from 'src/users/users.module';
 import { utilsService } from 'src/utils/utils.service';
 import { ProcessManagerSchema } from 'src/processStatusManager/schema/process-status-manager.schema';
+import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 
 @Module({
   providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService],
@@ -23,7 +24,8 @@ import { ProcessManagerSchema } from 'src/processStatusManager/schema/process-st
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },
     { name: 'valuation', schema: ValuationSchema },
-    { name: 'processManager', schema: ProcessManagerSchema }
+    { name: 'processManager', schema: ProcessManagerSchema },
+    { name: 'dataChecklist', schema: DataCheckListSchema }
   ]),
   UsersModule,
   JwtModule.register({
