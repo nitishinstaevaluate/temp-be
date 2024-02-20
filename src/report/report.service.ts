@@ -12,12 +12,12 @@ import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
 import ConvertAPI from 'convertapi';
-import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/interfaces/api-endpoints.prod';
+import { IFIN_REPORT, SYNC_FUSION_DOC_CONVERT } from 'src/library/interfaces/api-endpoints.prod';
 import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
-import { CIQ_FINANCIAL_SEGMENT } from 'src/interfaces/api-endpoints.local';
+import { CIQ_FINANCIAL_SEGMENT } from 'src/library/interfaces/api-endpoints.local';
 import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';

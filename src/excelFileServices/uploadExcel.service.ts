@@ -15,7 +15,7 @@ import { isNotEmpty } from 'class-validator';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
-import { IFIN_FINANCIAL_SHEETS } from 'src/interfaces/api-endpoints.prod';
+import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 require('dotenv').config();
 
