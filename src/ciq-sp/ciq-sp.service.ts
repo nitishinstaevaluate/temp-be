@@ -8,14 +8,14 @@ import { ciqcompanystatustypeDocument, ciqcompanytypeDocument, ciqindustryhierar
 import { RedisService } from 'src/middleware/redisConfig';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
-import { CAPITALIQ_MARKET } from 'src/interfaces/api-endpoints.prod';
+import { CAPITALIQ_MARKET } from 'src/library/interfaces/api-endpoints.prod';
 import { convertToNumberOrOne, convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { BETA_SUB_TYPE, BETA_TYPE, MNEMONICS_ARRAY, MNEMONICS_ARRAY_2, MNEMONIC_ENUMS, RATIO_TYPE } from 'src/constants/constants';
 import { calculateMean, calculateMedian, extractValues, formatDateToMMDDYYYY, iqCreateStructure } from './ciq-common-functions';
 import { ciqSpBetaService } from './ciq-sp-beta.service';
 import { ciqSpCompanyMeanMedianService } from './ciq-sp-company-mean-median.service';
 import { CiqSpFinancialService } from './ciq-sp-financial.service';
-import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/interfaces/api-endpoints.local';
+import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/library/interfaces/api-endpoints.local';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 require('dotenv').config();

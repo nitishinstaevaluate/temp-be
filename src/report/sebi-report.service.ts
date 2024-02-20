@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { formatDateHyphenToDDMMYYYY, convertToNumberOrZero } from "src/excelFileServices/common.methods";
-import { CIQ_ELASTIC_SEARCH_PRICE_EQUITY } from "src/interfaces/api-endpoints.local";
+import { CIQ_ELASTIC_SEARCH_PRICE_EQUITY } from "src/library/interfaces/api-endpoints.local";
 import { axiosInstance, axiosRejectUnauthorisedAgent } from "src/middleware/axiosConfig";
 import * as fs from 'fs';
 import * as puppeteer from 'puppeteer';

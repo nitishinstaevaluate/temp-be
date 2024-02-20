@@ -30,7 +30,6 @@ import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,s
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS } from 'src/constants/constants';
-import { type } from 'os';
 const date = require('date-and-time');
 
 @Injectable()
@@ -111,10 +110,11 @@ export class FCFEAndFCFFService {
     // var vdayLeft = 365 - vdate;
     console.log('total days ',vdate.totalDays);
     console.log('is leap ',vdate.isLeapYear);
-    if (vdate.dateDiff < vdate.totalDays) {
+    if (diffValProv > 1) {
+    // if (vdate.dateDiff < vdate.totalDays) {
       this.stubAdjRequired = true;
     }
-    console.log('Which period STUB OK?',this.stubAdjRequired);
+    console.log('Which period, is STUB needed?',this.stubAdjRequired);
     // vdayLeft = vdayLeft <= 1 ? 365 : vdayLeft;
 
     console.log('Days left in financial year ', vdate.dateDiff);
@@ -189,7 +189,7 @@ export class FCFEAndFCFFService {
 
         let pat = await GetPAT(i+1, worksheet1);
         let patOld = await GetPAT(i,worksheet1);
-        pat = i === 0 && this.stubAdjRequired == true  ? pat-patOld : pat;
+        pat = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? pat-patOld : pat;
         // if (pat !== null) pat = pat;
         // pat = i === 0 ? patNext - pat:pat;
         console.log('PAT ',pat);
@@ -202,12 +202,12 @@ export class FCFEAndFCFFService {
         // netOperatingAssetsInit = netOperatingAssets;   // Storing past value to get difference
         
 
-        depAndAmortisation = i === 0 && this.stubAdjRequired == true  ? depAndAmortisation - depAndAmortisationOld:depAndAmortisation;
+        depAndAmortisation = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? depAndAmortisation - depAndAmortisationOld:depAndAmortisation;
 
         //Get Oher Non Cash items Value
         let otherNonCashItems = await OtherNonCashItemsMethod(i+1, worksheet1);
         let otherNonCashItemsOld = await OtherNonCashItemsMethodNext(i, worksheet1);
-        otherNonCashItems = i === 0 && this.stubAdjRequired == true ? otherNonCashItems - otherNonCashItemsOld : otherNonCashItems;
+        otherNonCashItems = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false ? otherNonCashItems - otherNonCashItemsOld : otherNonCashItems;
         const changeInNCAValue = await ChangeInNCA(i, worksheet2,worksheet3);
         changeInNCA = changeInNCAValue;
 
@@ -241,7 +241,7 @@ export class FCFEAndFCFFService {
         // console.log('Borrowings, ',changeInBorrowingsVal);
         addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
         addInterestAdjustedTaxesStub = await interestAdjustedTaxesWithStubPeriod(i,worksheet1,inputs.taxRate);
-        addInterestAdjTaxes = i === 0 && this.stubAdjRequired == true  ? addInterestAdjustedTaxesStub:addInterestAdjTaxes;
+        addInterestAdjTaxes = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? addInterestAdjustedTaxesStub:addInterestAdjTaxes;
         
       
         // if (i === 0 && inputs.model.includes('FCFF')){      // optimize code not to run this block multiple times
