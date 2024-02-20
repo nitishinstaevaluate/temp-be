@@ -155,15 +155,19 @@ export async function calculateDaysFromDate(dateString: Date) {
 
   // const diffInDays = datediff(startDate, endDate);
   // console.log('Date Difference ',diffInDays);
-  const timeDiff = endDate.getTime() - startDate.getTime();
-  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+  // const timeDiff = endDate.getTime() - startDate.getTime();
+  // const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
   // const totalDays = date.isLeapYear(valuationDate.getFullYear()) ? 366 : 365;
   if (valuationDate.getMonth() <=3 ){
     totalDays = date.isLeapYear(endDate.getFullYear()) ? 366 :365;
   } else {
     totalDays = date.isLeapYear(startDate.getFullYear()) ? 366 :365;
   }
-
+ let isProvisionalYearFull:boolean;
+  if (daysRemaining == totalDays) {
+    isProvisionalYearFull = true;
+  } else 
+  isProvisionalYearFull = false;
 
   // if (days <= 0) {
   //   const diff = totalDays - -days;
@@ -175,8 +179,10 @@ export async function calculateDaysFromDate(dateString: Date) {
   let daysParam = {
     dateDiff : daysRemaining,
     totalDays : totalDays,
+    isProvisionalYearFull: isProvisionalYearFull,
     isLeapYear : date.isLeapYear(startDate.getFullYear())
   }
+  console.log(daysParam);
   return daysParam;
 }
 
