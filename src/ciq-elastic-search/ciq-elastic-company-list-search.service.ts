@@ -280,16 +280,16 @@ export class ciqElasticCompanyListSearchService {
             const companySalesData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
 
             for await(const individualCompanyDetails of companyList){
-                let ebitdaFound = false;
+                let salesFound = false;
                 for await(const individualSalesOfCompany of companySalesData.data){
                     if(individualSalesOfCompany.COMPANYID === individualCompanyDetails.COMPANYID){ 
                         const salesValue = { SALESVALUE: individualSalesOfCompany.DATAITEMVALUE};
                         companyDetailsList.push({ ...individualCompanyDetails, ...salesValue});
-                        ebitdaFound = true;
+                        salesFound = true;
                         break;
                     }
                 }
-                if (!ebitdaFound) {
+                if (!salesFound) {
                     companyDetailsList.push({ ...individualCompanyDetails });
                 }
             }
