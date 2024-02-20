@@ -2,7 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { CiqIndustryListDto } from "src/ciq-sp/dto/ciq-sp.dto";
 import { ElasticSearchService } from "src/elasticSearch/elastic-search-client.service";
-import { convertUnixTimestampToDateString, getFormattedProvisionalDate } from "src/excelFileServices/common.methods";
+import { convertUnixTimestampToDateString, convertUnixTimestampToQuarterAndYear, getFormattedProvisionalDate } from "src/excelFileServices/common.methods";
+import { elasticSearchIndex } from 'src/library/enums/elastic-search-index.enum';
+import { elasticSearchKey } from 'src/library/enums/elastic-search-keys.enum';
 
 @Injectable()
 export class ciqElasticCompanyListSearchService {
@@ -15,20 +17,19 @@ export class ciqElasticCompanyListSearchService {
             let pageStart = 0, size = 10, totalListCount;
 
             if(payload.companyType.length){
-                queryArray.push({terms: {"COMPANYTYPEID": payload.companyType}});
+                queryArray.push({terms: {[elasticSearchKey.COMPANYTYPEID] : payload.companyType}});
             }
 
             if(payload.companyStatusType.length){
-                queryArray.push({terms: {"COMPANYSTATUSTYPEID": payload.companyStatusType}});
+                queryArray.push({terms: {[elasticSearchKey.COMPANYSTATUSTYPEID]: payload.companyStatusType}});
             }
 
             if(payload?.decodeIndustry?.simpleindustryid){
-                queryArray.push({terms: {"SIMPLEINDUSTRYID": [+payload.decodeIndustry.simpleindustryid]}});
-                
+                queryArray.push({terms: { [elasticSearchKey.SIMPLEINDUSTRYID]: [+payload.decodeIndustry.simpleindustryid]}});
             }
 
             if(payload?.companyIdArray.length){
-                queryArray.push({terms: {"COMPANYID": payload.companyIdArray}});
+                queryArray.push({terms: {[elasticSearchKey.COMPANYID]: payload.companyIdArray}});
             }
 
             // if(queryArray.length === 0){
@@ -43,7 +44,7 @@ export class ciqElasticCompanyListSearchService {
                 size = payload.size;
             }
 
-            queryArray.push({"exists": {"field": "SIMPLEINDUSTRYID"}}); // null check filter to remove null simpleindustryid records 
+            queryArray.push({"exists": {"field": elasticSearchKey.SIMPLEINDUSTRYID}}); // null check filter to remove null simpleindustryid records 
 
             const criteria = {
                 query: {
@@ -52,14 +53,14 @@ export class ciqElasticCompanyListSearchService {
                     }
                 },
                 _source: {
-                    includes: ['COMPANYID', 'COMPANYNAME', 'SIMPLEINDUSTRYID', 'CITY'],
+                    includes: [elasticSearchKey.COMPANYID, elasticSearchKey.COMPANYNAME, elasticSearchKey.SIMPLEINDUSTRYID, elasticSearchKey.CITY],
                 },
                 from: `${pageStart}`,
                 size: `${size}`,
                 track_total_hits: true,
             };
             
-            const ciqCompanyList = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
+            const ciqCompanyList = await this.elasticSearchClientService.search(elasticSearchIndex.ciqcompanyind, criteria);
 
             const date = payload.valuationDate;
             const companyList:any = await this.computeCompanyDetails(ciqCompanyList.data, date);
@@ -95,9 +96,12 @@ export class ciqElasticCompanyListSearchService {
                     }
                 }
             }
-
             const addMarketCapDetails = await this.elasticSearchMarketCap(listedCompanyList, date);
-            const modifiedCompanyList = plainToClass(CiqIndustryListDto, addMarketCapDetails, {excludeExtraneousValues:true});
+
+            const addEbitdaDetails = await this.elasticSearchEbitda(addMarketCapDetails, date);
+            const addSalesDetails = await this.elasticSearchSales(addEbitdaDetails, date);
+
+            const modifiedCompanyList = plainToClass(CiqIndustryListDto, addSalesDetails, {excludeExtraneousValues:true});
             return modifiedCompanyList;
         }
         catch(error){
@@ -118,7 +122,7 @@ export class ciqElasticCompanyListSearchService {
                 size: 10000
             };
 
-            this.simpleIndustryList = (await this.elasticSearchClientService.search('ciqsimpleindustry', criteria)).data;
+            this.simpleIndustryList = (await this.elasticSearchClientService.search(elasticSearchIndex.ciqsimpleindustry, criteria)).data;
             return this.simpleIndustryList;
         }
         catch(error){
@@ -143,18 +147,18 @@ export class ciqElasticCompanyListSearchService {
                         must:[
                             {
                                 terms: {
-                                    "COMPANYID": companyId
+                                    [elasticSearchKey.COMPANYID]: companyId
                                 }
                             },{
                                 term:{
-                                    "PRICINGDATE":`${convertUnixTimestampToDateString(date)}`
+                                    [elasticSearchKey.PRICINGDATE]:`${convertUnixTimestampToDateString(date)}`
                                 }
                             }
                         ]
                     }
                 }
             }
-            const companyMarketData = await this.elasticSearchClientService.search('ciqmarketcap', criteria);
+            const companyMarketData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqmarketcap, criteria);
 
             for await(const individualCompanyDetails of companyList){
                 let marketCapFound = false;
@@ -177,6 +181,127 @@ export class ciqElasticCompanyListSearchService {
                 error:error,
                 status:false,
                 msg:"Market Cap search failed"
+            }
+        }
+    }
+
+    async elasticSearchEbitda(companyList, date){
+        try{
+            let companyId = [];
+            let companyDetailsList = [];
+            companyList.map((elements)=>{
+                companyId.push(elements.COMPANYID)
+            })
+            const criteria = {
+                query:{
+                    bool :{
+                        must:[
+                            {
+                                terms: {
+                                    [elasticSearchKey.COMPANYID]: companyId
+                                }
+                            },{
+                                term:{
+                                    [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                                }
+                            },{
+                                term:{
+                                    [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
+                                }
+                            },{
+                                term:{
+                                    [elasticSearchKey.DATAITEMID]:'4047' //using EBITDA Margin code for getting ebitda
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            const companyEbitdaData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
+
+            for await(const individualCompanyDetails of companyList){
+                let ebitdaFound = false;
+                for await(const individualEbitdaOfCompany of companyEbitdaData.data){
+                    if(individualEbitdaOfCompany.COMPANYID === individualCompanyDetails.COMPANYID){
+                        const ebidaValue = { EBITDAVALUE: individualEbitdaOfCompany.DATAITEMVALUE};
+                        companyDetailsList.push({ ...individualCompanyDetails, ...ebidaValue});
+                        ebitdaFound = true;
+                        break;
+                    }
+                }
+                if (!ebitdaFound) {
+                    companyDetailsList.push({ ...individualCompanyDetails });
+                }
+            }
+            return companyDetailsList;
+        }
+
+        catch(error){
+            console.log(error,"error")
+            return {
+                error:error,
+                status:false,
+                msg:"Ebit da search failed"
+            }
+        }
+    }
+    async elasticSearchSales(companyList, date){
+        try{
+            let companyId = [];
+            let companyDetailsList = [];
+            companyList.map((elements)=>{
+                companyId.push(elements.COMPANYID)
+            })
+            const criteria = {
+                query:{
+                    bool :{
+                        must:[
+                            {
+                                terms: {
+                                    [elasticSearchKey.COMPANYID]: companyId
+                                }
+                            },{
+                                term:{
+                                    [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                                }
+                            },{
+                                term:{
+                                    [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
+                                }
+                            },{
+                                term:{
+                                    [elasticSearchKey.DATAITEMID]:'300' //using Sales code for getting sales
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            const companySalesData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
+
+            for await(const individualCompanyDetails of companyList){
+                let salesFound = false;
+                for await(const individualSalesOfCompany of companySalesData.data){
+                    if(individualSalesOfCompany.COMPANYID === individualCompanyDetails.COMPANYID){ 
+                        const salesValue = { SALESVALUE: individualSalesOfCompany.DATAITEMVALUE};
+                        companyDetailsList.push({ ...individualCompanyDetails, ...salesValue});
+                        salesFound = true;
+                        break;
+                    }
+                }
+                if (!salesFound) {
+                    companyDetailsList.push({ ...individualCompanyDetails });
+                }
+            }
+            return companyDetailsList;
+        }
+
+        catch(error){
+            console.log(error,"error")
+            return {
+                error:error,
+                status:false,
+                msg:"Sales search failed"
             }
         }
     }

@@ -276,3 +276,17 @@ export function convertUnixTimestampToDateString(timestamp: number): string {
 
   return formattedDate;
 }
+
+export function convertUnixTimestampToQuarterAndYear(timestamp: number) {
+  const date = new Date(timestamp);
+  const unixTimestamp = Math.floor(date.getTime() / 1000);
+  const month = date.getMonth() + 1;
+  const quarter = Math.ceil(month / 3);
+  const year = date.getFullYear();
+
+  return {
+    unixTimestamp: unixTimestamp,
+    quarter: quarter,
+    year: year,
+  };
+}

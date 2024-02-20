@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthenticationService } from 'src/authentication/authentication.service';
-import { CIQ_ELASTIC_SEARCH_LISTED_COMPANIES_LIST } from 'src/interfaces/api-endpoints.local';
+import { CIQ_ELASTIC_SEARCH_LISTED_COMPANIES_LIST } from 'src/library/interfaces/api-endpoints.local';
 import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
 import { error } from 'winston';
 const Fuse = require("fuse.js")

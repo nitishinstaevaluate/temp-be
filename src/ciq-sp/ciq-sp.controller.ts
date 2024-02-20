@@ -3,7 +3,7 @@ import { CiqSpService } from './ciq-sp.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto, ciqGetStockBetaDto } from './dto/ciq-sp.dto';
 import { axiosInstance } from 'src/middleware/axiosConfig';
-import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/interfaces/api-endpoints.local';
+import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/library/interfaces/api-endpoints.local';
 
 @Controller('ciq-sp')
 export class CiqSpController {

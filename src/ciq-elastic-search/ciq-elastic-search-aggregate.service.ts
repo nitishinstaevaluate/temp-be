@@ -6,6 +6,8 @@ import { RedisService } from "src/middleware/redisConfig";
 import { CiqPriceEquityDto } from "./dto/ciq-elastic-search.dto";
 import { ciqElasticCompanyListSearchService } from "./ciq-elastic-company-list-search.service";
 import { ciqElasticPriceEquityService } from "./ciq-elastic-price-equity.service";
+import { elasticSearchIndex } from "src/library/enums/elastic-search-index.enum";
+import { elasticSearchKey } from "src/library/enums/elastic-search-keys.enum";
 
 @Injectable()
 export class ciqElasticSearchAggregateService{
@@ -76,11 +78,11 @@ export class ciqElasticSearchAggregateService{
                 },
                 size: 10000,
                 _source: {
-                    includes: ['COMPANYID'],
+                    includes: [elasticSearchKey.COMPANYID],
                 },
             };
 
-            const companyIndustryList = await this.elasticSearchClientService.search('ciqcompanyindustryind', criteria);
+            const companyIndustryList = await this.elasticSearchClientService.search(elasticSearchIndex.ciqcompanyindustryind, criteria);
 
             let listedCompanyIdArray = [];
             
@@ -136,11 +138,11 @@ export class ciqElasticSearchAggregateService{
                 },
                 size: 10000,
                 _source: {
-                    includes: ['COMPANYID', 'SEGMENTDESCRIPTION'],
+                    includes: [elasticSearchKey.COMPANYID, elasticSearchKey.SEGMENTDESCRIPTION],
                 },
             };
 
-            const descriptionQuery = await this.elasticSearchClientService.search('ciqsegmentdescriptionind', criteria);
+            const descriptionQuery = await this.elasticSearchClientService.search(elasticSearchIndex.ciqsegmentdescriptionind, criteria);
             return descriptionQuery.data;
 
         }
@@ -163,7 +165,7 @@ export class ciqElasticSearchAggregateService{
                         must: [
                             {
                                 term:{
-                                    "COMPANYID":data.companyId
+                                    [elasticSearchKey.COMPANYID]:data.companyId
                                 }
                             }
                         ]
@@ -171,7 +173,7 @@ export class ciqElasticSearchAggregateService{
                 }
             }
 
-            const companyData = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
+            const companyData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqcompanyind, criteria);
             return companyData.data;
         }
         catch(error){
@@ -205,19 +207,19 @@ export class ciqElasticSearchAggregateService{
                     bool: {
                         must: {
                             terms: { 
-                                "COMPANYID": listedCompaniesId
+                                [elasticSearchKey.COMPANYID]: listedCompaniesId
                             }
                         }
                     }
                 },
                 _source: {
-                    includes: ['COMPANYID', 'COMPANYNAME'],
+                    includes: [elasticSearchKey.COMPANYID, elasticSearchKey.COMPANYNAME],
                 },
                 size: 10000,
                 track_total_hits: true,
             };
             
-            const ciqCompanyList = await this.elasticSearchClientService.search('ciqcompanyind', criteria);
+            const ciqCompanyList = await this.elasticSearchClientService.search(elasticSearchIndex.ciqcompanyind, criteria);
             
             return ciqCompanyList.data;
 

@@ -3,7 +3,7 @@ import { ConvertAPI } from "convertapi";
 import * as fs from 'fs';
 import * as path from 'path';
 import { AWS_STAGING, DOCUMENT_UPLOAD_TYPE } from "src/constants/constants";
-import { SYNC_FUSION_DOC_CONVERT, IFIN_REPORT } from "src/interfaces/api-endpoints.prod";
+import { SYNC_FUSION_DOC_CONVERT, IFIN_REPORT } from "src/library/interfaces/api-endpoints.prod";
 import { axiosInstance } from "src/middleware/axiosConfig";
 const FormData = require('form-data');
 require('dotenv').config()

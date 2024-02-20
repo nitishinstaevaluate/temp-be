@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ElasticSearchService } from 'src/elasticSearch/elastic-search-client.service';
 import { RedisService } from 'src/middleware/redisConfig';
 import { ciqElasticSearchAggregateService } from './ciq-elastic-search-aggregate.service';
+import { elasticSearchIndex } from 'src/library/enums/elastic-search-index.enum';
 
 @Injectable()
 export class CiqElasticSearchService {
@@ -34,7 +35,7 @@ export class CiqElasticSearchService {
             // const index = payload.index;
             // const criteria = payload.criteria;
             
-            const response = await this.elasticSearchService.searchAll('ciqsimpleindustry');
+            const response = await this.elasticSearchService.searchAll(elasticSearchIndex.ciqsimpleindustry);
             console.log(response," response")
         }
         catch(error){

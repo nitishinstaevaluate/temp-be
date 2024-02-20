@@ -76,6 +76,14 @@ import { Expose, Type,} from 'class-transformer';
     @IsNumber()
     SHARESOUTSTANDING: number;
 
+    @Expose()
+    @IsNumber()
+    SALESVALUE: number;
+
+    @Expose()
+    @IsNumber()
+    EBITDAVALUE: number;
+
     // @Expose()
     // @IsString()
     // PRICINGDATE: number;
