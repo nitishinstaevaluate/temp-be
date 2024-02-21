@@ -18,10 +18,15 @@ import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
+import { MandateSchema } from 'src/utils/schema/mandate.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
-    MongooseModule.forFeature([{ name: 'processManager', schema: ProcessManagerSchema }, { name: 'dataChecklist', schema: DataCheckListSchema }]),
+    MongooseModule.forFeature([
+      { name: 'processManager', schema: ProcessManagerSchema }, 
+      { name: 'dataChecklist', schema: DataCheckListSchema },
+      { name: 'mandate', schema: MandateSchema }
+    ]),
     IndustryModule,
     MastersModule,
     LoggerModule,

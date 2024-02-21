@@ -26,9 +26,11 @@ import { AuthenticationModule } from 'src/authentication/authentication.module';
 import { thirdPartyReportService } from './third-party-report.service';
 import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
+import { MandateSchema } from 'src/utils/schema/mandate.schema';
+import { mandateReportService } from './mandate-report.service';
 
 @Module({
-  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, thirdPartyReportService],
+  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, thirdPartyReportService, mandateReportService],
   controllers: [ReportController],
   imports:[ValuationProcessModule,LoggerModule,
     MongooseModule.forFeature(
@@ -40,7 +42,8 @@ import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
         { name: 'historicalReturns', schema : HistoricalReturnsSchema},
           { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
           { name: 'riskFreeRate', schema : RiskFreeRateSchema},
-          { name: 'dataChecklist', schema: DataCheckListSchema }
+          { name: 'dataChecklist', schema: DataCheckListSchema },
+          { name: 'mandate', schema: MandateSchema },
       ]
     ),
     UsersModule,
