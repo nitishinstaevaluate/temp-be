@@ -147,9 +147,10 @@ export class CalculationService {
     try{
       const maturityYrs = parseInt(maturityYears);
 
-      const getHistoricalData:any = await this.historicalReturnsService.getHistoricalBSE500Date(date);
+      const newAsOnDate = (date/1000 + 24*60*60) * 1000;
+      let valuationDate = new Date(newAsOnDate);
 
-      const details:any = await this.riskFreeRateModel.findOne({ date: new Date(getHistoricalData.Date) }).exec();
+      const details:any = await this.riskFreeRateModel.findOne({ 'date': { "$lte": new Date(valuationDate)},'beta0': { $ne: null }}).sort({ "date": -1 }).exec();
 
       const riskFreeRate =
         details.beta0 +
