@@ -170,4 +170,18 @@ export class PurposeOfReportService {
   async getPurposeOfReport(reportPurpose) {
     return await this.reportPurpose.findOne({ reportObjective: reportPurpose }).exec();
   }
+  
+  async getMultiplePurposeOfReport(reportPurpose) {
+    const purpose = reportPurpose.split(",")
+    const purposeDetails = await this.reportPurpose.find({ reportObjective: { $in: purpose } }).exec();
+    let reportPurposes=[];
+    for await (const indPurposeDetails of purposeDetails){
+      reportPurposes.push(...indPurposeDetails.reportPurpose)
+    }
+    return {
+      status:true,
+      reportPurpose,
+      reportPurposes
+    }
+  }
 }

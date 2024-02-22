@@ -5,6 +5,8 @@ import * as puppeteer from 'puppeteer';
 import { utilsService } from "src/utils/utils.service";
 import hbs = require('handlebars');
 import * as converter from 'number-to-words'
+import { NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
+import { formatDate } from "./report-common-functions";
 
 @Injectable()
 export class mandateReportService {
@@ -68,6 +70,55 @@ export class mandateReportService {
                     return `Rupees ${converter.toWords(+mandateDetails.totalFees)} Only`;;
                 return '';
             })
+
+            hbs.registerHelper('natureOfInstrument',()=>{
+                if(mandateDetails.natureOfInstrument)
+                    return NATURE_OF_INSTRUMENT[`${mandateDetails.natureOfInstrument}`];
+                return '';
+            })
+
+            hbs.registerHelper('dateOfAppointment',()=>{
+                if(mandateDetails.dateOfAppointment)
+                    return formatDate(mandateDetails.dateOfAppointment);
+                return '';
+            })
+
+            hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
+              let outputObject = {};
+              let outputString = [];
+              let letterIndex = 97; // this is the ASCII code start
+              for (const indPurpose of mandateDetails.purposeOfReport ){
+                if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].length){
+                  let keys = Object.keys(mandateDetails.section);
+                  for (let i = 0; i < keys.length; i++){
+                    if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].includes(mandateDetails.section[i])){
+                      const key = keys[i];
+                      let element;
+                      if (letterIndex > 97) {
+                          element = ` ${mandateDetails.section[key]}`;
+                      } else {
+                          element = `${mandateDetails.section[key]}`;
+                      }
+                      outputObject[element] = key;
+                      letterIndex++;
+                    }
+                  }
+                  let outputArray = Object.keys(outputObject);
+                  if (outputArray.length > 1) {
+                      let lastElement = outputArray.pop();
+                      outputArray.push(`and ${lastElement}`);
+                  }
+                  if(outputString.length){
+                    outputString.push(" and " + outputArray.join(', ').replace(/,([^,]*)$/, ' $1') + ' of ' + REPORT_PURPOSE[`${indPurpose}`]);
+                  }
+                  else{
+                    outputString.push(outputArray.join(', ').replace(/,([^,]*)$/, ' $1') +' of ' + REPORT_PURPOSE[`${indPurpose}`]);
+                  }
+                }
+              }
+              return outputString;
+          });
+          
         }
         catch(error){
             return{
@@ -97,22 +148,46 @@ export class mandateReportService {
               bottom: "50px",
               left: "0px"
           },
-          headerTemplate:`<table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-          <td style="width:100%;">
-            <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:3%;padding-right:3%">
+
+          headerTemplate: `
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-left:7%;padding-right:0%;">
               <tr>
-                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of <span style="text-transform:capitalize">${mandateDetails.companyName}</span></i></td>
+                <td style="width:50%;">
+                  <table border="0" cellspacing="0" cellpadding="0" style="height: auto; width:100% !important; padding-left:3%; padding-right:3%">
+                    <tr>
+                      <td style="font-size: 13px; height: 5px; width:100% !important; text-align:left; font-size:12px; font-family:Calibri, sans-serif;line-height:160%">
+                        <b></b> <span style="font-size:14px;color:#4f4f4f;">Nitish Chaturvedi</span><br>
+                        <b></b> <span style="font-size:14px;color:#4f4f4f;">REGISTERED VALUER - Securities or Financial Assets</span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="font-size: 11px">&nbsp;</td>
+                    </tr>
+                  </table>
+                </td>
+                <td style="width:50%;">
+                  <table border="0" cellspacing="0" cellpadding="0" style="height: auto; width:100% !important; padding-left:14%;">
+                    <tr>
+                      <td style="font-size: 14px; height: 5px; width:100% !important; text-align:left; font-size:12px; font-family:Calibri, sans-serif;line-height:160%;padding-left:9%">
+                        <b>Corporate Address:</b><br>
+                        Unit No. 8, 2nd Floor,<br>
+                        Senior Estate, 7/C, Parsi Panchayat Road,<br>
+                        Andheri (East), Mumbai - 400069<br>
+                        <b>Email:</b> <a href="#">chaturvedinitish@gmail.com</a><br>
+                        <b>Mobile:</b> 9997354674
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="font-size: 11px">&nbsp;</td>
+                    </tr>
+                  </table>
+                </td>
               </tr>
-              <tr>
-                <td style="font-size: 11px">&nbsp;</td>
-              </tr>
-            </table>
-          </td>
-        </tr></table>`,
+            </table>`,
+
             footerTemplate: `<div style="width:100%;padding-left:3%;padding-right:3%">
-            <hr style="border:1px solid #bbccbb">
-            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"> <i>Privileged &amp; confidential</i> </span><span style="font-weight:400 !important;float:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;">Page <span class="pageNumber"></span> </span></span></h1>
+            <hr style="border: 1px solid rgba(187, 204, 187, 0.5);width:80%">
+            <h1 style="text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="float: left;padding-right: 3%;font-size:12px;font-family:'Carlito', sans-serif;"> <i></i> </span><span style="font-weight:400 !important;float:right;font-size:13px;font-family:'Carlito', sans-serif;color:#cceecc;padding-right:10%;padding-top:1%;font-weight:bold !important;"> <span class="pageNumber" style="color:#6F2F9F;font-weight:400;"></span> &nbsp;&nbsp; | &nbsp;&nbsp; Page  </span></span></h1>
             </div>`,
           });
 

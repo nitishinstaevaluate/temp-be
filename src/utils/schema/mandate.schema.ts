@@ -20,6 +20,18 @@ export class Mandate {
 
   @Prop({type: String})
   totalFees: string;
+  
+  @Prop({type: String})
+  natureOfInstrument: string;
+  
+  @Prop({type: Date})
+  dateOfAppointment: Date;
+
+  @Prop({type: Array})
+  purposeOfReport: Array<string>;
+
+  @Prop({type: Array})
+  section: Array<string>;
 }
 
 export type MandateDocument = Mandate & Document;
