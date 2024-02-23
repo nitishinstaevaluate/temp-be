@@ -469,8 +469,10 @@ export class CiqSpService {
           username: process.env.CAPITALIQ_API_USERNAME,
           password: process.env.CAPITALIQ_API_PASSWORD
         }
+        const date:any = await this.historicalReturnsService.getHistoricalBSE500Date(data.valuationDate);
+        data.valuationDate = formatDateToMMDDYYYY(date.Date) || formatDateToMMDDYYYY(data.valuationDate);
 
-        const createPayloadStructure = await this.ciqSpBetaService.createBetaPayloadStructure(data.industryAggregateList);
+        const createPayloadStructure = await this.ciqSpBetaService.createBetaPayloadStructure(data);
         const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
         const betaData = await this.ciqSpBetaService.calculateBetaAggregate(axiosBetaResponse, taxRate, betaSubType, betaType);
 
