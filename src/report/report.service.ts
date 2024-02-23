@@ -25,6 +25,7 @@ import { HistoricalReturnsService } from 'src/data-references/data-references.se
 import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from 'src/ciq-sp/ciq-common-functions';
 import { sebiReportService } from './sebi-report.service';
 import { thirdPartyReportService } from './third-party-report.service';
+import { mandateReportService } from './mandate-report.service';
 
 @Injectable()
 export class ReportService {
@@ -44,7 +45,8 @@ export class ReportService {
     private authenticationService: AuthenticationService,
     private historicalReturnsService:HistoricalReturnsService,
     private sebiReportService:sebiReportService,
-    private thirdPartyReportService:thirdPartyReportService
+    private thirdPartyReportService:thirdPartyReportService,
+    private mandateReportService: mandateReportService
     ){}
 
     async getReport(id,res, req,approach){
@@ -2652,6 +2654,16 @@ export class ReportService {
   }
 
   
-
-  
+  async mandateReport(id, res){
+    try{
+      return await this.mandateReportService.generateMandateReport(id, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"report generation failed",
+        status:false
+      }
+    }
+  }
 }

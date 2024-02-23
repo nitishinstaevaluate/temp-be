@@ -112,4 +112,12 @@ export class ReportController {
   async updateDocx(@UploadedFile() file,@Param('reportId') reportId:string) {
     return await this.reportService.updateReportDocxBuffer(reportId,file);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('mandate-report/:reportId')
+  async generateMandateReport(
+  @Param('reportId') reportId : string,
+  @Res() res) {
+    return await this.reportService.mandateReport(reportId, res);
+  }
 }
