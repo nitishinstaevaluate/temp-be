@@ -215,8 +215,8 @@ export class ciqSpBetaService {
   
             // calculate total market value of equity 
             calculateTotalMarketValueOfEquity.push(
-              convertToNumberOrOne(result[MNEMONIC_ENUMS.IQ_DILUT_WEIGHT][i]) *
-              convertToNumberOrOne(result[MNEMONIC_ENUMS.IQ_PRICE_SALES][i])
+              convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_DILUT_WEIGHT][i]) *
+              convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_CLOSEPRICE][i])
             )
   
             // calculate total market value of capital

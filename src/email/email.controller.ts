@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
-import { validateDataCheckListDto } from './dto/email.dto';
+import { emailDto, validateDataCheckListDto } from './dto/email.dto';
 
 const storage = diskStorage({
     destination: './email-uploads',
@@ -46,6 +46,12 @@ export class EmailController {
     @Get('send-data-checklist')
     async sendDataCheckList() {
         return await this.emailService.sendDataCheckListViaEmail();
+    }
+
+    // https://localhost:3000/email/v2/send-data-checklist-email
+    @Post('v2/send-data-checklist-email')
+    async versionTwosendDataCheckList(@Body(ValidationPipe) emailPayload: emailDto ) {
+        return await this.emailService.sendDataCheckListViaEmailVersionTwo(emailPayload);
     }
 }
 

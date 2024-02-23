@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber, IsEmail } from "class-validator";
 
 export class validateDataCheckListDto {
         @IsNotEmpty({ message: 'Date of report is required eg.2024-02-12' })
@@ -44,4 +44,15 @@ export class validateDataCheckListDto {
         @IsNotEmpty({ message: 'valuationDate is required eg.2024-02-12' })
         @IsString({ message: 'valuationDate cannot be empty eg.2024-02-12' })
         valuationDate: string;
+}
+
+export class emailDto{
+        @IsNotEmpty({ message: 'emailId is required eg.sanket@ifinworth.com' })
+        @IsEmail({}, { message: 'emailId should be a valid email address' })
+        @IsString({ message: 'emailId should be string eg. sanket@ifinworth.com' })
+        emailId: string;
+
+        @IsNotEmpty({ message: 'checkListUrl is required' })
+        @IsString({ message: 'checkListUrl should be string' })
+        checkListUrl: string;
 }
