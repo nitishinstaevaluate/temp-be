@@ -108,9 +108,21 @@ export class FCFEAndFCFFService {
     var vdate = diffValProv > 1 ? await calculateDaysFromDate(new Date(provDtRef)): await calculateDaysFromDate(new Date(inputs.valuationDate));;
     // console.log('Days left ',vdate);
     // var vdayLeft = 365 - vdate;
+    const monthToCheckProv = provDtRef.getMonth() === 0 || provDtRef.getMonth() === 1 || provDtRef.getMonth() === 2;
+    if (!vdate.isProvisionalYearFull && monthToCheckProv) {
+        let provAdjYears = yearsActual;
+        console.log('Prov Adj chk ', provAdjYears, ' ', typeof(yearsActual), ' ', yearsActual);
+        let provReAdjYears = provAdjYears.unshift('23');
+
+        console.log('Provisional adjusted years ', provReAdjYears);
+    }
+
+
+
+
     console.log('total days ',vdate.totalDays);
     console.log('is leap ',vdate.isLeapYear);
-    if (diffValProv > 1) {
+    if (diffValProv > 1 || vdate.dateDiff < vdate.totalDays ) {
     // if (vdate.dateDiff < vdate.totalDays) {
       this.stubAdjRequired = true;
     }
