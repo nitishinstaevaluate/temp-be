@@ -266,6 +266,41 @@ export class utilsService {
     }
   }
 
+  async updateDataChecklist(payload, link){
+    try{
+      const dataChecklistDetails = await this.dataChecklistModel.findOne({ uniqueLinkId: link.linkId }).exec();
+
+      if(!dataChecklistDetails)
+        return {
+          status:false,
+          msg:"data checklist record not found, please check linkid"
+        }
+
+      await this.dataChecklistModel.findOneAndUpdate(
+          {uniqueLinkId: link.linkId},
+          { 
+            $set: { 
+              ...payload, isSubmitted: true
+            }
+          },
+          { new: true }
+      );
+
+      return {
+          uniqueLinkId:link.linkId,
+          status:true,
+          msg:'data checklist updated successfully'
+      }
+    }
+    catch(error){
+      return{
+        error:error,
+        status:false,
+        msg:"data checklist update failed"
+      }
+    }
+  }
+
   async fetchMandateByLinkId(linkId){
     try{
       const mandateRecord = await this.mandateModel.findOne({uniqueLinkId: linkId}).exec();

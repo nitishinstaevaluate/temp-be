@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { utilsService } from './utils.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -32,5 +32,12 @@ export class UtilController {
     @Put('update-mandate-checklist/:linkId')
     async updateMandateChecklist(@Param() linkId:any, @Body() mandatePayload: any) {
         return await this.utilService.updateMandateChecklist(mandatePayload, linkId);
+    }
+
+    // https://localhost:3000/util/update-data-checklist
+    // @UseGuards(AuthGuard('jwt'))
+    @Put('update-data-checklist/:linkId')
+    async updateDataChecklist(@Param() linkId:any, @Body(ValidationPipe) dataChecklistPayload: any) {
+        return await this.utilService.updateDataChecklist(dataChecklistPayload, linkId);
     }
 }

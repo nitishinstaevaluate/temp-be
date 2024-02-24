@@ -42,6 +42,22 @@ export class EmailService {
               );
         }
       }
+      async sendDataCheckListViaEmailVersionTwo(emailPayload) {
+        try{
+            return await this.emailDataCheckListAggregateService.dataChecklistAggregateEmailVersionTwo(emailPayload);
+        }
+        catch(error){
+            console.log(error,"Error")
+            throw new HttpException(
+                {
+                  error: error,
+                  status: false,
+                  msg: 'Data checklist email sending failed',
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+        }
+      }
 
       async postEmailDataChecklist(formData){
         try{

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
+import { emailDto } from "./dto/email.dto";
 const handlebars = require('handlebars');
 const path = require('path');
 const fs = require('fs');
@@ -53,14 +54,47 @@ export class emailDataCheckListAggregateService{
             }
         }
         catch(error){
-
+          throw new HttpException(
+            {
+              error: error,
+              status: false,
+              msg: 'data checklist email sending failed',
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
         }
     }
+
+    async dataChecklistAggregateEmailVersionTwo(emailPayload:emailDto){
+      try{
+          const templateHtml = fs.readFileSync(path.join(process.cwd(), 'src', 'email', 'v2-email-data-checklist.html'), 'utf8');
+
+          const template = handlebars.compile(templateHtml);
+
+          await this.loadDataCheckListHelper(emailPayload);
+
+          const emailHtml = template(emailPayload);
+
+          const logopath = path.join(process.cwd(), 'images', 'logo.jpg');
+
+          return await await this.mailerService.sendMail(this.createDataCheckListPayload(emailHtml, logopath, emailPayload.emailId));
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error,
+            status: false,
+            msg: 'v2 - data checklist aggregate email sending failed',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   
-    createDataCheckListPayload(html,logoPath){
+    createDataCheckListPayload(html,logoPath, sendersEmail?){
       return {
           from:process.env.IFINWORTH_EMAIL_ID,
-          to: [process.env.SENDERS_EMAIL], 
+          to: [sendersEmail || process.env.IFINWORTH_EMAIL_ID], 
           subject: 'Data Checklist Form',
           attachments: [{
             filename: 'logo.jpg',
@@ -69,5 +103,21 @@ export class emailDataCheckListAggregateService{
             }],
           html: html
       };
+    }
+
+    async loadDataCheckListHelper(data){
+      try{
+        handlebars.registerHelper('checkListLink',()=>{
+          return data.checkListUrl
+        })
+      }
+      catch(error){
+        return{
+          error:error,
+          status:false,
+          msg:"data checklist helper failed"
+        }
+      }
+
     }
 }
