@@ -658,31 +658,49 @@
     <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;"><span class="s1"
             style=" ">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <h1 style="padding-top: 8%;padding-left: 10pt;text-indent: 0pt;text-align: left;">Prepared by</h1>
+    <div>
+        <h1 style="padding-top: 8%;padding-left: 10pt;text-indent: 0pt;text-align: left;">Prepared by</h1>
+    </div>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">{{registeredValuerName}}</span></p>
-    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">Securities or Financial Assets</span>
-        </p>
-    {{#if (registeredValuerCorporateAddress)}}
-    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 40%;line-height: 150%;">
-        <span style="font-weight: 400;">
-            {{registeredValuerCorporateAddress}}
+    <div>
+        <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">
+            {{registeredValuerName}}
         </span>
-    </p>
+        </p>
+    </div>
+    <div>
+        <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+            <span style="font-weight: 600;">
+                Securities or Financial Assets
+            </span>
+        </p>
+    </div>
+    {{#if (registeredValuerCorporateAddress)}}
+    <div>
+        <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 40%;line-height: 150%;">
+            <span style="font-weight: 400;">
+                {{registeredValuerCorporateAddress}}
+            </span>
+        </p>
+    </div>
     {{/if}}
     {{#if (registeredValuerEmailId)}}
-    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
-        <span style="font-weight: 400;">
-            <span style="font-weight: bold;">Email-Id :</span>{{registeredValuerEmailId}}
-        </span>
-    </p>
+    <div>
+        <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+            <span style="font-weight: 400;">
+                <span style="font-weight: bold;">Email-Id :</span>{{registeredValuerEmailId}}
+            </span>
+        </p>
+    </div>
     {{/if}}
     {{#if (registeredValuerMobileNumber)}}
-    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
-        <span style="font-weight: 400;">
-            <span style="font-weight: bold;">Mob No. :</span>{{registeredValuerMobileNumber}}
-        </span>
-    </p>
+    <div>
+        <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+            <span style="font-weight: 400;">
+                <span style="font-weight: bold;">Mob No. :</span>{{registeredValuerMobileNumber}}
+            </span>
+        </p>
+    </div>
     {{/if}}
        </div>
     </div>

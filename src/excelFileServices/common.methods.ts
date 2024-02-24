@@ -180,7 +180,7 @@ export async function calculateDaysFromDate(dateString: Date) {
     dateDiff : daysRemaining,
     totalDays : totalDays,
     isProvisionalYearFull: isProvisionalYearFull,
-    isLeapYear : date.isLeapYear(startDate.getFullYear())
+    isLeapYear : date.isLeapYear(endDate.getFullYear())
   }
   console.log(daysParam);
   return daysParam;

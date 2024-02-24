@@ -231,8 +231,12 @@ export class ExcelSheetService {
             xlsx.utils.book_append_sheet(newWorkbook, workbook.Sheets[sheetName], sheetName);
         }
   
-        xlsx.writeFile(newWorkbook, `./uploads/${fileName}`);
-        // await this.uploadFinancialSheet(filePath);
+        await new Promise<void>(async (resolve) => {
+          xlsx.writeFile(newWorkbook, `./uploads/${fileName}`);
+          resolve();
+        });
+
+       // await this.uploadFinancialSheet(filePath);
       }
       
       async readFile(filePath: string): Promise<xlsx.WorkBook> {

@@ -51,6 +51,32 @@ export const NATURE_OF_INSTRUMENT = {
     safe:"Simple Agreement for Future Equity",
     convertibleNotes:"Convertible Notes",
 }
+
+export const PURPOSE_OF_REPORT_AND_SECTION = {
+  companiesAct:[
+    "62 - Preferential Issue of Further Shares",
+    "42 - Private Placement",
+    "54 - Issue of Sweat Equity Shares",
+    "230 - Compromise or Arrangements",
+    "232 - Mergers & Amalgamation",
+    "236 - Purchase of Minority Interest"
+  ],
+  ita1961:[
+    "56(2)(x) - Tax on sum/property received without consideration. Valuatin to be done as per Rule 11UA",
+    "56(2)(viib) - Issue of Shares by a Closely Held Company to residents. Valuation as per Rule 11UA",
+    "50CA - Special Consideration for Full Value of consideration for transfer of shares other than quoted shares. Valuation as per Rule 11UA",
+    "50B - Slump Sale. Valuation as per Rule 11UAE"
+  ],
+  fema:[
+
+  ],
+  sebiRegulations:[
+    "87C(1)(ii) - SEBI (Listing Obligations and Disclosure Requirements Regulations), 2015",
+    "158(6)(b) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+    "163(3) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+    "165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018"
+  ]
+}
 export const CAPITAL_STRUCTURE_TYPE = {
     Industry_Based:"Industry Based",
     Company_Based:"Company Based",
@@ -1888,7 +1914,8 @@ export const MNEMONIC_ENUMS = {
   IQ_TOTAL_REV_AS_REPORTED: 'IQ_TOTAL_REV_AS_REPORTED',
   IQ_VOLUME: 'IQ_VOLUME',
   IQ_VWAP: 'IQ_VWAP',
-  IQ_BETA: 'IQ_BETA'
+  IQ_BETA: 'IQ_BETA',
+  IQ_BETA_5YR: 'IQ_BETA_5YR'
 }
 
 export const MNEMONICS_ARRAY = [
@@ -1902,8 +1929,8 @@ export const MNEMONICS_ARRAY = [
   MNEMONIC_ENUMS.IQ_LT_PORTION_LEASE_LIABILITIES,
   MNEMONIC_ENUMS.IQ_PREF_EQUITY,
   MNEMONIC_ENUMS.IQ_DILUT_WEIGHT,
-  MNEMONIC_ENUMS.IQ_LASTSALEPRICE,
-  MNEMONIC_ENUMS.IQ_CUSTOM_BETA
+  MNEMONIC_ENUMS.IQ_CLOSEPRICE,
+  MNEMONIC_ENUMS.IQ_BETA  //for 5 yr beta calculation
 ];
 
 export const MNEMONICS_ARRAY_2 = [

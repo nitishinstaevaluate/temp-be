@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 import { utilsService } from './utils.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -15,15 +15,29 @@ export class UtilController {
 
     // https://localhost:3000/util/generate-link-id
     // @UseGuards(AuthGuard('jwt'))
-    @Get('generate-link-id')
-    async generateLinkUniqueLinkId() {
-        return await this.utilService.generateUniqueLink();
+    @Get('generate-link-id/:queryCheckList')
+    async generateLinkUniqueLinkId(@Param() queryCheckList: string | undefined) {
+        return await this.utilService.generateUniqueLink(queryCheckList);
     }
 
     // https://localhost:3000/util/validate-link-id
     // @UseGuards(AuthGuard('jwt'))
-    @Get('validate-link-id/:linkId')
-    async validateLinkId(@Param() linkId:any) {
-        return await this.utilService.isValidUniqueLink(linkId);
+    @Get('validate-link-id/:linkId/:queryCheckList')
+    async validateLinkId(@Param() checklistDetails:any) {
+        return await this.utilService.isValidUniqueLink(checklistDetails);
+    }
+    
+    // https://localhost:3000/util/update-mandate-checklist
+    // @UseGuards(AuthGuard('jwt'))
+    @Put('update-mandate-checklist/:linkId')
+    async updateMandateChecklist(@Param() linkId:any, @Body() mandatePayload: any) {
+        return await this.utilService.updateMandateChecklist(mandatePayload, linkId);
+    }
+
+    // https://localhost:3000/util/update-data-checklist
+    // @UseGuards(AuthGuard('jwt'))
+    @Put('update-data-checklist/:linkId')
+    async updateDataChecklist(@Param() linkId:any, @Body(ValidationPipe) dataChecklistPayload: any) {
+        return await this.utilService.updateDataChecklist(dataChecklistPayload, linkId);
     }
 }

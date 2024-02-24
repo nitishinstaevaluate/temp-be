@@ -2,77 +2,18 @@ import { MNEMONIC_ENUMS, MODEL } from "src/constants/constants"
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
 
     export async function iqCreateStructure(data,mnemonic){
-        if(mnemonic === MNEMONIC_ENUMS.IQ_DILUT_WEIGHT)
         return {
-            "data":data.map((elements)=>{
+            "data":data.industryAggregateList.map((elements)=>{
             return {
                 "function":"GDSP",
-                "mnemonic":`${MNEMONIC_ENUMS.IQ_DILUT_WEIGHT}`,
+                "mnemonic":`${mnemonic}`,
                 "identifier":`IQ${elements.COMPANYID}`,
                 "properties":{
-                "periodType":"IQ_FQ",
-                "restatementTypeId":"LFR",
-                // "asOfDate": '12/31/21',
-                "currencyId":"INR",
-                "filingMode" : "P",
-                "consolidatedFlag":"CON",
-                "currencyConversionModeId" : "H",
+                "periodType": "IQ_FY",
+                "asOfDate": `${data.valuationDate}`
                 }
             }
             })
-        }
-
-        if(mnemonic === MNEMONIC_ENUMS.IQ_CUSTOM_BETA)
-        return {
-            "data":data.map((elements)=>{
-            return {
-                "function":"GDSP",
-                "mnemonic":`${MNEMONIC_ENUMS.IQ_CUSTOM_BETA}`,
-                "identifier":`IQ${elements.COMPANYID}`,
-                "properties":{
-                "asOfDate": `${getOneDayBeforeDate()}`,
-                "startDate": "01/01/2018",
-            //   "secondaryIdentifier": "^SPX",
-                "endDate": "12/31/2023",
-                "frequency": "Monthly"
-                }
-            }
-            })
-        }
-
-        if(mnemonic === MNEMONIC_ENUMS.IQ_LASTSALEPRICE)
-        return {
-            "data":data.map((elements)=>{
-            return {
-                "function":"GDSP",
-                "mnemonic":`${MNEMONIC_ENUMS.IQ_LASTSALEPRICE}`,
-                "identifier":`IQ${elements.COMPANYID}`,
-                "properties":{
-                "currencyConversionModeId" : "H",
-                "currencyId" : "INR",
-                // "asOfDate": '12/31/21'
-                }
-            }
-            })
-        }
-
-
-        return {
-        "data":data.map((elements)=>{
-            return {
-            "function":"GDSP",
-            "mnemonic":`${mnemonic}`,
-            "identifier":`IQ${elements.COMPANYID}`,
-            "properties":{
-                "periodType":"IQ_LTM",
-                "restatementTypeId":"LFR",
-                "filingMode" : "P",
-                "currencyConversionModeId" : "H",
-                "currencyId" : "INR",
-                // "asOfDate": '12/31/21'
-            }
-            }
-        })
         }
     }
 

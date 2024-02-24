@@ -147,4 +147,9 @@ export class PurposeOfReportController{
   async getPurpose(@Query('reportObjective') reportObjective:string | null){
     return await this.PurposeOfReportService.getPurposeOfReport(reportObjective);
   }
+
+  @Get('get-multiple-purpose')
+  async getMultiplePurpose(@Query('reportObjective') reportObjective:string[] | null){
+    return await this.PurposeOfReportService.getMultiplePurposeOfReport(reportObjective);
+  }
 }

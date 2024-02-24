@@ -10,12 +10,14 @@ import * as wordListPath from 'word-list';
 
 import { DataCheckListDocument } from './schema/dataCheckList.schema';
 import { nanoid } from 'nanoid';
+import { MandateDocument } from './schema/mandate.schema';
 @Injectable()
 export class utilsService {
   constructor(
     @InjectModel('valuation') private readonly valuationModel: Model<ValuationDocument>,
     @InjectModel('processManager') private readonly processModel: Model<ProcessManagerDocument>,
     @InjectModel('dataChecklist') private readonly dataChecklistModel: Model<DataCheckListDocument>,
+    @InjectModel('mandate') private readonly mandateModel: Model<MandateDocument>,
     private readonly authenticationService:AuthenticationService
   ) {}
   async paginateValuationByUserId(page: number, pageSize: number,req, query):Promise<any> {
@@ -105,14 +107,15 @@ export class utilsService {
     }
   }
 
-  async generateUniqueLink() {
+  async generateUniqueLink(checklist) {
     try{
 
     const uniqueLink = nanoid();
     const expirationDate = new Date();
 
     expirationDate.setHours(expirationDate.getHours() + 24);
-    await this.dataChecklistModel.create({ uniqueLinkId: uniqueLink, expirationDate });
+
+    await this.updateDBChecklist(checklist.queryCheckList, uniqueLink, expirationDate);
     
     return {
       uniqueLink,
@@ -132,13 +135,41 @@ export class utilsService {
     }
   }
 
-  async isValidUniqueLink(link){
+  async updateDBChecklist(checkList, uniqueLink, expirationDate){
     try{
-      const existingLink = await this.dataChecklistModel.findOne({ uniqueLinkId: link.linkId });
-      const linkStatus =  existingLink ? true : false;
+      switch(checkList){
+        case 'mandatechecklist':
+          await this.mandateModel.create({ uniqueLinkId: uniqueLink, expirationDate });
+          break;
+
+        case 'datachecklist':
+          await this.dataChecklistModel.create({ uniqueLinkId: uniqueLink, expirationDate });
+          break;
+
+        default:
+          return {
+            msg:"please provide checklist name",
+            status:false
+          }
+
+      }
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"checklist collection not updated"
+      }
+    }
+  }
+
+  async isValidUniqueLink(checklistDetails){
+    try{
+      const existingLink = await this.checkDBChecklist(checklistDetails.queryCheckList, checklistDetails.linkId);
+
       return {
         status:true,
-        linkValid:linkStatus,
+        linkValid:existingLink.status,
         msg:"unique id status fetched success"
       }
     }
@@ -151,6 +182,141 @@ export class utilsService {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async checkDBChecklist(checkList, link){
+    try{
+      let checklistModel;
+      let checklistName;
+      
+      switch(checkList){
+        case 'mandatechecklist':
+          checklistModel = this.mandateModel;
+          checklistName = 'Mandate Checklist';
+          break;
+  
+        case 'datachecklist':
+          checklistModel = this.dataChecklistModel;
+          checklistName = 'Data Checklist';
+          break;
+  
+        default:
+          return {
+            msg: "Please provide a valid checklist name (mandatechecklist or datachecklist)",
+            status: false
+          };
+      }
+  
+      const checklistDetails = await checklistModel.findOne({ uniqueLinkId: link });
+  
+      if(checklistDetails){
+        return {
+          data: checklistDetails,
+          status: true,
+          msg: `${checklistName} found`
+        };
+      } else {
+        return {
+          msg: `${checklistName} not found`,
+          status: false
+        };
+      }
+    } catch(error){
+      return {
+        error: error.message,
+        status: false,
+        msg: "Checklist collection not found"
+      };
+    }
+  }
+  
+  async updateMandateChecklist(payload, link){
+    try{
+      const mandateData = await this.mandateModel.findOne({ uniqueLinkId: link.linkId }).exec();
+
+      if(!mandateData)
+        return {
+          status:false,
+          msg:"mandate record not found, please check linkid"
+        }
+
+      await this.mandateModel.findOneAndUpdate(
+          {uniqueLinkId: link.linkId},
+          { 
+            $set: { 
+              ...payload, isSubmitted: true
+            }
+          },
+          { new: true }
+      );
+
+      return {
+          uniqueLinkId:link.linkId,
+          status:true,
+          msg:'mandate updated successfully'
+      }
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"Mandate checklist update failed"
+      }
+    }
+  }
+
+  async updateDataChecklist(payload, link){
+    try{
+      const dataChecklistDetails = await this.dataChecklistModel.findOne({ uniqueLinkId: link.linkId }).exec();
+
+      if(!dataChecklistDetails)
+        return {
+          status:false,
+          msg:"data checklist record not found, please check linkid"
+        }
+
+      await this.dataChecklistModel.findOneAndUpdate(
+          {uniqueLinkId: link.linkId},
+          { 
+            $set: { 
+              ...payload, isSubmitted: true
+            }
+          },
+          { new: true }
+      );
+
+      return {
+          uniqueLinkId:link.linkId,
+          status:true,
+          msg:'data checklist updated successfully'
+      }
+    }
+    catch(error){
+      return{
+        error:error,
+        status:false,
+        msg:"data checklist update failed"
+      }
+    }
+  }
+
+  async fetchMandateByLinkId(linkId){
+    try{
+      const mandateRecord = await this.mandateModel.findOne({uniqueLinkId: linkId}).exec();
+
+      return {
+        data:mandateRecord,
+        status:true,
+        msg:"mandate record found"
+      }
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"Mandate record not found"
+      }
     }
   }
   }
