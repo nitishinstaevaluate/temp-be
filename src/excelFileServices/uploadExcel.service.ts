@@ -240,13 +240,16 @@ export class ExcelSheetService {
       }
       
       async readFile(filePath: string): Promise<xlsx.WorkBook> {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
           if (!fs.existsSync(filePath)) {
             reject('File not found');
             return;
           }
-    
-          const workbook = xlsx.readFile(filePath);
+          let workbook;
+          await new Promise<void>(async (resolve) => {
+             workbook = xlsx.readFile(filePath);
+             resolve();
+            });
           resolve(workbook);
         });
       }
