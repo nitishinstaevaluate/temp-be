@@ -238,7 +238,7 @@ export class ExcelSheetService {
         for (const sheetName in workbook.Sheets) {
             xlsx.utils.book_append_sheet(newWorkbook, workbook.Sheets[sheetName], sheetName);
         }
-  
+        
         await new Promise<void>(async (resolve) => {
           xlsx.writeFile(newWorkbook, filePath);
           resolve();
@@ -1766,7 +1766,12 @@ export class ExcelSheetService {
             })
             }
           
-        await workbook.xlsx.writeFile(editedFilePath);
+        // await workbook.xlsx.writeFile(editedFilePath); // Changed by SHAQUE 24-Feb-2024 due to still error in assessment of WC
+        await new Promise<void>(async (resolve) => {
+          workbook.xlsx.writeFile(editedFilePath);
+          resolve();
+        });
+
         await this.updateFinancialSheet(editedFilePath);
           const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
           return {
