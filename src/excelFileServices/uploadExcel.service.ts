@@ -83,16 +83,18 @@ export class ExcelSheetService {
                        )
                     break;
 
-                    case 'Assessment of Working Capital':
-                      if(!workbook.SheetNames.includes(sheetName)){
-                        const workbookXLSX = xlsx.readFile(filePath);
-                        const worksheet1 = workbookXLSX.Sheets['P&L'];
-   
-                        return from(getYearsList(worksheet1)).pipe(
-                         switchMap((years) => {
+              case 'Assessment of Working Capital':
+                if(!workbook.SheetNames.includes(sheetName)){
+                  return from(new Promise((resolve, reject) => {
+                      let workbookXLSX = xlsx.readFile(filePath);
+                    resolve(workbookXLSX);
+                    })).pipe(
+                      switchMap((workbookXLSX: any) => {
+                      const worksheet1 = workbookXLSX.Sheets['P&L'];
+                      return from(getYearsList(worksheet1)).pipe(
+                        switchMap((years) => {
    
                            const balanceSheet = workbookXLSX.Sheets['BS']
-                           // const assessmentSheet = workbookXLSX.Sheets['Assessment of Working Capital']
                          return from(this.generatePayload(years,balanceSheet)).pipe(
                            switchMap((data)=>{
                              // console.log(data,"final opayload")
@@ -128,7 +130,13 @@ export class ExcelSheetService {
                          catchError((error) => {
                            return throwError(error);
                          })
-                       );
+                         );
+                          }),
+                          catchError((error) => {
+                            console.error('Error reading file:', error);
+                            return throwError(error);
+                          })
+                        );
                      }
                      else{
                        return from(this.appendSheetInExcel(filePath,[])).pipe(
@@ -232,7 +240,7 @@ export class ExcelSheetService {
         }
   
         await new Promise<void>(async (resolve) => {
-          xlsx.writeFile(newWorkbook, `./uploads/${fileName}`);
+          xlsx.writeFile(newWorkbook, filePath);
           resolve();
         });
 
