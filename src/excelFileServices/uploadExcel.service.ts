@@ -1766,11 +1766,11 @@ export class ExcelSheetService {
             })
             }
           
-        // await workbook.xlsx.writeFile(editedFilePath); // Changed by SHAQUE 24-Feb-2024 due to still error in assessment of WC
-        await new Promise<void>(async (resolve) => {
-          workbook.xlsx.writeFile(editedFilePath);
-          resolve();
-        });
+        await workbook.xlsx.writeFile(editedFilePath); // Changed by SHAQUE 24-Feb-2024 due to still error in assessment of WC// Rechanged by SANKET 26-Feb-2024, removed below promise statement
+        // await new Promise<void>(async (resolve) => {
+        //   workbook.xlsx.writeFile(editedFilePath);
+        //   resolve();
+        // });
 
         await this.updateFinancialSheet(editedFilePath);
           const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);

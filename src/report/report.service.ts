@@ -26,6 +26,7 @@ import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from 'src/ciq-sp/ciq-co
 import { sebiReportService } from './sebi-report.service';
 import { thirdPartyReportService } from './third-party-report.service';
 import { mandateReportService } from './mandate-report.service';
+import { mrlReportService } from './mrl-report.service';
 
 @Injectable()
 export class ReportService {
@@ -46,7 +47,8 @@ export class ReportService {
     private historicalReturnsService:HistoricalReturnsService,
     private sebiReportService:sebiReportService,
     private thirdPartyReportService:thirdPartyReportService,
-    private mandateReportService: mandateReportService
+    private mandateReportService: mandateReportService,
+    private mrlReportService: mrlReportService
     ){}
 
     async getReport(id,res, req,approach){
@@ -2657,6 +2659,19 @@ export class ReportService {
   async mandateReport(id, res){
     try{
       return await this.mandateReportService.generateMandateReport(id, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"report generation failed",
+        status:false
+      }
+    }
+  }
+
+  async mrlReport(stateId, res){
+    try{
+      return await this.mrlReportService.generateMrlReport(stateId, res);   
     }
     catch(error){
       return {

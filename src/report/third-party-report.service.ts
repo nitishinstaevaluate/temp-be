@@ -3,7 +3,7 @@ import { ConvertAPI } from "convertapi";
 import * as fs from 'fs';
 import * as path from 'path';
 import { AWS_STAGING, DOCUMENT_UPLOAD_TYPE } from "src/constants/constants";
-import { SYNC_FUSION_DOC_CONVERT, IFIN_REPORT } from "src/library/interfaces/api-endpoints.prod";
+import { SYNC_FUSION_DOC_CONVERT, IFIN_REPORT, IFIN_FINANCIAL_SHEETS } from "src/library/interfaces/api-endpoints.prod";
 import { axiosInstance } from "src/middleware/axiosConfig";
 const FormData = require('form-data');
 require('dotenv').config()
@@ -95,4 +95,56 @@ export class thirdPartyReportService{
           }
         }
        }
+
+       async fetchFinancialSheetFromS3(fileName){
+        try{
+          if(fileName){
+      
+            const headers = {
+              'x-api-key': process.env.AWS_S3_API_KEY,
+              "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+      
+           const fetchFinancialSheet = await axiosInstance.get(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${fileName}`,{headers})
+           if(fetchFinancialSheet.status === 200){
+            if(Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()){
+              throw new Error('The specified key does not exist');
+            }
+            else{
+              const uploadDir = path.join(process.cwd(),'uploads');
+      
+              const buffer = Buffer.from(fetchFinancialSheet.data, 'base64');
+              const filePath = path.join(uploadDir, fileName);
+      
+              const saveFile = async () => {
+                try {
+                  if (!fs.existsSync(uploadDir)) {
+                    await fs.promises.mkdir(uploadDir, { recursive: true });
+                  }
+                  await fs.promises.writeFile(filePath, buffer);
+                  return filePath;
+                } catch (error) {
+                  throw error;
+                }
+              };
+      
+              return saveFile();
+            }
+           }
+           else{
+            return {
+              status:false,
+              msg:'financial sheet fetch failed',
+            }
+           }
+        
+          }
+        }catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:'Financial sheet upload failed'
+          }
+        }
+      }
 }
