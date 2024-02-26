@@ -9,13 +9,13 @@ import { NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } f
 import { formatDate, transformData } from "./report-common-functions";
 import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
 import * as xlsx from 'xlsx';
-import { thirdPartyReportService } from "./third-party-report.service";
+import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 
 @Injectable()
 export class mrlReportService {
     constructor(private utilService: utilsService,
       private processStateManagerService: ProcessStatusManagerService,
-      private thirdPartyReportService: thirdPartyReportService){}
+      private thirdPartyApiAggregateService: thirdpartyApiAggregateService){}
     async generateMrlReport(id, res){
         try{
             const applicationData:any = await this.processStateManagerService.fetchProcess(id);
@@ -271,7 +271,7 @@ export class mrlReportService {
 
           const filePath = path.join(uploadDir, fileName);
           if (!fs.existsSync(filePath)) {
-            await this.thirdPartyReportService.fetchFinancialSheetFromS3(fileName);       //If excel is not found in uploads folder, download it from S3
+            await this.thirdPartyApiAggregateService.fetchFinancialSheetFromS3(fileName);       //If excel is not found in uploads folder, download it from S3
             return;
           }
           const  workbook = xlsx.readFile(filePath);

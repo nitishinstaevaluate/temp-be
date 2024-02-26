@@ -17,16 +17,19 @@ import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
 import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 require('dotenv').config();
 
 @Injectable()
 export class ExcelSheetService {
-  constructor( private valuationService:ValuationsService,private fcfeService:FCFEAndFCFFService){}
+  constructor( private valuationService:ValuationsService,
+    private fcfeService:FCFEAndFCFFService,
+    private thirdpartyApiAggregateService: thirdpartyApiAggregateService){}
     getSheetData(fileName: string, sheetName: string): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
         
-    return from(this.fetchFinancialSheetFromS3(fileName)).pipe(
+    return from(this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(fileName)).pipe(
       switchMap((filePath:any)=>{
         return from(this.readFile(filePath)).pipe(
           switchMap((workbook) => {
@@ -2171,7 +2174,7 @@ async updateFinancialSheet(filepath){
         filename: path.basename(`${fileName[fileName.length-1]}`),
         base64Document: base64
       }
-      return await this.upsertExcelInS3(data.base64Document,data.filename)
+      return await this.thirdpartyApiAggregateService.upsertExcelInS3(data.base64Document,data.filename)
   }catch(error){
     return {
       error:error,
@@ -2188,88 +2191,13 @@ async pushInitialFinancialSheet(formData){
     const filePath = path.join(uploadDir, formData.filename);
 
     let file = fs.readFileSync(filePath).toString('base64');
-    return await this.upsertExcelInS3(file,formData.filename)
+    return await this.thirdpartyApiAggregateService.upsertExcelInS3(file,formData.filename)
   }
   catch(error){
     return {
       error:error,
       msg:'uploading financial sheet in s3 failed',
       status : false
-    }
-  }
-}
-
-async upsertExcelInS3(data,filename){
-  try{
-    const headers = {
-      'x-api-key': process.env.AWS_S3_API_KEY,
-      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    }
-   const upsertExcel = await axiosInstance.put(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${filename}`,data,{headers});
-  
-   if(upsertExcel.status === 200){
-    return { excelSheetId: `${filename}` } 
-   }
-   else{
-    return {
-      status:false,
-      msg:'financial sheet upload failed',
-    }
-   }
-  }
-  catch(error){
-    throw error
-  }
-}
-async fetchFinancialSheetFromS3(fileName){
-  try{
-    if(fileName){
-
-      const headers = {
-        'x-api-key': process.env.AWS_S3_API_KEY,
-        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      }
-
-     const fetchFinancialSheet = await axiosInstance.get(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${fileName}`,{headers})
-     if(fetchFinancialSheet.status === 200){
-      if(Buffer.from(fetchFinancialSheet.data, 'base64').toString('base64') !== fetchFinancialSheet.data.trim()){
-        throw new Error('The specified key does not exist');
-      }
-      else{
-        // const uploadDir = path.join(__dirname, '../../uploads');
-        const uploadDir = path.join(process.cwd(),'uploads');
-
-        const buffer = Buffer.from(fetchFinancialSheet.data, 'base64');
-        const filePath = path.join(uploadDir, fileName);
-
-        const saveFile = async () => {
-          try {
-            if (!fs.existsSync(uploadDir)) {
-              await fs.promises.mkdir(uploadDir, { recursive: true });
-            }
-            await fs.promises.writeFile(filePath, buffer);
-            return filePath;
-          } catch (error) {
-            throw error;
-          }
-        };
-
-        return saveFile();
-      }
-     }
-     else{
-      return {
-        status:false,
-        msg:'financial sheet fetch failed',
-      }
-     }
-  
-    }
-  }catch(error){
-    return {
-      error:error,
-      status:false,
-      msg:'Financial sheet upload failed'
     }
   }
 }

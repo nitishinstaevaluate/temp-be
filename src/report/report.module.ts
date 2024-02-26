@@ -23,15 +23,15 @@ import { HistoricalReturnsService } from 'src/data-references/data-references.se
 import { HistoricalBSE500ReturnsSchema, HistoricalReturnsSchema } from 'src/data-references/schema/data-references.schema';
 import { sebiReportService } from './sebi-report.service';
 import { AuthenticationModule } from 'src/authentication/authentication.module';
-import { thirdPartyReportService } from './third-party-report.service';
 import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { mandateReportService } from './mandate-report.service';
 import { mrlReportService } from './mrl-report.service';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 
 @Module({
-  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, thirdPartyReportService, mandateReportService, mrlReportService],
+  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, mandateReportService, mrlReportService, thirdpartyApiAggregateService],
   controllers: [ReportController],
   imports:[ValuationProcessModule,LoggerModule,
     MongooseModule.forFeature(

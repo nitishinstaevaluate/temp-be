@@ -7,34 +7,58 @@ import { SYNC_FUSION_DOC_CONVERT, IFIN_REPORT, IFIN_FINANCIAL_SHEETS } from "src
 import { axiosInstance } from "src/middleware/axiosConfig";
 const FormData = require('form-data');
 require('dotenv').config()
-
-
 @Injectable()
-export class thirdPartyReportService{
-    async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
+export class thirdpartyApiAggregateService {
+
+    async upsertReportInS3(data,filename){
         try{
-          if(fileExist){
-            const { dir: directory, base: filename } = path.parse(docxpath);
-            await this.fetchReportFromS3(filename);
-          }
-          const htmlContent = fs.readFileSync(docxpath);
-          const formData = new FormData();
-          formData.append('file', htmlContent, {
-            filename: docxpath,
-            contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-          });
-        
-          const response = await axiosInstance.post(SYNC_FUSION_DOC_CONVERT, formData);
-          return response.data;
-         }
-         catch(error){
-          console.log(error)
-        return {
-          msg:'something went wrong',
-          status:false,
-          error:error.message
+            const headers = {
+            'x-api-key': process.env.AWS_S3_API_KEY,
+            "Content-Type": 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            }
+            
+            const upsertReport = await axiosInstance.put(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${filename}`,data,{headers});
+            if(upsertReport.status === 200){
+                return { filename } 
+            }
+            else{
+                return {
+                    status:false,
+                    msg:'Report upload failed',
+                }
+            }
         }
-         }
+        catch(error){
+          throw error
+        }
+      }
+
+        async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
+            try{
+                if(fileExist){
+                    const { dir: directory, base: filename } = path.parse(docxpath);
+                    await this.fetchReportFromS3(filename);
+                }
+                const htmlContent = fs.readFileSync(docxpath);
+                const formData = new FormData();
+
+                formData.append('file', htmlContent, {
+                    filename: docxpath,
+                    contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                });
+            
+                const response = await axiosInstance.post(SYNC_FUSION_DOC_CONVERT, formData);
+
+                return response.data;
+            }
+            catch(error){
+                console.log(error)
+                return {
+                    msg:'something went wrong',
+                    status:false,
+                    error:error.message
+                }
+            }
        }
 
        async fetchReportFromS3(fileName){
@@ -139,7 +163,8 @@ export class thirdPartyReportService{
            }
         
           }
-        }catch(error){
+        }
+        catch(error){
           return {
             error:error,
             status:false,
@@ -147,4 +172,48 @@ export class thirdPartyReportService{
           }
         }
       }
+
+      async upsertExcelInS3(data,filename){
+        try{
+            const headers = {
+            'x-api-key': process.env.AWS_S3_API_KEY,
+            "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+            const upsertExcel = await axiosInstance.put(`${IFIN_FINANCIAL_SHEETS}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.FINANCIAL_EXCEL}/${filename}`,data,{headers});
+            
+            if(upsertExcel.status === 200){
+                return { excelSheetId: `${filename}` } 
+            }
+            else{
+                return {
+                status:false,
+                msg:'financial sheet upload failed',
+                }
+            }
+        }
+        catch(error){
+                throw error
+            }
+        }
+
+        async convertDocxToPdf(docxFileName,pdfFilePath){
+            try{
+                const { dir: directory, base: filename } = path.parse(docxFileName);
+                
+                await this.fetchReportFromS3(filename);
+
+                const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
+                const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
+                await conversion.file.save(pdfFilePath);
+
+                return (await fs.readFileSync(pdfFilePath));
+            }
+            catch(error){
+                return{
+                    msg:'conversion from docx to pdf failed',
+                    status:false,
+                    error:error.message
+                }
+            }
+        }
 }
