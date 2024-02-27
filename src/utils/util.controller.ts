@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { utilsService } from './utils.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -14,10 +14,10 @@ export class UtilController {
     }
 
     // https://localhost:3000/util/generate-link-id
-    // @UseGuards(AuthGuard('jwt'))
-    @Get('generate-link-id/:queryCheckList')
-    async generateLinkUniqueLinkId(@Param() queryCheckList: string | undefined) {
-        return await this.utilService.generateUniqueLink(queryCheckList);
+    @UseGuards(AuthGuard('jwt'))
+    @Post('generate-link-id')
+    async generateLinkUniqueLinkId(@Req() request,@Body() emailPayload: any) {
+        return await this.utilService.generateUniqueLink(request, emailPayload);
     }
 
     // https://localhost:3000/util/validate-link-id
@@ -39,5 +39,12 @@ export class UtilController {
     @Put('update-data-checklist/:linkId')
     async updateDataChecklist(@Param() linkId:any, @Body(ValidationPipe) dataChecklistPayload: any) {
         return await this.utilService.updateDataChecklist(dataChecklistPayload, linkId);
+    }
+
+    // https://localhost:3000/util/get-email-list
+    @UseGuards(AuthGuard('jwt'))
+    @Get('get-email-list')
+    async fetchAllDataCheklistEmails() {
+        return await this.utilService.fetchDataChecklistAllEmails();
     }
 }
