@@ -24,8 +24,9 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from 'src/ciq-sp/ciq-common-functions';
 import { sebiReportService } from './sebi-report.service';
-import { thirdPartyReportService } from './third-party-report.service';
 import { mandateReportService } from './mandate-report.service';
+import { mrlReportService } from './mrl-report.service';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 
 @Injectable()
 export class ReportService {
@@ -45,8 +46,9 @@ export class ReportService {
     private authenticationService: AuthenticationService,
     private historicalReturnsService:HistoricalReturnsService,
     private sebiReportService:sebiReportService,
-    private thirdPartyReportService:thirdPartyReportService,
-    private mandateReportService: mandateReportService
+    private mandateReportService: mandateReportService,
+    private mrlReportService: mrlReportService,
+    private thirdpartyApiAggregateService: thirdpartyApiAggregateService
     ){}
 
     async getReport(id,res, req,approach){
@@ -69,7 +71,7 @@ export class ReportService {
           docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
           
           if(reportDetails?.fileName){
-            const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
+            const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
@@ -162,7 +164,7 @@ export class ReportService {
     docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
 
     if(reportDetails.fileName){
-      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
+      const convertDocxToSfdt = await this.thirdpartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
 
       res.send(convertDocxToSfdt);
 
@@ -208,9 +210,9 @@ export class ReportService {
         //   // pdf = await this.generateSebiReport(html, pdfFilePath);
         // }
 
-        await this.convertPdfToDocx(pdfFilePath,docFilePath)
+        await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath,docFilePath)
         
-        const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
+        const convertDocxToSfdt = await this.thirdpartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath)
 
         res.send(convertDocxToSfdt);
 
@@ -247,7 +249,7 @@ export class ReportService {
     docFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.docx`);
 
     if(reportDetails?.fileName){
-      const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
+      const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`);
@@ -297,7 +299,7 @@ export class ReportService {
     docFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.docx`);
 
     if(reportDetails?.fileName){
-      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
+      const convertDocxToSfdt = await this.thirdpartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
 
       res.send(convertDocxToSfdt);
 
@@ -315,9 +317,9 @@ export class ReportService {
     
       pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
 
-      await this.convertPdfToDocx(pdfFilePath,docFilePath)
+      await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath,docFilePath)
 
-      const convertDocxToSfdt = await this.convertDocxToSyncfusionDocumentFormat(docFilePath)
+      const convertDocxToSfdt = await this.thirdpartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath)
 
       res.send(convertDocxToSfdt);
 
@@ -345,7 +347,7 @@ export class ReportService {
     docFilePath = path.join(process.cwd(), 'pdf', `${companyName}-${reportDetails.id}.docx`);
 
     if(reportDetails?.fileName){
-      const convertDocxToPdf = await this.convertDocxToPdf(docFilePath,pdfFilePath);
+      const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`);
@@ -400,46 +402,46 @@ export class ReportService {
   }
  }
 
- async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
-  try{
-    if(fileExist){
-      const { dir: directory, base: filename } = path.parse(docxpath);
-      await this.fetchReportFromS3(filename);
-    }
-    const htmlContent = fs.readFileSync(docxpath);
-    const formData = new FormData();
-    formData.append('file', htmlContent, {
-      filename: docxpath,
-      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    });
+//  async convertDocxToSyncfusionDocumentFormat(docxpath,fileExist?){
+//   try{
+//     if(fileExist){
+//       const { dir: directory, base: filename } = path.parse(docxpath);
+//       await this.thirdpartyApiAggregateService.fetchReportFromS3(filename);
+//     }
+//     const htmlContent = fs.readFileSync(docxpath);
+//     const formData = new FormData();
+//     formData.append('file', htmlContent, {
+//       filename: docxpath,
+//       contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+//     });
   
-    const response = await axiosInstance.post(SYNC_FUSION_DOC_CONVERT, formData);
-    return response.data;
-   }
-   catch(error){
-    console.log(error)
-  return {
-    msg:'something went wrong',
-    status:false,
-    error:error.message
-  }
-   }
- }
+//     const response = await axiosInstance.post(SYNC_FUSION_DOC_CONVERT, formData);
+//     return response.data;
+//    }
+//    catch(error){
+//     console.log(error)
+//   return {
+//     msg:'something went wrong',
+//     status:false,
+//     error:error.message
+//   }
+//    }
+//  }
 
- async convertPdfToDocx(filePath,savePath){
-  try{
-    const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
-    const conversion = await  convertapi.convert('docx', { File: `${filePath}`},'pdf');
-    return conversion.file.save(savePath);
-  }
-  catch(error){
-    return{
-      msg:'conversion from pdf to docx failed',
-      status:false,
-      error:error.message
-    }
-  }
- }
+//  async convertPdfToDocx(filePath,savePath){
+//   try{
+//     const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
+//     const conversion = await  convertapi.convert('docx', { File: `${filePath}`},'pdf');
+//     return conversion.file.save(savePath);
+//   }
+//   catch(error){
+//     return{
+//       msg:'conversion from pdf to docx failed',
+//       status:false,
+//       error:error.message
+//     }
+//   }
+//  }
 
  async updateReportDocxBuffer(reportId:any,file){
   try{
@@ -466,23 +468,7 @@ export class ReportService {
   }
  }
 
- async convertDocxToPdf(docxFileName,pdfFilePath){
-  try{
-    const { dir: directory, base: filename } = path.parse(docxFileName);
-    await this.fetchReportFromS3(filename);
-    const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
-    const conversion = await  convertapi.convert('pdf', { File: `${docxFileName}`},'docx');
-    await conversion.file.save(pdfFilePath);
-    return (await fs.readFileSync(pdfFilePath));
-  }
-  catch(error){
-    return{
-      msg:'conversion from docx to pdf failed',
-      status:false,
-      error:error.message
-    }
-  }
- }
+
 
     async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
@@ -2162,7 +2148,7 @@ export class ReportService {
 
         const filePath = path.join(uploadDir, formData.filename);
         let file = fs.readFileSync(filePath).toString('base64');
-        return await this.upsertReportInS3(file,formData.filename);
+        return await this.thirdpartyApiAggregateService.upsertReportInS3(file,formData.filename);
       }
       catch(error){
         return {
@@ -2172,75 +2158,6 @@ export class ReportService {
         }
       }
     }
-
-  async upsertReportInS3(data,filename){
-    try{
-      
-      const headers = {
-        'x-api-key': process.env.AWS_S3_API_KEY,
-        "Content-Type": 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-      }
-      
-      const upsertReport = await axiosInstance.put(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${filename}`,data,{headers});
-      if(upsertReport.status === 200){
-      return { filename } 
-      }
-      else{
-      return {
-        status:false,
-        msg:'Report upload failed',
-      }
-      }
-    }
-    catch(error){
-      throw error
-    }
-  }
-
-
-
-  async fetchReportFromS3(fileName){
-    try{
-      if(fileName){
-
-      const headers = {
-        'x-api-key': process.env.AWS_S3_API_KEY,
-        "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      }
-
-      const fetchReport = await axiosInstance.get(`${IFIN_REPORT}${AWS_STAGING.PROD}/${DOCUMENT_UPLOAD_TYPE.VALUATION_REPORT}/${fileName}`,{headers});
-
-      if(fetchReport.status === 200){
-        if (Buffer.from(fetchReport.data, 'base64').toString('base64') !== fetchReport.data.trim()) {
-          throw new Error('The specified key does not exist');
-        } else {
-
-          const uploadDir = path.join(process.cwd(),'pdf');;
-  
-          const buffer = Buffer.from(fetchReport.data, 'base64')
-  
-          const filePath = path.join(uploadDir, fileName);
-  
-          if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-          }
-          fs.writeFileSync(filePath, buffer);
-          
-          return filePath;
-        }
-      }
-      else{
-        throw new Error('Report fetching from S3 failed');
-      }
-    }
-    }catch(error){
-      return {
-        error:error,
-        status:false,
-        msg:'Report fetch from S3 failed'
-      }
-    }
-  }
 
   formatPositiveAndNegativeValues(value) {
     const epsilonThreshold = 0.00001;
@@ -2657,6 +2574,19 @@ export class ReportService {
   async mandateReport(id, res){
     try{
       return await this.mandateReportService.generateMandateReport(id, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"report generation failed",
+        status:false
+      }
+    }
+  }
+
+  async mrlReport(stateId, res){
+    try{
+      return await this.mrlReportService.generateMrlReport(stateId, res);   
     }
     catch(error){
       return {

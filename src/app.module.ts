@@ -27,6 +27,7 @@ import { CiqElasticSearchModule } from './ciq-elastic-search/ciq-elastic-search.
 import { ContactSalesModule } from './contact-sales/contact-sales.module';
 import { FuseSearchModule } from './fuse-search/fuse-search.module';
 import { EmailModule } from './email/email.module';
+import { thirdpartyApiAggregateService } from './library/thirdparty-api/thirdparty-api-aggregate.service';
 require('dotenv').config();
 
 @Module({
@@ -37,7 +38,7 @@ require('dotenv').config();
     DataReferencesModule,
    CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule, EmailModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
-  providers: [AppService,ExcelSheetService]//ImportService
+  providers: [AppService,ExcelSheetService, thirdpartyApiAggregateService]//ImportService
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

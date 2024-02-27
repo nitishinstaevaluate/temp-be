@@ -120,4 +120,12 @@ export class ReportController {
   @Res() res) {
     return await this.reportService.mandateReport(reportId, res);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('mrl-report/:processStateId')
+  async generateMrlReport(
+  @Param('processStateId') processStateId : string,
+  @Res() res) {
+    return await this.reportService.mrlReport(processStateId, res);
+  }
 }
