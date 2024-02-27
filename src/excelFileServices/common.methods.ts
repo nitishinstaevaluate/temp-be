@@ -137,10 +137,15 @@ export function latestFindAverage(type:any,company:any){
   return average
 }
 
-export async function calculateDaysFromDate(dateString: Date) {
-  // const vdate = new Date(dateString);
+export async function calculateDaysFromDate(data: any) {
+  const rawValuationDate = data.valuationDate;
+  const rawProvisionalDate = data.provisionalDate;
+  console.log(data,"new date payload ----->143")
+
+  const verifiedDate = data?.useProvisionalDate ? rawProvisionalDate : rawValuationDate;
+
   let totalDays = 0;
-  const valuationDate = date.addDays(dateString,1)        // Adding a day due to UTC adjustment
+  const valuationDate = date.addDays(verifiedDate,1)        // Adding a day due to UTC adjustment
   // console.log('Year is ', `${date.getFullYear()}`);
   // const valuationMonth = valuationDate.getMonth();
   const startDate = valuationDate.getMonth() <= 3 ? new Date(`${valuationDate.getFullYear()-1},4,1`):new Date(`${valuationDate.getFullYear()+1},4,1`); // April 1st is considered as financial year
@@ -163,11 +168,13 @@ export async function calculateDaysFromDate(dateString: Date) {
   } else {
     totalDays = date.isLeapYear(startDate.getFullYear()) ? 366 :365;
   }
- let isProvisionalYearFull:boolean;
+
+  let isProvisionalYearFull:boolean;
   if (daysRemaining == totalDays) {
     isProvisionalYearFull = true;
-  } else 
-  isProvisionalYearFull = false;
+  } else {
+    isProvisionalYearFull = false;
+  }
 
   // if (days <= 0) {
   //   const diff = totalDays - -days;
@@ -176,16 +183,28 @@ export async function calculateDaysFromDate(dateString: Date) {
   //   else
   //     return diff;
   // }
+
+  const provisionalMinusValuation = calculateDateDifference(rawValuationDate,rawProvisionalDate); // calculate no of days using two dates difference
   let daysParam = {
     dateDiff : daysRemaining,
     totalDays : totalDays,
     isProvisionalYearFull: isProvisionalYearFull,
-    isLeapYear : date.isLeapYear(endDate.getFullYear())
+    isLeapYear : date.isLeapYear(endDate.getFullYear()),
+    valuationDate,
+    provisionalMinusValuation,
+    financialYearStart: startDate
   }
   console.log(daysParam);
   return daysParam;
 }
 
+export function calculateDateDifference(dateOne:any, dateTwo:any){
+  const rawDateOne = new Date(dateOne);
+  const rawDateTwo = new Date(dateTwo);
+  const differenceInMs = rawDateOne.getTime() - rawDateTwo.getTime();
+  const differenceInDays = differenceInMs / (1000 * 60 * 60 * 24);
+  return differenceInDays;
+}
 export function getDiscountingPeriod(discountingPeriod: string) {
   let discountingPeriodValue = 0;
   if (discountingPeriod === 'Full_Period' || discountingPeriod === 'Full Period') discountingPeriodValue = 1;

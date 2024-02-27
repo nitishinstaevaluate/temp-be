@@ -70,7 +70,19 @@ export class ExcessEarningsService {
       discountingPeriod
     );
     console.log(discountingPeriodObj);
-    var vdate = diffValProv > 1 ? await calculateDaysFromDate(new Date(provDtRef)): await calculateDaysFromDate(new Date(inputs.valuationDate));;
+
+    const datePayload = {
+      valuationDate: new Date(inputs.valuationDate),    //since date format is in unix format
+      provisionalDate: provDtRef
+    }
+    let vdate;
+      if (diffValProv > 1) {
+        datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
+          vdate = await calculateDaysFromDate(datePayload);
+      } else {
+          vdate = await calculateDaysFromDate(datePayload);
+      }
+      
     // console.log('Days left ',vdate);
     // var vdayLeft = 365 - vdate;
     console.log('total days ', vdate.totalDays);
