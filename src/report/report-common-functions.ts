@@ -41,3 +41,43 @@ export function  formatDate(date: Date): string {
 
     return `${month} ${day}, ${year}`;
   }
+
+  export async function transformData(data: any[]) { //only for data table showcase on ui
+    try{
+    let maxKeys = Object.keys(data[0]).length;
+    let maxKeysObject = data[0];
+
+    for (let i = 1; i < data.length; i++) {
+      const numKeys = Object.keys(data[i]).length;
+      if (numKeys > maxKeys) {
+        maxKeys = numKeys;
+        maxKeysObject = data[i];
+      }
+    }
+    const atLeastOneArray = data.some(item => Array.isArray(item));
+    const keysArray = Object.keys(maxKeysObject);
+    data.forEach(obj => {
+      keysArray.forEach(key => {
+        if (!(key in obj)) {
+          obj[key] = null;
+        }
+      });
+    });
+    let splicedEle;
+    keysArray.map((value:any,index:number)=>{
+      if(value === 'Particulars'){
+        splicedEle = keysArray.splice(index,1);
+      }
+    })
+    if(!atLeastOneArray){
+      keysArray.unshift(splicedEle[0])
+    }
+    data.unshift(keysArray)
+    return data;
+  }
+    catch(error){
+      console.log(error);
+      throw error;
+    }
+  
+  }

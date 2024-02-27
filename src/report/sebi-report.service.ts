@@ -8,7 +8,7 @@ import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
 import { convertEpochToPlusOneDate, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
 import { GET_MULTIPLIER_UNITS, MODEL, NATURE_OF_INSTRUMENT, REPORT_PURPOSE } from "src/constants/constants";
-import { thirdPartyReportService } from "./third-party-report.service";
+import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 require('dotenv').config()
 
 
@@ -17,7 +17,7 @@ require('dotenv').config()
 export class sebiReportService {
 
     constructor(private authenticationService:AuthenticationService,
-      private thirdPartyService:thirdPartyReportService){}
+      private thirdPartyApiAggregateService:thirdpartyApiAggregateService){}
 
     async computeSEBIReport(htmlPath, pdfFilePath, request, valuationResult, reportDetails){
         try{
@@ -51,7 +51,7 @@ export class sebiReportService {
           const sharePriceDetails:any = await this.fetchPriceEquityShare(request, companyName, valuationDate);
 
           if(reportDetails.fileName){
-            const convertDocxToSfdt = await this.thirdPartyService.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
+            const convertDocxToSfdt = await this.thirdPartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath,true)
       
             response.send(convertDocxToSfdt);
       
@@ -72,9 +72,9 @@ export class sebiReportService {
       
               
               pdf = await this.generateSebiReport(html, pdfFilePath);
-              await this.thirdPartyService.convertPdfToDocx(pdfFilePath,docFilePath)
+              await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath,docFilePath)
               
-              const convertDocxToSfdt = await this.thirdPartyService.convertDocxToSyncfusionDocumentFormat(docFilePath)
+              const convertDocxToSfdt = await this.thirdPartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath)
       
               response.send(convertDocxToSfdt);
       

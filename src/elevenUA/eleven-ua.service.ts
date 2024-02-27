@@ -9,11 +9,12 @@ import { columnsList, sheet4_ruleElevenUaObj } from 'src/excelFileServices/excel
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { plainToClass } from 'class-transformer';
 import { ElevenUaDTO, FetchElevenUaDto } from './dto/eleven-ua.dto';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 
 @Injectable()
 export class ElevenUaService {
     constructor(@InjectModel('ruleelevenua') private readonly ruleelevenuaModel: Model<ElevenUaDocument>,
-    private readonly uplaodExcelService:ExcelSheetService,
+    private readonly thirdpartyApiAggregate: thirdpartyApiAggregateService,
     private readonly authenticationService:AuthenticationService){}
 
     async upsertProcess(req,payload,id){
@@ -26,7 +27,7 @@ export class ElevenUaService {
             
             const excelSheetId = payload.isExcelModified ? payload.modifiedExcelSheetId : payload.excelSheetId;
 
-            const filePath:any = await this.uplaodExcelService.fetchFinancialSheetFromS3(excelSheetId);
+            const filePath:any = await this.thirdpartyApiAggregate.fetchFinancialSheetFromS3(excelSheetId);
 
             const authorizeUser = await this.authenticationService.extractUserId(req);
 
