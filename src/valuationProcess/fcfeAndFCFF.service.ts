@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { IndustryService } from 'src/industry/industry.service';
 import {
   GetPAT,
@@ -26,10 +26,13 @@ import {
   interestAdjustedTaxesWithStubPeriod,
   // differenceAssetsLiabilities
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS } from 'src/constants/constants';
+import { any } from 'joi';
+import { async } from 'rxjs';
+import { transformData } from 'src/report/report-common-functions';
 const date = require('date-and-time');
 
 @Injectable()
@@ -44,420 +47,811 @@ export class FCFEAndFCFFService {
   discountingPeriodObj : any;
   discountingFactorWACC : any;
   stubAdjRequired:boolean = false;
-  async FCFEAndFCFF_Common(
-    inputs: any,
-    worksheet1: any,
-    worksheet2: any,
-    worksheet3: any,
-  ): Promise<any> {
-    try{
-    this.customLogger.log({
-      message: 'Request is entered into FCFEAndFCFF Service.',
-      userId: inputs.userId,
-    });
-    const { outstandingShares, discountingPeriod, popShareCapitalType } =
-      inputs;
-      // console.log(inputs);
-      // discountingPeriodValue:number: 0;
-      let equityValue = 0;
-      let adjCOE;
-      let adjustedCostOfEquity;
-      let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
-      let discountingPeriodValue = 0;
+  // async FCFEAndFCFF_Common(
+  //   inputs: any,
+  //   worksheet1: any,
+  //   worksheet2: any,
+  //   worksheet3: any,
+  // ): Promise<any> {
+  //   try{
+  //   this.customLogger.log({
+  //     message: 'Request is entered into FCFEAndFCFF Service.',
+  //     userId: inputs.userId,
+  //   });
+  //   const { outstandingShares, discountingPeriod, popShareCapitalType } =
+  //     inputs;
+  //     // console.log(inputs);
+  //     // discountingPeriodValue:number: 0;
+  //     let equityValue = 0;
+  //     let adjCOE;
+  //     let adjustedCostOfEquity;
+  //     let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
+  //     let discountingPeriodValue = 0;
       
-    const yearsActual = await getYearsList(worksheet1);
+  //   const yearsActual = await getYearsList(worksheet1);
     
-    let provisionalDates = worksheet1['B1'].v
-    // console.log(' Valuation Date ', inputs.valuationDate)
-    // console.log('Provisional Date ', provisionalDates);
-    // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
-    // console.log(typeof('02-01-2015'));
-    // let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
-    let  provDtRef = parseDate(provisionalDates.trim());
-    // console.log(provDtRef,"prov date",typeof provDtRef);
-    let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
-    console.log('Difference in days between provisional and valuation date',diffValProv);
+  //   let provisionalDates = worksheet1['B1'].v
+  //   // console.log(' Valuation Date ', inputs.valuationDate)
+  //   // console.log('Provisional Date ', provisionalDates);
+  //   // console.log(typeof(provisionalDates),'a','a',provisionalDates.trim());
+  //   // console.log(typeof('02-01-2015'));
+  //   // let provDtRef = date.parse(provisionalDates.trim(), 'DD-MM-YYYY');
+  //   let  provDtRef = parseDate(provisionalDates.trim());
+  //   // console.log(provDtRef,"prov date",typeof provDtRef);
+  //   let diffValProv = parseInt(date.subtract(new Date(inputs.valuationDate),provDtRef).toDays()); 
+  //   console.log('Difference in days between provisional and valuation date',diffValProv);
 
-    // const provStr = provisionalDates.split(",");
+  //   // const provStr = provisionalDates.split(",");
     
-    // let provDtRef = new date(provisionalDates);
-    // console.log('Provisional Dates ', provDtRef);
-    // console.log(provStr.slice(-1).trim());
+  //   // let provDtRef = new date(provisionalDates);
+  //   // console.log('Provisional Dates ', provDtRef);
+  //   // console.log(provStr.slice(-1).trim());
     
-    const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
-    console.log('Net year ',years);
-    if (years === null)
-      return {
-        result: null,
-        msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
-      };
-    const discountingPeriodObj = await getDiscountingPeriod(
-      discountingPeriod
-    );
+  //   const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
+  //   console.log('Net year ',years);
+  //   if (years === null)
+  //     return {
+  //       result: null,
+  //       msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
+  //     };
+  //   const discountingPeriodObj = await getDiscountingPeriod(
+  //     discountingPeriod
+  //   );
     
-      //c------ Start Sample ----------//
-    // const valuationDate = new Date(inputs.valuationDate);
-    // let updDate = date.addDays(valuationDate,1)
-    // console.log('Valuation Date ', updDate);
+  //     //c------ Start Sample ----------//
+  //   // const valuationDate = new Date(inputs.valuationDate);
+  //   // let updDate = date.addDays(valuationDate,1)
+  //   // console.log('Valuation Date ', updDate);
 
-    // const valuationMonth = updDate.getMonth();
-    // console.log('Month ',valuationMonth);
+  //   // const valuationMonth = updDate.getMonth();
+  //   // console.log('Month ',valuationMonth);
 
-    //c------ End Sample ----------//
-    const datePayload = {
-      valuationDate: new Date(inputs.valuationDate),    //since date format is in unix format
-      provisionalDate: provDtRef
-    }
-    let vdate;
-    if (diffValProv > 1) {
-        datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
-        vdate = await calculateDaysFromDate(datePayload);
-    } else {
-        vdate = await calculateDaysFromDate(datePayload);
-    }
+  //   //c------ End Sample ----------//
+  //   const datePayload = {
+  //     valuationDate: new Date(inputs.valuationDate),    //since date format is in unix format
+  //     provisionalDate: provDtRef
+  //   }
+  //   let vdate;
+  //   if (diffValProv > 1) {
+  //       datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
+  //       vdate = await calculateDaysFromDate(datePayload);
+  //   } else {
+  //       vdate = await calculateDaysFromDate(datePayload);
+  //   }
 
-    // console.log('Days left ',vdate);
-    // var vdayLeft = 365 - vdate;
-    const monthToCheckProv = provDtRef.getMonth() === 0 || provDtRef.getMonth() === 1 || provDtRef.getMonth() === 2;
-    let provAdjYears:Array<string> = [], counter = 0;
-    if (!vdate.isProvisionalYearFull && monthToCheckProv) {
-      for await (const indYear of yearsActual){
-        if(counter === 0){
-          provAdjYears.push(`${+indYear-1}`)
-        }
-        provAdjYears.push(indYear);
-        counter++;
-      }
-      console.log(provAdjYears,"provisional adjusted years--->120")
-    }
+  //   // console.log('Days left ',vdate);
+  //   // var vdayLeft = 365 - vdate;
+  //   const monthToCheckProv = provDtRef.getMonth() === 0 || provDtRef.getMonth() === 1 || provDtRef.getMonth() === 2;
+  //   let provAdjYears:Array<string> = [], counter = 0;
+  //   if (!vdate.isProvisionalYearFull && monthToCheckProv) {
+  //     for await (const indYear of yearsActual){
+  //       if(counter === 0){
+  //         provAdjYears.push(`${+indYear-1}`)
+  //       }
+  //       provAdjYears.push(indYear);
+  //       counter++;
+  //     }
+  //     console.log(provAdjYears,"provisional adjusted years--->120")
+  //   }
 
 
 
-    console.log('total days ',vdate.totalDays);
-    console.log('is leap ',vdate.isLeapYear);
-    if (diffValProv > 1 || vdate.dateDiff < vdate.totalDays ) {
-    // if (vdate.dateDiff < vdate.totalDays) {
-      this.stubAdjRequired = true;
-    }
-    console.log('Which period, is STUB needed?',this.stubAdjRequired);
-    // vdayLeft = vdayLeft <= 1 ? 365 : vdayLeft;
+  //   console.log('total days ',vdate.totalDays);
+  //   console.log('is leap ',vdate.isLeapYear);
+  //   if (diffValProv > 1 || vdate.dateDiff < vdate.totalDays ) {
+  //   // if (vdate.dateDiff < vdate.totalDays) {
+  //     this.stubAdjRequired = true;
+  //   }
+  //   console.log('Which period, is STUB needed?',this.stubAdjRequired);
+  //   // vdayLeft = vdayLeft <= 1 ? 365 : vdayLeft;
 
-    console.log('Days left in financial year ', vdate.dateDiff);
-    // if (vday <= 90) {
-    //   vdayLeft = 90 - vday;
-    // } else {
-    //   vdayLeft = 365 - vday - 90;
-    // }
+  //   console.log('Days left in financial year ', vdate.dateDiff);
+  //   // if (vday <= 90) {
+  //   //   vdayLeft = 90 - vday;
+  //   // } else {
+  //   //   vdayLeft = 365 - vday - 90;
+  //   // }
     
-    if (popShareCapitalType === 'DFBS_PC') {
-      const popShareCapitalValue = await POPShareCapitalLabelPer(0, worksheet2);
-      if (popShareCapitalValue > 100)
-        return {
-          result: null,
-          msg: 'Invalid: Preference Share Capital % value.',
-        };
-    }
+  //   if (popShareCapitalType === 'DFBS_PC') {
+  //     const popShareCapitalValue = await POPShareCapitalLabelPer(0, worksheet2);
+  //     if (popShareCapitalValue > 100)
+  //       return {
+  //         result: null,
+  //         msg: 'Invalid: Preference Share Capital % value.',
+  //       };
+  //   }
     
-    if (discountingPeriodObj.result == null) return discountingPeriodObj;
-    discountingPeriodValue = discountingPeriodObj.result;
-    // console.log('Discoun Val ',discountingPeriod,discountingPeriodValue );
+  //   if (discountingPeriodObj.result == null) return discountingPeriodObj;
+  //   discountingPeriodValue = discountingPeriodObj.result;
+  //   // console.log('Discoun Val ',discountingPeriod,discountingPeriodValue );
 
-    console.log('Discoun Val ',discountingPeriodValue);
+  //   console.log('Discoun Val ',discountingPeriodValue);
     
-    let fractionOfYearLeft = this.stubAdjRequired == true ? (vdate.dateDiff-1)/ vdate.totalDays: vdate.dateDiff/vdate.totalDays;            // Adjust based on next fiscal year
-    console.log('Faction Year left ', fractionOfYearLeft);
-    discountingPeriodValue = fractionOfYearLeft * discountingPeriodValue;      // To be used as in WACC Calc next
-    console.log('discountingPeriodValue ',discountingPeriodValue);
-    let valuation = null;
-    let finalWacc = 0;
-    let finalDebt = 0;
-    let yearstoUse = years.slice(0, -1);
-    let yearsLength = years.length;
-    const yearLengthT = yearsLength - 1;
-    let sumOfCashFlows = 0;
-    // let debtAsOnDate = 0;
-    let calculatedWacc = 0;
-    let capitalStruc;
+  //   let fractionOfYearLeft = this.stubAdjRequired == true ? (vdate.dateDiff-1)/ vdate.totalDays: vdate.dateDiff/vdate.totalDays;            // Adjust based on next fiscal year
+  //   console.log('Faction Year left ', fractionOfYearLeft);
+  //   discountingPeriodValue = fractionOfYearLeft * discountingPeriodValue;      // To be used as in WACC Calc next
+  //   console.log('discountingPeriodValue ',discountingPeriodValue);
+  //   let valuation = null;
+  //   let finalWacc = 0;
+  //   let finalDebt = 0;
+  //   let yearstoUse = years.slice(0, -1);
+  //   let yearsLength = years.length;
+  //   const yearLengthT = yearsLength - 1;
+  //   let sumOfCashFlows = 0;
+  //   // let debtAsOnDate = 0;
+  //   let calculatedWacc = 0;
+  //   let capitalStruc;
     
-    // console.log(yearsLength);
-    const finalResult = await Promise.all(
-      years.map(async (year: string, i: number) => {
+  //   // console.log(yearsLength);
+  //   const finalResult = await Promise.all(
+  //     years.map(async (year: string, i: number) => {
         
-        let changeInNCA = null;
-        let deferredTaxAssets = null;
-        let changeInBorrowingsVal = 0;
-        let addInterestAdjTaxes = 0;
-        let addInterestAdjustedTaxesStub = 0;
-        let result = {};
-        // let fcff = 0;
-        let fcfeValueAtTerminalRate = 0;
-        let fcffValueAtTerminalRate = 0;
-        let netOperatingAssets;
-        let netOperatingAssetsInit = 0;
-        // let equityValue =0;
-        let presentFCFF = 0;
+  //       let changeInNCA = null;
+  //       let deferredTaxAssets = null;
+  //       let changeInBorrowingsVal = 0;
+  //       let addInterestAdjTaxes = 0;
+  //       let addInterestAdjustedTaxesStub = 0;
+  //       let result = {};
+  //       // let fcff = 0;
+  //       let fcfeValueAtTerminalRate = 0;
+  //       let fcffValueAtTerminalRate = 0;
+  //       let netOperatingAssets;
+  //       let netOperatingAssetsInit = 0;
+  //       // let equityValue =0;
+  //       let presentFCFF = 0;
         
-        //Get PAT value
+  //       //Get PAT value
 
-        // console.log('discountingPeriodValue ',discountingPeriodValue);
-        // For mid year calculation need nextPAT,depAndAmortisationNext
+  //       // console.log('discountingPeriodValue ',discountingPeriodValue);
+  //       // For mid year calculation need nextPAT,depAndAmortisationNext
 
-        // console.log("Value of i ",i);
-        const patNext = await getCellValue(
-          worksheet1,
-          `${columnsList[i+1] + sheet1_PLObj.patRow}`,
-        );
-        const depAndAmortisationNext = await getCellValue(
-          worksheet1,
-          `${columnsList[i+1] + sheet1_PLObj.depAndAmortisationRow}`,
-        );
+  //       // console.log("Value of i ",i);
+  //       const patNext = await getCellValue(
+  //         worksheet1,
+  //         `${columnsList[i+1] + sheet1_PLObj.patRow}`,
+  //       );
+  //       const depAndAmortisationNext = await getCellValue(
+  //         worksheet1,
+  //         `${columnsList[i+1] + sheet1_PLObj.depAndAmortisationRow}`,
+  //       );
 
-        let pat = await GetPAT(i+1, worksheet1);
-        let patOld = await GetPAT(i,worksheet1);
-        pat = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? pat-patOld : pat;
-        // if (pat !== null) pat = pat;
-        // pat = i === 0 ? patNext - pat:pat;
-        console.log('PAT ',pat);
-        //Get Depn and Amortisation value
-        let depAndAmortisation = await DepAndAmortisation(i+1, worksheet1);
-        let depAndAmortisationOld = await DepAndAmortisation(i, worksheet1);
+  //       let pat = await GetPAT(i+1, worksheet1);
+  //       let patOld = await GetPAT(i,worksheet1);
+  //       pat = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? pat-patOld : pat;
+  //       // if (pat !== null) pat = pat;
+  //       // pat = i === 0 ? patNext - pat:pat;
+  //       console.log('PAT ',pat);
+  //       //Get Depn and Amortisation value
+  //       let depAndAmortisation = await DepAndAmortisation(i+1, worksheet1);
+  //       let depAndAmortisationOld = await DepAndAmortisation(i, worksheet1);
 
-        // netOperatingAssets = await differenceAssetsLiabilities(i,worksheet3);
-        // const netOperatingDifference = i === 0 ? 0 : netOperatingAssets-netOperatingAssetsInit;
-        // netOperatingAssetsInit = netOperatingAssets;   // Storing past value to get difference
+  //       // netOperatingAssets = await differenceAssetsLiabilities(i,worksheet3);
+  //       // const netOperatingDifference = i === 0 ? 0 : netOperatingAssets-netOperatingAssetsInit;
+  //       // netOperatingAssetsInit = netOperatingAssets;   // Storing past value to get difference
         
 
-        depAndAmortisation = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? depAndAmortisation - depAndAmortisationOld:depAndAmortisation;
+  //       depAndAmortisation = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? depAndAmortisation - depAndAmortisationOld:depAndAmortisation;
 
-        //Get Oher Non Cash items Value
-        let otherNonCashItems = await OtherNonCashItemsMethod(i+1, worksheet1);
-        let otherNonCashItemsOld = await OtherNonCashItemsMethodNext(i, worksheet1);
-        otherNonCashItems = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false ? otherNonCashItems - otherNonCashItemsOld : otherNonCashItems;
-        const changeInNCAValue = await ChangeInNCA(i, worksheet2,worksheet3);
-        changeInNCA = changeInNCAValue;
+  //       //Get Oher Non Cash items Value
+  //       let otherNonCashItems = await OtherNonCashItemsMethod(i+1, worksheet1);
+  //       let otherNonCashItemsOld = await OtherNonCashItemsMethodNext(i, worksheet1);
+  //       otherNonCashItems = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false ? otherNonCashItems - otherNonCashItemsOld : otherNonCashItems;
+  //       const changeInNCAValue = await ChangeInNCA(i, worksheet2,worksheet3);
+  //       changeInNCA = changeInNCAValue;
 
-        const deferredTaxAssetsValue = await DeferredTaxAssets(i, worksheet2);
-        deferredTaxAssets =  deferredTaxAssetsValue;
+  //       const deferredTaxAssetsValue = await DeferredTaxAssets(i, worksheet2);
+  //       deferredTaxAssets =  deferredTaxAssetsValue;
         
-        var changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
-        // if (i===0) {
-        adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
-        adjCOE = adjustedCostOfEquity;        // To be used outside block;
-        console.log("Adjusted COE ",adjustedCostOfEquity );
-        // }
-        // console.log('Change in Net Fixed Assets ', changeInFixedAssets);
+  //       var changeInFixedAssets = await ChangeInFixedAssets(i, worksheet2);
+  //       // if (i===0) {
+  //       adjustedCostOfEquity = await this.industryService.CAPM_Method(inputs);
+  //       adjCOE = adjustedCostOfEquity;        // To be used outside block;
+  //       console.log("Adjusted COE ",adjustedCostOfEquity );
+  //       // }
+  //       // console.log('Change in Net Fixed Assets ', changeInFixedAssets);
         
-        // console.log('disc ', discountingPeriodValue);
-        // var ndiscountingPeriodValue = discountingPeriodValue + 1
+  //       // console.log('disc ', discountingPeriodValue);
+  //       // var ndiscountingPeriodValue = discountingPeriodValue + 1
        
 
 
         
-        // console.log('WACC Value - ',this.discountingFactorWACC);
-        // if (i === 0)        // Control from here not to print next set of values
-                                                                       // old code ->     discountingFactorValue * fcff;
+  //       // console.log('WACC Value - ',this.discountingFactorWACC);
+  //       // if (i === 0)        // Control from here not to print next set of values
+  //                                                                      // old code ->     discountingFactorValue * fcff;
         
-        // console.log('out disc ', discountingPeriodValue);
-        // const sumOfCashFlows = 1000000; //presentFCFF;                                                     // To be checked
-        let debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
-        const cashEquivalents = await CashEquivalents(i, worksheet2);
-        const surplusAssets = await SurplusAssets(i, worksheet2);
-        changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
-        // console.log('Borrowings, ',changeInBorrowingsVal);
-        addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
-        addInterestAdjustedTaxesStub = await interestAdjustedTaxesWithStubPeriod(i,worksheet1,inputs.taxRate);
-        addInterestAdjTaxes = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? addInterestAdjustedTaxesStub:addInterestAdjTaxes;
+  //       // console.log('out disc ', discountingPeriodValue);
+  //       // const sumOfCashFlows = 1000000; //presentFCFF;                                                     // To be checked
+  //       let debtAsOnDate = await GetDebtAsOnDate(i, worksheet2);
+  //       const cashEquivalents = await CashEquivalents(i, worksheet2);
+  //       const surplusAssets = await SurplusAssets(i, worksheet2);
+  //       changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
+  //       // console.log('Borrowings, ',changeInBorrowingsVal);
+  //       addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
+  //       addInterestAdjustedTaxesStub = await interestAdjustedTaxesWithStubPeriod(i,worksheet1,inputs.taxRate);
+  //       addInterestAdjTaxes = i === 0 && this.stubAdjRequired == true && vdate.isProvisionalYearFull == false  ? addInterestAdjustedTaxesStub:addInterestAdjTaxes;
         
       
-        // if (i === 0 && inputs.model.includes('FCFF')){      // optimize code not to run this block multiple times
-        // Adding i = 0 check is causing discounting period to work incorrectly in first column
+  //       // if (i === 0 && inputs.model.includes('FCFF')){      // optimize code not to run this block multiple times
+  //       // Adding i = 0 check is causing discounting period to work incorrectly in first column
         
-        const shareholderFunds = await getShareholderFunds(0,worksheet2);
+  //       const shareholderFunds = await getShareholderFunds(0,worksheet2);
         
-          capitalStruc = await CapitalStruc(0,worksheet2,shareholderFunds,inputs);
+  //         capitalStruc = await CapitalStruc(0,worksheet2,shareholderFunds,inputs);
         
-        console.log(capitalStruc);
-        calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
-        // finalWacc = calculatedWacc;
-        // console.log(debtAsOnDate,"debt as on date fcff")  
-        // finalDebt = debtAsOnDate;
-      // }
-        console.log('WACC Calculat- ',i,' ',calculatedWacc);
-        const otherAdj = parseFloat(inputs.otherAdj);                                                       // ValidateHere
-        //formula: =+B16-B17+B18+B19+B20
-        // console.log('out disc ', discountingPeriodValue);
+  //       console.log(capitalStruc);
+  //       calculatedWacc = adjustedCostOfEquity/100 * capitalStruc.equityProp + (parseFloat(inputs.costOfDebt)/100)*(1-parseFloat(inputs.taxRate)/100)*capitalStruc.debtProp + parseFloat(inputs.copShareCapital)/100 * capitalStruc.prefProp;
+  //       // finalWacc = calculatedWacc;
+  //       // console.log(debtAsOnDate,"debt as on date fcff")  
+  //       // finalDebt = debtAsOnDate;
+  //     // }
+  //       console.log('WACC Calculat- ',i,' ',calculatedWacc);
+  //       const otherAdj = parseFloat(inputs.otherAdj);                                                       // ValidateHere
+  //       //formula: =+B16-B17+B18+B19+B20
+  //       // console.log('out disc ', discountingPeriodValue);
 
         
-        let netCashFlow =0 ;
-        if (inputs.model.includes('FCFE')) {
+  //       let netCashFlow =0 ;
+  //       if (inputs.model.includes('FCFE')) {
           
-          netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets + changeInBorrowingsVal;
-        } else {
-          netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets  + addInterestAdjTaxes;
-        }
+  //         netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets + changeInBorrowingsVal;
+  //       } else {
+  //         netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNCA + deferredTaxAssets  + addInterestAdjTaxes;
+  //       }
           
-        changeInFixedAssets = changeInFixedAssets - depAndAmortisation;
-        const fcff = netCashFlow + changeInFixedAssets ;    
-        console.log("Value at ",fcff,' ',i, ' ', yearLengthT);
-        // Calculate wacc for FCFF
-        // =+D22*D30+D26*(1-D7)*D29+D24*D31
+  //       changeInFixedAssets = changeInFixedAssets - depAndAmortisation;
+  //       const fcff = netCashFlow + changeInFixedAssets ;    
+  //       console.log("Value at ",fcff,' ',i, ' ', yearLengthT);
+  //       // Calculate wacc for FCFF
+  //       // =+D22*D30+D26*(1-D7)*D29+D24*D31
 
-        // this.calculatedWacc = adjustedCostOfEquity * capitalStruc.equityProp + (inputs.costOfDebt/100)*(1-inputs.taxRate/100)*capitalStruc.debtProp + inputs.copShareCapital/100 * capitalStruc.prefProp
+  //       // this.calculatedWacc = adjustedCostOfEquity * capitalStruc.equityProp + (inputs.costOfDebt/100)*(1-inputs.taxRate/100)*capitalStruc.debtProp + inputs.copShareCapital/100 * capitalStruc.prefProp
 
-        if  (i === yearLengthT && inputs.model.includes('FCFE')) {                                // Valuation data
-        fcfeValueAtTerminalRate = await fcfeTerminalValue(valuation,inputs.terminalGrowthRate,adjustedCostOfEquity)
-        console.log('ter val ',fcfeValueAtTerminalRate,' ', valuation);
-        // console.log('fcfe ter ', fcfeValueAtTerminalRate)
-        discountingPeriodValue = discountingPeriodValue - 1;
-        } else if (i === yearLengthT && inputs.model.includes('FCFF')) {  
-          fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
-          discountingPeriodValue = discountingPeriodValue - 1;
-        }
-        // console.log('Term - ',fcffValueAtTerminalRate);
+  //       if  (i === yearLengthT && inputs.model.includes('FCFE')) {                                // Valuation data
+  //       fcfeValueAtTerminalRate = await fcfeTerminalValue(valuation,inputs.terminalGrowthRate,adjustedCostOfEquity)
+  //       console.log('ter val ',fcfeValueAtTerminalRate,' ', valuation);
+  //       // console.log('fcfe ter ', fcfeValueAtTerminalRate)
+  //       discountingPeriodValue = discountingPeriodValue - 1;
+  //       } else if (i === yearLengthT && inputs.model.includes('FCFF')) {  
+  //         fcfeValueAtTerminalRate = await fcffTerminalValue(valuation,inputs.terminalGrowthRate, finalWacc)
+  //         discountingPeriodValue = discountingPeriodValue - 1;
+  //       }
+  //       // console.log('Term - ',fcffValueAtTerminalRate);
         
-        if (i === 0) {                      // 
-        finalWacc = calculatedWacc;
-        finalDebt = debtAsOnDate;
-        }
+  //       if (i === 0) {                      // 
+  //       finalWacc = calculatedWacc;
+  //       finalDebt = debtAsOnDate;
+  //       }
 
-        // console.log('discountingPeriodValue ',discountingPeriodValue);
-          // console.log('Final Deb ',finalDebt);
-        if (inputs.model.includes('FCFE')) {
-          // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
-          if (i === yearLengthT) {
-            // Do nothing
-          } else {
-          this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
-          }
-          console.log('Disc COE ', this.discountingFactorWACC)
+  //       // console.log('discountingPeriodValue ',discountingPeriodValue);
+  //         // console.log('Final Deb ',finalDebt);
+  //       if (inputs.model.includes('FCFE')) {
+  //         // changeInBorrowingsVal = await changeInBorrowings(i, worksheet2);
+  //         if (i === yearLengthT) {
+  //           // Do nothing
+  //         } else {
+  //         this.discountingFactorWACC = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
+  //         }
+  //         console.log('Disc COE ', this.discountingFactorWACC)
          
-        } else if (inputs.model.includes('FCFF')) {
-          // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
-          if (i === yearLengthT) {
-            // Do nothing
-          } else {
-          this.discountingFactorWACC = 1/ (1+finalWacc) ** (discountingPeriodValue)
-          }
-          console.log('Disc WACC ', this.discountingFactorWACC)
+  //       } else if (inputs.model.includes('FCFF')) {
+  //         // addInterestAdjTaxes = await interestAdjustedTaxes(i,worksheet1,inputs.taxRate);
+  //         if (i === yearLengthT) {
+  //           // Do nothing
+  //         } else {
+  //         this.discountingFactorWACC = 1/ (1+finalWacc) ** (discountingPeriodValue)
+  //         }
+  //         console.log('Disc WACC ', this.discountingFactorWACC)
         
-        } 
-        valuation = fcff;
+  //       } 
+  //       valuation = fcff;
         
-        // console.log('Disounting factor ',this.discountingFactorWACC,' ',fcff)
-        if  (i === yearLengthT){
-          // if (inputs.model === 'FCFE') {
-          //   presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
-          // } else {
-            presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
+  //       // console.log('Disounting factor ',this.discountingFactorWACC,' ',fcff)
+  //       if  (i === yearLengthT){
+  //         // if (inputs.model === 'FCFE') {
+  //         //   presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
+  //         // } else {
+  //           presentFCFF = this.discountingFactorWACC * fcfeValueAtTerminalRate
           
-        } else {
-          presentFCFF = this.discountingFactorWACC * fcff
-        }
-        console.log("Present FCFF ",presentFCFF);
-        sumOfCashFlows = presentFCFF + sumOfCashFlows;
-        console.log('Sum of cash flow ',i, ' ' ,sumOfCashFlows, 'Eq ',cashEquivalents, 'Surpla ', surplusAssets,'Other ', otherAdj);
-        if  (i === 0) {                     // To be run for first instance only
-          equityValue =
-          // sumOfCashFlows +
-          // debtAsOnDate +
-          cashEquivalents +
-          surplusAssets +
-          otherAdj;
-        }
-        // equityValue = equityValue + sumOfCashFlows;
-        // const valuePerShare = equityValue / outstandingShares;
-        if (inputs.model.includes('FCFE')) {
-        result = {
-          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
-          pat: (i === yearLengthT) ?'':pat,
-          depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
-          onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
-          nca: (i === yearLengthT) ?'':changeInNCA,
-          changeInBorrowings: (i === yearLengthT) ?'':changeInBorrowingsVal,
-          defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
-          netCashFlow: (i === yearLengthT) ?'':netCashFlow,
-          fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
-          fcff: (i === yearLengthT) ?fcfeValueAtTerminalRate:fcff,
-          discountingPeriod: discountingPeriodValue,
-          discountingFactor: this.discountingFactorWACC,
-          presentFCFF: presentFCFF,
-          sumOfCashFlows: '',
-          // debtOnDate: i> 0?'':finalDebt,
-          cashEquivalents: i> 0?'':cashEquivalents,
-          surplusAssets: i> 0?'':surplusAssets,
-          otherAdj: i> 0?'':otherAdj,
-          equityValue: '',
-          noOfShares: i> 0?'':outstandingShares,
-          valuePerShare: '',
-          // totalFlow: this.discountingFactorWACC + i
-        }; 
-      } else if (inputs.model.includes('FCFF')) {
-        result = {
-          particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
-          pat: (i === yearLengthT) ?'':pat,
-          addInterestAdjTaxes: (i === yearLengthT) ?'':addInterestAdjTaxes,
-          depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
-          onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
-          nca: (i === yearLengthT) ?'':changeInNCA,
-          defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
-          netCashFlow: (i === yearLengthT) ?'':netCashFlow,
-          fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
-          fcff: (i === yearLengthT) ?fcfeValueAtTerminalRate:fcff,
-          discountingPeriod: discountingPeriodValue,
-          discountingFactor: this.discountingFactorWACC,
-          presentFCFF: presentFCFF,
-          sumOfCashFlows: '',
-          debtOnDate: i> 0?'':finalDebt,
-          cashEquivalents: i> 0?'':cashEquivalents,
-          surplusAssets: i> 0?'':surplusAssets,
-          otherAdj: i> 0?'':otherAdj,
-          equityValue: '',
-          noOfShares: i> 0?'':outstandingShares,
-          valuePerShare: '',
-        }; 
-      }
-        discountingPeriodValue = discountingPeriodValue + 1;    
-        // console.log(result);
-        return result;
-      }),
-    );
+  //       } else {
+  //         presentFCFF = this.discountingFactorWACC * fcff
+  //       }
+  //       console.log("Present FCFF ",presentFCFF);
+  //       sumOfCashFlows = presentFCFF + sumOfCashFlows;
+  //       console.log('Sum of cash flow ',i, ' ' ,sumOfCashFlows, 'Eq ',cashEquivalents, 'Surpla ', surplusAssets,'Other ', otherAdj);
+  //       if  (i === 0) {                     // To be run for first instance only
+  //         equityValue =
+  //         // sumOfCashFlows +
+  //         // debtAsOnDate +
+  //         cashEquivalents +
+  //         surplusAssets +
+  //         otherAdj;
+  //       }
+  //       // equityValue = equityValue + sumOfCashFlows;
+  //       // const valuePerShare = equityValue / outstandingShares;
+  //       if (inputs.model.includes('FCFE')) {
+  //       result = {
+  //         particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
+  //         pat: (i === yearLengthT) ?'':pat,
+  //         depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
+  //         onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
+  //         nca: (i === yearLengthT) ?'':changeInNCA,
+  //         changeInBorrowings: (i === yearLengthT) ?'':changeInBorrowingsVal,
+  //         defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
+  //         netCashFlow: (i === yearLengthT) ?'':netCashFlow,
+  //         fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
+  //         fcff: (i === yearLengthT) ?fcfeValueAtTerminalRate:fcff,
+  //         discountingPeriod: discountingPeriodValue,
+  //         discountingFactor: this.discountingFactorWACC,
+  //         presentFCFF: presentFCFF,
+  //         sumOfCashFlows: '',
+  //         // debtOnDate: i> 0?'':finalDebt,
+  //         cashEquivalents: i> 0?'':cashEquivalents,
+  //         surplusAssets: i> 0?'':surplusAssets,
+  //         otherAdj: i> 0?'':otherAdj,
+  //         equityValue: '',
+  //         noOfShares: i> 0?'':outstandingShares,
+  //         valuePerShare: '',
+  //         // totalFlow: this.discountingFactorWACC + i
+  //       }; 
+  //     } else if (inputs.model.includes('FCFF')) {
+  //       result = {
+  //         particulars: GET_DATE_MONTH_YEAR_FORMAT.test(year) ? `${year}` :  (i === yearLengthT) ?'Terminal Value':`${year}-${parseInt(year)+1}`,
+  //         pat: (i === yearLengthT) ?'':pat,
+  //         addInterestAdjTaxes: (i === yearLengthT) ?'':addInterestAdjTaxes,
+  //         depAndAmortisation: (i === yearLengthT) ?'':depAndAmortisation,
+  //         onCashItems: (i === yearLengthT) ?'':otherNonCashItems,
+  //         nca: (i === yearLengthT) ?'':changeInNCA,
+  //         defferedTaxAssets: (i === yearLengthT) ?'':deferredTaxAssets,
+  //         netCashFlow: (i === yearLengthT) ?'':netCashFlow,
+  //         fixedAssets: (i === yearLengthT) ?'':changeInFixedAssets,
+  //         fcff: (i === yearLengthT) ?fcfeValueAtTerminalRate:fcff,
+  //         discountingPeriod: discountingPeriodValue,
+  //         discountingFactor: this.discountingFactorWACC,
+  //         presentFCFF: presentFCFF,
+  //         sumOfCashFlows: '',
+  //         debtOnDate: i> 0?'':finalDebt,
+  //         cashEquivalents: i> 0?'':cashEquivalents,
+  //         surplusAssets: i> 0?'':surplusAssets,
+  //         otherAdj: i> 0?'':otherAdj,
+  //         equityValue: '',
+  //         noOfShares: i> 0?'':outstandingShares,
+  //         valuePerShare: '',
+  //       }; 
+  //     }
+  //       discountingPeriodValue = discountingPeriodValue + 1;    
+  //       // console.log(result);
+  //       return result;
+  //     }),
+  //   );
     
-    // let lastElement = finalResult.slice(-1);
-    finalResult[0].sumOfCashFlows = sumOfCashFlows;
-    finalResult[0].equityValue = inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
-    finalResult[0].valuePerShare = (finalResult[0].equityValue*multiplier)/outstandingShares;       // Applying mulitplier for figures
-    // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
+  //   // let lastElement = finalResult.slice(-1);
+  //   finalResult[0].sumOfCashFlows = sumOfCashFlows;
+  //   finalResult[0].equityValue = inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - finalDebt;
+  //   finalResult[0].valuePerShare = (finalResult[0].equityValue*multiplier)/outstandingShares;       // Applying mulitplier for figures
+  //   // delete finalResult[0].totalFlow;                        // Remove to avoid showing up in display
     
-    if (this.stubAdjRequired === true && diffValProv > 1) {
-      // console.log("gar ",diffValProv);
-      let stubFactor = (1 + diffValProv/365) ** (adjCOE/100)-1;
+  //   if (this.stubAdjRequired === true && diffValProv > 1) {
+  //     // console.log("gar ",diffValProv);
+  //     let stubFactor = (1 + diffValProv/365) ** (adjCOE/100)-1;
 
-      // console.log(stubFactor);
-      let equityValueToAdj = stubFactor * finalResult[0].equityValue;
-      console.log('Stub Factor ',stubFactor);
-      let keyValues = Object.entries(finalResult[0]);
-      keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
-      keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
-      let newObj = Object.fromEntries(keyValues);
-      finalResult[0] = newObj;
-      finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*multiplier)/outstandingShares;       // Applying mulitplier for figures
-      // console.log('new EPV ',((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares);
+  //     // console.log(stubFactor);
+  //     let equityValueToAdj = stubFactor * finalResult[0].equityValue;
+  //     console.log('Stub Factor ',stubFactor);
+  //     let keyValues = Object.entries(finalResult[0]);
+  //     keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
+  //     keyValues.splice(-2,0, ["equityValueNew",finalResult[0].equityValue + equityValueToAdj ]);
+  //     let newObj = Object.fromEntries(keyValues);
+  //     finalResult[0] = newObj;
+  //     finalResult[0].valuePerShare = ((finalResult[0].equityValue + equityValueToAdj)*multiplier)/outstandingShares;       // Applying mulitplier for figures
+  //     // console.log('new EPV ',((finalResult[0].equityValue + equityValueToAdj)*100000)/outstandingShares);
+  //   }
+
+  //   // let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
+  //   const provisionalDate = provDtRef;
+    
+  //   this.stubAdjRequired = false;                              // Resetting to default;
+  //   const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
+  //   const data = await this.transformData(finalResult);
+  //   return { result: finalResult, tableData:data.transposedResult, valuation:checkIfStub? finalResult[0].equityValueNew :finalResult[0].equityValue,columnHeader:data.columnHeader,provisionalDate,
+  //     msg: 'Executed Successfully' };
+  // }catch(error){
+  //   console.log(error)
+  //   throw  error;
+  // }
+  // }
+
+  async fcfeAndFcffValuation(body:any){
+    try{
+      const dataInputs = body.inputs;
+      const worksheet1 = body.worksheet1;
+      const worksheet2 = body.worksheet2;
+
+      const { outstandingShares } = dataInputs;
+      let multiplier = GET_MULTIPLIER_UNITS[`${dataInputs.reportingUnit}`];
+
+      const adjustedCostOfEquity = await this.industryService.CAPM_Method(dataInputs);
+
+      const yearsActual = await getYearsList(worksheet1);
+
+      let provisionalDates = worksheet1['B1'].v || worksheet2['B1'].v;
+
+      let  provDtRef = parseDate(provisionalDates.trim());
+      console.log(provDtRef,"provisional date")
+
+      const decodeValuationDate =  new Date(dataInputs.valuationDate);    //Since valuation date is in unix time stamp, we need to convert it into readable date format which is eg. 2023-03-30T18:30:00.000Z
+      console.log(decodeValuationDate, "valuation date")
+
+      const isStubRequired = await this.isStubRequired(provDtRef, decodeValuationDate); //checking if stub is required or not
+      console.log(isStubRequired, "stub required")
+
+      let totalDaysDifferenceStubAdjustment, totalDaysDifferenceDiscountingFactor;
+
+      if(isStubRequired){
+        totalDaysDifferenceStubAdjustment = await this.subtractProvisionalDateByValuationDate(provDtRef, decodeValuationDate); //calculating number of days from provisional date - valuation date difference
+        console.log(totalDaysDifferenceStubAdjustment," total days difference in stub adjustment")
+      }
+
+    const isDiscountingFactorAdjustmentRequired = await this.isDiscountingFactorRequired(provDtRef);  //checking if discountingFactorAdjustment is required or not
+    if(isDiscountingFactorAdjustmentRequired){
+      totalDaysDifferenceDiscountingFactor = await this.subtractValuationDateByFincancialYearEndDate(decodeValuationDate, provDtRef);   //calculating number of days from valuation date - financial year end date difference
+    }
+    console.log(isDiscountingFactorAdjustmentRequired," discounting factor required")
+
+    const checkPartialFinancialYear = await this.checkPartialFinancialYear(provDtRef);  //checking if the provisional year is partial or not, if partial then implementing the subtraction of first and second columns logic below
+
+    console.log(checkPartialFinancialYear,"partial financial year")
+
+    const years = yearsActual.slice(0,parseInt(dataInputs.projectionYears)+1);
+
+    const aggregateBody = {
+      years,
+      ...body,
+      isStubRequired,
+      totalDaysDifferenceStubAdjustment,
+      isDiscountingFactorAdjustmentRequired,
+      totalDaysDifferenceDiscountingFactor,
+      checkPartialFinancialYear,
+      provDtRef
     }
 
-    // let equityValueDate = await getFormattedProvisionalDate(new Date(provDtRef));
-    const provisionalDate = provDtRef;
+    const resultAggregate:any = await this.calculateAggregate(aggregateBody); //calculating whole aggregate 
     
-    this.stubAdjRequired = false;                              // Resetting to default;
-    const checkIfStub = finalResult.some((item,i)=>item.stubAdjValue);
-    const data = await this.transformData(finalResult);
-    return { result: finalResult, tableData:data.transposedResult, valuation:checkIfStub? finalResult[0].equityValueNew :finalResult[0].equityValue,columnHeader:data.columnHeader,provisionalDate,
-      msg: 'Executed Successfully' };
-  }catch(error){
-    console.log(error)
-    throw  error;
-  }
-  }
+    
+    if (isStubRequired && totalDaysDifferenceStubAdjustment > 1) { //based on the above conditions, calculating stub
+      let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (adjustedCostOfEquity/100)-1;
+      
+      let equityValueToAdj = stubFactor * resultAggregate[0].equityValue;
+      console.log('Stub Factor ',stubFactor);
+      let keyValues = Object.entries(resultAggregate[0]);
+      keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
+      keyValues.splice(-2,0, ["equityValueNew",resultAggregate[0].equityValue + equityValueToAdj ]);
+      let newObj = Object.fromEntries(keyValues);
+      resultAggregate[0] = newObj;
+      resultAggregate[0].valuePerShare = ((resultAggregate[0].equityValue + equityValueToAdj)*multiplier)/outstandingShares;       // Applying mulitplier for figures
+    }
+    
+      const provisionalDate = provDtRef;                          // Resetting to default;
+      const checkIfStub = resultAggregate.some((item,i)=>item.stubAdjValue);
+      const data = await this.transformData(resultAggregate);
 
+      return { result: resultAggregate, tableData:data.transposedResult, valuation:checkIfStub? resultAggregate[0].equityValueNew :resultAggregate[0].equityValue,columnHeader:data.columnHeader,provisionalDate,
+        msg: 'Executed Successfully' };
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'valuation computation failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+    }
+
+
+    async checkPartialFinancialYear(provisionalDate:any){
+      const cleanProvisionalDate = new Date(provisionalDate);
+
+      const provisionalMonth = cleanProvisionalDate.getMonth() + 1; // Since months are zero-based (0-Jan, 1-Feb, ..., 11-Dec)
+      const provisionalDay = cleanProvisionalDate.getDate();
+
+      // Check if not equal to 31st March
+      if (provisionalMonth !== 3 || provisionalDay !== 31) { // March is month index 2
+          return true; // Return true indicating partial financial year
+      } else {
+          return false; // Return false indicating full financial year
+      }
+    }
+
+    async subtractProvisionalDateByValuationDate(provisionalDate:any, valuationDate:any){
+      const cleanProvisionalDate:any = new Date(provisionalDate);
+      const cleanValuationDate:any = new Date(valuationDate);
+
+       const differenceInMilliseconds = cleanValuationDate - cleanProvisionalDate;
+
+       // Convert the difference to days (divide by milliseconds in a day)
+      const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+      return differenceInDays;
+    }
+
+    async subtractValuationDateByFincancialYearEndDate(valuationDate:any, provisionalDate:any){
+      const cleanValuationDate:any = new Date(valuationDate);
+      const cleanProvisionalDate:any = new Date(provisionalDate);
+  
+      // End of the financial year (31st March of the financial year)
+      const fiscalYearEnd:any = await this.computeFinancialYearEndDate(cleanProvisionalDate); //computing financial year
+
+      const differenceInMilliseconds =  fiscalYearEnd - cleanValuationDate;
+  
+      // Convert the difference to days (divide by milliseconds in a day)
+      const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+  
+      return differenceInDays;
+    }
+
+    async computeFinancialYearEndDate(provisionalDate){    //Always pass provisioanl date it will give you  only financial year
+      const cleanProvisionalDate = new Date(provisionalDate);
+
+      const provisionalYear = cleanProvisionalDate.getFullYear();
+
+      const provisionalBasedFinancialYear = new Date(provisionalYear, 2, 31);
+
+      const currentYear = new Date().getFullYear();
+      const currentFinancialDate = new Date(currentYear, 2, 31);
+
+      const fiscalYearEnd:any = new Date(currentYear, 2, 31); // March is month index 2
+
+      return cleanProvisionalDate <= fiscalYearEnd ? provisionalBasedFinancialYear : currentFinancialDate; 
+    }
+
+    async isStubRequired(provisionalDate, valuationDate){
+      const cleanValuationDate = new Date(valuationDate);
+      const cleanProvisionalDate = new Date(provisionalDate);
+
+      return cleanValuationDate.getTime() > cleanProvisionalDate.getTime();
+    }
+
+    async isDiscountingFactorRequired(provisionalDate){
+      const cleanProvisionalDate = new Date(provisionalDate);
+
+      const provisionalDay = cleanProvisionalDate.getDate();
+      const provisionalMonth = cleanProvisionalDate.getMonth() + 1; // Since months are zero-based (0-Jan, 1-Feb, ..., 11-Dec)
+
+      // Compare with 31st March 2023
+      return !(provisionalMonth === 3 && provisionalDay === 31);    //Since we need to check if provisional date is of 31st if the provisional date is equal to 31st, march 2023 then discounting adjustment factor is applicable
+    }
+
+    async recalculatePat(index, worksheet){
+      let pat = await GetPAT(index+1, worksheet);
+      let patOld = await GetPAT(index,worksheet);
+      return pat-patOld;
+    }
+
+    async recalculateDepnAndAmortisation(index, worksheet){
+      let depAndAmortisation = await DepAndAmortisation(index+1, worksheet);
+      let DepAndAmortisationOld = await DepAndAmortisation(index,worksheet);
+      return depAndAmortisation-DepAndAmortisationOld;
+    }
+
+    async recalculateOtherNonCashItems(index, worksheet){
+      let otherNonCashItem = await OtherNonCashItemsMethodNext(index+1, worksheet);
+      let otherNonCashItemOld = await OtherNonCashItemsMethodNext(index,worksheet);
+      return otherNonCashItem-otherNonCashItemOld;
+    }
+
+    async calculateWacc(waccPayload){
+      return waccPayload.adjustedCostOfEquity/100 * waccPayload.capitalStruc.equityProp + 
+          (
+            parseFloat(waccPayload.costOfDebt)/100)*(1-parseFloat(waccPayload.taxRate)/100
+          )
+          *
+          waccPayload.capitalStruc.debtProp + parseFloat(waccPayload.copShareCapital)/100 
+          * waccPayload.capitalStruc.prefProp;
+    }
+  
+    async calculateAggregate(aggregatePayload){
+      try{
+        const { outstandingShares, discountingPeriod } = aggregatePayload.inputs;
+        let multiplier = GET_MULTIPLIER_UNITS[`${aggregatePayload.inputs.reportingUnit}`];
+        let counter = 0, debtOnIndexZero, discountingFactorWacc, secondLastFcfe = 0, sumOfCashFlows = 0, equityValue = 0;      //This will act as index inside for loop;
+        const years = aggregatePayload.years;
+        const worksheet1 = aggregatePayload.worksheet1;
+        const worksheet2 = aggregatePayload.worksheet2;
+        const worksheet3 = aggregatePayload.worksheet3;
+
+        const adjustedCostOfEquity = await this.industryService.CAPM_Method(aggregatePayload.inputs);
+        const shareholderFunds = await getShareholderFunds(0,worksheet2);
+        const capitalStruc = await CapitalStruc(0,worksheet2,shareholderFunds,aggregatePayload.inputs);
+        const otherAdj = parseFloat(aggregatePayload.inputs.otherAdj) || 0; 
+        const calculateWaccPayload = {
+          adjustedCostOfEquity,
+          capitalStruc,
+          costOfDebt: aggregatePayload.inputs.costOfDebt,
+          taxRate: aggregatePayload.inputs.taxRate,
+          copShareCapital: aggregatePayload.inputs.copShareCapital
+        }
+
+        const calculatedWacc = await this.calculateWacc(calculateWaccPayload);
+
+        const yearLength = years.length - 1;
+        let resultArray = [];
+        console.log(years,"years")
+
+        const datePayload = {
+          valuationDate: new Date(aggregatePayload.inputs.valuationDate),    //since date format is in unix format
+          provisionalDate: aggregatePayload.provDtRef
+        }
+
+        let vdate;
+        if (aggregatePayload.totalDaysDifferenceStubAdjustment > 1) {
+          datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
+          vdate = await calculateDaysFromDate(datePayload);
+        } else {
+            vdate = await calculateDaysFromDate(datePayload);
+        }
+
+        const discountingPeriodObj = await getDiscountingPeriod(
+          discountingPeriod
+        );
+      
+        // calculating fraction of year : if provisional date is 31st,March, use 1 else use the totalDaysDifferenceDiscountingFactor/totalDays  
+        const fractionOfYearLeft = aggregatePayload.isDiscountingFactorAdjustmentRequired ? aggregatePayload.totalDaysDifferenceDiscountingFactor/vdate.totalDays : 1;
+    
+        console.log(fractionOfYearLeft,"date difference ---->688")
+        console.log(aggregatePayload.totalDaysDifferenceDiscountingFactor,"total date difference ---->689", discountingPeriodObj.result)
+        let discountingPeriodValue = fractionOfYearLeft * discountingPeriodObj.result;
+
+        for await (const individualYear of years){    //Use for await, map is not to be used, map handles large loads of data incorrectly 
+            let pat, depAndAmortisation, otherNonCashItems, changeInNca, deferredTaxAssets, 
+            changeInFixedAssets, debtAsOnDate, cashEquivalents, surplusAssets, changeInBorrowing, 
+            addInterestAdjTaxes,netCashFlow, fcfeValueAtTerminalRate,
+            presentFCFF;
+
+            //  In this if condition itself we are recalculating all the values
+            if(counter === 0 && aggregatePayload.checkPartialFinancialYear){    //checking if the the provisional date is not 31st,March
+              console.log("inside partial years calculations")
+              pat  = await this.recalculatePat(counter, worksheet1);
+              depAndAmortisation = await this.recalculateDepnAndAmortisation(counter, worksheet1);
+              otherNonCashItems = await this.recalculateOtherNonCashItems(counter, worksheet1);
+            }
+            else{
+              pat = await GetPAT(counter+1, worksheet1);
+              depAndAmortisation = await DepAndAmortisation(counter+1, worksheet1);
+              otherNonCashItems = await OtherNonCashItemsMethodNext(counter+1, worksheet1);
+            }
+
+            // Please verify this stub value, stub is working,but not sure about the value 
+            if(aggregatePayload.isStubRequired){
+              addInterestAdjTaxes = await interestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
+            }
+            else{
+              addInterestAdjTaxes = await interestAdjustedTaxes(counter, worksheet1, aggregatePayload?.inputs?.taxRate)
+            }
+
+            changeInNca = await ChangeInNCA(counter, worksheet2,worksheet3);
+            deferredTaxAssets = await DeferredTaxAssets(counter, worksheet2);
+            
+            changeInFixedAssets = await ChangeInFixedAssets(counter, worksheet2);
+            console.log(changeInFixedAssets, "fixed assets")
+
+            debtAsOnDate = await GetDebtAsOnDate(counter, worksheet2);
+
+            if(counter === 0){
+              debtOnIndexZero = debtAsOnDate; 
+            }
+
+            cashEquivalents = await CashEquivalents(counter, worksheet2);
+            surplusAssets = await SurplusAssets(counter, worksheet2);
+            changeInBorrowing = await changeInBorrowings(counter, worksheet2);
+
+            if (aggregatePayload.inputs.model.includes('FCFE')) {
+              netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNca + deferredTaxAssets + changeInBorrowing;
+            } else {
+              netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNca + deferredTaxAssets  + addInterestAdjTaxes;
+            }
+
+            const differenceInFixedAssetAndDepnAndAmortisation = changeInFixedAssets - depAndAmortisation;
+            const fcff = netCashFlow + differenceInFixedAssetAndDepnAndAmortisation;
+    
+            if  (counter === yearLength && aggregatePayload.inputs.model.includes('FCFE')) {
+              console.log(secondLastFcfe,"")
+              fcfeValueAtTerminalRate = await fcfeTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate,adjustedCostOfEquity)
+              discountingPeriodValue = discountingPeriodValue - 1;
+            } 
+            else if (counter === yearLength && aggregatePayload.inputs.model.includes('FCFF')) {
+              fcfeValueAtTerminalRate = await fcffTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate, calculatedWacc)
+              discountingPeriodValue = discountingPeriodValue - 1;
+            }
+
+
+            if (aggregatePayload.inputs.model.includes('FCFE')) {
+              if (counter !== yearLength){
+                discountingFactorWacc = 1/ (1+adjustedCostOfEquity/100) ** (discountingPeriodValue)
+              }
+              console.log('Disc COE ', discountingFactorWacc)
+             
+            } 
+            else if (aggregatePayload.inputs.model.includes('FCFF')) {
+              if (counter !== yearLength){
+                discountingFactorWacc = 1/ (1+calculatedWacc) ** (discountingPeriodValue)
+              }
+              console.log('Disc WACC ', discountingFactorWacc)
+            
+            } 
+
+            if  (counter === yearLength){
+                presentFCFF = discountingFactorWacc * fcfeValueAtTerminalRate
+              
+            } else {
+              presentFCFF = discountingFactorWacc * fcff
+            }
+
+            sumOfCashFlows = presentFCFF + sumOfCashFlows;
+
+            if  (counter === 0) {                     // To be run for first instance only
+              equityValue = cashEquivalents + surplusAssets + otherAdj;
+            }
+
+            const isFCFE = aggregatePayload.inputs.model.includes('FCFE');
+            const isFCFF = aggregatePayload.inputs.model.includes('FCFF');
+
+            const result:any = {
+              particulars: GET_DATE_MONTH_YEAR_FORMAT.test(individualYear) ? `${individualYear}` : (counter === yearLength ? 'Terminal Value' : `${individualYear}-${parseInt(individualYear) + 1}`),
+              pat: counter === yearLength ? '' : pat,
+              depAndAmortisation: counter === yearLength ? '' : depAndAmortisation,
+              onCashItems: counter === yearLength ? '' : otherNonCashItems,
+              nca: counter === yearLength ? '' : changeInNca,
+              changeInBorrowings: counter === yearLength ? '' : changeInBorrowing,
+              defferedTaxAssets: counter === yearLength ? '' : deferredTaxAssets,
+              netCashFlow: counter === yearLength ? '' : netCashFlow,
+              fixedAssets: counter === yearLength ? '' : changeInFixedAssets,
+              fcff: counter === yearLength ? fcfeValueAtTerminalRate:fcff,
+              discountingPeriod: discountingPeriodValue,
+              discountingFactor: discountingFactorWacc,
+              presentFCFF: presentFCFF,
+              sumOfCashFlows: '',
+              debtOnDate: counter > 0 ? '' : debtOnIndexZero,
+              cashEquivalents: counter > 0 ? '' : cashEquivalents,
+              surplusAssets: counter > 0 ? '' : surplusAssets,
+              otherAdj: counter > 0 ? '' : otherAdj,
+              equityValue: '',
+              noOfShares: counter > 0 ? '' : outstandingShares,
+              valuePerShare: '',
+          };
+
+            discountingPeriodValue = discountingPeriodValue + 1;
+
+            if (isFCFF) {
+                delete result.addInterestAdjTaxes; // If not needed for FCFE
+            }
+
+            if (isFCFE) {
+                delete result.debtOnDate; // If not needed for FCFE
+            }
+            secondLastFcfe = fcff; 
+
+             resultArray.push(result);
+             counter++;
+        }
+
+        // Using static substitution 
+        resultArray[0]['sumOfCashFlows'] = sumOfCashFlows;
+        resultArray[0].equityValue = aggregatePayload.inputs.model.includes('FCFE')? equityValue + sumOfCashFlows:equityValue + sumOfCashFlows - debtOnIndexZero;
+        resultArray[0].valuePerShare = (resultArray[0].equityValue*multiplier)/outstandingShares;   
+        return resultArray;
+      }
+      catch(error){
+        return {
+          error:error,
+          status:false,
+          msg:"aggregate calculation failed"
+        }
+      }
+    }
+  
   async transformData(data: any[]) { //only to render data on UI table
    try{
     const transformedData = [];
