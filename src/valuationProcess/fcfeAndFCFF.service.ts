@@ -84,7 +84,6 @@ export class FCFEAndFCFFService {
     // console.log('Provisional Dates ', provDtRef);
     // console.log(provStr.slice(-1).trim());
     
-    console.log(yearsActual);
     const years = yearsActual.slice(0,parseInt(inputs.projectionYears)+1);
     console.log('Net year ',years);
     if (years === null)
@@ -105,18 +104,32 @@ export class FCFEAndFCFFService {
     // console.log('Month ',valuationMonth);
 
     //c------ End Sample ----------//
-    var vdate = diffValProv > 1 ? await calculateDaysFromDate(new Date(provDtRef)): await calculateDaysFromDate(new Date(inputs.valuationDate));;
+    const datePayload = {
+      valuationDate: new Date(inputs.valuationDate),    //since date format is in unix format
+      provisionalDate: provDtRef
+    }
+    let vdate;
+    if (diffValProv > 1) {
+        datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
+        vdate = await calculateDaysFromDate(datePayload);
+    } else {
+        vdate = await calculateDaysFromDate(datePayload);
+    }
+
     // console.log('Days left ',vdate);
     // var vdayLeft = 365 - vdate;
     const monthToCheckProv = provDtRef.getMonth() === 0 || provDtRef.getMonth() === 1 || provDtRef.getMonth() === 2;
+    let provAdjYears:Array<string> = [], counter = 0;
     if (!vdate.isProvisionalYearFull && monthToCheckProv) {
-        let provAdjYears = yearsActual;
-        console.log('Prov Adj chk ', provAdjYears, ' ', typeof(yearsActual), ' ', yearsActual);
-        let provReAdjYears = provAdjYears.unshift('23');
-
-        console.log('Provisional adjusted years ', provReAdjYears);
+      for await (const indYear of yearsActual){
+        if(counter === 0){
+          provAdjYears.push(`${+indYear-1}`)
+        }
+        provAdjYears.push(indYear);
+        counter++;
+      }
+      console.log(provAdjYears,"provisional adjusted years--->120")
     }
-
 
 
 
