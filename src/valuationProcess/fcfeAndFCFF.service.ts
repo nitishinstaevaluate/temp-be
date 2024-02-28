@@ -520,8 +520,9 @@ export class FCFEAndFCFFService {
     
     if (isStubRequired && totalDaysDifferenceStubAdjustment > 1) { //based on the above conditions, calculating stub
       let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (adjustedCostOfEquity/100)-1;
-      
       let equityValueToAdj = stubFactor * resultAggregate[0].equityValue;
+      
+      // let equityValueToAdj = +resultAggregate[0].equityValue  * (Math.pow(1 + ((adjustedCostOfEquity/100)/ 365), totalDaysDifferenceStubAdjustment ) - 1); // Confirmation pending 
       console.log('Stub Factor ',stubFactor);
       let keyValues = Object.entries(resultAggregate[0]);
       keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
