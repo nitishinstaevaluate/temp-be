@@ -58,6 +58,9 @@ export class Report {
 
     @Prop({ type:String,default:'' }) 
     processStateId:string;
+
+    @Prop({ type:String,default:'' }) 
+    companyInfo:string;
 }
 
 export type ReportDocument = Report & Document;

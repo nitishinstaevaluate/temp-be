@@ -629,7 +629,8 @@ export class ReportService {
         cinNumber:data?.cinNumber,
         companyAddress:data?.companyAddress,
         modelWeightageValue:data.finalWeightedAverage,
-        processStateId:data.processStateId
+        processStateId:data.processStateId,
+        companyInfo:data.companyInfo
       }
       try {
         const filter = { reportId: data?.reportId };
@@ -801,6 +802,15 @@ export class ReportService {
           });
           return '';
       })
+
+
+      hbs.registerHelper('companyInfo',()=>{
+        if(reportDetails.companyInfo){
+          return reportDetails.companyInfo;
+        }
+        return '';
+      })
+
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
         modelName = modelName.split(',');
         if(modelName.length <= 2 ){
@@ -2198,6 +2208,13 @@ export class ReportService {
       if(elevenUaData)
         return elevenUaData.data?.inputData?.reportingUnit;
       return 'Lakhs';
+    })
+
+    hbs.registerHelper('companyInfo',()=>{
+      if(reportDetails.companyInfo){
+        return reportDetails.companyInfo;
+      }
+      return '';
     })
 
     hbs.registerHelper('bookValueOfAllAssets',()=>{
