@@ -107,7 +107,7 @@ export class utilsService {
     }
   }
 
-  async generateUniqueLink(checklist) {
+  async generateUniqueLink(request, emailData) {
     try{
 
     const uniqueLink = nanoid();
@@ -115,7 +115,14 @@ export class utilsService {
 
     expirationDate.setHours(expirationDate.getHours() + 24);
 
-    await this.updateDBChecklist(checklist.queryCheckList, uniqueLink, expirationDate);
+    const body = {
+      checkList: emailData.checkList,
+      uniqueLink,
+      expirationDate,
+      emailTo: emailData?.emailTo
+    }
+
+    await this.updateDBChecklist(request, body);
     
     return {
       uniqueLink,
@@ -135,16 +142,28 @@ export class utilsService {
     }
   }
 
-  async updateDBChecklist(checkList, uniqueLink, expirationDate){
+  async updateDBChecklist(request, body){
     try{
-      switch(checkList){
+      switch(body.checkList){
         case 'mandatechecklist':
-          await this.mandateModel.create({ uniqueLinkId: uniqueLink, expirationDate });
-          break;
+          await this.mandateModel.create({ uniqueLinkId: body.uniqueLink, expirationDate: body.expirationDate });
+        break;
 
         case 'datachecklist':
-          await this.dataChecklistModel.create({ uniqueLinkId: uniqueLink, expirationDate });
-          break;
+          const userDetails = await this.authenticationService.extractUser(request);
+
+          if(!userDetails.status)
+            return {message:'unauthorized', status:false};
+
+          await this.dataChecklistModel.create(
+            { 
+              uniqueLinkId: body.uniqueLink, 
+              expirationDate: body.expirationDate, 
+              emailFrom: userDetails.userId.username, 
+              emailTo: body?.emailTo
+            }
+          );
+        break;
 
         default:
           return {
@@ -317,6 +336,70 @@ export class utilsService {
         status:false,
         msg:"Mandate record not found"
       }
+    }
+  }
+  async fetchDataChecklistByLinkId(link){
+    try{
+      const dataChecklistRecord = await this.dataChecklistModel.findOne({uniqueLinkId: link.linkId}).exec();
+
+      return {
+        data:dataChecklistRecord,
+        status:true,
+        msg:"datachecklist record found"
+      }
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"datachecklist record not found"
+      }
+    }
+  }
+
+  async fetchDataChecklistAllEmails(){
+    try{
+      const dataCheckListEmails = await this.dataChecklistModel.find({ emailFrom: { $ne: null } }).exec();
+      return {
+        data:dataCheckListEmails,
+        status:true,
+        msg:"email fetched successfully"
+      };
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"emails fetched failed"
+      }
+    }
+  }
+
+  async resendDatachecklist(link) {
+    try {
+      const expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 24);
+
+      await this.dataChecklistModel.findOneAndUpdate(
+        { uniqueLinkId: link.linkId },
+        { 
+          $inc: { emailSendFrequency: 1 },
+          $set: { expirationDate: expirationDate } 
+        },
+        { upsert: true, new: true }
+      ).exec();
+  
+      return {
+        uniqueLinkId: link.linkId,
+        status: true,
+        msg: 'data checklist re-sent successfully'
+      };
+    } catch (error) {
+      return {
+        error: error,
+        status: false,
+        msg: "datachecklist resend failed"
+      };
     }
   }
   }

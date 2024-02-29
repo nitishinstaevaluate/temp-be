@@ -35,8 +35,8 @@ export class Report {
     @Prop({ required: false, type: [] }) 
     regulationReference: [];
 
-    @Prop({ required: true, type: String }) 
-    reportPurpose:string;
+    @Prop({ required: true, type: Array<String> }) 
+    reportPurpose:Array<string>;
 
     @Prop({ required: false, type: [] }) 
     reportSection:[];
@@ -58,6 +58,9 @@ export class Report {
 
     @Prop({ type:String,default:'' }) 
     processStateId:string;
+
+    @Prop({ type:String,default:'' }) 
+    companyInfo:string;
 }
 
 export type ReportDocument = Report & Document;

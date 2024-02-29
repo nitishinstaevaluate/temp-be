@@ -112,7 +112,7 @@ let workbook=null;
     // Performe calculation by specific method
     if (model === 'FCFE') {
       
-      const valuationResponse = await this.valuationMethodsService.FCFEMethod(
+      const valuationResponse = await this.valuationMethodsService.FCFEMethodVersionTwo(
         inputs,
         worksheet1,
         worksheet2,
@@ -140,7 +140,7 @@ let workbook=null;
       // Send Response.
       return { reportId: reportId, valuationData: valuationResult };
     } else if (model === 'FCFF') {
-      const valuationResponse = await this.valuationMethodsService.FCFFMethod(
+      const valuationResponse = await this.valuationMethodsService.FCFEMethodVersionTwo(
         inputs,
         worksheet1,
         worksheet2,
@@ -245,7 +245,7 @@ let workbook=null;
           switch (modelValue) {
             case MODEL[0]:
               const fcfeResponse = await this.valuationMethodsService
-                .FCFEMethod(inputs, worksheet1, worksheet2, worksheet3)
+                .FCFEMethodVersionTwo(inputs, worksheet1, worksheet2, worksheet3)
                 valResult.push({
                   model: MODEL[0],
                   valuationData: fcfeResponse.result,
@@ -265,7 +265,7 @@ let workbook=null;
               
               case MODEL[1]:
                 const fcffResponse = await this.valuationMethodsService
-                .FCFFMethod(inputs, worksheet1, worksheet2,worksheet3)
+                .FCFEMethodVersionTwo(inputs, worksheet1, worksheet2,worksheet3)
                 valResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.result,

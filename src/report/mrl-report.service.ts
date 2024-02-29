@@ -64,19 +64,19 @@ export class mrlReportService {
         try{
             hbs.registerHelper('companyName',()=>{
                 if(processStateInfo.firstStageInput.company)
-                    return processStateInfo.firstStageInput.company;
+                    return processStateInfo.firstStageInput?.company;
                 return '';
             })
 
             hbs.registerHelper('natureOfInstrument',()=>{
                 if(processStateInfo.sixthStageInput.natureOfInstrument)
-                    return NATURE_OF_INSTRUMENT[`${processStateInfo.sixthStageInput.natureOfInstrument}`];
+                    return NATURE_OF_INSTRUMENT[`${processStateInfo.sixthStageInput?.natureOfInstrument}`];
                 return '';
             })
 
             hbs.registerHelper('dateOfAppointment',()=>{
                 if(processStateInfo.sixthStageInput.dateOfAppointment){
-                  return formatDate(new Date(processStateInfo.sixthStageInput.dateOfAppointment));
+                  return formatDate(new Date(processStateInfo.sixthStageInput?.dateOfAppointment));
                 }
                 return '';
             })
@@ -89,27 +89,32 @@ export class mrlReportService {
               return index === 0 ? 'left' : 'right';
             });
 
+            hbs.registerHelper('companyInfo', ()=>{
+              if(processStateInfo.sixthStageInput?.companyInfo)
+                return processStateInfo.sixthStageInput?.companyInfo;
+              return '';
+            })
             hbs.registerHelper('dateOfIncorporation',()=>{
                 if(processStateInfo.sixthStageInput.dateOfIncorporation)
-                    return formatDate(new Date(processStateInfo.sixthStageInput.dateOfIncorporation));
+                    return formatDate(new Date(processStateInfo.sixthStageInput?.dateOfIncorporation));
                 return '';
             })
 
             hbs.registerHelper('valuationDate',()=>{
                 if(processStateInfo.firstStageInput.valuationDate)
-                    return formatDate(new Date(processStateInfo.firstStageInput.valuationDate));
+                    return formatDate(new Date(processStateInfo.firstStageInput?.valuationDate));
                 return '';
             })
 
             hbs.registerHelper('cinNumber',()=>{
-                if(processStateInfo.sixthStageInput.cinNumber)
-                    return processStateInfo.sixthStageInput.cinNumber;
+                if(processStateInfo.sixthStageInput?.cinNumber)
+                    return processStateInfo.sixthStageInput?.cinNumber;
                 return '';
             })
 
             hbs.registerHelper('companyAddress',()=>{
-                if(processStateInfo.sixthStageInput.companyAddress)
-                    return processStateInfo.sixthStageInput.companyAddress;
+                if(processStateInfo.sixthStageInput?.companyAddress)
+                    return processStateInfo.sixthStageInput?.companyAddress;
                 return '';
             })
 

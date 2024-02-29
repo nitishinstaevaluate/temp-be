@@ -19,7 +19,39 @@ export class ProcessStatusManagerService {
     try {
       let existingRecord, alreadyExistingRecord;
 
-      const { step, ...rest } = process
+      const { step, uniqueLinkId, ...rest  } = process;
+
+      if(uniqueLinkId){
+      const record = await this.processModel.findOne({ uniqueLinkId: uniqueLinkId });
+
+      if(record)
+        return {
+          processId:record._id,
+          status:true,
+          msg:"record already exist"
+        }
+        const maxProcessIdentifierId = await this.utilsService.getMaxObId();
+
+        const authoriseUser = await this.authenticationService.extractUserId(req);
+
+        if (!authoriseUser.status)
+          return authoriseUser;
+
+        const newRecord = await new this.processModel(
+          {
+            ...rest,
+            step: parseInt(step) + 1,
+            processIdentifierId: maxProcessIdentifierId + 1,
+            userId: authoriseUser.userId,
+            uniqueLinkId
+          }).save();
+
+        return {
+          processId: newRecord.id,
+          status: true,
+          msg: 'process state created',
+        }
+    }
 
       if (processId && isValidObjectId(processId)) {
         alreadyExistingRecord = await this.processModel.findOne({ _id: processId });

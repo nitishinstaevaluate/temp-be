@@ -26,6 +26,9 @@ export class DataCheckList {
   
   @Prop({type: String})
   companyAddress: string;
+
+  @Prop({type: String})
+  companyInfo: string;
   
   @Prop({type: String})
   cinNumber: string;
@@ -47,6 +50,18 @@ export class DataCheckList {
 
   @Prop({default:false})
   isSubmitted: boolean;
+
+  @Prop({type:String})
+  emailFrom: string;
+
+  @Prop({type:String})
+  emailTo: string;
+
+  @Prop({type:String})
+  excelSheetId: string;
+
+  @Prop({type:Number, default:1})
+  emailSendFrequency: number;
 }
 
 export type DataCheckListDocument = DataCheckList & Document;
