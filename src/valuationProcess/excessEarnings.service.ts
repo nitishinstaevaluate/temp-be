@@ -75,13 +75,14 @@ export class ExcessEarningsService {
       valuationDate: new Date(inputs.valuationDate),    //since date format is in unix format
       provisionalDate: provDtRef
     }
-    let vdate;
-      if (diffValProv > 1) {
-        datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
-          vdate = await calculateDaysFromDate(datePayload);
-      } else {
-          vdate = await calculateDaysFromDate(datePayload);
-      }
+    
+      // if (diffValProv > 1) {
+      //   datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
+      //     vdate = await calculateDaysFromDate(datePayload);
+      // } else {
+      //     vdate = await calculateDaysFromDate(datePayload);
+      //   }
+    let vdate = await calculateDaysFromDate(datePayload);
       
     // console.log('Days left ',vdate);
     // var vdayLeft = 365 - vdate;

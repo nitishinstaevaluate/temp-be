@@ -142,7 +142,6 @@ export async function calculateDaysFromDate(data: any) {
   const rawProvisionalDate = data.provisionalDate;
   console.log(data,"new date payload ----->143")
 
-  // const verifiedDate = data?.useProvisionalDate ? rawProvisionalDate : rawValuationDate;
   const verifiedDate = rawValuationDate;
 
   let totalDays = 0;

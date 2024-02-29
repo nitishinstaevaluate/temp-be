@@ -684,19 +684,16 @@ export class FCFEAndFCFFService {
         const datePayload = {
           valuationDate: new Date(aggregatePayload.inputs.valuationDate),    //since date format is in unix format
           provisionalDate: aggregatePayload.provDtRef
-        }
+        };
+        
+        let vdate = await calculateDaysFromDate(datePayload);
+        // if (aggregatePayload.totalDaysDifferenceStubAdjustment > 1) {
+        //   datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
+        // } else {
+        //     vdate = await calculateDaysFromDate(datePayload);
+        // }
 
-        let vdate;
-        if (aggregatePayload.totalDaysDifferenceStubAdjustment > 1) {
-          datePayload['useProvisionalDate'] = true;    //Since we need provisional date here so adding isProvisionalDate key inside payload
-          vdate = await calculateDaysFromDate(datePayload);
-        } else {
-            vdate = await calculateDaysFromDate(datePayload);
-        }
-
-        const discountingPeriodObj = await getDiscountingPeriod(
-          discountingPeriod
-        );
+        const discountingPeriodObj = await getDiscountingPeriod(discountingPeriod);
       
         // calculating fraction of year : if provisional date is 31st,March, use 1 else use the totalDaysDifferenceDiscountingFactor/totalDays  
         const fractionOfYearLeft = aggregatePayload.isDiscountingFactorAdjustmentRequired ? vdate.dateDiff/vdate.totalDays : 1;
