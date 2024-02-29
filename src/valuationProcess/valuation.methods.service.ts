@@ -14,20 +14,49 @@ export class ValuationMethodsService {
     private readonly netAssetValueService: NetAssetValueService,
   ) {}
 
-  async FCFEMethod(
+  // async FCFEMethod(
+  //   inputs: any,
+  //   worksheet1: any,
+  //   worksheet2: any,
+  //   worksheet3: any,
+  // ): Promise<any> {
+  //   console.log("Hello Counter zFCFE");
+  //   return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
+  //     inputs,
+  //     worksheet1,
+  //     worksheet2,
+  //     worksheet3,
+  //   );
+  // }
+  async FCFEMethodVersionTwo(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
     worksheet3: any,
   ): Promise<any> {
     console.log("Hello Counter zFCFE");
-    return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
+    const body = {
       inputs,
       worksheet1,
       worksheet2,
       worksheet3,
-    );
+    }
+    return await this.fcfeAndFCFFService.fcfeAndFcffValuation(body);
   }
+  // async FCFFMethod(
+  //   inputs: any,
+  //   worksheet1: any,
+  //   worksheet2: any,
+  //   worksheet3: any,
+  // ): Promise<any> {
+  //   console.log("Hello Counter FCFF");
+  //   return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
+  //     inputs,
+  //     worksheet1,
+  //     worksheet2,
+  //     worksheet3,
+  //   );
+  // }
   async FCFFMethod(
     inputs: any,
     worksheet1: any,
@@ -35,12 +64,13 @@ export class ValuationMethodsService {
     worksheet3: any,
   ): Promise<any> {
     console.log("Hello Counter FCFF");
-    return await this.fcfeAndFCFFService.FCFEAndFCFF_Common(
+    const body = {
       inputs,
       worksheet1,
       worksheet2,
       worksheet3,
-    );
+    }
+    return await this.fcfeAndFCFFService.fcfeAndFcffValuation(body);
   }
 
   async Relative_Valuation_Method(

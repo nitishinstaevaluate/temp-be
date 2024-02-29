@@ -89,6 +89,11 @@ export class mrlReportService {
               return index === 0 ? 'left' : 'right';
             });
 
+            hbs.registerHelper('companyInfo', ()=>{
+              if(processStateInfo.sixthStageInput?.companyInfo)
+                return processStateInfo.sixthStageInput?.companyInfo;
+              return '';
+            })
             hbs.registerHelper('dateOfIncorporation',()=>{
                 if(processStateInfo.sixthStageInput.dateOfIncorporation)
                     return formatDate(new Date(processStateInfo.sixthStageInput?.dateOfIncorporation));

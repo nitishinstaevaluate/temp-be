@@ -56,6 +56,12 @@ export class DataCheckList {
 
   @Prop({type:String})
   emailTo: string;
+
+  @Prop({type:String})
+  excelSheetId: string;
+
+  @Prop({type:Number, default:1})
+  emailSendFrequency: number;
 }
 
 export type DataCheckListDocument = DataCheckList & Document;

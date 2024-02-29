@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -60,11 +60,11 @@ export class ReportService {
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
 
-          if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+          if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
             // htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
           }
-          else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
           }
           pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
@@ -110,7 +110,7 @@ export class ReportService {
               const template = hbs.compile(htmlContent);
               const html = template(valuationResult);
             
-              if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+              if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
                 pdf = await this.generatePdf(html, pdfFilePath);
                 // pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
               }
@@ -153,10 +153,10 @@ export class ReportService {
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
-    if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+    if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
-    else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
     }
 
@@ -201,7 +201,7 @@ export class ReportService {
         const template = hbs.compile(htmlContent);
         const html = template(valuationResult);
 
-        if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[0]){
+        if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
           pdf = await this.generatePdf(html, pdfFilePath);
         }
         // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
@@ -629,7 +629,8 @@ export class ReportService {
         cinNumber:data?.cinNumber,
         companyAddress:data?.companyAddress,
         modelWeightageValue:data.finalWeightedAverage,
-        processStateId:data.processStateId
+        processStateId:data.processStateId,
+        companyInfo:data.companyInfo
       }
       try {
         const filter = { reportId: data?.reportId };
@@ -801,6 +802,15 @@ export class ReportService {
           });
           return '';
       })
+
+
+      hbs.registerHelper('companyInfo',()=>{
+        if(reportDetails.companyInfo){
+          return reportDetails.companyInfo;
+        }
+        return '';
+      })
+
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
         modelName = modelName.split(',');
         if(modelName.length <= 2 ){
@@ -1721,27 +1731,68 @@ export class ReportService {
           return navData;
         })
 
-        hbs.registerHelper('reportSection',()=>{
-          let outputObject = {};
-          let letterIndex = 97; // this is the ascii code start
-          for (const key in reportDetails.reportSection) {
-              let element;
-              if (letterIndex > 97) {
-                element = ` ${reportDetails.reportSection[key]}`;
-              } else {
-                element = `${reportDetails.reportSection[key]}`;
-              }
-              outputObject[element] = key;
-              letterIndex++;
-          }
-          return `${Object.keys(outputObject)}`;
-        })
+        // hbs.registerHelper('reportSection',()=>{
+        //   let outputObject = {};
+        //   let letterIndex = 97; // this is the ascii code start
+        //   for (const key in reportDetails.reportSection) {
+        //       let element;
+        //       if (letterIndex > 97) {
+        //         element = ` ${reportDetails.reportSection[key]}`;
+        //       } else {
+        //         element = `${reportDetails.reportSection[key]}`;
+        //       }
+        //       outputObject[element] = key;
+        //       letterIndex++;
+        //   }
+        //   return `${Object.keys(outputObject)}`;
+        // })
 
         hbs.registerHelper('reportPurpose',()=>{
-          if(reportDetails?.reportPurpose)
-            return `${REPORT_PURPOSE[`${reportDetails?.reportPurpose}`]}`;
+          if(reportDetails?.reportPurpose){
+            let purposes = [];
+            for(const indReportPurpose of reportDetails.reportPurpose){
+              purposes.push(`${REPORT_PURPOSE[`${indReportPurpose}`]}`)
+            }
+            return purposes;
+          }
           return '';
         })
+
+        hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
+          let outputObject = {};
+          let outputString = [];
+          let letterIndex = 97; // this is the ASCII code start
+          for (const indPurpose of reportDetails.reportPurpose ){
+            if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].length){
+              let keys = Object.keys(reportDetails.reportSection);
+              for (let i = 0; i < keys.length; i++){
+                if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].includes(reportDetails.reportSection[i])){
+                  const key = keys[i];
+                  let element;
+                  if (letterIndex > 97) {
+                      element = ` ${reportDetails.reportSection[key]}`;
+                  } else {
+                      element = `${reportDetails.reportSection[key]}`;
+                  }
+                  outputObject[element] = key;
+                  letterIndex++;
+                }
+              }
+              let outputArray = Object.keys(outputObject);
+              if (outputArray.length > 1) {
+                  let lastElement = outputArray.pop();
+                  outputArray.push(`and ${lastElement}`);
+              }
+              if(outputString.length){
+                outputString.push(" and " + outputArray.join(', ').replace(/,([^,]*)$/, ' $1') + ' of ' + REPORT_PURPOSE[`${indPurpose}`]);
+              }
+              else{
+                outputString.push(outputArray.join(', ').replace(/,([^,]*)$/, ' $1') +' of ' + REPORT_PURPOSE[`${indPurpose}`]);
+              }
+            }
+          }
+          return outputString;
+      });
 
         hbs.registerHelper('modelWeightageValue',()=>{
           let dcfApproachString:any = [],netAssetValueString:any = [],marketPriceString:any = [],totalWeightage:any=[];
@@ -2198,6 +2249,13 @@ export class ReportService {
       if(elevenUaData)
         return elevenUaData.data?.inputData?.reportingUnit;
       return 'Lakhs';
+    })
+
+    hbs.registerHelper('companyInfo',()=>{
+      if(reportDetails.companyInfo){
+        return reportDetails.companyInfo;
+      }
+      return '';
     })
 
     hbs.registerHelper('bookValueOfAllAssets',()=>{

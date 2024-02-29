@@ -142,19 +142,21 @@ export async function calculateDaysFromDate(data: any) {
   const rawProvisionalDate = data.provisionalDate;
   console.log(data,"new date payload ----->143")
 
-  const verifiedDate = data?.useProvisionalDate ? rawProvisionalDate : rawValuationDate;
+  const verifiedDate = rawValuationDate;
 
   let totalDays = 0;
   const valuationDate = date.addDays(verifiedDate,1)        // Adding a day due to UTC adjustment
   // console.log('Year is ', `${date.getFullYear()}`);
   // const valuationMonth = valuationDate.getMonth();
-  const startDate = valuationDate.getMonth() <= 3 ? new Date(`${valuationDate.getFullYear()-1},4,1`):new Date(`${valuationDate.getFullYear()+1},4,1`); // April 1st is considered as financial year
+  const startDate = valuationDate.getMonth() < 3 ? new Date(`${valuationDate.getFullYear()},4,1`):new Date(`${valuationDate.getFullYear()+1},4,1`); // April 1st is considered as financial year
   // new Date(`${valuationDate.getFullYear()+1}-04-01`)
   console.log('Start Date ', startDate);
   const endDate = valuationDate
   console.log('End Date ',endDate);
 
-  const daysRemaining = startDate > endDate ? date.subtract(startDate,endDate).toDays():date.subtract(endDate,startDate).toDays(); 
+  // const daysRemaining = startDate > endDate ? date.subtract(startDate,endDate).toDays():date.subtract(endDate,startDate).toDays(); 
+
+  const daysRemaining =   date.subtract(startDate,endDate).toDays(); 
 
   console.log("Days Left calc using date-time ",daysRemaining)
 
@@ -163,7 +165,7 @@ export async function calculateDaysFromDate(data: any) {
   // const timeDiff = endDate.getTime() - startDate.getTime();
   // const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
   // const totalDays = date.isLeapYear(valuationDate.getFullYear()) ? 366 : 365;
-  if (valuationDate.getMonth() <=3 ){
+  if (valuationDate.getMonth() <3 ){
     totalDays = date.isLeapYear(endDate.getFullYear()) ? 366 :365;
   } else {
     totalDays = date.isLeapYear(startDate.getFullYear()) ? 366 :365;
@@ -189,7 +191,7 @@ export async function calculateDaysFromDate(data: any) {
     dateDiff : daysRemaining,
     totalDays : totalDays,
     isProvisionalYearFull: isProvisionalYearFull,
-    isLeapYear : date.isLeapYear(endDate.getFullYear()),
+    isLeapYear : date.isLeapYear(startDate.getFullYear()),
     valuationDate,
     provisionalMinusValuation,
     financialYearStart: startDate
