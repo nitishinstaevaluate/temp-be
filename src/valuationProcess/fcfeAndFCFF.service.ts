@@ -657,7 +657,7 @@ export class FCFEAndFCFFService {
       try{
         const { outstandingShares, discountingPeriod } = aggregatePayload.inputs;
         let multiplier = GET_MULTIPLIER_UNITS[`${aggregatePayload.inputs.reportingUnit}`];
-        let counter = 0, debtOnIndexZero, discountingFactorWacc, secondLastFcfe = 0, sumOfCashFlows = 0, equityValue = 0;      //This will act as index inside for loop;
+        let counter = 0, debtOnIndexZero, discountingFactorWacc, secondLastFcfe = 0, sumOfCashFlows = 0, equityValue = 0,terminalDiscountingPeriod;      //This will act as index inside for loop;
         const years = aggregatePayload.years;
         const worksheet1 = aggregatePayload.worksheet1;
         const worksheet2 = aggregatePayload.worksheet2;
@@ -699,7 +699,7 @@ export class FCFEAndFCFFService {
         );
       
         // calculating fraction of year : if provisional date is 31st,March, use 1 else use the totalDaysDifferenceDiscountingFactor/totalDays  
-        const fractionOfYearLeft = aggregatePayload.isDiscountingFactorAdjustmentRequired ? aggregatePayload.totalDaysDifferenceDiscountingFactor/vdate.totalDays : 1;
+        const fractionOfYearLeft = aggregatePayload.isDiscountingFactorAdjustmentRequired ? vdate.dateDiff/vdate.totalDays : 1;
     
         console.log(fractionOfYearLeft,"date difference ---->688")
         console.log(aggregatePayload.totalDaysDifferenceDiscountingFactor,"total date difference ---->689", discountingPeriodObj.result)
@@ -760,13 +760,17 @@ export class FCFEAndFCFFService {
             if  (counter === yearLength && aggregatePayload.inputs.model.includes('FCFE')) {
               console.log(secondLastFcfe,"")
               fcfeValueAtTerminalRate = await fcfeTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate,adjustedCostOfEquity)
-              discountingPeriodValue = discountingPeriodValue - 1;
+              // discountingPeriodValue = discountingPeriodValue - 1;
             } 
             else if (counter === yearLength && aggregatePayload.inputs.model.includes('FCFF')) {
               fcfeValueAtTerminalRate = await fcffTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate, calculatedWacc)
-              discountingPeriodValue = discountingPeriodValue - 1;
+              // discountingPeriodValue = discountingPeriodValue - 1;
             }
 
+
+            if(discountingPeriod  !== yearLength){    //Forcing discounting period value in terminal value column to be  
+              terminalDiscountingPeriod = discountingPeriodValue-1;
+            }
 
             if (aggregatePayload.inputs.model.includes('FCFE')) {
               if (counter !== yearLength){
@@ -810,7 +814,7 @@ export class FCFEAndFCFFService {
               netCashFlow: counter === yearLength ? '' : netCashFlow,
               fixedAssets: counter === yearLength ? '' : changeInFixedAssets,
               fcff: counter === yearLength ? fcfeValueAtTerminalRate:fcff,
-              discountingPeriod: discountingPeriodValue,
+              discountingPeriod:counter === yearLength ? terminalDiscountingPeriod :  discountingPeriodValue,
               discountingFactor: discountingFactorWacc,
               presentFCFF: presentFCFF,
               sumOfCashFlows: '',
