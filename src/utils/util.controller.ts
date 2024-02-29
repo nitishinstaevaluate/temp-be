@@ -47,4 +47,18 @@ export class UtilController {
     async fetchAllDataCheklistEmails() {
         return await this.utilService.fetchDataChecklistAllEmails();
     }
+
+    // https://localhost:3000/util/resend-data-checklist
+    @UseGuards(AuthGuard('jwt'))
+    @Get('resend-data-checklist/:linkId')
+    async resendDataChecklist(@Param() linkId:any) {
+        return await this.utilService.resendDatachecklist(linkId);
+    }
+
+    // https://localhost:3000/util/get-data-checklist
+    @UseGuards(AuthGuard('jwt'))
+    @Get('get-data-checklist/:linkId')
+    async getDataChecklist(@Param() linkId:any) {
+        return await this.utilService.fetchDataChecklistByLinkId(linkId);
+    }
 }

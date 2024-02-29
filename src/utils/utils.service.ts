@@ -338,6 +338,24 @@ export class utilsService {
       }
     }
   }
+  async fetchDataChecklistByLinkId(link){
+    try{
+      const dataChecklistRecord = await this.dataChecklistModel.findOne({uniqueLinkId: link.linkId}).exec();
+
+      return {
+        data:dataChecklistRecord,
+        status:true,
+        msg:"datachecklist record found"
+      }
+    }
+    catch(error){
+      return {
+        error:error,
+        status:false,
+        msg:"datachecklist record not found"
+      }
+    }
+  }
 
   async fetchDataChecklistAllEmails(){
     try{
@@ -354,6 +372,34 @@ export class utilsService {
         status:false,
         msg:"emails fetched failed"
       }
+    }
+  }
+
+  async resendDatachecklist(link) {
+    try {
+      const expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 24);
+
+      await this.dataChecklistModel.findOneAndUpdate(
+        { uniqueLinkId: link.linkId },
+        { 
+          $inc: { emailSendFrequency: 1 },
+          $set: { expirationDate: expirationDate } 
+        },
+        { upsert: true, new: true }
+      ).exec();
+  
+      return {
+        uniqueLinkId: link.linkId,
+        status: true,
+        msg: 'data checklist re-sent successfully'
+      };
+    } catch (error) {
+      return {
+        error: error,
+        status: false,
+        msg: "datachecklist resend failed"
+      };
     }
   }
   }

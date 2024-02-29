@@ -427,6 +427,9 @@ export class ProcessManager {
 
     @Prop({ type: Number,unique: true,required:true  })
     processIdentifierId:number;
+    
+    @Prop({ type: String, required: false, default:'' })
+    uniqueLinkId: string;
 
     @Prop({ default: () => new Date(), required: false })
     createdOn: Date;
