@@ -6,7 +6,7 @@ import { utilsService } from "src/utils/utils.service";
 import hbs = require('handlebars');
 import * as converter from 'number-to-words'
 import { NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
-import { formatDate, transformData } from "./report-common-functions";
+import { computedTotalYears, formatDate, transformData } from "./report-common-functions";
 import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
 import * as xlsx from 'xlsx';
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
@@ -28,13 +28,16 @@ export class mrlReportService {
 
             const stageOneData = applicationData.stateInfo.firstStageInput;
             const computeExcelSheet = await this.excelSheetComputation(stageOneData);
+            const excelSheetId = this.getExcelSheetId(stageOneData);
+            const workbook = await this.readFile(excelSheetId); 
+            const computedTotalYear = await computedTotalYears(workbook);
               
 
             let htmlFilePath = path.join(process.cwd(), 'html-template', `management-representation-letter.html`);
             let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
 
         
-           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet);
+           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear);
         
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
             const template = hbs.compile(htmlContent);
@@ -59,8 +62,12 @@ export class mrlReportService {
             }
         }
     }
+    
+    getExcelSheetId(formOneData){
+      return formOneData.isExcelModified ? formOneData.modifiedExcelSheetId : formOneData.excelSheetId;
+    }
 
-    async loadMrlHelpers(processStateInfo, excelSheetData){
+    async loadMrlHelpers(processStateInfo, excelSheetData, computedTotalYear){
         try{
             hbs.registerHelper('companyName',()=>{
                 if(processStateInfo.firstStageInput.company)
@@ -182,9 +189,16 @@ export class mrlReportService {
             }
             return '';
         })
+
         hbs.registerHelper('natureOfInstrument',()=>{
           if(processStateInfo.sixthStageInput.natureOfInstrument)
             return NATURE_OF_INSTRUMENT[`${processStateInfo.sixthStageInput.natureOfInstrument}`];
+          return '';
+        })
+
+        hbs.registerHelper('yearStartAndYearEnd',()=>{
+          if(computedTotalYear)
+            return `FY ${computedTotalYear.startYear} to FY ${computedTotalYear.endYear}`;
           return '';
         })
         }
@@ -286,7 +300,7 @@ export class mrlReportService {
 
       async excelSheetComputation(data){
         try{
-          const excelSheetId = data.isExcelModified ? data.modifiedExcelSheetId : data.excelSheetId;
+          const excelSheetId = this.getExcelSheetId(data);
           const workbook = await this.readFile(excelSheetId); 
 
           let excelSheetDataObject = {};

@@ -1,3 +1,5 @@
+import { getYearsList } from 'src/excelFileServices/common.methods';
+
 export function  formatDate(date: Date): string {
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -80,4 +82,32 @@ export function  formatDate(date: Date): string {
       throw error;
     }
   
+  }
+
+  export async function computedTotalYears(worksheet){
+    try{
+      const excelWorkSheet = worksheet.Sheets['P&L'] || worksheet.Sheets['BS'];
+
+      const yearList:any = await getYearsList(excelWorkSheet);
+
+      let totalYearList = [];
+      yearList.forEach((indYear, index) => {
+        if(index !== yearList.length - 1){
+          totalYearList.push(`20${indYear}-20${yearList[index+1]}`);
+        }
+      });
+
+      return {
+        startYear: totalYearList[0],
+        endYear: totalYearList[totalYearList.length-1] || totalYearList[0]
+      }
+    }
+    catch(error){
+      console.log(error,"error")
+      return{
+        error:error,
+        status:false,
+        msg:"Financial and projection years"
+      }
+    }
   }
