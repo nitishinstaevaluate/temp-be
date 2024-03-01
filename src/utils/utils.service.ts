@@ -73,6 +73,55 @@ export class utilsService {
     )
   }
 
+
+  async paginateDatachecklist(page: number, pageSize: number,req):Promise<any> {
+
+    const skip = (page - 1) * pageSize;
+
+    return from(this.authenticationService.extractUserId(req)).pipe(
+      switchMap((userDetails)=>{
+        if(!userDetails.status)
+          return of(userDetails);
+        return forkJoin([
+          from(this.dataChecklistModel.find({ emailFrom: { $ne: null } })
+        .skip(skip)
+        .limit(pageSize)
+        .sort({ createdAt: -1 })
+        .exec()
+        ),
+        from(this.dataChecklistModel.find({ emailFrom: { $ne: null } })
+        .exec()
+        )
+        ])
+       .pipe(
+          switchMap(([response, totalPage]):any => {
+            const totalPages = Math.ceil(totalPage.length / pageSize);
+
+            return of({
+                response,
+                pagination: {
+                  current: page,
+                  pageSize,
+                  hasPrevious: page > 1,
+                  previous: page - 1,
+                  hasNext: page < totalPages,
+                  next: page + 1,
+                  lastPage: totalPages,
+                  totalElements: totalPage.length,
+                },
+              })
+          }),
+          catchError((error) => {
+            throw new NotFoundException({
+              error,
+              message: 'Something went wrong',
+            });
+          })
+        );
+      })
+    )
+  }
+
   async getMaxObId(){
     const maxState = await this.processModel.findOne({ processIdentifierId: { $exists: true, $ne: null } }).sort({ processIdentifierId: -1 }).exec();
     return maxState.processIdentifierId | 100000;
@@ -357,23 +406,23 @@ export class utilsService {
     }
   }
 
-  async fetchDataChecklistAllEmails(){
-    try{
-      const dataCheckListEmails = await this.dataChecklistModel.find({ emailFrom: { $ne: null } }).exec();
-      return {
-        data:dataCheckListEmails,
-        status:true,
-        msg:"email fetched successfully"
-      };
-    }
-    catch(error){
-      return {
-        error:error,
-        status:false,
-        msg:"emails fetched failed"
-      }
-    }
-  }
+  // async fetchDataChecklistAllEmails(){
+  //   try{
+  //     const dataCheckListEmails = await this.dataChecklistModel.find({ emailFrom: { $ne: null } }).exec();
+  //     return {
+  //       data:dataCheckListEmails,
+  //       status:true,
+  //       msg:"email fetched successfully"
+  //     };
+  //   }
+  //   catch(error){
+  //     return {
+  //       error:error,
+  //       status:false,
+  //       msg:"emails fetched failed"
+  //     }
+  //   }
+  // }
 
   async resendDatachecklist(link) {
     try {
