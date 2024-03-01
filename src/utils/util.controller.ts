@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards, ValidationPipe, Request, ParseIntPipe } from '@nestjs/common';
 import { utilsService } from './utils.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -41,12 +41,12 @@ export class UtilController {
         return await this.utilService.updateDataChecklist(dataChecklistPayload, linkId);
     }
 
-    // https://localhost:3000/util/get-email-list
-    @UseGuards(AuthGuard('jwt'))
-    @Get('get-email-list')
-    async fetchAllDataCheklistEmails() {
-        return await this.utilService.fetchDataChecklistAllEmails();
-    }
+    // // https://localhost:3000/util/get-email-list
+    // @UseGuards(AuthGuard('jwt'))
+    // @Get('get-email-list')
+    // async fetchAllDataCheklistEmails() {
+    //     return await this.utilService.fetchDataChecklistAllEmails();
+    // }
 
     // https://localhost:3000/util/resend-data-checklist
     @UseGuards(AuthGuard('jwt'))
@@ -60,5 +60,15 @@ export class UtilController {
     @Get('get-data-checklist/:linkId')
     async getDataChecklist(@Param() linkId:any) {
         return await this.utilService.fetchDataChecklistByLinkId(linkId);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('get-all-datachecklist/paginate')
+    async getPaginatedValuations(
+      @Request() req,
+      @Query('page', ParseIntPipe) page: number = 1,
+      @Query('pageSize', ParseIntPipe) pageSize: number = 10
+    ) :Promise<any>{
+      return this.utilService.paginateDatachecklist(page,pageSize, req);
     }
 }
