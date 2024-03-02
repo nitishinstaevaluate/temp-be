@@ -732,7 +732,7 @@ export class FCFEAndFCFFService {
             changeInNca = await ChangeInNCA(counter, worksheet2,worksheet3);
             deferredTaxAssets = await DeferredTaxAssets(counter, worksheet2);
             
-            changeInFixedAssets = await ChangeInFixedAssets(counter, worksheet2);
+            changeInFixedAssets =  -(await ChangeInFixedAssets(counter, worksheet2) + depAndAmortisation);  //Since formula for changeInFixedAssets =  -(closing value - opening value + depnAndAmortisation) - As per discussions with sonal  02-03-2024
             console.log(changeInFixedAssets, "fixed assets")
 
             debtAsOnDate = await GetDebtAsOnDate(counter, worksheet2);
@@ -751,8 +751,9 @@ export class FCFEAndFCFFService {
               netCashFlow = pat + depAndAmortisation + otherNonCashItems + changeInNca + deferredTaxAssets  + addInterestAdjTaxes;
             }
 
-            const differenceInFixedAssetAndDepnAndAmortisation = changeInFixedAssets - depAndAmortisation;
-            const fcff = netCashFlow + differenceInFixedAssetAndDepnAndAmortisation;
+            // const differenceInFixedAssetAndDepnAndAmortisation = changeInFixedAssets;
+            // console.log(depAndAmortisation,"depn and amortisation", differenceInFixedAssetAndDepnAndAmortisation)
+            const fcff = changeInFixedAssets + netCashFlow ;
     
             if  (counter === yearLength && aggregatePayload.inputs.model.includes('FCFE')) {
               console.log(secondLastFcfe,"")
