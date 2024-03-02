@@ -324,7 +324,7 @@ export async function ChangeInFixedAssets(i: number, worksheet2: any) {
   const nextNetFixedAsset = nextTangibleAssets + nextIntangibleAssets + nextCapitalWorkInProgress +
     nextPreOperativeExpenses + nextCapitalAdvances + nextCapitalLiabilities
   // console.log('Net Next Fixed Asset - ', nextNetFixedAsset );
-  return netFixedAsset - nextNetFixedAsset;
+  return nextNetFixedAsset - netFixedAsset; //it should be (closing - opening) and not (opening - closing) - As per discussion with Sonal 02-03-2024 
 }
 
 export async function GetDebtAsOnDate(i: number, worksheet2: any) {
