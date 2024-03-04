@@ -5,6 +5,7 @@ import { ValuationsService } from 'src/valuationProcess/valuationProcess.service
 import { UsersService } from 'src/users/users.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { AuthGuard } from '@nestjs/passport';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 @Controller('export')
 export class ExportResultsController {
   constructor(
@@ -13,7 +14,7 @@ export class ExportResultsController {
     private readonly customLogger:CustomLogger,
   ) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get(':reportId')
   async generatePdf(@Param('reportId') reportId: string, @Res() res: Response) {
     this.customLogger.log({

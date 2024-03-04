@@ -42,12 +42,8 @@ transports: [
 export class KeyCloakAuthGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
   canActivate(context: ExecutionContext): Observable<boolean> {
-    const accessToken =
-    `eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpc0hFRjZna05QNTNnN2RJWTA4bzlnRDVfZF9DV1FhdnBVOHUyYWlOR1R3In0.eyJleHAiOjE3MDk1NTY2MDgsImlhdCI6MTcwOTU1MzAwOCwianRpIjoiZjY5MTc1NDAtODFhZi00OGZmLTllM2QtOTg3YzRhZjUzZDJlIiwiaXNzIjoiaHR0cHM6Ly9hdXRoLmlmaW53b3J0aC5jb20vcmVhbG1zL2l2YWxyZWFsbSIsInN1YiI6IjQ4N2E1ZjZlLTg5ZWItNDFiZC1hZWY5LWM3NjNlN2MwNTA4YyIsInR5cCI6IkJlYXJlciIsImF6cCI6ImlmaW4tdmFsIiwic2Vzc2lvbl9zdGF0ZSI6ImEzZTZiZjFkLTdkYmMtNGVmNy1hNGFkLTI2NWVkNGE5YWQ2MyIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidGVzdGVyIiwiYWNjb3VudF9vd25lciJdfSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiYTNlNmJmMWQtN2RiYy00ZWY3LWE0YWQtMjY1ZWQ0YTlhZDYzIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJuYW1lIjoiU2Fua2V0IFNhdHB1dGUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzYW5rZXQiLCJnaXZlbl9uYW1lIjoiU2Fua2V0IiwiZmFtaWx5X25hbWUiOiJTYXRwdXRlIiwiZW1haWwiOiJzYW5rZXRAaWZpbndvcnRoLmNvbSJ9.VvU4IFwjEGsP0Z773z9yJR6BdFXmn-hR3XIWS435vWkEkcHbqKCV_ZVx9bOh3FHrSxl-bG7VDXwPaNNvHp5bnv00pyPoRcgFfJjK_WsnzE0EvN1KdDW2eBihfOs0Kaq20tAAgsqRdx3NuQt3o4uYe_jxlRGQ67dJiOuZRN6XCYm9L_tEEDDidCrx79qPSgr8hFtuoki8bfjPixEvS9n7Z4CIEnd2v1QhLfUnHvn64Dc9vhlbOpx7xakO47zOpz6D5kGzpebnzMORl9p_i_XJt_nPGBOZ2vUa6LFkvti7_Pi5GAjSMzLePJ3MhsO2t0PBVqxUAN6W_b8uKH7wAILaAg`;
-    
-
     const request = context.switchToHttp().getRequest();
-    // const accessToken = request.headers['authorization'];
+    const accessToken = request.headers['authorization'];
 
     const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler()) || [];
 
@@ -143,6 +139,62 @@ export class KeyCloakAuthGuard implements CanActivate {
           throw new UnauthorizedException({message:'Login failed, contact administrator',...error.response.data});
         }
       )
+    );
+  }
+
+
+  fetchAuthUser(request){
+    const token = request.headers.authorization;
+      
+    if (!token) {
+      return { status:false, msg: 'Unauthorized' };
+    }
+
+    return from(
+      axios.post(
+        KEY_CLOAK_INTROSPECT,
+        qs.stringify(
+          { 
+            token: token,
+            client_secret: process.env.KEY_CLOAK_CLIENT_SECRET,
+            client_id: process.env.KEY_CLOAK_CLIENT_ID,
+          }
+        ),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      )
+    ).pipe(
+      switchMap((response:any) => {
+          const method = response.config.method;
+          const url = response.config.url;
+
+          if(!response.data.active)
+            throw new UnauthorizedException({error:response,message:'Invalid access token'});
+
+          logger.log(
+              `${moment(now)} | ${response.status} | Authentication | [${method.toUpperCase()}] ${url} - ${delay}ms ${JSON.stringify(
+                response.data,
+              )}`,
+            );
+          return of({...response.data,status:true,userId:response.data.sub});
+          
+      }),
+      catchError((error:any) => {
+        logger.error(
+          `${moment(now)} | ${error.status} | [${error.response.error.config.method.toUpperCase()}] ${error.response.error.config.url} - ${delay}ms ${JSON.stringify(
+            {token:error.response.error.config.data},
+          )} ${JSON.stringify(error.response.error.data)} | ${JSON.stringify({message:error.response.message})}`,
+        );
+        throw new UnauthorizedException(
+          {
+            status: false,
+            msg: error.response.message,
+          }
+        );
+      })
     );
   }
 

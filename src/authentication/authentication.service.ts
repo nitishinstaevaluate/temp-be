@@ -37,8 +37,8 @@ export class AuthenticationService {
 
      async loginVersionTwo(request){
       try{
-        const response = new KeyCloakAuthGuard(new Reflector());
-        return await response.authoriseKCUser(request).toPromise();
+        const KCGuard = new KeyCloakAuthGuard(new Reflector());
+        return await KCGuard.authoriseKCUser(request).toPromise();
       }
       catch(error){
         throw new HttpException(
@@ -122,7 +122,7 @@ export class AuthenticationService {
 
       async extractBearer(req){
           const token = req.headers.authorization;
-          if (!token || !token.startsWith('Bearer ')) {
+          if (!token) {
             return { status:false, msg: 'Unauthorized' };
           }
 

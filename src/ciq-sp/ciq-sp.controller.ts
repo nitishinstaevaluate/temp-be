@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto, ciqGetStockBetaDto } from './dto/ciq-sp.dto';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/library/interfaces/api-endpoints.local';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Controller('ciq-sp')
 export class CiqSpController {
@@ -11,21 +12,21 @@ export class CiqSpController {
     constructor(private capitalIqAndSPService: CiqSpService){}
     
   // https://localhost:3000/ciq-sp/hierarchy-based-industry-list
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('hierarchy-based-industry-list')
   async getSPHierarchyBasedIndustry() {
     return this.capitalIqAndSPService.fetchSPHierarchyBasedIndustry();
   }
 
   // https://localhost:3000/ciq-sp/sp-industry-list
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sp-industry-list')
   async getAllSPIndustry() {
     return this.capitalIqAndSPService.fetchAllSPIndustry();
   }
 
   // https://localhost:3000/ciq-sp/sp-industry-list/search?
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sp-industry-list/search')
   async getSPIndustryListByName(
     @Query('industry') industry: string,
@@ -35,7 +36,7 @@ export class CiqSpController {
   }
 
   // https://localhost:3000/ciq-sp/hierarchy-based-level-four-industry/:descriptor
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('hierarchy-based-level-four-industry/:descriptor')
   async getSPLevelFourIndustryBasedList(
     @Param('descriptor') descriptor: string,
@@ -44,7 +45,7 @@ export class CiqSpController {
   }
 
   // https://localhost:3000/ciq-sp/sp-level-four-industry-list
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('sp-level-four-industry-list')
   async getSPIndustryListByLevelFourIndustries(@Body() levelFourIndustry:any, @Req() req) {
     // return this.capitalIqAndSPService.fetchSPIndustryListByLevelFourIndustries(levelFourIndustry);
@@ -52,42 +53,42 @@ export class CiqSpController {
   }
 
   // https://localhost:3000/ciq-sp/sp-company-status-type
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sp-company-status-type')
   async getSPCompanyStatusType() {
     return this.capitalIqAndSPService.fetchSPCompanyStatusType();
   }
 
   // https://localhost:3000/ciq-sp/sp-company-type
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sp-company-type')
   async getSPCompanyType() {
     return this.capitalIqAndSPService.fetchSPCompanyType();
   }
 
   // https://localhost:3000/ciq-sp/calculate-sp-beta-aggregate
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('calculate-sp-beta-aggregate')
   async calculateSpBetaAggregate(@Body(ValidationPipe) payload: ciqGetMarketBetaDto) {
     return this.capitalIqAndSPService.calculateBetaAggregate(payload)
   }
 
   // https://localhost:3000/ciq-sp/calculate-sp-stock-beta
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('calculate-sp-stock-beta')
   async calculateSpStockBeta(@Body(ValidationPipe) payload: ciqGetStockBetaDto) {
     return this.capitalIqAndSPService.calculateStockBeta(payload)
   }
 
   // https://localhost:3000/ciq-sp/calculate-sp-companies-mean-median
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('calculate-sp-companies-mean-median')
   async calculateSPCompaniesMeanMedianRatio(@Body(ValidationPipe) payload: ciqGetCompanyMeanMedianDto) {
     return this.capitalIqAndSPService.calculateCompaniesMeanMedianRatio(payload)
   }
 
   // https://localhost:3000/ciq-sp/calculate-sp-financial-data
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('calculate-sp-financial-data')
   async calculateSPFinancialData(@Body(ValidationPipe) payload: ciqGetFinancialDto) {
     return this.capitalIqAndSPService.calculateFinancialData(payload)

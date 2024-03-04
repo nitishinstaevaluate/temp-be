@@ -6,6 +6,8 @@ import { isNotEmpty } from 'class-validator';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { utilsService } from 'src/utils/utils.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class ProcessStatusManagerService {
@@ -32,7 +34,9 @@ export class ProcessStatusManagerService {
         }
         const maxProcessIdentifierId = await this.utilsService.getMaxObId();
 
-        const authoriseUser = await this.authenticationService.extractUserId(req);
+        const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+
+        const authoriseUser = await KCGuard.fetchAuthUser(req).toPromise();
 
         if (!authoriseUser.status)
           return authoriseUser;
@@ -180,7 +184,8 @@ export class ProcessStatusManagerService {
       else {
         const maxProcessIdentifierId = await this.utilsService.getMaxObId();
 
-        const authoriseUser = await this.authenticationService.extractUserId(req);
+        const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+        const authoriseUser:any = await KCGuard.fetchAuthUser(req).toPromise();
 
         if (!authoriseUser.status)
           return authoriseUser;
