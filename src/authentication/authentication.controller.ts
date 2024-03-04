@@ -8,12 +8,15 @@ import {
   Request,
   Put,
   UseGuards,
+  ValidationPipe,
+  UsePipes,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { config } from 'process';
 import { Response } from 'express';
 import {AuthorizationGuard} from './authorization/authorization.guard';
+import { KCloginAuthDto } from './dto/authentication.dto';
 // import { authconfig } from '../middleware/auth0';
 // const { auth } = require('express-openid-connect');
 // import { Client, Account, ID } from "appwrite";
@@ -61,6 +64,12 @@ export class AuthenticationController {
   @Get('/extractUser')
   async extractUser(@Request() req){
     return this.authenticationService.extractUserId(req)
+  }
+
+  @Post('/v2/login')
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
+  async loginVersionTwo(@Body() payload:KCloginAuthDto) {
+    return await this.authenticationService.loginVersionTwo(payload);
   }
 
 }
