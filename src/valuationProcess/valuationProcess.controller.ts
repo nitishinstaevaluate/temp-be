@@ -23,8 +23,10 @@ import { CustomLogger } from 'src/loggerService/logger.service';
 import { MODEL } from 'src/constants/constants';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from 'src/authentication/authentication.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { Reflector } from '@nestjs/core';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
 @UseInterceptors(MyMiddleware)
 export class ValuationProcessController {
@@ -197,10 +199,12 @@ let workbook=null;
     }
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('v1')
   async processValuationModel(@Request() req, @Body() inputs): Promise<any> {
-    const authoriseUser = await this.authService.extractUserId(req);
+    const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+
+    const authoriseUser = await KCGuard.fetchAuthUser(req).toPromise();
     if(!authoriseUser.status)
       return authoriseUser;
     
@@ -387,7 +391,7 @@ export class ValuationsController {
   constructor(private valuationsService: ValuationsService,
     private readonly utilsService: utilsService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get(':userId')
   async findAllByUserId(@Param('userId') userId: string): Promise<any[]> {
     return this.valuationsService.getValuationsByUserId(userId);
