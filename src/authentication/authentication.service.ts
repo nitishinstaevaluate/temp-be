@@ -4,7 +4,6 @@ import { User } from '../users/schema/user.schema';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
-import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class AuthenticationService {
@@ -37,7 +36,7 @@ export class AuthenticationService {
 
      async loginVersionTwo(request){
       try{
-        const KCGuard = new KeyCloakAuthGuard(new Reflector());
+        const KCGuard = new KeyCloakAuthGuard();
         return await KCGuard.authoriseKCUser(request).toPromise();
       }
       catch(error){

@@ -11,7 +11,6 @@ import { plainToClass } from 'class-transformer';
 import { ElevenUaDTO, FetchElevenUaDto } from './dto/eleven-ua.dto';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
-import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class ElevenUaService {
@@ -31,7 +30,7 @@ export class ElevenUaService {
 
             const filePath:any = await this.thirdpartyApiAggregate.fetchFinancialSheetFromS3(excelSheetId);
 
-            const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+            const KCGuard:any = new KeyCloakAuthGuard();
             const authorizeUser = await KCGuard.fetchAuthUser(req).toPromise();
 
             if(!authorizeUser.status)

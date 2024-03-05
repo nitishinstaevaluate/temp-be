@@ -12,7 +12,6 @@ import { DataCheckListDocument } from './schema/dataCheckList.schema';
 import { nanoid } from 'nanoid';
 import { MandateDocument } from './schema/mandate.schema';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
-import { Reflector } from '@nestjs/core';
 @Injectable()
 export class utilsService {
   constructor(
@@ -25,7 +24,7 @@ export class utilsService {
   async paginateValuationByUserId(page: number, pageSize: number,req, query):Promise<any> {
 
     const skip = (page - 1) * pageSize;
-    const KCGuard:any = new KeyCloakAuthGuard(new Reflector()); 
+    const KCGuard:any = new KeyCloakAuthGuard(); 
     return from(KCGuard.fetchAuthUser(req).toPromise()).pipe(
       switchMap((userDetails:any)=>{
         if(!userDetails.status)
@@ -80,7 +79,7 @@ export class utilsService {
 
     const skip = (page - 1) * pageSize;
 
-    const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+    const KCGuard:any = new KeyCloakAuthGuard();
     return from(KCGuard.fetchAuthUser(req)).pipe(
       switchMap((userDetails:any)=>{
         if(!userDetails.status)
@@ -202,7 +201,7 @@ export class utilsService {
         break;
 
         case 'datachecklist':
-          const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+          const KCGuard:any = new KeyCloakAuthGuard();
 
           const userDetails:any = await KCGuard.fetchAuthUser(request).toPromise();
 

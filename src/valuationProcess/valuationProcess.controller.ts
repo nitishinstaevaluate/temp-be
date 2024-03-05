@@ -24,7 +24,6 @@ import { MODEL } from 'src/constants/constants';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
-import { Reflector } from '@nestjs/core';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -202,7 +201,7 @@ let workbook=null;
   @UseGuards(KeyCloakAuthGuard)
   @Post('v1')
   async processValuationModel(@Request() req, @Body() inputs): Promise<any> {
-    const KCGuard:any = new KeyCloakAuthGuard(new Reflector());
+    const KCGuard:any = new KeyCloakAuthGuard();
 
     const authoriseUser = await KCGuard.fetchAuthUser(req).toPromise();
     if(!authoriseUser.status)

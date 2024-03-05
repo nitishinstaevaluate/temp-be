@@ -40,12 +40,13 @@ transports: [
 
 @Injectable()
 export class KeyCloakAuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
   canActivate(context: ExecutionContext): Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const accessToken = request.headers['authorization'];
 
-    const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler()) || [];
+    const reflectorHandler = new Reflector();
+    
+    const requiredRoles = reflectorHandler.get<string[]>('roles', context.getHandler()) || [];
 
     if (!accessToken) {
       logger.error(
@@ -95,6 +96,7 @@ export class KeyCloakAuthGuard implements CanActivate {
             
         }),
         catchError((error:any) => {
+          console.log(error,"KC error")
           logger.error(
             `${moment(now)} | ${error.status} | [${error.response.error.config.method.toUpperCase()}] ${error.response.error.config.url} - ${delay}ms ${JSON.stringify(
               {token:error.response.error.config.data},
