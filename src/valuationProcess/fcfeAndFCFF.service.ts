@@ -804,6 +804,7 @@ export class FCFEAndFCFFService {
             const result:any = {
               particulars: GET_DATE_MONTH_YEAR_FORMAT.test(individualYear) ? `${individualYear}` : (counter === yearLength ? 'Terminal Value' : `${individualYear}-${parseInt(individualYear) + 1}`),
               pat: counter === yearLength ? '' : pat,
+              addInterestAdjTaxes:counter === yearLength ?'':addInterestAdjTaxes,
               depAndAmortisation: counter === yearLength ? '' : depAndAmortisation,
               onCashItems: counter === yearLength ? '' : otherNonCashItems,
               nca: counter === yearLength ? '' : changeInNca,
@@ -828,11 +829,12 @@ export class FCFEAndFCFFService {
             discountingPeriodValue = discountingPeriodValue + 1;
 
             if (isFCFF) {
-                delete result.addInterestAdjTaxes; // If not needed for FCFE
-            }
-
-            if (isFCFE) {
+                delete result.changeInBorrowings; // If not needed for FCFF
+              }
+              
+              if (isFCFE) {
                 delete result.debtOnDate; // If not needed for FCFE
+                delete result.addInterestAdjTaxes; // If not needed for FCFE
             }
             secondLastFcfe = fcff; 
 
