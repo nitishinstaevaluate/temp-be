@@ -27,8 +27,18 @@ export class ciqSpBetaService {
             }
         }
       }
+
+      async baseBetaWorking(data:any){
+        return data.industryAggregateList.map((elements,index)=>{    //creating base for beta storing beta workings/calculations
+          return {
+              companyId:elements.COMPANYID,
+              companyName:elements.COMPANYNAME,
+              counter:index+1
+            }
+          })
+      }
   
-      async calculateBetaAggregate(axiosBetaResponse, taxRate, betSubType, betaType) {
+      async calculateBetaAggregate(axiosBetaResponse, taxRate, betSubType, betaType, betaWorking) {
         try {
           if (!axiosBetaResponse.data) {
             throw new NotFoundException({
@@ -58,7 +68,7 @@ export class ciqSpBetaService {
             }
           }
           
-          const getDebtToCapitalAndMarketValue = await  this.calculateDebtToCapitalAndEquityToCapital(result, maxLength); // calculating debt to capital (8) and equity to capital (10)
+          const getDebtToCapitalAndMarketValue = await  this.calculateDebtToCapitalAndEquityToCapital(result, maxLength, betaWorking); // calculating debt to capital (8) and equity to capital (10)
           
           const calculateAdjstdBetaByMarshallBlume = await this.calculateAdjustedBeta(result,maxLength);  //calculating adjusted beta using marshal blume formula
 
@@ -67,6 +77,7 @@ export class ciqSpBetaService {
                   calculateAdjstdBetaByMarshallBlume, 
                   getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, 
                   getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, 
+                  getDebtToCapitalAndMarketValue.betaCalculations, 
                   taxRate, maxLength
                 );
 
@@ -74,12 +85,18 @@ export class ciqSpBetaService {
                   unleveredBetaDetails.unleveredBeta, 
                   getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, 
                   getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, 
+                  unleveredBetaDetails.betaCalculations, 
                   taxRate, maxLength
                 );
+
+            const betaWorkingsMeanMedianMetric = await this.calculateBetaWorkingMetric(releveredBetaDetails.betaCalculations, maxLength);   //calculating beta workings - mean and median
                   
+            console.log(betaWorkingsMeanMedianMetric.betaCalculations)
             return {
                 beta:await this.calculateBetaMetric(releveredBetaDetails.releveredBeta,  betSubType, maxLength),  // mean/average or median computation
-                deRatio: await this.calculateBetaMetric(releveredBetaDetails.deRatio, betSubType, maxLength)    //mean/average or median computation
+                deRatio: await this.calculateBetaMetric(releveredBetaDetails.deRatio, betSubType, maxLength),    //mean/average or median computation
+                coreBetaWorking: releveredBetaDetails.betaCalculations,
+                betaMeanMedianWorking: betaWorkingsMeanMedianMetric.betaCalculations
               };
           }
           else{     // For unlevered scenario
@@ -87,13 +104,18 @@ export class ciqSpBetaService {
                 calculateAdjstdBetaByMarshallBlume,
                 getDebtToCapitalAndMarketValue.calculateTotalDebtToCapital, 
                 getDebtToCapitalAndMarketValue.calculateTotalEquityToCapital, 
+                getDebtToCapitalAndMarketValue.betaCalculations, 
                 taxRate, 
                 maxLength
               );
 
+            const betaWorkingsMeanMedianMetric = await this.calculateBetaWorkingMetric(unleveredBetaDetails.betaCalculations, maxLength);    //calculating beta workings - mean and median
+            
             return {
               beta: await this.calculateBetaMetric(unleveredBetaDetails.unleveredBeta,  betSubType, maxLength), // mean/average or median computation
-              deRatio: await this.calculateBetaMetric(unleveredBetaDetails.deRatio, betSubType, maxLength)  //mean/average or median computation
+              deRatio: await this.calculateBetaMetric(unleveredBetaDetails.deRatio, betSubType, maxLength),  //mean/average or median computation
+              coreBetaWorking: unleveredBetaDetails.betaCalculations,
+              betaMeanMedianWorking: betaWorkingsMeanMedianMetric.betaCalculations
             };
           }
           
@@ -108,6 +130,24 @@ export class ciqSpBetaService {
         }
       }
   
+      async calculateBetaWorkingMetric(betaWorkings, maxLength) {
+    
+        const betaCalculations = [];
+        
+        for await (const betaType of BETA_SUB_TYPE) {
+            const betaCalculation = {
+                betaType: betaType,
+                debtToCapital: await this.calculateBetaMetric(betaWorkings.map(element => element.debtToCapital), betaType, maxLength),
+                equityToCapital: await this.calculateBetaMetric(betaWorkings.map(element => element.equityToCapital), betaType, maxLength),
+                leveredBeta: betaWorkings[0]?.leveredBeta ? await this.calculateBetaMetric(betaWorkings.map(element => element.leveredBeta), betaType, maxLength) : '',
+                unleveredBeta: await this.calculateBetaMetric(betaWorkings.map(element => element.unleveredBeta), betaType, maxLength)
+            };
+    
+            betaCalculations.push(betaCalculation);
+        }
+      
+        return { betaCalculations };
+    }
       async calculateBetaMetric(data, method, maxLength) {
         try{
           const result = (method === BETA_SUB_TYPE[0])
@@ -145,16 +185,22 @@ export class ciqSpBetaService {
           }
         }
       }
-      async calculateUnleveredBeta(adjustedBeta, debtToCapital, equityToCapital, taxRate, maxLength){
+      async calculateUnleveredBeta(adjustedBeta, debtToCapital, equityToCapital, betaWorking, taxRate, maxLength){
         try{
           // Be4 = M12/(1+(1-L12)*J12/K12)
 
-          let unleveredBeta = [], deRatio = [];
+          let unleveredBeta = [], deRatio = [], betaCalculations:any[]=[];
           for (let i = 0; i < maxLength; i++){
             unleveredBeta.push(adjustedBeta[i] / (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i]));
+            betaCalculations.push(
+              {
+                ...betaWorking[i],
+                unleveredBeta:unleveredBeta[i]
+              }
+            );
             deRatio.push(debtToCapital[i]/equityToCapital[i]);  //calculating de ratio
           }
-          return { unleveredBeta, deRatio };
+          return { unleveredBeta, deRatio, betaCalculations };
         }
         catch(error){
           return {
@@ -165,16 +211,24 @@ export class ciqSpBetaService {
         }
       }
   
-      async calculateReleveredBeta(betaUnleveredArray,debtToCapital, equityToCapital, taxRate, maxLength){
+      async calculateReleveredBeta(betaUnleveredArray,debtToCapital, equityToCapital, betaWorking, taxRate, maxLength){
         try{
           // Relevered Equity Beta = Be4 * (1 + (1-Tax Rate) * Debt to Equity)
-          
-          let releveredBeta = [], deRatio = [];
+          console.log(betaWorking,"beta before relevering")
+          let releveredBeta = [], deRatio = [], betaCalculations:any[] = [];
           for (let i = 0; i < maxLength; i++){
             releveredBeta.push(betaUnleveredArray[i] * (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i]));
+
+            betaCalculations.push(
+              {
+                ...betaWorking[i],
+                leveredBeta:releveredBeta[i]
+              }
+            )
+
             deRatio.push(debtToCapital[i]/equityToCapital[i]);  //calculating de ratio
           }
-          return { releveredBeta, deRatio };
+          return { releveredBeta, deRatio, betaCalculations };
         }
         catch(error){
           return {
@@ -184,10 +238,10 @@ export class ciqSpBetaService {
         }
       }
   
-      async calculateDebtToCapitalAndEquityToCapital(result ,maxLength){
+      async calculateDebtToCapitalAndEquityToCapital(result ,maxLength, betaWorking){
         try{
           let calculateTotalDebtInCurrentLiabilities = [], calculateTotalLongTermDebt = [], calculateTotalBookValue = [], 
-            calculateTotalMarketValueOfEquity = [], calculateTotalMarketValueOfCapital = [], calculateTotalDebtToCapital = [], calculateTotalEquityToCapital = [];
+            calculateTotalMarketValueOfEquity = [], calculateTotalMarketValueOfCapital = [], calculateTotalDebtToCapital = [], calculateTotalEquityToCapital = [], betaCalculations:any[] = [];
   
           for (let i = 0; i < maxLength; i++){
   
@@ -240,11 +294,23 @@ export class ciqSpBetaService {
               (calculateTotalMarketValueOfEquity[i] / calculateTotalMarketValueOfCapital[i]) * 100
             )
             
+            betaCalculations.push(
+              {
+                ...betaWorking[i],
+                totalBookValueOfDebt: calculateTotalBookValue[i], 
+                totalBookValueOfPreferredEquity: convertToNumberOrZero(result[MNEMONIC_ENUMS.IQ_PREF_EQUITY][i]), 
+                totalMarketValueOfEquity: calculateTotalMarketValueOfEquity[i],
+                totalMarketValueOfCapital: calculateTotalMarketValueOfCapital[i],
+                debtToCapital: calculateTotalDebtToCapital[i],
+                equityToCapital: calculateTotalEquityToCapital[i]
+
+              })
           }
   
           return {
             calculateTotalDebtToCapital,
-            calculateTotalEquityToCapital
+            calculateTotalEquityToCapital,
+            betaCalculations
           }
         }
         catch(error){
