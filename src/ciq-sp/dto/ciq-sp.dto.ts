@@ -170,7 +170,7 @@ import { Expose, Type,} from 'class-transformer';
     unleveredBeta: number;
 }
 
-  export class CompanyDto {
+  export class CoreBetaWorkingDto {
     @IsNotEmpty({ message: 'companyId cannot be empty' })
     @IsNumber({}, { message: 'companyId should be a number' })
     companyId: number;
@@ -214,8 +214,8 @@ import { Expose, Type,} from 'class-transformer';
   export class betaWorkingDto {
     @IsArray({ message: 'coreBetaWorking must be an array' })
     @ValidateNested({ each: true })
-    @Type(() => CompanyDto)
-    coreBetaWorking: CompanyDto[];
+    @Type(() => CoreBetaWorkingDto)
+    coreBetaWorking: CoreBetaWorkingDto[];
     
     @IsArray({ message: 'betaMeanMedianWorking must be an array' })
     @ValidateNested({ each: true })

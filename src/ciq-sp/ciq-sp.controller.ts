@@ -4,7 +4,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { betaWorkingDto, ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto, ciqGetStockBetaDto } from './dto/ciq-sp.dto';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/library/interfaces/api-endpoints.local';
-import { betaWorking } from './schema/ciq-sp.chema';
 
 @Controller('ciq-sp')
 export class CiqSpController {

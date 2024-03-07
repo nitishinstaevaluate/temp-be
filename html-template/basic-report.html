@@ -2094,12 +2094,138 @@
                                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                                 </li>
                                                 <li data-list-text="3." style="">
+                                                    {{#if (hasBetaWorking)}}
+                                                    <p style="padding-left: 27pt;text-indent: -18pt;line-height: 140%;text-align: left;padding-bottom: 2%;">
+                                                        The beta is arrived using {{betaName}} beta of the comparable companies in
+                                                        the similar sector.    
+                                                    </p>
+                                                    <table style="border-collapse:collapse;width: 100%;margin-left: 2%;" cellspacing="0">
+                                                        <tr style="padding-top: 3%;padding-bottom: 1%;">
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Company Id
+                                                                </p>
+                                                            </td>
+                                                            
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Company Name
+                                                                </p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Book value of Debt
+                                                                </p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color: black;;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Book value of Preferred Equity   
+                                                                </p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color: black;;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Market value of Equity                            
+                                                                </p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Market value of Capital
+                                                                </p>
+                                                                
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Debt to capital
+                                                                    </p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Equity to capital
+                                                                </p>
+                                                            </td>
+                                                            {{#if (hasLeveredBeta)}}
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Levered beta
+                                                                </p>
+                                                            </td>
+                                                            {{/if}}
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                                                <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                                                    Unlevered beta
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                            
+                                                        {{#each (coreBetaWorking data)}}
+                                                        <tr style="padding-top: 1%;padding-bottom: 1%;">
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{this.companyId}}</p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{this.companyName}}</p>
+                                                            </td>
+                                                            <td style="width:11% !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.totalBookValueOfDebt}}</p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.totalBookValueOfPreferredEquity}}</p>
+                                                            </td>
+                                                            <td style="width:11% !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.totalMarketValueOfEquity}}</p>
+                                                            </td>
+                                                            <td style="width:11% !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.totalMarketValueOfCapital}}</p>
+                                                            </td>
+                                                            <td style="width:7% !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.debtToCapital}}</p>
+                                                            </td>
+                                                            <td style="width:7% !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.equityToCapital}}</p>
+                                                            </td>
+                                                            {{#if (hasLeveredBeta)}}
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.leveredBeta}}</p>
+                                                            </td>
+                                                            {{/if}}
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo this.unleveredBeta}}</p>
+                                                            </td>
+                                                        </tr>
+                                                        {{/each}}
+
+                                                        {{#each (betaMeanMedianWorking data)}}
+                                                        <tr style="padding-top: 1%;padding-bottom: 1%;">
+                                                            <td colspan="6" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{updateBetaType this.betaType}}</p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{fixDecimalUptoTwo this.debtToCapital}}</p>
+                                                            </td>
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{fixDecimalUptoTwo this.equityToCapital}}</p>
+                                                            </td>
+                                                            {{#if (hasLeveredBeta)}}
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{fixDecimalUptoTwo this.leveredBeta}}</p>
+                                                            </td>
+                                                            {{/if}}
+                                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                                                <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{fixDecimalUptoTwo this.unleveredBeta}}</p>
+                                                            </td>
+                                                        </tr>
+                                                        {{/each}}
+                                                            </table>
+                                                    {{else}}
                                                     <p style="padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
                                                         The beta is arrived using {{betaName}} beta of the comparable companies in
-                                                        the similar sector.</p>
+                                                        the similar sector.
+                                                    </p>
+                                                    {{/if}}
+
                                                 </li>
                                                 <li data-list-text="4.">
-                                                    <p style="padding-top: 9pt;padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
+                                                    <p style="padding-top: 2%;padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
                                                         The alpha/company specific risk premium is adjusted on account of micro
                                                         factors associated with the company. 
                                                     </p>
