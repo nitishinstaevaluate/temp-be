@@ -88,4 +88,10 @@ export class ProcessStatusManagerController {
         ) {
       return await this.processStatusManagerService.updateEditedExcelStatus(processStateId);
     }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Get('fetch-process-identifier-id/:obId')
+    async fetchProcessIdentifierId(@Param() obId: any){
+      return await this.processStatusManagerService.getProcessIdentifierId(obId);
+    }
 }

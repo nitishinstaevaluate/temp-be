@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToClass } from 'class-transformer';
 import { Model } from 'mongoose';
@@ -473,11 +473,13 @@ export class CiqSpService {
         data.valuationDate = formatDateToMMDDYYYY(date.Date) || formatDateToMMDDYYYY(data.valuationDate);
 
         const createPayloadStructure = await this.ciqSpBetaService.createBetaPayloadStructure(data);
+        const createBetaBase = await this.ciqSpBetaService.baseBetaWorking(data);
         const axiosBetaResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
-        const betaData = await this.ciqSpBetaService.calculateBetaAggregate(axiosBetaResponse, taxRate, betaSubType, betaType);
+        const betaData = await this.ciqSpBetaService.calculateBetaAggregate(axiosBetaResponse, taxRate, betaSubType, betaType, createBetaBase);
 
         return {
-          data:axiosBetaResponse.data,
+          coreBetaWorking:betaData.coreBetaWorking,
+          betaMeanMedianWorking:betaData.betaMeanMedianWorking,
           msg:"beta calculation success",
           status:true,
           total:betaData.beta,
@@ -711,6 +713,38 @@ export class CiqSpService {
           status:false,
           msg:"Stock beta calculation failed"
         }
+      }
+    }
+
+    async upsertBetaWorking(payload){
+      try{
+        return await this.ciqSpBetaService.upsertBetaWorkingAggregate(payload);
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error,
+            status: false,
+            msg: 'beta working upsertion failed',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+
+    async getBetaWorking(processDetails){
+      try{
+        return await this.ciqSpBetaService.getBetaWorkingAggregate(processDetails.processId);
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error,
+            status: false,
+            msg: 'beta working upsertion failed',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
 }

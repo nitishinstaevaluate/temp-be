@@ -1881,7 +1881,7 @@ export const REPORT_LINE_ITEM = ['PAT','Depn. and Amortn.','Other Non Cash items
 
 export const BETA_SUB_TYPE = ['meanBeta', 'medianBeta'];
 
-export const BETA_TYPE = ['levered', 'unlevered'];
+export const BETA_TYPE = ['levered', 'unlevered', 'market_beta'];
 
 export const MNEMONIC_ENUMS = {
   IQ_CUSTOM_BETA: 'IQ_CUSTOM_BETA',
