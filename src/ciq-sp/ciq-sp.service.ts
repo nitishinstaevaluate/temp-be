@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { plainToClass } from 'class-transformer';
 import { Model } from 'mongoose';
@@ -713,6 +713,38 @@ export class CiqSpService {
           status:false,
           msg:"Stock beta calculation failed"
         }
+      }
+    }
+
+    async upsertBetaWorking(payload){
+      try{
+        return await this.ciqSpBetaService.upsertBetaWorkingAggregate(payload);
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error,
+            status: false,
+            msg: 'beta working upsertion failed',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
+
+    async getBetaWorking(processDetails){
+      try{
+        return await this.ciqSpBetaService.getBetaWorkingAggregate(processDetails.processId);
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error,
+            status: false,
+            msg: 'beta working upsertion failed',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
     }
 }

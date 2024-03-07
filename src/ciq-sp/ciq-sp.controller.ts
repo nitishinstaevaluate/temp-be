@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CiqSpService } from './ciq-sp.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto, ciqGetStockBetaDto } from './dto/ciq-sp.dto';
+import { betaWorkingDto, ciqGetCompanyMeanMedianDto, ciqGetFinancialDto, ciqGetMarketBetaDto, ciqGetStockBetaDto } from './dto/ciq-sp.dto';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { CIQ_ELASTIC_SEARCH_CRITERIA } from 'src/library/interfaces/api-endpoints.local';
+import { betaWorking } from './schema/ciq-sp.chema';
 
 @Controller('ciq-sp')
 export class CiqSpController {
@@ -91,5 +92,20 @@ export class CiqSpController {
   @Post('calculate-sp-financial-data')
   async calculateSPFinancialData(@Body(ValidationPipe) payload: ciqGetFinancialDto) {
     return this.capitalIqAndSPService.calculateFinancialData(payload)
+  }
+
+  // https://localhost:3000/ciq-sp/beta-working
+  @UseGuards(AuthGuard('jwt'))
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
+  @Put('beta-working')
+  async upsertBetaWorking(@Body() payload: betaWorkingDto) {
+    return this.capitalIqAndSPService.upsertBetaWorking(payload)
+  }
+
+  // https://localhost:3000/ciq-sp/fetch-beta-working
+  @UseGuards(AuthGuard('jwt'))
+  @Get('fetch-beta-working/:processId')
+  async fetchBetaWorking(@Param() processId: any) {
+    return this.capitalIqAndSPService.getBetaWorking(processId);
   }
 }

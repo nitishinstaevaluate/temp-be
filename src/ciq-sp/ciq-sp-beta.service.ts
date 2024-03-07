@@ -1,11 +1,18 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { MNEMONIC_ENUMS, MNEMONICS_ARRAY, BETA_TYPE, BETA_SUB_TYPE, MNEMONICS_ARRAY_5 } from "src/constants/constants";
 import { convertToNumberOrZero, convertToNumberOrOne } from "src/excelFileServices/common.methods";
 import { iqCreateStructure, extractValues, calculateMean, calculateMedian, ciqStockBetaCreateStructure } from "./ciq-common-functions";
+import { BetaWorkingDocument } from "./schema/ciq-sp.chema";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { betaWorkingDto } from "./dto/ciq-sp.dto";
 
 
 @Injectable()
 export class ciqSpBetaService {
+  constructor(
+    @InjectModel('betaWorking') 
+    private readonly betaWorkingModel: Model<BetaWorkingDocument>){}
     //#region beta calculation starts
       async createBetaPayloadStructure(data){
         try{
@@ -379,4 +386,70 @@ export class ciqSpBetaService {
         }
       }
       //#endregion stock beta calculation ends
+
+      //#region Beta working starts
+      async upsertBetaWorkingAggregate(payload:betaWorkingDto){
+        try{
+          const existingBetaWorking = await this.betaWorkingModel.findOne({processIdentifierId:payload.processIdentifierId});
+
+          if (existingBetaWorking) {
+            const updatedRecord = await this.betaWorkingModel.findOneAndUpdate(
+                { processIdentifierId: payload.processIdentifierId },
+                {
+                    $set: {
+                       ...payload
+                    },
+                },
+                { new: true },
+            ).exec();
+            return {
+              processIdentifierId: updatedRecord.processIdentifierId,
+              status:true,
+              msg:"Updated beta working success"
+            }
+          }
+
+          const newRecord = await this.betaWorkingModel.create(payload);
+          return {
+            processIdentifierId: newRecord.processIdentifierId,
+            status:true,
+            msg:"new beta working inserted success"
+          }
+        }
+        catch(error){
+          throw new HttpException(
+            {
+              error: error,
+              status: false,
+              msg: 'beta working aggregate upsertion failed',
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+
+      async getBetaWorkingAggregate(id){
+        try{
+          const response = await this.betaWorkingModel
+                              .findOne({processIdentifierId: id})
+                              .select('coreBetaWorking betaMeanMedianWorking processIdentifierId')
+                              .exec();
+          return {
+            data:response,
+            status:true,
+            msg:"Beta working found"
+          }
+        }
+        catch(error){
+          throw new HttpException(
+            {
+              error: error,
+              status: false,
+              msg: 'beta working record not found',
+            },
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      }
+      //#endregion Beta working ends
 }
