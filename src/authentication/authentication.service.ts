@@ -1,8 +1,9 @@
-import { Injectable,NotAcceptableException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable,NotAcceptableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/schema/user.schema';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Injectable()
 export class AuthenticationService {
@@ -31,6 +32,23 @@ export class AuthenticationService {
         return {
             access_token: this.jwtService.sign(payload),
         };
+    }
+
+     async loginVersionTwo(request){
+      try{
+        const KCGuard = new KeyCloakAuthGuard();
+        return await KCGuard.authoriseKCUser(request).toPromise();
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error.response,
+            status: false,
+            msg: error.response.message,
+          },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
     }
 
     getPublic(): string {
@@ -103,7 +121,7 @@ export class AuthenticationService {
 
       async extractBearer(req){
           const token = req.headers.authorization;
-          if (!token || !token.startsWith('Bearer ')) {
+          if (!token) {
             return { status:false, msg: 'Unauthorized' };
           }
 

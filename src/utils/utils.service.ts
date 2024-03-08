@@ -11,6 +11,7 @@ import * as wordListPath from 'word-list';
 import { DataCheckListDocument } from './schema/dataCheckList.schema';
 import { nanoid } from 'nanoid';
 import { MandateDocument } from './schema/mandate.schema';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 @Injectable()
 export class utilsService {
   constructor(
@@ -23,9 +24,9 @@ export class utilsService {
   async paginateValuationByUserId(page: number, pageSize: number,req, query):Promise<any> {
 
     const skip = (page - 1) * pageSize;
-
-    return from(this.authenticationService.extractUserId(req)).pipe(
-      switchMap((userDetails)=>{
+    const KCGuard:any = new KeyCloakAuthGuard(); 
+    return from(KCGuard.fetchAuthUser(req).toPromise()).pipe(
+      switchMap((userDetails:any)=>{
         if(!userDetails.status)
           return of(userDetails);
         return forkJoin([
@@ -78,8 +79,9 @@ export class utilsService {
 
     const skip = (page - 1) * pageSize;
 
-    return from(this.authenticationService.extractUserId(req)).pipe(
-      switchMap((userDetails)=>{
+    const KCGuard:any = new KeyCloakAuthGuard();
+    return from(KCGuard.fetchAuthUser(req)).pipe(
+      switchMap((userDetails:any)=>{
         if(!userDetails.status)
           return of(userDetails);
         return forkJoin([
@@ -199,7 +201,9 @@ export class utilsService {
         break;
 
         case 'datachecklist':
-          const userDetails = await this.authenticationService.extractUser(request);
+          const KCGuard:any = new KeyCloakAuthGuard();
+
+          const userDetails:any = await KCGuard.fetchAuthUser(request).toPromise();
 
           if(!userDetails.status)
             return {message:'unauthorized', status:false};
@@ -208,7 +212,7 @@ export class utilsService {
             { 
               uniqueLinkId: body.uniqueLink, 
               expirationDate: body.expirationDate, 
-              emailFrom: userDetails.userId.username, 
+              emailFrom: userDetails.email, 
               emailTo: body?.emailTo
             }
           );

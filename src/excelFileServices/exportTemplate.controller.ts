@@ -6,11 +6,12 @@ import * as ExcelJS from 'exceljs';
 import { columnsList } from './excelSheetConfig';
 import { AuthGuard } from '@nestjs/passport';
 import { MODEL } from 'src/constants/constants';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Controller('download')
 export class ExportTemplateController {
 
-  // @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(KeyCloakAuthGuard)
   @Get('/template/:projectionYears/:modelName')
   async download(
     @Param('projectionYears') projectionYears: number,
