@@ -2249,7 +2249,7 @@ export class ReportService {
     let formattedValue = '';
   
     if (value !== null && value !== undefined && value !== '') {
-      formattedValue = Math.abs(value) < 0.005 ? '0.00' : `${Math.abs(value).toFixed(3)}`;
+      formattedValue = Math.abs(value) < 0.005 ? '0.00' : `${Math.abs(value).toFixed(2)}`;
       formattedValue = Number(formattedValue).toLocaleString('en-IN');
     }
   
