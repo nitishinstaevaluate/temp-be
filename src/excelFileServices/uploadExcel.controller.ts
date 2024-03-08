@@ -18,6 +18,7 @@ import { CustomLogger } from 'src/loggerService/logger.service';
 import { Observable, catchError, from, throwError } from 'rxjs';
 import { ExcelSheetService } from './uploadExcel.service';
 import { AuthGuard } from '@nestjs/passport';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 const storage = diskStorage({
   destination: './uploads',
@@ -42,14 +43,14 @@ export class UploadController {
     }
   }
 
-  // @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(KeyCloakAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
   async uploadFile(@UploadedFile() formData) {
     return await this.excelSheetService.pushInitialFinancialSheet(formData);
   }
 
-  // @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(KeyCloakAuthGuard)
   @Get('dates')
   getUploadDates() {
     const uploadDir = path.join(__dirname, '../../uploads');
@@ -63,7 +64,7 @@ export class UploadController {
     return fileDates;
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sheet/:fileName/:sheetName')
   getSheetData(
     @Param('fileName') fileName: string,
@@ -76,7 +77,7 @@ export class UploadController {
     );
   }
 
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('generate/:reportId/:model/:specificity')
   async generatePdf(
     @Param('reportId') reportId : string,
@@ -87,6 +88,7 @@ export class UploadController {
     return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res);
   }
 
+  @UseGuards(KeyCloakAuthGuard)
   @Post('modifyExcel')
   async modifyExcel(@Body() excelData){
     return await this.excelSheetService.modifyExcelSheet(excelData);

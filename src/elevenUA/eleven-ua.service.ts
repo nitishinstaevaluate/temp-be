@@ -10,6 +10,7 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import { plainToClass } from 'class-transformer';
 import { ElevenUaDTO, FetchElevenUaDto } from './dto/eleven-ua.dto';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Injectable()
 export class ElevenUaService {
@@ -29,7 +30,8 @@ export class ElevenUaService {
 
             const filePath:any = await this.thirdpartyApiAggregate.fetchFinancialSheetFromS3(excelSheetId);
 
-            const authorizeUser = await this.authenticationService.extractUserId(req);
+            const KCGuard:any = new KeyCloakAuthGuard();
+            const authorizeUser = await KCGuard.fetchAuthUser(req).toPromise();
 
             if(!authorizeUser.status)
                 return authorizeUser

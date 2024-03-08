@@ -13,13 +13,15 @@ import { ProcessStatusManagerService } from './process-status-manager.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ProcessStatusManagerDTO } from './dto/process-status-manager.dto';
 import { utilsService } from 'src/utils/utils.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { Roles } from 'src/middleware/decorator/roles.decorator';
 
 @Controller('process-status-manager')
 export class ProcessStatusManagerController {
     constructor(private processStatusManagerService:ProcessStatusManagerService,
       private readonly utilsService:utilsService){}
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Put('instantiateProcess')
     async upsertProcessState(
         @Request() req,
@@ -29,7 +31,7 @@ export class ProcessStatusManagerController {
       return await this.processStatusManagerService.upsertProcess(req,process,processId);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Get('retrieveProcess/:processId')
     async fetchProcessState(
         @Param('processId') processId?: string
@@ -37,7 +39,7 @@ export class ProcessStatusManagerController {
       return await this.processStatusManagerService.fetchProcess(processId);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Get('retrieveStage/:processId')
     async fetchActiveStage(
         @Param('processId') processId?: string
@@ -45,7 +47,7 @@ export class ProcessStatusManagerController {
       return await this.processStatusManagerService.fetchActiveStage(processId);
     }
     
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Put('updateStage')
     async updateActiveStage(
       @Body() processStage:any
@@ -53,7 +55,9 @@ export class ProcessStatusManagerController {
       return await this.processStatusManagerService.updateActiveStage(processStage);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    // @UseGuards(KeyCloakAuthGuard)
+    @UseGuards(KeyCloakAuthGuard)
+    // @Roles('account_owner')
     @Get('paginate')
     async getPaginatedValuations(
       @Request() req,
@@ -64,7 +68,7 @@ export class ProcessStatusManagerController {
       return this.utilsService.paginateValuationByUserId(page,pageSize, req,query);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Get('retrieve-particular-stage/filter')
     async getStageWiseDetails(
         @Query('processId') processId?: string,
@@ -73,7 +77,7 @@ export class ProcessStatusManagerController {
       return await this.processStatusManagerService.fetchStageWiseDetails(processId, stageDetails);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Get('excel-status/:processStateId')
     async fetchExcelStatus(
       @Param('processStateId') processStateId: string,
@@ -81,7 +85,7 @@ export class ProcessStatusManagerController {
       return await this.processStatusManagerService.getExcelStatus(processStateId);
     }
 
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Put('update-edited-excel-status/:processStateId')
     async updateEditedExcelStatus(
       @Param() processStateId:any

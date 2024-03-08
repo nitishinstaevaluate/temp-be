@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { User } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Controller('users')
 export class UsersController {
@@ -38,13 +39,13 @@ export class UsersController {
     //   return this.userService.createUser(email, password);
     
   
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Get()
     async getAllUsers() {
       return this.userService.getUsers();
     }
   
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(KeyCloakAuthGuard)
     @Get(':id')
     async getMe(@Param() params) {
       return this.userService.getMe(params.id);

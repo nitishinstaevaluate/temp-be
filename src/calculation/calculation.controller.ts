@@ -3,18 +3,19 @@ import { CalculationService} from './calculation.service';
 
 import { valuationWeightage } from "./dto/calculation.dto";
 import { AuthGuard } from '@nestjs/passport';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Controller('calculation')
 export class CalculationController {
   constructor(private calculationService: CalculationService) { }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('/weightedvaluation')
   createPost(@Body() body: valuationWeightage) {
     return this.calculationService.calculateWeightedVal(body);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('risk-free-rate/:maturityYears/:date')
   async calculateRiskFreeRate(
     @Param('maturityYears') maturityYears: string,
@@ -31,7 +32,7 @@ export class CalculationController {
 export class WaccController {
   constructor(private calculationService: CalculationService) { }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('/adjcoe')
   async find(
     @Query('riskFreeRate') riskFreeRate: string,
@@ -43,7 +44,7 @@ export class WaccController {
     return this.calculationService.adjCOE(parseFloat(riskFreeRate), parseFloat(expMarketReturn), parseFloat(beta), parseFloat(riskPremium),coeMethod);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('/wacc')
   async findByID(
     @Query('adjustedCostOfEquity') adjustedCostOfEquity: string,
@@ -64,7 +65,7 @@ export class WaccController {
     coeMethod)
   } 
   
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('/industryOrCompanyBasedWacc')
   async calculateWacc(
     @Query('adjCoe') adjCoe: string,
