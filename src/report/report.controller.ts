@@ -15,6 +15,7 @@ import { ReportService } from './report.service';
 import { diskStorage } from 'multer';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 const storage = diskStorage({
   destination: './pdf',
@@ -28,7 +29,7 @@ const storage = diskStorage({
 export class ReportController {
     constructor(private reportService:ReportService){}
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('getReport/:approach/:reportId')
   async getReport(
     @Param('reportId') reportId : string,
@@ -53,7 +54,7 @@ export class ReportController {
   }
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Post('generateReport')
   async generateReport(
   @Body() data) {
@@ -61,7 +62,7 @@ export class ReportController {
     return result;
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('rule-eleven-ua-report/:reportId')
   async generateElevenUaReport(
   @Param('reportId') reportId : string,
@@ -69,7 +70,7 @@ export class ReportController {
     return await this.reportService.ruleElevenUaReport(reportId, res);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sebi-report/:reportId')
   async generateSebiReport(
   @Param('reportId') reportId : string,
@@ -78,7 +79,7 @@ export class ReportController {
     return await this.reportService.sebiReport(reportId, res, req);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('preview-sebi-report/:reportId')
   async previewSebiReport(
   @Param('reportId') reportId : string,
@@ -87,7 +88,7 @@ export class ReportController {
     return await this.reportService.previewSebiReport(reportId, res, req);
   }
   
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('previewReport/:approach/:reportId')
   async previewReport(
     @Param('reportId') reportId : string='',
@@ -98,7 +99,7 @@ export class ReportController {
     return  result;
   }
   
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('preview-rule-eleven-ua-report/:reportId')
   async previewElevenUa(
     @Param('reportId') reportId : string='',
@@ -107,13 +108,13 @@ export class ReportController {
   }
 
   @Put('updateReportDoc/:reportId')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage }))
   async updateDocx(@UploadedFile() file,@Param('reportId') reportId:string) {
     return await this.reportService.updateReportDocxBuffer(reportId,file);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('mandate-report/:reportId')
   async generateMandateReport(
   @Param('reportId') reportId : string,
@@ -121,7 +122,7 @@ export class ReportController {
     return await this.reportService.mandateReport(reportId, res);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('mrl-report/:processStateId')
   async generateMrlReport(
   @Param('processStateId') processStateId : string,
