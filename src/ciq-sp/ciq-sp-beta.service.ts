@@ -98,7 +98,6 @@ export class ciqSpBetaService {
 
             const betaWorkingsMeanMedianMetric = await this.calculateBetaWorkingMetric(releveredBetaDetails.betaCalculations, maxLength);   //calculating beta workings - mean and median
                   
-            console.log(betaWorkingsMeanMedianMetric.betaCalculations)
             return {
                 beta:await this.calculateBetaMetric(releveredBetaDetails.releveredBeta,  betSubType, maxLength),  // mean/average or median computation
                 deRatio: await this.calculateBetaMetric(releveredBetaDetails.deRatio, betSubType, maxLength),    //mean/average or median computation
@@ -221,7 +220,6 @@ export class ciqSpBetaService {
       async calculateReleveredBeta(betaUnleveredArray,debtToCapital, equityToCapital, betaWorking, taxRate, maxLength){
         try{
           // Relevered Equity Beta = Be4 * (1 + (1-Tax Rate) * Debt to Equity)
-          console.log(betaWorking,"beta before relevering")
           let releveredBeta = [], deRatio = [], betaCalculations:any[] = [];
           for (let i = 0; i < maxLength; i++){
             releveredBeta.push(betaUnleveredArray[i] * (1 + (1 - taxRate) * debtToCapital[i]/equityToCapital[i]));
