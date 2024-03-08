@@ -62,6 +62,9 @@ export class DataCheckList {
 
   @Prop({type:Number, default:1})
   emailSendFrequency: number;
+
+  @Prop({ type: Number,unique: true,required:true  })
+  dataChecklistIdentifierId:number;
 }
 
 export type DataCheckListDocument = DataCheckList & Document;

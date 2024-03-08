@@ -124,7 +124,12 @@ export class utilsService {
 
   async getMaxObId(){
     const maxState = await this.processModel.findOne({ processIdentifierId: { $exists: true, $ne: null } }).sort({ processIdentifierId: -1 }).exec();
-    return maxState.processIdentifierId | 100000;
+    return maxState ? maxState.processIdentifierId : 100000;
+  }
+
+  async getMaxDatachecklistObId() {
+    const maxState = await this.dataChecklistModel.findOne({ dataChecklistIdentifierId: { $exists: true, $ne: null } }).sort({ dataChecklistIdentifierId: -1 }).exec();
+    return maxState ? maxState.dataChecklistIdentifierId : 1000;
   }
 
   constructQuery(userId: string, query?: string): FilterQuery<any> {
@@ -204,12 +209,15 @@ export class utilsService {
           if(!userDetails.status)
             return {message:'unauthorized', status:false};
 
+          const maxId = await this.getMaxDatachecklistObId();
+          
           await this.dataChecklistModel.create(
             { 
               uniqueLinkId: body.uniqueLink, 
               expirationDate: body.expirationDate, 
               emailFrom: userDetails.userId.username, 
-              emailTo: body?.emailTo
+              emailTo: body?.emailTo,
+              dataChecklistIdentifierId: maxId + 1
             }
           );
         break;
