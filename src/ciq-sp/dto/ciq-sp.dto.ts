@@ -148,3 +148,81 @@ import { Expose, Type,} from 'class-transformer';
     @ValidateNested({ each: true })
     industryAggregateList: [];
   }
+
+  export class BetaMeanMedianDto {
+    @IsNotEmpty({ message: 'betaType cannot be empty' })
+    @IsString({ message: 'betaType is required eg.meanBeta or medianBeta' })
+    betaType: string;
+
+    @IsNotEmpty({ message: 'debtToCapital cannot be empty' })
+    @IsNumber({}, { message: 'debtToCapital should be a number' })
+    debtToCapital: number;
+
+    @IsNotEmpty({ message: 'equityToCapital cannot be empty' })
+    @IsNumber({}, { message: 'equityToCapital should be a number' })
+    equityToCapital: number;
+
+    @IsOptional()
+    leveredBeta?: number;
+
+    @IsNotEmpty({ message: 'unleveredBeta cannot be empty' })
+    @IsNumber({}, { message: 'unleveredBeta should be a number' })
+    unleveredBeta: number;
+}
+
+  export class CoreBetaWorkingDto {
+    @IsNotEmpty({ message: 'companyId cannot be empty' })
+    @IsNumber({}, { message: 'companyId should be a number' })
+    companyId: number;
+    
+    @IsNotEmpty({ message: 'companyName cannot be empty' })
+    @IsString({ message: 'companyName should be string' })
+    companyName: string;
+    
+    @IsNotEmpty({ message: 'totalBookValueOfDebt cannot be empty' })
+    @IsNumber({}, { message: 'totalBookValueOfDebt should be a number' })
+    totalBookValueOfDebt: number;
+    
+    @IsNotEmpty({ message: 'totalBookValueOfPreferredEquity cannot be empty' })
+    @IsNumber({}, { message: 'totalBookValueOfPreferredEquity should be a number' })
+    totalBookValueOfPreferredEquity: number;
+    
+    @IsNotEmpty({ message: 'totalMarketValueOfEquity cannot be empty' })
+    @IsNumber({}, { message: 'totalMarketValueOfEquity should be a number' })
+    totalMarketValueOfEquity: number;
+    
+    @IsNotEmpty({ message: 'totalMarketValueOfCapital cannot be empty' })
+    @IsNumber({}, { message: 'totalMarketValueOfCapital should be a number' })
+    totalMarketValueOfCapital: number;
+    
+    @IsNotEmpty({ message: 'debtToCapital cannot be empty' })
+    @IsNumber({}, { message: 'debtToCapital should be a number' })
+    debtToCapital: number;
+    
+    @IsNotEmpty({ message: 'equityToCapital cannot be empty' })
+    @IsNumber({}, { message: 'equityToCapital should be a number' })
+    equityToCapital: number;
+    
+    @IsNotEmpty({ message: 'unleveredBeta cannot be empty' })
+    @IsNumber({}, { message: 'unleveredBeta should be a number' })
+    unleveredBeta: number;
+    
+    @IsOptional()
+    leveredBeta?: number;
+  }
+
+  export class betaWorkingDto {
+    @IsArray({ message: 'coreBetaWorking must be an array' })
+    @ValidateNested({ each: true })
+    @Type(() => CoreBetaWorkingDto)
+    coreBetaWorking: CoreBetaWorkingDto[];
+    
+    @IsArray({ message: 'betaMeanMedianWorking must be an array' })
+    @ValidateNested({ each: true })
+    @Type(() => BetaMeanMedianDto)
+    betaMeanMedianWorking: BetaMeanMedianDto[];
+
+    @IsNotEmpty({ message: 'processIdentifierId cannot be empty' })
+    @IsNumber({}, { message: 'processIdentifierId should be a number' })
+    processIdentifierId: number;
+  }

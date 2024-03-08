@@ -541,7 +541,7 @@ export class CapitalStructureService {
     }
   }
   async getCapitalStructure(): Promise<CapitalStructure[]> {
-    return await this.capitalStructureModel.find().exec();
+    return await this.capitalStructureModel.find({isActive:true}).exec();
   }
   async getCapitalStructureById(id: string): Promise<CapitalStructure> {
     return await this.capitalStructureModel.findById(id);

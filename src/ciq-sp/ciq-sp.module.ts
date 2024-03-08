@@ -3,7 +3,7 @@ import { CiqSpService } from '../ciq-sp/ciq-sp.service';
 import { CiqSpController } from './ciq-sp.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-service.service';
-import { ciqsimpleindustrySchema, ciqindustryhierarchySchema, ciqcompanystatustypeSchema, ciqcompanytypeSchema } from './schema/ciq-sp.chema';
+import { ciqsimpleindustrySchema, ciqindustryhierarchySchema, ciqcompanystatustypeSchema, ciqcompanytypeSchema, BetaWorkingSchema } from './schema/ciq-sp.chema';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { AuthenticationService } from 'src/authentication/authentication.service';
@@ -35,7 +35,8 @@ import { MandateSchema } from 'src/utils/schema/mandate.schema';
     { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
     { name: 'historicalReturns', schema : HistoricalReturnsSchema},
     { name: 'dataChecklist', schema: DataCheckListSchema },
-    { name: 'mandate', schema: MandateSchema }
+    { name: 'mandate', schema: MandateSchema },
+    { name: 'betaWorking', schema: BetaWorkingSchema },
   ]),
   ProcessStatusManagerModule,
   AuthenticationModule,

@@ -369,4 +369,20 @@ export class ProcessStatusManagerService {
       );
     }
   }
+
+  async getProcessIdentifierId(idDetails){
+    try{
+      return this.processModel.findOne({_id: idDetails.obId}).select('processIdentifierId').exec();
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'fetch process-id failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

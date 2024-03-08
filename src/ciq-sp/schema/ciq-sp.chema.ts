@@ -37,10 +37,10 @@ export const ciqindustryhierarchySchema = SchemaFactory.createForClass(ciqindust
 
 @Schema()
 export class ciqcompanystatustype {
-  @Prop({type:Number,require:true})
+  @Prop({type:Number,required:true})
   companystatustypeid:number;
 
-  @Prop({type:String,require:true})
+  @Prop({type:String,required:true})
   companystatustypename:string
 }
 
@@ -49,12 +49,27 @@ export const ciqcompanystatustypeSchema = SchemaFactory.createForClass(ciqcompan
 
 @Schema()
 export class ciqcompanytype {
-  @Prop({type:Number,require:true})
+  @Prop({type:Number,required:true})
   companytypeid:number;
 
-  @Prop({type:String,require:true})
+  @Prop({type:String,required:true})
   companytypename:string
 }
 
 export type ciqcompanytypeDocument = ciqcompanytype & Document;
 export const ciqcompanytypeSchema = SchemaFactory.createForClass(ciqcompanytype);
+
+@Schema({timestamps:true, versionKey:false})
+export class betaWorking {
+  @Prop({type:Array<Object>,required:true})
+  coreBetaWorking:Array<object>;
+
+  @Prop({type:Array<Object>,required:true})
+  betaMeanMedianWorking:Array<object>;
+  
+  @Prop({type:Number,required:true})
+  processIdentifierId:number;
+}
+
+export type BetaWorkingDocument = betaWorking & Document;
+export const BetaWorkingSchema = SchemaFactory.createForClass(betaWorking);

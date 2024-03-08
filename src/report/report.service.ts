@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -17,7 +17,7 @@ import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axio
 require('dotenv').config();
 import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
-import { CIQ_FINANCIAL_SEGMENT } from 'src/library/interfaces/api-endpoints.local';
+import { CIQ_FINANCIAL_SEGMENT, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
 import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
@@ -59,14 +59,15 @@ export class ReportService {
           const reportDetails = await this.reportModel.findById(id);
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
+          const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
           if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
             // htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
           }
-          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
-            htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
-          }
+          // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
+          //   htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+          // }
           pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
           docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
           
@@ -103,7 +104,7 @@ export class ReportService {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
-          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure);
+          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking);
   
           if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -152,13 +153,14 @@ export class ReportService {
 
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+    const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
     if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
-    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
-      htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
-    }
+    // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
+    //   htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
+    // }
 
     pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
     docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
@@ -194,7 +196,7 @@ export class ReportService {
             transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
         }
     }
-    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure);
+    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking);
 
     if (valuationResult.modelResults.length > 0) {
         const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -649,7 +651,7 @@ export class ReportService {
       }
     }
 
-   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure){
+   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure, betaWorking){
      try{
       hbs.registerHelper('companyName',()=>{
         if(valuationResult.inputData[0].company)
@@ -2169,6 +2171,33 @@ export class ReportService {
       }
       return false;
     })
+    
+    hbs.registerHelper('hasBetaWorking',()=>{
+      return betaWorking?.coreBetaWorking?.length;
+    })
+
+    hbs.registerHelper('coreBetaWorking',()=>{
+      return betaWorking?.coreBetaWorking;
+    })
+
+    hbs.registerHelper('betaMeanMedianWorking',()=>{
+      return betaWorking?.betaMeanMedianWorking;
+    })
+
+    hbs.registerHelper('hasLeveredBeta',()=>{
+      return betaWorking?.coreBetaWorking.some((item:any) => item.leveredBeta !== undefined);
+    })
+
+    hbs.registerHelper('updateBetaType',(val)=>{
+      if (val === BETA_SUB_TYPE[0]) {
+        return 'Average';
+      }
+      else if(val === BETA_SUB_TYPE[1]) {
+        return 'Median';
+      }
+      return '-';
+    })
+    
     }
      
      catch(error){
@@ -2652,6 +2681,36 @@ export class ReportService {
         msg:"report generation failed",
         status:false
       }
+    }
+  }
+
+  async fetchBetaWorking(request, id, betaType){
+    try{
+      if(betaType === BETA_TYPE[2]){
+        return;
+      }
+      const bearerToken = await this.authenticationService.extractBearer(request);
+
+      if(!bearerToken.status)
+        return bearerToken;
+
+      const headers = { 
+        'Authorization':`${bearerToken.token}`,
+        'Content-Type': 'application/json'
+      }
+      const processDetails = await this.processStateManagerService.getProcessIdentifierId({obId:id});
+      const financialSegmentDetails = await axiosInstance.get(`${FETCH_BETA_WORKING}/${processDetails.processIdentifierId}`, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+      return financialSegmentDetails.data?.data;
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'beta working fetch failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
