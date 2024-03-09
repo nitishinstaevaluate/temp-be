@@ -30,8 +30,14 @@ export async function getYearsList(worksheet1: any): Promise<any> {
         const object = worksheet1[key];
         // console.log('First Object ', object.v);
         if(object.v && GET_DATE_MONTH_YEAR_FORMAT.test(object.v)){
-          // console.log(object.v,"new date")
-          yearSet.push(object.v.trim().slice(-2))
+          // yearSet.push(object.v.trim().slice(-2))
+
+          // Updated logic to check if provisional year is before financial year end, if true, push the provisional year else push the financial year
+          const [day, month, year] = object.v.split('-').map(Number);
+          const dateObject = new Date(year, month - 1, day); 
+          const calculatedProvisionalYear = await computeFinancialYearEndDate(dateObject);
+          const provisionalYear = calculatedProvisionalYear.getFullYear();
+          yearSet.push(`${provisionalYear}`.slice(-2));
         }
         else if (object.v && GET_YEAR.test(object.v)) {
           if(object?.v?.includes('-')){
@@ -101,6 +107,23 @@ export async function getYearsList(worksheet1: any): Promise<any> {
 
   
 }
+
+export async function computeFinancialYearEndDate(provisionalDate){    //Always pass provisioanl date it will give you  only financial year
+  const cleanProvisionalDate = new Date(provisionalDate);
+
+  const currentFinancialYearEnd = cleanProvisionalDate.getFullYear();
+
+
+  const provisionalBasedFinancialYear = new Date(currentFinancialYearEnd, 2, 31);
+
+  const currentYear = new Date().getFullYear();
+  const currentFinancialDate = new Date(currentYear, 2, 31);
+
+  const fiscalYearEnd:any = new Date(currentYear, 2, 31); // March is month index 2
+
+  return cleanProvisionalDate <= fiscalYearEnd ? ( cleanProvisionalDate.getFullYear() === new Date().getFullYear() ? new Date(currentFinancialYearEnd - 1, 2, 31) : provisionalBasedFinancialYear ) : currentFinancialDate; 
+}
+
 export function findMedian(numbers: number[]) {
   numbers.sort((a, b) => a - b);
   const middleIndex = Math.floor(numbers.length / 2);
