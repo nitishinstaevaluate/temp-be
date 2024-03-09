@@ -154,20 +154,23 @@ import { Expose, Type,} from 'class-transformer';
     @IsString({ message: 'betaType is required eg.meanBeta or medianBeta' })
     betaType: string;
 
+    @IsOptional()
     @IsNotEmpty({ message: 'debtToCapital cannot be empty' })
     @IsNumber({}, { message: 'debtToCapital should be a number' })
-    debtToCapital: number;
+    debtToCapital?: number;
 
+    @IsOptional()
     @IsNotEmpty({ message: 'equityToCapital cannot be empty' })
     @IsNumber({}, { message: 'equityToCapital should be a number' })
-    equityToCapital: number;
+    equityToCapital?: number;
 
     @IsOptional()
     leveredBeta?: number;
 
+    @IsOptional()
     @IsNotEmpty({ message: 'unleveredBeta cannot be empty' })
     @IsNumber({}, { message: 'unleveredBeta should be a number' })
-    unleveredBeta: number;
+    unleveredBeta?: number;
 }
 
   export class CoreBetaWorkingDto {
@@ -179,33 +182,40 @@ import { Expose, Type,} from 'class-transformer';
     @IsString({ message: 'companyName should be string' })
     companyName: string;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'totalBookValueOfDebt cannot be empty' })
     @IsNumber({}, { message: 'totalBookValueOfDebt should be a number' })
-    totalBookValueOfDebt: number;
+    totalBookValueOfDebt?: number;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'totalBookValueOfPreferredEquity cannot be empty' })
     @IsNumber({}, { message: 'totalBookValueOfPreferredEquity should be a number' })
-    totalBookValueOfPreferredEquity: number;
+    totalBookValueOfPreferredEquity?: number;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'totalMarketValueOfEquity cannot be empty' })
     @IsNumber({}, { message: 'totalMarketValueOfEquity should be a number' })
-    totalMarketValueOfEquity: number;
+    totalMarketValueOfEquity?: number;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'totalMarketValueOfCapital cannot be empty' })
     @IsNumber({}, { message: 'totalMarketValueOfCapital should be a number' })
-    totalMarketValueOfCapital: number;
+    totalMarketValueOfCapital?: number;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'debtToCapital cannot be empty' })
     @IsNumber({}, { message: 'debtToCapital should be a number' })
-    debtToCapital: number;
+    debtToCapital?: number;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'equityToCapital cannot be empty' })
     @IsNumber({}, { message: 'equityToCapital should be a number' })
-    equityToCapital: number;
+    equityToCapital?: number;
     
+    @IsOptional()
     @IsNotEmpty({ message: 'unleveredBeta cannot be empty' })
     @IsNumber({}, { message: 'unleveredBeta should be a number' })
-    unleveredBeta: number;
+    unleveredBeta?: number;
     
     @IsOptional()
     leveredBeta?: number;

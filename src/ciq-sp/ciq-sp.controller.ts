@@ -95,7 +95,7 @@ export class CiqSpController {
   }
 
   // https://localhost:3000/ciq-sp/beta-working
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
   @Put('beta-working')
   async upsertBetaWorking(@Body() payload: betaWorkingDto) {
@@ -103,7 +103,7 @@ export class CiqSpController {
   }
 
   // https://localhost:3000/ciq-sp/fetch-beta-working
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(KeyCloakAuthGuard)
   @Get('fetch-beta-working/:processId')
   async fetchBetaWorking(@Param() processId: any) {
     return this.capitalIqAndSPService.getBetaWorking(processId);
