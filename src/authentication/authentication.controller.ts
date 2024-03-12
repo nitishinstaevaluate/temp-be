@@ -16,7 +16,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { config } from 'process';
 import { Response } from 'express';
 import {AuthorizationGuard} from './authorization/authorization.guard';
-import { KCloginAuthDto } from './dto/authentication.dto';
+import { KCloginAuthDto, authTokenDto } from './dto/authentication.dto';
+import { authenticationTokenService } from './authentication-token.service';
 // import { authconfig } from '../middleware/auth0';
 // const { auth } = require('express-openid-connect');
 // import { Client, Account, ID } from "appwrite";
@@ -29,7 +30,7 @@ import { KCloginAuthDto } from './dto/authentication.dto';
 @Controller('authentication')
 export class AuthenticationController {
 
-  constructor(private authenticationService: AuthenticationService) { }
+  constructor(private authenticationService: AuthenticationService, private authenticationTokenService: authenticationTokenService) { }
 
   // @UseGuards(AuthorizationGuard)
   @Get('/public')
@@ -72,4 +73,19 @@ export class AuthenticationController {
     return await this.authenticationService.loginVersionTwo(payload);
   }
 
+
+  @Put('/create-token')
+  async insertToken(@Body() payload:authTokenDto) {
+    return await this.authenticationTokenService.upsertAuthToken(payload);
+  }
+
+  @Get('/get-token/:sessionState')
+  async fetchToken(@Param() sessionState) {
+    return await this.authenticationTokenService.fetchToken(sessionState);
+  }
+
+  @Get('/refresh-token')
+  async refreshToken(@Req() request) {
+    return await this.authenticationTokenService.refreshToken(request);
+  }
 }
