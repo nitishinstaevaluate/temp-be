@@ -9,9 +9,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthStrategy } from './strategies/jwtauth.strategy';
 import { ConfigModule } from '@nestjs/config';
 import {AuthorizationGuard} from './authorization/authorization.guard';
+import { MongooseModule } from '@nestjs/mongoose';
+import { authenticationTokenSchema } from './schema/authentication-token.schema';
+import { authenticationTokenService } from './authentication-token.service';
 require('dotenv').config();
 @Module({
-    imports: [UsersModule,
+    imports: [UsersModule,MongooseModule.forFeature([{name:'token', schema: authenticationTokenSchema}]),
       PassportModule.register({
         defaultStrategy: 'jwt',
       //   property: 'user',
@@ -27,10 +30,11 @@ require('dotenv').config();
   providers: [AuthenticationService,
     LocalStrategy,JwtStrategy,
     AuthorizationGuard,
+    authenticationTokenService
     // JwtAuthStrategy
   ],
   controllers : [AuthenticationController],
-  exports: [AuthenticationService],
+  exports: [AuthenticationService, authenticationTokenService],
 })
 export class AuthenticationModule {}
 

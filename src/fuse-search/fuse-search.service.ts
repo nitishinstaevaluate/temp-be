@@ -13,13 +13,13 @@ export class FuseSearchService {
         try{
 
             if(!this.axiosResponse?.data){
-                const bearerToken = await this.authenticationService.extractBearer(request);
+                // const bearerToken = await this.authenticationService.extractBearer(request);
                 
-                if(!bearerToken.status)
-                return bearerToken;
+                // if(!bearerToken.status)
+                // return bearerToken;
             
                 const headers = { 
-                    'Authorization':`${bearerToken.token}`,
+                    // 'Authorization':`${bearerToken.token}`,
                     'Content-Type': 'application/json'
                 }
 

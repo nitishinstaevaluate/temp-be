@@ -30,7 +30,7 @@ export class CiqElasticSearchController {
     }
 
     // https://localhost:3000/ciq-elastic-search/ciq-elastic-search-all-listed-companies
-    @UseGuards(KeyCloakAuthGuard)
+    // @UseGuards(KeyCloakAuthGuard)
     @Get('ciq-elastic-search-all-listed-companies')
     async searchCiqEntitiesAllListedCompanies() {
         return await this.ciqElasticSearchService.searchEntitiesAllListedCompanies();
