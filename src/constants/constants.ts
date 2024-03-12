@@ -24,6 +24,14 @@ export const GET_MULTIPLIER_UNITS = {
     Millions:1000000,
     Crores:10000000
 }
+export const REPORTING_UNIT = {
+    ABSOLUTE:'absolute',
+    HUNDRED:'Hundreds',
+    THOUSAND:'Thousands',
+    LAKH:'Lakhs',
+    MILLION:'Millions',
+    CRORE:'Crores'
+}
 
 export const ALPHA={
   companySize:'Company Size',

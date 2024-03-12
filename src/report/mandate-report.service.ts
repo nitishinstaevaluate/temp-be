@@ -83,6 +83,12 @@ export class mandateReportService {
                 return '';
             })
 
+            hbs.registerHelper('valuedEntity',()=>{
+                if(mandateDetails.valuedEntity)
+                    return mandateDetails.valuedEntity;
+                return '';
+            })
+
             hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
               let outputObject = {};
               let outputString = [];
