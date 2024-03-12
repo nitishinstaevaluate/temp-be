@@ -14,6 +14,9 @@ export class Mandate {
   
   @Prop({type: String})
   companyName: string;
+
+  @Prop({type: String})
+  valuedEntity: string;
   
   @Prop({type: String})
   companyAddress: string;

@@ -8,7 +8,7 @@ export class FuseSearchController {
     constructor(private readonly fuseSearchService: FuseSearchService){}
 
     // https://localhost:3000/fuse-search/fuse-search-by-company-name
-    @UseGuards(KeyCloakAuthGuard)
+    // @UseGuards(KeyCloakAuthGuard)
     @Get('fuse-search-by-company-name/:companyName')
     async fuzzySearchByCompanyName(@Param('companyName') companyName:string, @Req() request) {
         return this.fuseSearchService.fuseSearchByCompanyName(request, companyName);

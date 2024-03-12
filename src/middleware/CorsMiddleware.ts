@@ -7,7 +7,7 @@ export class CorsMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, session_state');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     res.header('X-Content-Type-Options', 'nosniff');

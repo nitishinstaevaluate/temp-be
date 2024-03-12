@@ -19,6 +19,7 @@ import { ProcessManagerSchema } from 'src/processStatusManager/schema/process-st
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
+import { authenticationTokenSchema } from 'src/authentication/schema/authentication-token.schema';
 
 @Module({
   providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService],
@@ -28,7 +29,8 @@ import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdp
     { name: 'valuation', schema: ValuationSchema },
     { name: 'processManager', schema: ProcessManagerSchema },
     { name: 'dataChecklist', schema: DataCheckListSchema },
-    { name: 'mandate', schema: MandateSchema }
+    { name: 'mandate', schema: MandateSchema },
+    { name: 'token', schema: authenticationTokenSchema }
   ]),
   UsersModule,
   JwtModule.register({

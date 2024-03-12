@@ -60,11 +60,23 @@ export class DataCheckList {
   @Prop({type:String})
   excelSheetId: string;
 
+  @Prop({type:String})
+  company: string;
+
+  @Prop({type:String})
+  reportingUnit: string;
+
   @Prop({type:Number, default:1})
   emailSendFrequency: number;
 
   @Prop({ type: Number,unique: true,required:true  })
   dataChecklistIdentifierId:number;
+
+  @Prop({ type: Number,required:false  })
+  companyId:number;
+
+  @Prop({ type: String,required:false  })
+  companyType:string;
 }
 
 export type DataCheckListDocument = DataCheckList & Document;
