@@ -1106,9 +1106,7 @@ export class ReportService {
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
-              const depAndAmortisationValue = response?.depAndAmortisation;
-              let depAndAmortisation = depAndAmortisationValue ? (Math.abs(depAndAmortisationValue) < 0.005 ? '0.00' : `${Math.abs(depAndAmortisationValue).toFixed(2)}`) : '';
-              depAndAmortisation = depAndAmortisationValue && `${depAndAmortisation}`.includes('-') ? `(${depAndAmortisation})` : depAndAmortisation;
+              const depAndAmortisation = this.formatPositiveAndNegativeValues(response?.depAndAmortisation);
               arraydepAndAmortisation.push({fcfeDepAmortisation:depAndAmortisation})
             })
             arraydepAndAmortisation.unshift({fcfeDepAmortisation:"Depn. and Amortn."});
@@ -2596,6 +2594,13 @@ export class ReportService {
     hbs.registerHelper('fixDecimalUptoTwo',(val)=>{
       if (val) {
         return val.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+      }
+      return '-';
+    })
+
+    hbs.registerHelper('decimalAdjustment',(val)=>{
+      if (val && !isNaN(+val)) {
+        return parseFloat(val).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
       }
       return '-';
     })
