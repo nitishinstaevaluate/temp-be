@@ -651,7 +651,8 @@ export class CiqSpService {
             businessDescriptor,
             pageStart: data?.pageStart,
             size: data?.size,
-            valuationDate:data.valuationDate
+            valuationDate:data.valuationDate,
+            companyName:data?.companyName
           }
 
           const bearerToken = await this.authenticationService.extractBearer(req);

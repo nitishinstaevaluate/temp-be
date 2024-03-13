@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import * as fs from 'fs';
 import * as stream from 'stream';
@@ -7,15 +7,17 @@ import { columnsList } from './excelSheetConfig';
 import { AuthGuard } from '@nestjs/passport';
 import { MODEL } from 'src/constants/constants';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { templateYearSet } from './common.methods';
 
 @Controller('download')
 export class ExportTemplateController {
 
   // @UseGuards(KeyCloakAuthGuard)
-  @Get('/template/:projectionYears/:modelName')
+  @Get('/template')
   async download(
-    @Param('projectionYears') projectionYears: number,
-    @Param('modelName') modelName: string | undefined,
+    @Query('projectionYears') projectionYears: number,
+    @Query('modelName') modelName: string | undefined,
+    @Query('valuationDate') valuationDate: string | undefined,
     @Res() res: Response,
   ) {
    try{
@@ -37,12 +39,14 @@ export class ExportTemplateController {
     if (!fs.existsSync(filePath)) {
       return res.status(404).send('File not found');
     }
+    const rawValuationDate = valuationDate || new Date().getTime();
+    const getFinancialYearDate = await templateYearSet(+rawValuationDate);
 
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filePath);
 
     const worksheet:any = workbook.getWorksheet(1);
-    const currentYear = new Date().getFullYear();
+    const currentYear = new Date(getFinancialYearDate).getFullYear();
     worksheet.getColumn(
       'B',
     ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`

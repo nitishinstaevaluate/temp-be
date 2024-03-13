@@ -124,6 +124,17 @@ export async function computeFinancialYearEndDate(provisionalDate){    //Always 
   return cleanProvisionalDate <= fiscalYearEnd ? ( cleanProvisionalDate.getFullYear() === new Date().getFullYear() ? new Date(currentFinancialYearEnd - 1, 2, 31) : provisionalBasedFinancialYear ) : currentFinancialDate; 
 }
 
+export async function templateYearSet(valuationDate){    //Always pass valuation date it will give you  only financial year
+  const cleanProvisionalDate = new Date(valuationDate);
+  const currentFinancialYearEnd = cleanProvisionalDate.getFullYear();
+
+  const provisionalBasedFinancialYear = new Date(currentFinancialYearEnd, 2, 31);
+
+  const fiscalYearEnd:any = new Date(currentFinancialYearEnd, 2, 31); // March is month index 2
+
+  return cleanProvisionalDate <= fiscalYearEnd ? ( cleanProvisionalDate.getFullYear() === new Date(fiscalYearEnd).getFullYear() ? new Date(currentFinancialYearEnd - 1, 2, 31) : provisionalBasedFinancialYear ) : fiscalYearEnd; 
+}
+
 export function findMedian(numbers: number[]) {
   numbers.sort((a, b) => a - b);
   const middleIndex = Math.floor(numbers.length / 2);
