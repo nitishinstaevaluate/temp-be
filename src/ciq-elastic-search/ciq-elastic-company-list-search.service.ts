@@ -32,6 +32,10 @@ export class ciqElasticCompanyListSearchService {
                 queryArray.push({terms: {[elasticSearchKey.COMPANYID]: payload.companyIdArray}});
             }
 
+            if(payload?.companyName){
+                queryArray.push({match: {[elasticSearchKey.COMPANYNAME]: payload.companyName}});
+            }
+
             // if(queryArray.length === 0){
             //     totalListCount = await this.elasticSearchClientService.countTotal('ciqcompanyindustryind');
             // }

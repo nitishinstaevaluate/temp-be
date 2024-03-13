@@ -53,7 +53,8 @@ export class ciqElasticSearchAggregateService{
                 companyIdArray:filteredDescriptorDetails,
                 size: body.size,
                 pageStart: body.pageStart,
-                valuationDate:body.valuationDate
+                valuationDate:body.valuationDate,
+                companyName:body.companyName
             }
 
             const companyList = await this.ciqElasticCompanyListSearchService.fetchCompanyList(payload); // only filter through ciqCompanyId table by listed companies

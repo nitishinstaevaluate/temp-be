@@ -45,7 +45,6 @@ export class KeyCloakAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const accessToken = request.headers['authorization'];
-    const session_state = request.headers['session_state'];
 
     const reflectorHandler = new Reflector();
     
@@ -57,10 +56,10 @@ export class KeyCloakAuthGuard implements CanActivate {
       );
     }
 
-    return this.validateToken(accessToken, requiredRoles, session_state);
+    return this.validateToken(accessToken, requiredRoles);
   }
 
-  private validateToken(accessToken: string, roles:Array<string>, session_state:string): Observable<boolean> {
+  private validateToken(accessToken: string, roles:Array<string>): Observable<boolean> {
     return from(
         axios.post(
           KEY_CLOAK_INTROSPECT,
@@ -174,7 +173,6 @@ export class KeyCloakAuthGuard implements CanActivate {
       ).pipe(
         switchMap((authFetchToken)=>{
           const refreshTokenDetails = authFetchToken?.data?.data;
-          console.log(refreshTokenDetails," refresh token details")
           return from(
             axios.post(
             KEY_CLOAK_TOKEN,
@@ -200,7 +198,6 @@ export class KeyCloakAuthGuard implements CanActivate {
                 catchError((error) => {
                   throw new UnauthorizedException({message:'Token upsertion failed, contact administrator',error});
                 }));
-              return [true];
             }),
             catchError((error)=>{
               throw new UnauthorizedException({message:'Token refresh failed, contact administrator',...error.response});
