@@ -902,14 +902,18 @@ export class ReportService {
       })
       hbs.registerHelper('equityPerShare',()=>{
         let equityPerShare = [];
+        let checkiIfStub = false;
         if(reportDetails?.modelWeightageValue){
           const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
           return `${number.replace(/,/g, ',')}`
         }
         if(transposedData[0]?.data.transposedResult[1])
           valuationResult.modelResults.map((response)=>{
+            if(Array.isArray(response.valuationData) && response.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+              checkiIfStub=true;
+            }
           if(response.model===MODEL[0] || response.model === MODEL[1]){
-            const number = Math.floor(response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
+            const number = Math.floor(checkiIfStub ? response.valuationData[0]?.equityValueNew : response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
             if(number){
               equityPerShare.push( `${number.replace(/,/g, ',')}`);
             }
