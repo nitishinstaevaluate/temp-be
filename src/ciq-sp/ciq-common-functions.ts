@@ -186,3 +186,15 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
             return true;
           }
       }
+
+      export function convertIntoTimeStamp(inputDate) {
+        const [month, day, year] = inputDate.split('/');
+        
+        const date = new Date(year, month - 1, day);
+
+        // Adding 5:30 hours, since we want exact date for filtering into elastic search db
+        date.setHours(date.getHours() + 5);
+        date.setMinutes(date.getMinutes() + 30);
+        
+        return date;
+    }

@@ -17,7 +17,7 @@ import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axio
 require('dotenv').config();
 import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
-import { CIQ_FINANCIAL_SEGMENT, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
+import { CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT, CIQ_FINANCIAL_SEGMENT, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
 import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
@@ -27,6 +27,7 @@ import { sebiReportService } from './sebi-report.service';
 import { mandateReportService } from './mandate-report.service';
 import { mrlReportService } from './mrl-report.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
+import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 
 @Injectable()
 export class ReportService {
@@ -2655,7 +2656,14 @@ export class ReportService {
       }
       
       const financialSegmentDetails = await axiosInstance.post(`${CIQ_FINANCIAL_SEGMENT}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
-      return financialSegmentDetails.data.data;
+      
+      const financialLog = new ciqGetFinancialDto();
+      financialLog.industryAggregateList = financialSegmentDetails.data.data;
+      financialLog.valuationDate = date;
+      
+      const elasticfinancialSegmentDetails = await axiosInstance.post(`${CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT}`, financialLog, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+      
+      return elasticfinancialSegmentDetails.data.data;
     }
     catch(error){
       return {

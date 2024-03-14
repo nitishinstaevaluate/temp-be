@@ -3,11 +3,13 @@ import { ElasticSearchService } from 'src/elasticSearch/elastic-search-client.se
 import { RedisService } from 'src/middleware/redisConfig';
 import { ciqElasticSearchAggregateService } from './ciq-elastic-search-aggregate.service';
 import { elasticSearchIndex } from 'src/library/enums/elastic-search-index.enum';
+import { ciqElasticFinancialSegmentService } from './ciq-elastic-financial-segment.service';
 
 @Injectable()
 export class CiqElasticSearchService {
     constructor(private readonly elasticSearchService: ElasticSearchService,
-        private readonly ciqElasticSearchAggregateService:ciqElasticSearchAggregateService){}
+        private readonly ciqElasticSearchAggregateService:ciqElasticSearchAggregateService,
+        private readonly ciqElasticFinancialSegmentService: ciqElasticFinancialSegmentService){}
 
     async searchEntities(data){
         try{
@@ -101,6 +103,24 @@ export class CiqElasticSearchService {
                 error:error,
                 status:false,
                 msg:"Listed companies search failed"
+            }
+        }
+    }
+
+    async searchEntityByFinancialData(data){
+        try{
+            const financialData = await this.ciqElasticFinancialSegmentService.elasticSearchFinancialAggregate(data);
+            return {
+                data:financialData,
+                status:true,
+                msg:"financial segment data fetched"
+            }
+        }
+        catch(error){
+            return{
+                error:error,
+                status:false,
+                msg:"financial data search failed"
             }
         }
     }
