@@ -6,9 +6,10 @@ import { RedisService } from 'src/middleware/redisConfig';
 import { ciqElasticSearchAggregateService } from './ciq-elastic-search-aggregate.service';
 import { ciqElasticCompanyListSearchService } from './ciq-elastic-company-list-search.service';
 import { ciqElasticPriceEquityService } from './ciq-elastic-price-equity.service';
+import { ciqElasticFinancialSegmentService } from './ciq-elastic-financial-segment.service';
 
 @Module({
-  providers: [CiqElasticSearchService, ElasticSearchService, RedisService, ciqElasticSearchAggregateService, ciqElasticCompanyListSearchService, ciqElasticPriceEquityService],
+  providers: [CiqElasticSearchService, ElasticSearchService, RedisService, ciqElasticSearchAggregateService, ciqElasticCompanyListSearchService, ciqElasticPriceEquityService, ciqElasticFinancialSegmentService],
   controllers: [CiqElasticSearchController]
 })
 export class CiqElasticSearchModule {}

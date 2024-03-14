@@ -104,7 +104,7 @@ import { Expose, Type,} from 'class-transformer';
   export class ciqGetFinancialDto {
     @IsNotEmpty({ message: 'Valuation date cannot be empty' })
     @IsString({ message: 'Valuation date should be of format mm/dd/yyyy and must be string' })
-    valuationDate: number;
+    valuationDate: string;
 
     @IsArray({ message: 'Industry aggregate list must be an array' })
     @ValidateNested({ each: true })
