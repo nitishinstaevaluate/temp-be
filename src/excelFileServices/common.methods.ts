@@ -332,7 +332,7 @@ export function convertUnixTimestampToDateString(timestamp: number): string {
   return formattedDate;
 }
 
-export function convertUnixTimestampToQuarterAndYear(timestamp: number) {
+export function convertUnixTimestampToQuarterAndYear(timestamp: any) {
   const date = new Date(timestamp);
   const unixTimestamp = Math.floor(date.getTime() / 1000);
   const month = date.getMonth() + 1;
