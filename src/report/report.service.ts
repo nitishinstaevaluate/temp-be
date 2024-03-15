@@ -2476,7 +2476,7 @@ export class ReportService {
     })
 
     hbs.registerHelper('calculateAll',()=>{
-      return (this.totalA + this.totalB + this.totalC + this.totalD - this.totalL).toFixed(2);
+      return (convertToNumberOrZero(this.totalA) + convertToNumberOrZero(this.totalB) + convertToNumberOrZero(this.totalC) + convertToNumberOrZero(this.totalD) - convertToNumberOrZero(this.totalL)).toFixed(2);
     })
 
     hbs.registerHelper('phaseValue',()=>{
@@ -2490,7 +2490,7 @@ export class ReportService {
       const phaseValue = !isNaN(parseFloat(elevenUaData?.data?.inputData?.phaseValue)) ? parseFloat(elevenUaData?.data?.inputData?.phaseValue) : 1;
       const paidUpCapital = !isNaN(parseFloat(elevenUaData?.data?.paidUpCapital)) ? parseFloat(elevenUaData?.data?.paidUpCapital) : 1;
 
-      const totalSum = this.totalA + this.totalB + this.totalC + this.totalD - this.totalL;
+      const totalSum = convertToNumberOrZero(this.totalA) + convertToNumberOrZero(this.totalB) + convertToNumberOrZero(this.totalC) + convertToNumberOrZero(this.totalD) - convertToNumberOrZero(this.totalL);
 
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
       this.unqotedEquityShareVal = result

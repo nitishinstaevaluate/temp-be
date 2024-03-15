@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { CiqIndustryListDto } from "src/ciq-sp/dto/ciq-sp.dto";
 import { ElasticSearchService } from "src/elasticSearch/elastic-search-client.service";
-import { convertUnixTimestampToDateString, convertUnixTimestampToQuarterAndYear, getFormattedProvisionalDate } from "src/excelFileServices/common.methods";
+import { convertUnixTimestampToQuarterAndYear, getFormattedProvisionalDate } from "src/excelFileServices/common.methods";
 import { elasticSearchIndex } from 'src/library/enums/elastic-search-index.enum';
 import { elasticSearchKey } from 'src/library/enums/elastic-search-keys.enum';
 
@@ -155,7 +155,7 @@ export class ciqElasticCompanyListSearchService {
                                 }
                             },{
                                 term:{
-                                    [elasticSearchKey.PRICINGDATE]:`${convertUnixTimestampToDateString(date)}`
+                                    [elasticSearchKey.PRICINGDATE]:`${convertUnixTimestampToQuarterAndYear(date).date.toISOString()}`
                                 }
                             }
                         ]
@@ -204,19 +204,34 @@ export class ciqElasticCompanyListSearchService {
                                 terms: {
                                     [elasticSearchKey.COMPANYID]: companyId
                                 }
-                            },{
-                                term:{
-                                    [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                            },
+                            // {
+                            //     term:{
+                            //         [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                            //     }
+                            // },
+                            // {
+                            //     term:{
+                            //         [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
+                            //     }
+                            // },
+                            {
+                                range: {
+                                    [elasticSearchKey.PERIODENDDATE]: {
+                                    lte: `${convertUnixTimestampToQuarterAndYear(date).date.toISOString()}`
+                                  }
                                 }
-                            },{
-                                term:{
-                                    [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
-                                }
-                            },{
+                            },
+                            {
                                 term:{
                                     [elasticSearchKey.DATAITEMID]:'4047' //using EBITDA Margin code for getting ebitda
                                 }
-                            }
+                            },
+                            {
+                                term: {
+                                    [elasticSearchKey.PERIODTYPEID]: '4'
+                                }
+                            },
                         ]
                     }
                 }
@@ -264,19 +279,34 @@ export class ciqElasticCompanyListSearchService {
                                 terms: {
                                     [elasticSearchKey.COMPANYID]: companyId
                                 }
-                            },{
-                                term:{
-                                    [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                            },
+                            // {
+                            //     term:{
+                            //         [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                            //     }
+                            // },
+                            {
+                                range: {
+                                    [elasticSearchKey.PERIODENDDATE]: {
+                                    lte: `${convertUnixTimestampToQuarterAndYear(date).date.toISOString()}`
+                                  }
                                 }
-                            },{
-                                term:{
-                                    [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
-                                }
-                            },{
+                            },
+                            // {
+                            //     term:{
+                            //         [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
+                            //     }
+                            // },
+                            {
                                 term:{
                                     [elasticSearchKey.DATAITEMID]:'300' //using Sales code for getting sales
                                 }
-                            }
+                            },
+                            {
+                                term: {
+                                    [elasticSearchKey.PERIODTYPEID]: '4'
+                                }
+                            },
                         ]
                     }
                 }
