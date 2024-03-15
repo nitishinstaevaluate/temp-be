@@ -320,18 +320,6 @@ export function formatDateHyphenToDDMMYYYY(inputDate: string): string {
     return `${day}-${month}-${year}`;
 }
 
-export function convertUnixTimestampToDateString(timestamp: number): string {
-  const date = new Date(timestamp);
-  
-  const year = date.getUTCFullYear();
-  const month = ('0' + (date.getUTCMonth() + 1)).slice(-2);
-  const day = ('0' + (date.getUTCDate() + 1)).slice(-2);
-
-  const formattedDate = `${year}-${month}-${day}T00:00:00.000Z`;
-
-  return formattedDate;
-}
-
 export function convertUnixTimestampToQuarterAndYear(timestamp: any) {
   const date = new Date(timestamp);
   const unixTimestamp = Math.floor(date.getTime() / 1000);
@@ -339,9 +327,14 @@ export function convertUnixTimestampToQuarterAndYear(timestamp: any) {
   const quarter = Math.ceil(month / 3);
   const year = date.getFullYear();
 
+  // Adding 5:30 hours, since we want exact date for filtering into elastic search db
+  date.setHours(date.getHours() + 5);
+  date.setMinutes(date.getMinutes() + 30);
+
   return {
     unixTimestamp: unixTimestamp,
     quarter: quarter,
     year: year,
+    date
   };
 }

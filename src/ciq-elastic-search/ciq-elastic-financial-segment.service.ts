@@ -59,20 +59,20 @@ export class ciqElasticFinancialSegmentService {
                                     [elasticSearchKey.COMPANYID]: body?.companyIdArray
                                 }
                             },
-                            {
-                                term: {
-                                    [elasticSearchKey.CALENDARYEAR]: `${new Date(convertIntoTimeStamp(body?.valuationDate)).getFullYear()}`
-                                }
-                            },
                             // {
                             //     term: {
-                            //         [elasticSearchKey.CALENDARQUARTER]: `${convertUnixTimestampToQuarterAndYear(convertIntoTimeStamp(body.valuationDate)).quarter-1}`
+                            //         [elasticSearchKey.CALENDARYEAR]: `${new Date(convertIntoTimeStamp(body?.valuationDate)).getFullYear()}`      //Repurposed if needed in future
+                            //     }
+                            // },
+                            // {
+                            //     term: {
+                            //         [elasticSearchKey.CALENDARQUARTER]: `${convertUnixTimestampToQuarterAndYear(convertIntoTimeStamp(body.valuationDate)).quarter-1}`        //Repurposed if needed in future
                             //     }
                             // },
                             {
                                 range: {
                                     [elasticSearchKey.PERIODENDDATE]: {
-                                    lt: `${convertIntoTimeStamp(body?.valuationDate).toISOString()}`
+                                    lte: `${convertIntoTimeStamp(body?.valuationDate).toISOString()}`
                                   }
                                 }
                               },
@@ -87,7 +87,7 @@ export class ciqElasticFinancialSegmentService {
                                 }
                             },
                         ]
-                        // should: [
+                        // should: [    //Repurposed if needed in future
                         //     {
                         //         term: {
                         //             [elasticSearchKey.PERIODTYPEID]: '1'
@@ -109,7 +109,14 @@ export class ciqElasticFinancialSegmentService {
                         //     }
                         // ]
                     }
-                }
+                },
+                sort : [
+                    { 
+                        [elasticSearchKey.PERIODENDDATE] : {
+                            "order" : "desc"
+                        }
+                    },
+                  ]
             };
             
             const companyFinancialData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
@@ -142,8 +149,6 @@ export class ciqElasticFinancialSegmentService {
     async elasticSearchDebt(body){
         try{
 
-            const valuationQuarter = convertUnixTimestampToQuarterAndYear(convertIntoTimeStamp(body.valuationDate)).quarter;
-
             const criteria = {
                 query: {
                     bool: {
@@ -153,23 +158,23 @@ export class ciqElasticFinancialSegmentService {
                                     [elasticSearchKey.COMPANYID]: body?.companyIdArray
                                 }
                             },
-                            {
-                                term: {
-                                    [elasticSearchKey.CALENDARYEAR]: `${new Date(convertIntoTimeStamp(body?.valuationDate)).getFullYear()}`
-                                }
-                            },
+                            // {
+                            //     term: {
+                            //         [elasticSearchKey.CALENDARYEAR]: `${new Date(convertIntoTimeStamp(body?.valuationDate)).getFullYear()}`      //Repurposed if needed in future
+                            //     }
+                            // },
                             {
                                 range: {
                                     [elasticSearchKey.PERIODENDDATE]: {
-                                    lt: `${convertIntoTimeStamp(body?.valuationDate).toISOString()}`
+                                    lte: `${convertIntoTimeStamp(body?.valuationDate).toISOString()}`
                                   }
                                 }
                             },
-                            {
-                                term: {
-                                    [elasticSearchKey.CALENDARQUARTER]: `${valuationQuarter-1}`
-                                }
-                            },
+                            // {
+                            //     term: {
+                            //         [elasticSearchKey.CALENDARQUARTER]: `${valuationQuarter-1}`      //Repurposed if needed in future
+                            //     }
+                            // },
                             {
                                 term: {
                                     [elasticSearchKey.DATAITEMID]: '4173'     //using total debt code
@@ -183,7 +188,14 @@ export class ciqElasticFinancialSegmentService {
                         ],
                       
                     }
-                }
+                },
+                sort : [
+                    { 
+                        [elasticSearchKey.PERIODENDDATE] : {
+                            "order" : "desc"
+                        }
+                    },
+                  ]
             };
 
             const companyDebtData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
