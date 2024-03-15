@@ -2163,7 +2163,11 @@
                                             <p class="s13"
                                                 style="text-align: left;padding-left: 2pt;font-size: 13px !important;">
                                                 For the Year ending 31st March
-                                            <span style="float: right;font-size: 13px !important">Amount In {{currencyUnit}}({{reportingUnit}})</span></p>
+                                            <span style="float: right;font-size: 13px !important">Amount In {{currencyUnit}}
+                                                {{#if (reportingUnit)}}
+                                                ({{reportingUnit}})
+                                                {{/if}}
+                                            </span></p>
                                         </td>
                                         <!-- <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                              bgcolor="#001F5F">
@@ -2437,7 +2441,11 @@
                                         <p class="s13"
                                             style="text-align: left;padding-left: 2pt;font-size: 13px !important;">
                                             For the Year ending 31st March
-                                            <span style="float: right;font-size: 13px !important;">Amount In {{currencyUnit}}({{reportingUnit}})</span></p>
+                                            <span style="float: right;font-size: 13px !important;">Amount In {{currencyUnit}}
+                                                {{#if (reportingUnit)}}
+                                                ({{reportingUnit}})
+                                                {{/if}}
+                                            </span></p>
                                     </td>
                                 </tr>
 
@@ -3740,7 +3748,11 @@
             <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 16px;">Net Asset Value Method</h3>
         <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 15px;font-weight: 400 !important;">Based on the existing financial information as provided to us by the Management the value of the equity shares of the company is derived as follows:</h3>
         <h3 style="padding-top: 2pt;padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 15px;font-weight: 400 !important;">To estimate the fair value of the business, we have considered book value of assets and liabilities as fair market value for my calculation purposes.</h3>
-        <p><span style="float: right;font-size: 13px;"><i>({{currencyUnit}} in {{reportingUnit}})</i></span></p>
+        <p><span style="float: right;font-size: 13px;"><i>({{currencyUnit}} 
+            {{#if (reportingUnit)}}
+            in {{reportingUnit}}
+            {{/if}})
+        </i></span></p>
         <table style="border-collapse:collapse;margin-left:8pt;width: 100%;" cellspacing="0">
             <tr style="height:14pt">
                 <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"

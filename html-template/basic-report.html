@@ -2385,7 +2385,11 @@
                                         <p class="s13"
                                             style="text-align: left;padding-left: 2pt;font-size: 13px !important;">
                                             For the Year ending 31st March
-                                        <span style="float: right;font-size: 13px !important">Amount In {{currencyUnit}}({{reportingUnit}})</span></p>
+                                        <span style="float: right;font-size: 13px !important">Amount In {{currencyUnit}}
+                                            {{#if (reportingUnit)}}
+                                            ({{reportingUnit}})
+                                            {{/if}}
+                                        </span></p>
                                     </td>
                                     <!-- <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                          bgcolor="#001F5F">
@@ -2659,7 +2663,11 @@
                                         <p class="s13"
                                             style="text-align: left;padding-left: 2pt;font-size: 13px;">
                                             For the Year ending 31st March
-                                            <span style="float: right;font-size: 13px;">Amount In {{currencyUnit}}({{reportingUnit}})</span></p>
+                                            <span style="float: right;font-size: 13px;">Amount In {{currencyUnit}}
+                                                {{#if (reportingUnit)}}
+                                                ({{reportingUnit}})
+                                                {{/if}}
+                                        </span></p>
                                     </td>
                                 </tr>
 
