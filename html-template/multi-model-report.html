@@ -597,6 +597,14 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+        .alpha-restyle{
+            span{
+                text-align: left !important;
+            }
+            p{
+                text-align: left !important;
+            }
+        }
     </style>
 </head>
 
@@ -1993,6 +2001,7 @@
                                                         </tr>
                                                         {{/each}}
                                                             </table>
+                                                            <span style="font-size: 13px !important;font-weight: bold;float: left;padding-left: 10pt;font-family: 'Times New Roman', Times, serif !important;">Source- Capital IQ</span>
                                                     {{else}}
                                                     <p style="padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
                                                         The beta is arrived using {{betaName}} beta of the comparable companies in
@@ -2001,14 +2010,27 @@
                                                     {{/if}}
                                                 </li>
                                                 <li data-list-text="4.">
-                                                    <p style="padding-top: 9pt;padding-left: 140pt;text-indent: -18pt;line-height: 140%;text-align: left;">
-                                                        The alpha/company specific risk premium is adjusted on account of micro
-                                                        factors associated with the company. 
-                                                    </p>
-                                                    <p style="text-align: left;padding-left: 150pt;text-indent: -18pt;">
-                                                        The factors such as:-
-                                                    </p>
-                                                    {{{alpha}}}
+                                                    {{#if (hasBetaWorking)}}
+                                                        <p style="padding-top: 7%;padding-left: 30pt;text-indent: -18pt;line-height: 140%;text-align: left;">
+                                                            The alpha/company specific risk premium is adjusted on account of micro
+                                                            factors associated with the company. 
+                                                        </p>
+                                                        <p style="text-align: left;padding-left: 48pt;text-indent: -18pt;">
+                                                            The factors such as:-
+                                                        </p>
+                                                        <p class="alpha-restyle">
+                                                            {{{alpha}}}
+                                                        </p>
+                                                    {{else}}
+                                                        <p style="padding-top: 2%;padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
+                                                            The alpha/company specific risk premium is adjusted on account of micro
+                                                            factors associated with the company. 
+                                                        </p>
+                                                        <p style="text-align: left;padding-left: 167pt;text-indent: -18pt;padding-top: 1%;">
+                                                            The factors such as:-
+                                                        </p>
+                                                        {{{alpha}}}
+                                                    {{/if}}
                                                 </li>
                                             </ol>
                                          </li>
@@ -2016,10 +2038,25 @@
                                  </li>
                              </ol>
                              {{#if (checkIfFcff)}}
+                             {{#if (hasBetaWorking)}}
+                             <div style="page-break-before: always;padding-top: 8%;">
+                                <p style="text-align: center;padding-top: 3%;">
+                                    <span class="s1" style="font-weight:bold;">Cost of Debt</span></p>
+                                <p style="padding-left: 30pt;text-indent: 0pt;line-height: 140%;text-align: justify;padding-top: 2%;">
+                                    The cost of Debt as confirmed by management of the company is {{costOfDebt}}%. Tax rate applicable is {{taxRate}}.</p>
+                                <p style="padding-left: 30pt;text-indent: 0pt;text-align: justify;line-height: 140%;"> Accordingly,
+                                        post tax cost of debt is arrived at {{postCostOfDebt}}%.</p>
+                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                <p
+                                    style="padding-top: 5px;text-align: center;padding-top: 2%;">
+                                    <span class="s1" style="">Capital Structure</span></p>
+                                <p style="padding-left: 30pt;text-indent: 0pt;line-height: 140%;text-align: justify;">
+                                    We have used {{capitalStructureType}} Capital Structure of {{capitalStructureRatio}} for the purpose of computation of WACC.</p>
+                                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            </div>
+                            {{else}}
                              <p style="text-align: center;padding-top: 1%;">
-                                
-                                <span
-                                    class="s1" style="font-weight:bold;">Cost of Debt</span></p>
+                                <span class="s1" style="font-weight:bold;">Cost of Debt</span></p>
                             <p style="padding-left: 80pt;text-indent: 0pt;line-height: 140%;text-align: justify;">
                                 The cost of Debt as confirmed by management of the company is {{costOfDebt}}%. Tax rate applicable is {{taxRate}}.</p>
                             <p style="padding-left: 80pt;text-indent: 0pt;text-align: justify;line-height: 140%;"> Accordingly,
@@ -2028,9 +2065,10 @@
                             <p
                                 style="padding-top: 5px;text-align: center;">
                                 <span class="s1" style="">Capital Structure</span></p>
-                            <p style="padding-left: 80pt;text-indent: 0pt;line-height: 140%;text-align: justify;">
+                            <p style="padding-left: 80pt;text-indent: 0pt;line-height: 140%;text-align: justify;padding-top: 2%;">
                                 We have used {{capitalStructureType}} Capital Structure of {{capitalStructureRatio}} for the purpose of computation of WACC.</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                             {{/if}}
                              {{/if}}
                              <h1 style="padding-left: 28pt;text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 5pt;">Terminal Value:
                             </h1>
