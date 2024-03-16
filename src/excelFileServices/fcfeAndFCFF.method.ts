@@ -1,7 +1,7 @@
 import { sheet1_PLObj, sheet2_BSObj,sheet3_assWCObj } from './excelSheetConfig';
 import { columnsList } from './excelSheetConfig';
 import * as XLSX from 'xlsx';
-import { getCellValue } from './common.methods';
+import { convertToNumberOrZero, getCellValue } from './common.methods';
 
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 
@@ -236,6 +236,10 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
   const nextSum = nextSum1 - nextSum2
     console.log('Change in NCA ', currentSum - nextSum);
   return currentSum - nextSum;
+}
+
+export async function changeInNcaFromAssessment(counter, worksheet3){
+  return convertToNumberOrZero(worksheet3[`${columnsList[counter + 1]}24`].v);
 }
 
 export async function DeferredTaxAssets(i: number, worksheet2: any) {
