@@ -2,6 +2,37 @@ import { read } from 'fs';
 import { columnsList } from './excelSheetConfig';
 import { GET_DATE_MONTH_YEAR_FORMAT, GET_YEAR, MATCH_YEAR } from 'src/constants/constants';
 const date = require('date-and-time');
+const fs = require('fs');
+const path = require('path');
+import { utilities as nestWinstonModuleUtilities, WinstonModule,  } from 'nest-winston';
+import { transports,format } from 'winston';
+const moment = require('moment');
+
+const logDir = './logs';
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
+}
+const combinedLog = path.join(logDir, 'combined.log');
+const errorLog = path.join(logDir, 'error.log');
+const now = Date.now();
+const delay = Date.now() - now;
+
+const logger = WinstonModule.createLogger({
+transports: [
+    new transports.File({ filename: combinedLog }),
+    new transports.File({ filename: errorLog, level: 'error' }),
+    new transports.Console({
+    format: format.combine(
+        format.ms(),
+        nestWinstonModuleUtilities.format.nestLike('Ifin', {
+        colors: true,
+        prettyPrint: true,
+        }),
+    ),
+    }),
+],
+});
+
 export async function getCellValue(worksheet: any, address: string) {
   const Cell = worksheet[address];
   // console.log(Cell);
@@ -33,7 +64,11 @@ export async function getYearsList(worksheet1: any): Promise<any> {
           // yearSet.push(object.v.trim().slice(-2))
 
           // Updated logic to check if provisional year is before financial year end, if true, push the provisional year else push the financial year
-          const [day, month, year] = object.v.split('-').map(Number);
+          if(object.v.split(/[-./]/).length <= 1){
+            logger.error(`${moment(now)} | Invalid date format in provisional input | ${JSON.stringify({actualProvisionalDate:object.v})}`)
+          }
+          const [day, month, year] = object.v.split(/[-./]/).map(Number);
+          
           const dateObject = new Date(year, month - 1, day); 
           const calculatedProvisionalYear = await computeFinancialYearEndDate(dateObject);
           const provisionalYear = calculatedProvisionalYear.getFullYear();
@@ -114,14 +149,18 @@ export async function computeFinancialYearEndDate(provisionalDate){    //Always 
   const currentFinancialYearEnd = cleanProvisionalDate.getFullYear();
 
 
-  const provisionalBasedFinancialYear = new Date(currentFinancialYearEnd, 2, 31);
+  const provisionalBasedFinancialYear = new Date(currentFinancialYearEnd, 2, 31); //create a new date of 31st march using the provisional year
 
   const currentYear = new Date().getFullYear();
-  const currentFinancialDate = new Date(currentYear, 2, 31);
+  const currentFinancialDate = new Date(currentYear, 2, 31); //create current financial year end
 
   const fiscalYearEnd:any = new Date(currentYear, 2, 31); // March is month index 2
 
-  return cleanProvisionalDate <= fiscalYearEnd ? ( cleanProvisionalDate.getFullYear() === new Date().getFullYear() ? new Date(currentFinancialYearEnd - 1, 2, 31) : provisionalBasedFinancialYear ) : currentFinancialDate; 
+  const finalYear =  cleanProvisionalDate <= fiscalYearEnd ? ( cleanProvisionalDate.getFullYear() === new Date().getFullYear() ? new Date(currentFinancialYearEnd - 1, 2, 31) : provisionalBasedFinancialYear ) : currentFinancialDate; 
+  console.log(finalYear,"final year calculations----->125")
+  console.log(fiscalYearEnd,"fiscal year end----->126")
+  console.log(cleanProvisionalDate,"provisional date----->127", provisionalDate)
+  return finalYear;
 }
 
 export async function templateYearSet(valuationDate){    //Always pass valuation date it will give you  only financial year
