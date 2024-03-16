@@ -974,6 +974,16 @@ export class ReportService {
           return valuationResult.inputData[0].reportingUnit === REPORTING_UNIT.ABSOLUTE ? '' : valuationResult.inputData[0].reportingUnit;
         return 'Lakhs';
       })
+
+      hbs.registerHelper('alphaExist',()=>{
+        let alphaToggle = false;
+          for (const key in valuationResult.inputData[0].alpha) {
+            if (valuationResult.inputData[0].alpha[key] !== '' && valuationResult.inputData[0].alpha[key] !== '0') {
+              alphaToggle = true
+            }
+        }
+          return alphaToggle;
+      })
       hbs.registerHelper('alpha',()=>{
         let outputObject = {};
         let letterIndex = 97; // this is the ascii code start
@@ -982,15 +992,15 @@ export class ReportService {
             let element;
             let letter = String.fromCharCode(letterIndex);
             if (letterIndex > 97) {
-              element = `<br/><span style="text-align: center;text-transform:capitalize">${letter}. ${ALPHA[`${key}`]}</span>`;
+              element = `<br/><span style="text-align: left;text-transform:capitalize;padding-top:1%;">${letter}. ${ALPHA[`${key}`]}</span>`;
             } else {
-              element = `<span style="text-align: center;text-transform:capitalize">${letter}. ${ALPHA[`${key}`]}</span>`;
+              element = `<span style="text-align: left;text-transform:capitalize;padding-top:1%;">${letter}. ${ALPHA[`${key}`]}</span>`;
             }
             outputObject[element] = valuationResult.inputData[0].alpha[key];
             letterIndex++;
           }
         }
-        return `<p style="text-align:center">${Object.keys(outputObject)}</p>`;
+        return `<p style="text-align:center;padding-top:1%;">${Object.keys(outputObject)}</p>`;
       })
 
       hbs.registerHelper('betaName',()=>{
@@ -2598,7 +2608,7 @@ export class ReportService {
 
     hbs.registerHelper('fixDecimalUptoTwo',(val)=>{
       if (val) {
-        return val.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        return this.formatPositiveAndNegativeValues(val);
       }
       return '-';
     })
