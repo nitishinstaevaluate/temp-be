@@ -87,7 +87,7 @@ export class ReportService {
 
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
-            this.loadFinancialTableHelper(financialSegmentDetails);
+            this.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
           }
 
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -179,7 +179,7 @@ export class ReportService {
 
     if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
       const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
-      this.loadFinancialTableHelper(financialSegmentDetails);
+      this.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
     }
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -2577,7 +2577,7 @@ export class ReportService {
     })
 }
 
-  loadFinancialTableHelper(financialData){
+  loadFinancialTableHelper(financialData, valuationDetails){
     hbs.registerHelper('financialSegment',()=>{
       if(financialData){
         return financialData;
@@ -2606,6 +2606,19 @@ export class ReportService {
     hbs.registerHelper('decimalAdjustment',(val)=>{
       if (val && !isNaN(+val)) {
         return parseFloat(val).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+      }
+      return '-';
+    })
+
+    hbs.registerHelper('lessDiscountRate',()=>{
+      if (valuationDetails) {
+        return valuationDetails.inputData[0].discountRateValue;
+      }
+      return '-';
+    })
+    hbs.registerHelper('postDiscount',(mean)=>{
+      if (mean || valuationDetails.inputData[0].discountRateValue) {
+        return (convertToNumberOrZero(mean) * convertToNumberOrZero(+valuationDetails.inputData[0].discountRateValue/100)).toFixed(2);
       }
       return '-';
     })

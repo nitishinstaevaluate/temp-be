@@ -236,7 +236,7 @@ let workbook=null;
 
     const worksheet1 = workbook.Sheets['P&L'];
     const worksheet2 = workbook.Sheets['BS'];
-    const worksheet3 = inputs.isExcelModified === true ? workbook.Sheets['Assessment of Working Capital'] : 'NA';
+    const worksheet3 = workbook.Sheets['Assessment of Working Capital'] ?? 'NA';
     
     console.log('Choosing Model Run:');
     if (inputs.model) {

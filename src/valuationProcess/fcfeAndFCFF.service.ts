@@ -24,12 +24,13 @@ import {
   fcfeTerminalValue,
   fcffTerminalValue,
   interestAdjustedTaxesWithStubPeriod,
+  changeInNcaFromAssessment,
   // differenceAssetsLiabilities
 } from '../excelFileServices/fcfeAndFCFF.method';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS } from 'src/constants/constants';
+import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS, MODEL } from 'src/constants/constants';
 import { any } from 'joi';
 import { async } from 'rxjs';
 import { transformData } from 'src/report/report-common-functions';
@@ -729,7 +730,10 @@ export class FCFEAndFCFFService {
               addInterestAdjTaxes = await interestAdjustedTaxes(counter, worksheet1, aggregatePayload?.inputs?.taxRate)
             }
 
-            changeInNca = await ChangeInNCA(counter, worksheet2,worksheet3);
+            if(counter !== yearLength){
+              changeInNca =  await changeInNcaFromAssessment(counter, worksheet3);
+            }
+            
             deferredTaxAssets = await DeferredTaxAssets(counter, worksheet2);
             
             changeInFixedAssets =  -(await ChangeInFixedAssets(counter, worksheet2) + depAndAmortisation);  //Since formula for changeInFixedAssets =  -(closing value - opening value + depnAndAmortisation) - As per discussions with sonal  02-03-2024
