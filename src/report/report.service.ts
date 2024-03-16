@@ -944,7 +944,7 @@ export class ReportService {
         if(transposedData[0].data.transposedResult[1])
            valuationResult.modelResults.map((response)=>{
             if(response.model===MODEL[0] || response.model === MODEL[1]){
-              freeCashFlow.push(response?.valuationData[response.valuationData.length -2].presentFCFF.toFixed(2)); // subtract (- 2) to get last year fcfe/fcff data 
+              freeCashFlow.push(response?.valuationData[response.valuationData.length -2].fcff.toFixed(2)); // subtract (- 2) to get last year fcfe/fcff data 
             }
           });
           return freeCashFlow;
