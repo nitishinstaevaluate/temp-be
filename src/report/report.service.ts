@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -944,7 +944,7 @@ export class ReportService {
         if(transposedData[0].data.transposedResult[1])
            valuationResult.modelResults.map((response)=>{
             if(response.model===MODEL[0] || response.model === MODEL[1]){
-              freeCashFlow.push(response?.valuationData[response.valuationData.length -2].presentFCFF.toFixed(2)); // subtract (- 2) to get last year fcfe/fcff data 
+              freeCashFlow.push(this.formatPositiveAndNegativeValues(response?.valuationData[response.valuationData.length -2].fcff)); // subtract (- 2) to get last year fcfe/fcff data 
             }
           });
           return freeCashFlow;
@@ -956,7 +956,7 @@ export class ReportService {
             if(response.model===MODEL[0] || response.model === MODEL[1])
                response?.valuationData.map((perYearData)=>{
                 if(perYearData.particulars === 'Terminal Value'){
-                  terminalVal = perYearData?.fcff.toFixed(2);
+                  terminalVal = this.formatPositiveAndNegativeValues(perYearData?.fcff);
                 }
               });
           });
@@ -974,6 +974,16 @@ export class ReportService {
           return valuationResult.inputData[0].reportingUnit === REPORTING_UNIT.ABSOLUTE ? '' : valuationResult.inputData[0].reportingUnit;
         return 'Lakhs';
       })
+
+      hbs.registerHelper('alphaExist',()=>{
+        let alphaToggle = false;
+          for (const key in valuationResult.inputData[0].alpha) {
+            if (valuationResult.inputData[0].alpha[key] !== '' && valuationResult.inputData[0].alpha[key] !== '0') {
+              alphaToggle = true
+            }
+        }
+          return alphaToggle;
+      })
       hbs.registerHelper('alpha',()=>{
         let outputObject = {};
         let letterIndex = 97; // this is the ascii code start
@@ -982,20 +992,20 @@ export class ReportService {
             let element;
             let letter = String.fromCharCode(letterIndex);
             if (letterIndex > 97) {
-              element = `<br/><span style="text-align: center;text-transform:capitalize">${letter}. ${ALPHA[`${key}`]}</span>`;
+              element = `<br/><span style="text-align: left;text-transform:capitalize;padding-top:1%;">${letter}. ${ALPHA[`${key}`]}</span>`;
             } else {
-              element = `<span style="text-align: center;text-transform:capitalize">${letter}. ${ALPHA[`${key}`]}</span>`;
+              element = `<span style="text-align: left;text-transform:capitalize;padding-top:1%;">${letter}. ${ALPHA[`${key}`]}</span>`;
             }
             outputObject[element] = valuationResult.inputData[0].alpha[key];
             letterIndex++;
           }
         }
-        return `<p style="text-align:center">${Object.keys(outputObject)}</p>`;
+        return `<p style="text-align:center;padding-top:1%;">${Object.keys(outputObject)}</p>`;
       })
 
       hbs.registerHelper('betaName',()=>{
         if(valuationResult.inputData[0].betaType)
-          return valuationResult.inputData[0].betaType;
+          return REPORT_BETA_TYPES[`${valuationResult.inputData[0].betaType}`];
         return '';
       })
       hbs.registerHelper('postCostOfDebt',()=>{
@@ -2598,7 +2608,7 @@ export class ReportService {
 
     hbs.registerHelper('fixDecimalUptoTwo',(val)=>{
       if (val) {
-        return val.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        return this.formatPositiveAndNegativeValues(val);
       }
       return '-';
     })
