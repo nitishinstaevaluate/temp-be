@@ -1891,6 +1891,13 @@ export const BETA_SUB_TYPE = ['meanBeta', 'medianBeta'];
 
 export const BETA_TYPE = ['levered', 'unlevered', 'market_beta'];
 
+export const REPORT_BETA_TYPES = {
+  levered: 'Relevered Beta',
+  unlevered: 'Unlevered Beta',
+  market_beta: 'Market Beta',
+  stock_beta:'Stock Beta'
+}
+
 export const MNEMONIC_ENUMS = {
   IQ_CUSTOM_BETA: 'IQ_CUSTOM_BETA',
   IQ_PBV: 'IQ_PBV',
