@@ -2302,25 +2302,25 @@ export class ReportService {
 
     hbs.registerHelper('bookValueOfAllAssets',()=>{
       if(elevenUaData)
-        return elevenUaData.data?.bookValueOfAllAssets ? elevenUaData.data?.bookValueOfAllAssets : '-';
+        return elevenUaData.data?.bookValueOfAllAssets ? this.formatPositiveAndNegativeValues(elevenUaData.data?.bookValueOfAllAssets) : '-';
       return '-';
     })
 
     hbs.registerHelper('bookValueOfAllAssets',()=>{
       if(elevenUaData)
-        return elevenUaData.data?.bookValueOfAllAssets ? elevenUaData.data?.bookValueOfAllAssets : '-';
+        return elevenUaData.data?.bookValueOfAllAssets ? this.formatPositiveAndNegativeValues(elevenUaData.data?.bookValueOfAllAssets) : '-';
       return '-';
     })
 
     hbs.registerHelper('totalIncomeTaxPaid',()=>{
       if(elevenUaData)
-        return elevenUaData.data?.totalIncomeTaxPaid ? elevenUaData.data?.totalIncomeTaxPaid : '-';
+        return elevenUaData.data?.totalIncomeTaxPaid ? this.formatPositiveAndNegativeValues(elevenUaData.data?.totalIncomeTaxPaid) : '-';
       return '-';
     })
 
     hbs.registerHelper('unamortisedAmountOfDeferredExpenditure',()=>{
       if(elevenUaData)
-        return elevenUaData.data?.unamortisedAmountOfDeferredExpenditure ? elevenUaData.data?.unamortisedAmountOfDeferredExpenditure : '-';
+        return elevenUaData.data?.unamortisedAmountOfDeferredExpenditure ? this.formatPositiveAndNegativeValues(elevenUaData.data?.unamortisedAmountOfDeferredExpenditure) : '-';
       return '-';
     })
 
@@ -2329,7 +2329,7 @@ export class ReportService {
         const totalIncomeTaxPaid = elevenUaData?.data?.totalIncomeTaxPaid;
       const unamortisedAmountOfDeferredExpenditure = elevenUaData?.data?.unamortisedAmountOfDeferredExpenditure;
       this.totalA = elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure);
-      return elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure);
+      return this.formatPositiveAndNegativeValues(elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure));
       }
       return '-';
     })
@@ -2356,7 +2356,7 @@ export class ReportService {
               const obj = {
                 index:romanNumeral,
                 label:jewelleryAndArtisticWorkArray[i]?.name,
-                value:jewelleryAndArtisticWorkArray[i]?.value ? jewelleryAndArtisticWorkArray[i].value : '-' 
+                value:jewelleryAndArtisticWorkArray[i]?.value ? this.formatPositiveAndNegativeValues(jewelleryAndArtisticWorkArray[i].value) : '-' 
               }
               jewlleryAndArtisticWork.push(obj);
             }
@@ -2371,7 +2371,7 @@ export class ReportService {
         const artisticWork =!isNaN(parseFloat(elevenUaData.data?.inputData?.fairValueArtistic)) ? parseFloat(elevenUaData.data?.inputData?.fairValueArtistic) : 0;
         const totalValue = jewellery + artisticWork;
         this.totalB = totalValue ? totalValue : 0;
-        return totalValue ? totalValue : '-';
+        return totalValue ? this.formatPositiveAndNegativeValues(totalValue) : '-';
       }
       return '-';
     })
@@ -2386,7 +2386,7 @@ export class ReportService {
           investment =  investmentTotalFromExcel;
         }
         this.totalC = investment;
-        return investment ? investment : '-';
+        return investment ? this.formatPositiveAndNegativeValues(investment) : '-';
       }
       return '-'
     })
@@ -2401,64 +2401,64 @@ export class ReportService {
           investment =  investmentTotalFromExcel;
         }
         this.totalC = investment;
-        return investment ? investment : '-';
+        return investment ? this.formatPositiveAndNegativeValues(investment) : '-';
       }
       return '-'
     })
 
     hbs.registerHelper('fairValueImmovableProp',()=>{
       if(elevenUaData)
-        return elevenUaData.data?.inputData?.fairValueImmovableProp ? elevenUaData.data?.inputData?.fairValueImmovableProp : '-';
+        return elevenUaData.data?.inputData?.fairValueImmovableProp ? this.formatPositiveAndNegativeValues(elevenUaData.data?.inputData?.fairValueImmovableProp) : '-';
       return '-'
     })
     
     hbs.registerHelper('totalD',()=>{
       if(elevenUaData){
         this.totalD = elevenUaData.data?.inputData?.fairValueImmovableProp ? parseFloat(elevenUaData.data?.inputData?.fairValueImmovableProp) : 0 
-        return elevenUaData.data?.inputData?.fairValueImmovableProp ? elevenUaData.data?.inputData?.fairValueImmovableProp : '-';
+        return elevenUaData.data?.inputData?.fairValueImmovableProp ? this.formatPositiveAndNegativeValues(elevenUaData.data?.inputData?.fairValueImmovableProp) : '-';
       }
     return '-'
     })
 
     hbs.registerHelper('bookValueOfLiabilities',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.bookValueOfLiabilities ? elevenUaData?.data?.bookValueOfLiabilities : '-';
+        return elevenUaData?.data?.bookValueOfLiabilities ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.bookValueOfLiabilities) : '-';
       return '-'
     })
 
     hbs.registerHelper('paidUpCapital',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.paidUpCapital ? elevenUaData?.data?.paidUpCapital : '-';
+        return elevenUaData?.data?.paidUpCapital ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.paidUpCapital) : '-';
       return '-'
     })
 
     hbs.registerHelper('paymentDividends',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.paymentDividends ? elevenUaData?.data?.paymentDividends : '-';
+        return elevenUaData?.data?.paymentDividends ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.paymentDividends) : '-';
       return '-'
     })
 
     hbs.registerHelper('reserveAndSurplus',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.reserveAndSurplus ? elevenUaData?.data?.reserveAndSurplus : '-';
+        return elevenUaData?.data?.reserveAndSurplus ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.reserveAndSurplus) : '-';
       return '-'
     })
 
     hbs.registerHelper('provisionForTaxation',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.provisionForTaxation ? elevenUaData?.data?.provisionForTaxation : '-';
+        return elevenUaData?.data?.provisionForTaxation ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.provisionForTaxation) : '-';
       return '-'
     })
 
     hbs.registerHelper('otherThanAscertainLiability',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.inputData?.otherThanAscertainLiability ? elevenUaData?.data?.inputData?.otherThanAscertainLiability : '-';
+        return elevenUaData?.data?.inputData?.otherThanAscertainLiability ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.inputData?.otherThanAscertainLiability) : '-';
       return '-'
     })
 
     hbs.registerHelper('contingentLiability',()=>{
       if(elevenUaData)
-        return elevenUaData?.data?.inputData?.contingentLiability ? elevenUaData?.data?.inputData?.contingentLiability : '-';
+        return elevenUaData?.data?.inputData?.contingentLiability ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.inputData?.contingentLiability) : '-';
       return '-'
     })
     hbs.registerHelper('totalL',()=>{
@@ -2470,28 +2470,32 @@ export class ReportService {
           // const contingentLiabilities = isNaN(parseFloat(elevenUaData.data?.inputData?.contingentLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.contingentLiability);
           // const otherThanAscertainLiability = isNaN(parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability)) ? 0 : parseFloat(elevenUaData.data?.inputData?.otherThanAscertainLiability);
           this.totalL = convertToNumberOrZero(elevenUaData?.data?.bookValueOfLiabilities) - (convertToNumberOrZero(paidUpCapital) + convertToNumberOrZero(paymentDividends) + convertToNumberOrZero(reservAndSurplus) + convertToNumberOrZero(provisionForTaxation) + convertToNumberOrZero(elevenUaData.data?.inputData?.contingentLiability) + convertToNumberOrZero(elevenUaData.data?.inputData?.otherThanAscertainLiability));
-          return (
-            convertToNumberOrZero(elevenUaData?.data?.bookValueOfLiabilities) -  
-          (
-            convertToNumberOrZero(paidUpCapital) + 
-            convertToNumberOrZero(paymentDividends) + 
-            convertToNumberOrZero(reservAndSurplus) + 
-            convertToNumberOrZero(provisionForTaxation) + 
-            convertToNumberOrZero(elevenUaData.data?.inputData?.contingentLiability) + 
-            convertToNumberOrZero(elevenUaData.data?.inputData?.otherThanAscertainLiability)
-          )
-          ).toFixed(2);
+          return this.formatPositiveAndNegativeValues(
+            (
+              convertToNumberOrZero(elevenUaData?.data?.bookValueOfLiabilities) -  
+            (
+              convertToNumberOrZero(paidUpCapital) + 
+              convertToNumberOrZero(paymentDividends) + 
+              convertToNumberOrZero(reservAndSurplus) + 
+              convertToNumberOrZero(provisionForTaxation) + 
+              convertToNumberOrZero(elevenUaData.data?.inputData?.contingentLiability) + 
+              convertToNumberOrZero(elevenUaData.data?.inputData?.otherThanAscertainLiability)
+            )
+            )
+          );
       }
       return '-'
     })
 
     hbs.registerHelper('calculateAll',()=>{
-      return (convertToNumberOrZero(this.totalA) + convertToNumberOrZero(this.totalB) + convertToNumberOrZero(this.totalC) + convertToNumberOrZero(this.totalD) - convertToNumberOrZero(this.totalL)).toFixed(2);
+      return this.formatPositiveAndNegativeValues(
+        (convertToNumberOrZero(this.totalA) + convertToNumberOrZero(this.totalB) + convertToNumberOrZero(this.totalC) + convertToNumberOrZero(this.totalD) - convertToNumberOrZero(this.totalL))
+      );
     })
 
     hbs.registerHelper('phaseValue',()=>{
       if(elevenUaData){
-        return elevenUaData?.data?.inputData?.phaseValue ? elevenUaData?.data?.inputData?.phaseValue : '-';
+        return elevenUaData?.data?.inputData?.phaseValue ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.inputData?.phaseValue) : '-';
       }
       return '-';
     })
@@ -2505,12 +2509,12 @@ export class ReportService {
       const result = totalSum !== 0 && paidUpCapital !== 0 ? (totalSum * phaseValue) / paidUpCapital : 0;
       this.unqotedEquityShareVal = result
 
-      return result.toFixed(2);
+      return this.formatPositiveAndNegativeValues(result);
     })
 
     hbs.registerHelper('elevenUaPerShare',()=>{
       if(this.unqotedEquityShareVal){
-        return this.unqotedEquityShareVal.toFixed(2);
+        return this.formatPositiveAndNegativeValues(this.unqotedEquityShareVal);
       }
       return '-'
     })
