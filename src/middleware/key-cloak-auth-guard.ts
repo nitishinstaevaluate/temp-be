@@ -89,11 +89,11 @@ export class KeyCloakAuthGuard implements CanActivate {
             if (!hasRequiredRole && roles?.length) {
               throw new UnauthorizedException({error:response,message:'Insufficient role'});
             }
-            logger.log(
-                `${moment(now)} | ${response.status} | Authentication | [${method.toUpperCase()}] ${url} - ${delay}ms ${JSON.stringify(
-                  response.data,
-                )}`,
-              );
+            // logger.log(
+            //     `${moment(now)} | ${response.status} | Authentication | [${method.toUpperCase()}] ${url} - ${delay}ms ${JSON.stringify(
+            //       response.data,
+            //     )}`,
+            //   );
             return [true];
 
         }),
