@@ -129,4 +129,12 @@ export class ReportController {
   @Res() res) {
     return await this.reportService.mrlReport(processStateId, res);
   }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('mrl-docx-report/:processStateId')
+  async generateMrlDocxReport(
+  @Param('processStateId') processStateId : string,
+  @Res() res) {
+    return await this.reportService.mrlDocxReport(processStateId, res);
+  }
 }

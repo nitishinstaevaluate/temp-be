@@ -2724,6 +2724,18 @@ export class ReportService {
       }
     }
   }
+  async mrlDocxReport(stateId, res){
+    try{
+      return await this.mrlReportService.generateMrlDocxReport(stateId, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"report generation failed",
+        status:false
+      }
+    }
+  }
 
   async fetchBetaWorking(request, id, betaType){
     try{

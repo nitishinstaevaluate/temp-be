@@ -62,6 +62,57 @@ export class mrlReportService {
             }
         }
     }
+
+    async generateMrlDocxReport(id, res){
+        try{
+            const applicationData:any = await this.processStateManagerService.fetchProcess(id);
+            if(!applicationData.status) 
+              throw new NotFoundException({
+                  statusCode: HttpStatus.NOT_FOUND,
+                  message: 'Application data not found, check processId',
+                  error: 'Not Found',
+                }).getResponse();
+
+            const stageOneData = applicationData.stateInfo.firstStageInput;
+            const computeExcelSheet = await this.excelSheetComputation(stageOneData);
+            const excelSheetId = this.getExcelSheetId(stageOneData);
+            const workbook = await this.readFile(excelSheetId); 
+            const computedTotalYear = await computedTotalYears(workbook);
+              
+
+            let htmlFilePath = path.join(process.cwd(), 'html-template', `management-representation-letter.html`);
+            let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
+            let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
+            
+        
+           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear);
+        
+            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+            const template = hbs.compile(htmlContent);
+            const html = template(applicationData.stateInfo);
+        
+            await this.createpdf(html, pdfFilePath);
+            await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+            
+            let wordBuffer = fs.readFileSync(wordFilePath);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.setHeader('Content-Disposition', 'attachment; filename="document.docx"');
+            res.send(wordBuffer);
+    
+            return {
+                msg: "PDF download Success",
+                status: true,
+            };
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"Mrl service report generation failed"
+            }
+        }
+    }
     
     getExcelSheetId(formOneData){
       return formOneData.isExcelModified ? formOneData.modifiedExcelSheetId : formOneData.excelSheetId;
