@@ -62,6 +62,57 @@ export class mrlReportService {
             }
         }
     }
+
+    async generateMrlDocxReport(id, res){
+        try{
+            const applicationData:any = await this.processStateManagerService.fetchProcess(id);
+            if(!applicationData.status) 
+              throw new NotFoundException({
+                  statusCode: HttpStatus.NOT_FOUND,
+                  message: 'Application data not found, check processId',
+                  error: 'Not Found',
+                }).getResponse();
+
+            const stageOneData = applicationData.stateInfo.firstStageInput;
+            const computeExcelSheet = await this.excelSheetComputation(stageOneData);
+            const excelSheetId = this.getExcelSheetId(stageOneData);
+            const workbook = await this.readFile(excelSheetId); 
+            const computedTotalYear = await computedTotalYears(workbook);
+              
+
+            let htmlFilePath = path.join(process.cwd(), 'html-template', `management-representation-letter.html`);
+            let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
+            let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
+            
+        
+           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear);
+        
+            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+            const template = hbs.compile(htmlContent);
+            const html = template(applicationData.stateInfo);
+        
+            await this.createpdf(html, pdfFilePath);
+            await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+            
+            let wordBuffer = fs.readFileSync(wordFilePath);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.setHeader('Content-Disposition', 'attachment; filename="document.docx"');
+            res.send(wordBuffer);
+    
+            return {
+                msg: "PDF download Success",
+                status: true,
+            };
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"Mrl service report generation failed"
+            }
+        }
+    }
     
     getExcelSheetId(formOneData){
       return formOneData.isExcelModified ? formOneData.modifiedExcelSheetId : formOneData.excelSheetId;
@@ -126,39 +177,36 @@ export class mrlReportService {
             })
 
             hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
-              let outputObject = {};
-              let outputString = [];
-              let letterIndex = 97; // this is the ASCII code start
-              for (const indPurpose of processStateInfo.sixthStageInput.reportPurpose ){
-                if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].length){
-                  let keys = Object.keys(processStateInfo.sixthStageInput.reportSection);
-                  for (let i = 0; i < keys.length; i++){
-                    if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].includes(processStateInfo.sixthStageInput.reportSection[i])){
-                      const key = keys[i];
-                      let element;
-                      if (letterIndex > 97) {
-                          element = ` ${processStateInfo.sixthStageInput.reportSection[key]}`;
-                      } else {
-                          element = `${processStateInfo.sixthStageInput.reportSection[key]}`;
-                      }
-                      outputObject[element] = key;
-                      letterIndex++;
+              let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+              if(!processStateInfo.sixthStageInput.reportPurpose?.length || !processStateInfo.sixthStageInput.reportSection?.length){
+                return ['Please provide data']
+              }
+
+
+              //Firstly create object structure with purpose of report and sections in key-value format;
+              processStateInfo.sixthStageInput.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+                processStateInfo.sixthStageInput.reportSection.forEach((indSection, sectionIndex) => {
+                  if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                    if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                      storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                      storePurposeWiseSections[indpurpose].push(indSection);
                     }
                   }
-                  let outputArray = Object.keys(outputObject);
-                  if (outputArray.length > 1) {
-                      let lastElement = outputArray.pop();
-                      outputArray.push(`and ${lastElement}`);
+                });
+              })
+
+              // Use that object structure created above for looping and adding sections followed by purposes 
+              processStateInfo.sixthStageInput.reportPurpose.forEach((indPurposeOfReport,index)=>{
+               let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+                if (stockedPurposes.length <= 1) {
+                  overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                } else {
+                  const lastSection = stockedPurposes[stockedPurposes.length - 1];
+                  const otherSections = stockedPurposes.slice(0, -1).join(', ');
+                  overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
                   }
-                  if(outputString.length){
-                    outputString.push(" and " + outputArray.join(', ').replace(/,([^,]*)$/, ' $1') + ' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-                  }
-                  else{
-                    outputString.push(outputArray.join(', ').replace(/,([^,]*)$/, ' $1') +' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-                  }
-                }
-              }
-              return outputString;
+              })
+              return overallSectionsWithPurposes.join(' and ');
           });
 
           hbs.registerHelper('profitAndLossExcel',()=>{
