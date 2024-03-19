@@ -1774,39 +1774,36 @@ export class ReportService {
         })
 
         hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
-          let outputObject = {};
-          let outputString = [];
-          let letterIndex = 97; // this is the ASCII code start
-          for (const indPurpose of reportDetails.reportPurpose ){
-            if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].length){
-              let keys = Object.keys(reportDetails.reportSection);
-              for (let i = 0; i < keys.length; i++){
-                if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].includes(reportDetails.reportSection[i])){
-                  const key = keys[i];
-                  let element;
-                  if (letterIndex > 97) {
-                      element = ` ${reportDetails.reportSection[key]}`;
-                  } else {
-                      element = `${reportDetails.reportSection[key]}`;
+          let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+              if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
+                return ['Please provide data']
+              }
+
+               //Firstly create object structure with purpose of report and sections in key-value format;
+               reportDetails.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+                reportDetails.reportSection.forEach((indSection, sectionIndex) => {
+                  if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                    if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                      storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                      storePurposeWiseSections[indpurpose].push(indSection);
+                    }
                   }
-                  outputObject[element] = key;
-                  letterIndex++;
-                }
-              }
-              let outputArray = Object.keys(outputObject);
-              if (outputArray.length > 1) {
-                  let lastElement = outputArray.pop();
-                  outputArray.push(`and ${lastElement}`);
-              }
-              if(outputString.length){
-                outputString.push(" and " + outputArray.join(', ').replace(/,([^,]*)$/, ' $1') + ' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-              }
-              else{
-                outputString.push(outputArray.join(', ').replace(/,([^,]*)$/, ' $1') +' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-              }
-            }
-          }
-          return outputString;
+                });
+              })
+
+              console.log(storePurposeWiseSections,"all purposes")
+              // Use that object structure created above for looping and adding sections followed by purposes
+              reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
+               let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+                if (stockedPurposes.length <= 1) {
+                  overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                } else {
+                  const lastSection = stockedPurposes[stockedPurposes.length - 1];
+                  const otherSections = stockedPurposes.slice(0, -1).join(', ');
+                  overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                  }
+              })
+              return overallSectionsWithPurposes.join(' and ');
       });
 
         hbs.registerHelper('modelWeightageValue',()=>{
@@ -1911,7 +1908,7 @@ export class ReportService {
         })
         
         hbs.registerHelper('evEbitaRatioCalculation',()=>{
-          let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[];
+          let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[],cashEquivalent:any=[];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
@@ -1940,12 +1937,17 @@ export class ReportService {
                       avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.debtAvg * 100) / 100),
                       med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.debtMed * 100) / 100)
                     }
+                    cashEquivalent = {
+                      particular:'Cash and cash equivalent',
+                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.cashEquivalent * 100) / 100),
+                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.cashEquivalent * 100) / 100)
+                    }
                     equityVal = {
                       particular:'Value of Equity',
                       avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100),
                       med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityMed * 100) / 100)
                     }
-                    totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,equityVal);
+                    totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,cashEquivalent,equityVal);
                   }
                 })
               }
@@ -2718,6 +2720,18 @@ export class ReportService {
   async mrlReport(stateId, res){
     try{
       return await this.mrlReportService.generateMrlReport(stateId, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"report generation failed",
+        status:false
+      }
+    }
+  }
+  async mrlDocxReport(stateId, res){
+    try{
+      return await this.mrlReportService.generateMrlDocxReport(stateId, res);   
     }
     catch(error){
       return {

@@ -70,10 +70,10 @@ export const PURPOSE_OF_REPORT_AND_SECTION = {
     "236 - Purchase of Minority Interest"
   ],
   ita1961:[
-    "56(2)(x) - Tax on sum/property received without consideration. Valuatin to be done as per Rule 11UA",
-    "56(2)(viib) - Issue of Shares by a Closely Held Company to residents. Valuation as per Rule 11UA",
-    "50CA - Special Consideration for Full Value of consideration for transfer of shares other than quoted shares. Valuation as per Rule 11UA",
-    "50B - Slump Sale. Valuation as per Rule 11UAE"
+    "56(2)(x) - Tax on sum/property received without consideration",
+    "56(2)(viib) - Issue of Shares by a Closely Held Company to residents",
+    "50CA - Special Consideration for Full Value of consideration for transfer of shares other than quoted shares",
+    "50B - Slump Sale"
   ],
   fema:[
 
