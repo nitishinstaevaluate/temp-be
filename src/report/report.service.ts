@@ -1908,7 +1908,7 @@ export class ReportService {
         })
         
         hbs.registerHelper('evEbitaRatioCalculation',()=>{
-          let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[];
+          let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[],cashEquivalent:any=[];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
@@ -1937,12 +1937,17 @@ export class ReportService {
                       avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.debtAvg * 100) / 100),
                       med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.debtMed * 100) / 100)
                     }
+                    cashEquivalent = {
+                      particular:'Cash and cash equivalent',
+                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.cashEquivalent * 100) / 100),
+                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.cashEquivalent * 100) / 100)
+                    }
                     equityVal = {
                       particular:'Value of Equity',
                       avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100),
                       med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityMed * 100) / 100)
                     }
-                    totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,equityVal);
+                    totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,cashEquivalent,equityVal);
                   }
                 })
               }

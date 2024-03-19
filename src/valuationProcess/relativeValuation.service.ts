@@ -6,6 +6,7 @@ import {
   debtMethod,
   incomeFromOperation,
   netWorthOfComp,
+  cashAndCashEquivalent,
 } from 'src/excelFileServices/relativeValuation.methods';
 
 import {
@@ -18,7 +19,7 @@ import {
 } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { RELATIVE_PREFERENCE_RATIO } from 'src/constants/constants';
+import { GET_MULTIPLIER_UNITS, RELATIVE_PREFERENCE_RATIO } from 'src/constants/constants';
 @Injectable()
 export class RelativeValuationService {
   constructor(private readonly customLogger: CustomLogger) {}
@@ -35,7 +36,7 @@ export class RelativeValuationService {
     });
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
-    let multiplier = 100000;
+    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];;
     if (years === null)
       return {
         result: null,
@@ -50,13 +51,30 @@ export class RelativeValuationService {
     const companies = inputs.companies;
     const industries = inputs.industries;
     const ratiotypebased = inputs.type;
-    const peRatio = [];
-    const pbRatio = [];
-    const ebitda = [];
-    const sales = [];
+    // const peRatio = [];
+    // const pbRatio = [];
+    // const ebitda = [];
+    // const sales = [];
     var companiesInfo: any;
     let colNum =1;
+
+    let newPeRatioAvg,newPeRatioMed, newPbRatioAvg, newPbRatioMed, newEbitdaAvg, newEbitdaMed, newSalesAvg, newSalesMed;
     
+
+      companies.map((indCompanies)=>{
+        if(indCompanies.company === 'Average'){
+          newPeRatioAvg = indCompanies.peRatio;
+          newPbRatioAvg = indCompanies.pbRatio;
+          newEbitdaAvg = indCompanies.ebitda;
+          newSalesAvg = indCompanies.sales;
+        }
+        if(indCompanies.company === 'Median'){
+          newPeRatioMed = indCompanies.peRatio;
+          newPbRatioMed = indCompanies.pbRatio;
+          newEbitdaMed = indCompanies.ebitda;
+          newSalesMed = indCompanies.sales;
+        }
+      })
     // const companiesInfo = {
     //   peRatioAvg: findAverage(peRatio),
     //   peRatioMed: findMedian(peRatio),
@@ -68,57 +86,57 @@ export class RelativeValuationService {
     //   salesMed: findMedian(sales),
     // };
     
-    if (inputs.type == 'manual') {                // Make it smarter in next release
-      companies.map((company) => {
-        peRatio.push(company.peRatio);
-        pbRatio.push(company.pbRatio);
-        ebitda.push(company.ebitda);
-        sales.push(company.sales);
-      });
+    // if (inputs.type == 'manual') {                // Make it smarter in next release
+    //   companies.map((company) => {
+    //     peRatio.push(company.peRatio);
+    //     pbRatio.push(company.pbRatio);
+    //     ebitda.push(company.ebitda);
+    //     sales.push(company.sales);
+    //   });
 
-       companiesInfo = {
-        peRatioAvg: findAverage(peRatio),
-        peRatioMed: findMedian(peRatio),
-        pbRatioAvg: findAverage(pbRatio),
-        pbRatioMed: findMedian(pbRatio),
-        ebitdaAvg: findAverage(ebitda),
-        ebitdaMed: findMedian(ebitda),
-        salesAvg: findAverage(sales),
-        salesMed: findMedian(sales),
-      };
-    } else if (inputs.preferenceRatioSelect == RELATIVE_PREFERENCE_RATIO[0]){
-        companiesInfo = {
-        peRatioAvg: industries[0].currentPE,
-        peRatioMed: industries[0].currentPE,
-        pbRatioAvg: industries[0].pbv,
-        pbRatioMed: industries[0].pbv,
-        ebitdaAvg: industries[0].evEBITDA_PV,
-        ebitdaMed: industries[0].evEBITDA_PV,
-        salesAvg: industries[0].priceSales,
-        salesMed: industries[0].priceSales,
-      };
-    }
-    else if (inputs.preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
-      companies.map((company) => {
-        peRatio.push(company.peRatio);
-        pbRatio.push(company.pbRatio);
-        ebitda.push(company.ebitda);
-        sales.push(company.sales);
-      });
-      companiesInfo = {
-        peRatioAvg: findAverage(peRatio),
-        peRatioMed: findMedian(peRatio),
-        pbRatioAvg: findAverage(pbRatio),
-        pbRatioMed: findMedian(pbRatio),
-        ebitdaAvg: findAverage(ebitda),
-        ebitdaMed: findMedian(ebitda),
-        salesAvg: findAverage(sales),
-        salesMed: findMedian(sales),
-      }
-    }
-      else
-        // Do nothing for now
-      ;
+    //    companiesInfo = {
+    //     peRatioAvg: findAverage(peRatio),
+    //     peRatioMed: findMedian(peRatio),
+    //     pbRatioAvg: findAverage(pbRatio),
+    //     pbRatioMed: findMedian(pbRatio),
+    //     ebitdaAvg: findAverage(ebitda),
+    //     ebitdaMed: findMedian(ebitda),
+    //     salesAvg: findAverage(sales),
+    //     salesMed: findMedian(sales),
+    //   };
+    // } else if (inputs.preferenceRatioSelect == RELATIVE_PREFERENCE_RATIO[0]){
+    //     companiesInfo = {
+    //     peRatioAvg: industries[0].currentPE,
+    //     peRatioMed: industries[0].currentPE,
+    //     pbRatioAvg: industries[0].pbv,
+    //     pbRatioMed: industries[0].pbv,
+    //     ebitdaAvg: industries[0].evEBITDA_PV,
+    //     ebitdaMed: industries[0].evEBITDA_PV,
+    //     salesAvg: industries[0].priceSales,
+    //     salesMed: industries[0].priceSales,
+    //   };
+    // }
+    // else if (inputs.preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
+    //   companies.map((company) => {
+    //     peRatio.push(company.peRatio);
+    //     pbRatio.push(company.pbRatio);
+    //     ebitda.push(company.ebitda);
+    //     sales.push(company.sales);
+    //   });
+    //   companiesInfo = {
+    //     peRatioAvg: findAverage(peRatio),
+    //     peRatioMed: findMedian(peRatio),
+    //     pbRatioAvg: findAverage(pbRatio),
+    //     pbRatioMed: findMedian(pbRatio),
+    //     ebitdaAvg: findAverage(ebitda),
+    //     ebitdaMed: findMedian(ebitda),
+    //     salesAvg: findAverage(sales),
+    //     salesMed: findMedian(sales),
+    //   }
+    // }
+    //   else
+    //     // Do nothing for now
+    //   ;
 
     // const abc= await netWorthOfComp(column, worksheet2);
     // console.log('Hello Abc - ', abc);
@@ -130,31 +148,32 @@ export class RelativeValuationService {
     netWorth = netWorth - prefShareCap;
 
     const bookValue = netWorth * multiplier / outstandingShares;
-    const pbMarketPriceAvg = netWorth * companiesInfo.pbRatioAvg;
-    const pbMarketPriceMed = netWorth * companiesInfo.pbRatioMed;
+    const pbMarketPriceAvg = netWorth * newPbRatioAvg;
+    const pbMarketPriceMed = netWorth * newPbRatioMed;
 
     // Valuation based on P/E Ratio
     let resProfitLoss = await profitLossValues(colNum-1, worksheet1);
     let eps = (resProfitLoss.profitLossForYear * multiplier) / outstandingShares;
-    const peMarketPriceAvg = resProfitLoss.profitLossForYear * companiesInfo.peRatioAvg;
-    const peMarketPriceMed = resProfitLoss.profitLossForYear * companiesInfo.peRatioMed;
+    const peMarketPriceAvg = resProfitLoss.profitLossForYear * newPeRatioAvg;
+    const peMarketPriceMed = resProfitLoss.profitLossForYear * newPeRatioMed;
 
     // Valuation based on EV/EBITDA
     const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
-    const enterpriseAvg = ebitdaValue * companiesInfo.ebitdaAvg;
-    const enterpriseMed = ebitdaValue * companiesInfo.ebitdaMed;
+    const cashEquivalent = await cashAndCashEquivalent(colNum-1, worksheet2);
+    const enterpriseAvg = ebitdaValue * newEbitdaAvg;
+    const enterpriseMed = ebitdaValue * newEbitdaMed;
 
     const debt = await debtMethod(colNum-1, worksheet2);
 
-    const ebitdaEquityAvg = enterpriseAvg - debt;
-    const ebitdaEquityMed = enterpriseMed - debt;
+    const ebitdaEquityAvg = enterpriseAvg - debt + cashEquivalent;
+    const ebitdaEquityMed = enterpriseMed - debt + cashEquivalent;
     const ebitdaMarketPriceAvg = ebitdaEquityAvg * multiplier/ outstandingShares;
     const ebitdaMarketPriceMed = ebitdaEquityMed* multiplier / outstandingShares;
 
     // Valuation based on Price/Sales
     const salesValue = await incomeFromOperation(colNum-1, worksheet1);
-    const salesEquityAvg = salesValue * companiesInfo.salesAvg;
-    const salesEquityMed = salesValue * companiesInfo.salesMed;
+    const salesEquityAvg = salesValue * newSalesAvg;
+    const salesEquityMed = salesValue * newSalesMed;
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
     const salesMarketPriceMed = salesEquityMed  / outstandingShares;
 
@@ -197,8 +216,8 @@ export class RelativeValuationService {
           pbSharesMed: outstandingShares,
           bookValueAvg: bookValue,
           bookValueMed: bookValue,
-          pbRatioAvg: companiesInfo.pbRatioAvg,
-          pbRatioMed: companiesInfo.pbRatioMed,
+          pbRatioAvg: newPbRatioAvg,
+          pbRatioMed: newPbRatioMed,
           pbMarketPriceAvg: pbMarketPriceAvg,
           pbMarketPriceMed: pbMarketPriceMed,
         },
@@ -207,22 +226,23 @@ export class RelativeValuationService {
           pat:resProfitLoss.profitLossForYear,
           epsAvg: eps,
           epsMed: eps,
-          peRatioAvg: companiesInfo.peRatioAvg,
-          peRatioMed: companiesInfo.peRatioMed,
+          peRatioAvg: newPeRatioAvg,
+          peRatioMed: newPeRatioMed,
           peMarketPriceAvg: peMarketPriceAvg,
           peMarketPriceMed: peMarketPriceMed,
         },
         {
           particular: 'ebitda',
           ebitda: ebitdaValue,
-          // ebitdaAvg: companiesInfo.ebitdaAvg,
-          // ebitdaMed: companiesInfo.ebitdaAvg,
-          evAvg: companiesInfo.ebitdaAvg,
-          evMed: companiesInfo.ebitdaMed,
+          // ebitdaAvg: ebitdaAvg,
+          // ebitdaMed: ebitdaAvg,
+          evAvg: newEbitdaAvg,
+          evMed: newEbitdaMed,
           enterpriseAvg: enterpriseAvg,
           enterpriseMed: enterpriseMed,
           debtAvg: debt,
           debtMed: debt,
+          cashEquivalent: cashEquivalent,
           ebitdaEquityAvg: ebitdaEquityAvg,
           ebitdaEquityMed: ebitdaEquityMed,
           ebitdaSharesAvg: outstandingShares,
@@ -234,8 +254,8 @@ export class RelativeValuationService {
           particular: 'sales',
           salesAvg: salesValue,
           salesMed: salesValue,
-          salesRatioAvg: companiesInfo.salesAvg,
-          salesRatioMed: companiesInfo.salesMed,
+          salesRatioAvg: newSalesAvg,
+          salesRatioMed: newSalesMed,
           salesEquityAvg: salesEquityAvg,
           salesEquityMed: salesEquityMed,
           salesSharesAvg: outstandingShares,

@@ -1,6 +1,6 @@
 import { sheet1_PLObj, sheet2_BSObj,columnsList } from './excelSheetConfig';
 import * as XLSX from 'xlsx';
-import { getCellValue } from './common.methods';
+import { convertToNumberOrZero, getCellValue } from './common.methods';
 
 
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
@@ -231,6 +231,25 @@ export async function debtMethod(column:number, worksheet2: any) {
     `${columnsList[column] + sheet2_BSObj.otherUnsecuredLoansRow}`,
   );
   return longTermBorrowings + shortTermBorrowings + otherUnsecuredLoans;
+}
+
+export async function  cashAndCashEquivalent(column:number, worksheet2){
+  const cashEquivalent =  await getCellValue(
+    worksheet2,
+    `${columnsList[column] + sheet2_BSObj.cashEquivalentsRow}`,
+  );
+
+  const bankBalance =  await getCellValue(
+    worksheet2,
+    `${columnsList[column] + sheet2_BSObj.bankBalancesRow}`,
+  );
+
+  const shortTermInvestment =  await getCellValue(
+    worksheet2,
+    `${columnsList[column] + sheet2_BSObj.shortTermInvestmentsRow}`,
+  );
+
+  return convertToNumberOrZero(cashEquivalent) + convertToNumberOrZero(bankBalance) + convertToNumberOrZero(shortTermInvestment);
 }
 
 export async function incomeFromOperation(column:number, worksheet1: any) {
