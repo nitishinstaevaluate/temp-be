@@ -1774,39 +1774,36 @@ export class ReportService {
         })
 
         hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
-          let outputObject = {};
-          let outputString = [];
-          let letterIndex = 97; // this is the ASCII code start
-          for (const indPurpose of reportDetails.reportPurpose ){
-            if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].length){
-              let keys = Object.keys(reportDetails.reportSection);
-              for (let i = 0; i < keys.length; i++){
-                if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].includes(reportDetails.reportSection[i])){
-                  const key = keys[i];
-                  let element;
-                  if (letterIndex > 97) {
-                      element = ` ${reportDetails.reportSection[key]}`;
-                  } else {
-                      element = `${reportDetails.reportSection[key]}`;
+          let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+              if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
+                return ['Please provide data']
+              }
+
+               //Firstly create object structure with purpose of report and sections in key-value format;
+               reportDetails.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+                reportDetails.reportSection.forEach((indSection, sectionIndex) => {
+                  if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                    if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                      storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                      storePurposeWiseSections[indpurpose].push(indSection);
+                    }
                   }
-                  outputObject[element] = key;
-                  letterIndex++;
-                }
-              }
-              let outputArray = Object.keys(outputObject);
-              if (outputArray.length > 1) {
-                  let lastElement = outputArray.pop();
-                  outputArray.push(`and ${lastElement}`);
-              }
-              if(outputString.length){
-                outputString.push(" and " + outputArray.join(', ').replace(/,([^,]*)$/, ' $1') + ' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-              }
-              else{
-                outputString.push(outputArray.join(', ').replace(/,([^,]*)$/, ' $1') +' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-              }
-            }
-          }
-          return outputString;
+                });
+              })
+
+              console.log(storePurposeWiseSections,"all purposes")
+              // Use that object structure created above for looping and adding sections followed by purposes
+              reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
+               let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+                if (stockedPurposes.length <= 1) {
+                  overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                } else {
+                  const lastSection = stockedPurposes[stockedPurposes.length - 1];
+                  const otherSections = stockedPurposes.slice(0, -1).join(', ');
+                  overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                  }
+              })
+              return overallSectionsWithPurposes.join(' and ');
       });
 
         hbs.registerHelper('modelWeightageValue',()=>{

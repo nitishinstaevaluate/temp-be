@@ -6,7 +6,7 @@ import { utilsService } from "src/utils/utils.service";
 import hbs = require('handlebars');
 import * as converter from 'number-to-words'
 import { NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
-import { formatDate } from "./report-common-functions";
+import { formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
 
 @Injectable()
 export class mandateReportService {
@@ -61,7 +61,7 @@ export class mandateReportService {
 
             hbs.registerHelper('totalFees',()=>{
                 if(mandateDetails.totalFees)
-                    return mandateDetails.totalFees;
+                    return formatPositiveAndNegativeValues(mandateDetails.totalFees);
                 return '';
             })
 
@@ -90,39 +90,35 @@ export class mandateReportService {
             })
 
             hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
-              let outputObject = {};
-              let outputString = [];
-              let letterIndex = 97; // this is the ASCII code start
-              for (const indPurpose of mandateDetails.purposeOfReport ){
-                if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].length){
-                  let keys = Object.keys(mandateDetails.section);
-                  for (let i = 0; i < keys.length; i++){
-                    if(PURPOSE_OF_REPORT_AND_SECTION[indPurpose].includes(mandateDetails.section[i])){
-                      const key = keys[i];
-                      let element;
-                      if (letterIndex > 97) {
-                          element = ` ${mandateDetails.section[key]}`;
-                      } else {
-                          element = `${mandateDetails.section[key]}`;
-                      }
-                      outputObject[element] = key;
-                      letterIndex++;
+              let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+              if(!mandateDetails.purposeOfReport?.length || !mandateDetails.section?.length){
+                return ['Please provide data']
+              }
+
+               //Firstly create object structure with purpose of report and sections in key-value format;
+              mandateDetails.purposeOfReport.forEach((indpurpose, purposeIndex)=>{
+                mandateDetails.section.forEach((indSection, sectionIndex) => {
+                  if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                    if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                      storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                      storePurposeWiseSections[indpurpose].push(indSection);
                     }
                   }
-                  let outputArray = Object.keys(outputObject);
-                  if (outputArray.length > 1) {
-                      let lastElement = outputArray.pop();
-                      outputArray.push(`and ${lastElement}`);
+                });
+              })
+
+              // Use that object structure created above for looping and adding sections followed by purposes
+              mandateDetails.purposeOfReport.forEach((indPurposeOfReport,index)=>{
+               let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+                if (stockedPurposes.length <= 1) {
+                  overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                } else {
+                  const lastSection = stockedPurposes[stockedPurposes.length - 1];
+                  const otherSections = stockedPurposes.slice(0, -1).join(', ');
+                  overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
                   }
-                  if(outputString.length){
-                    outputString.push(" and " + outputArray.join(', ').replace(/,([^,]*)$/, ' $1') + ' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-                  }
-                  else{
-                    outputString.push(outputArray.join(', ').replace(/,([^,]*)$/, ' $1') +' of ' + REPORT_PURPOSE[`${indPurpose}`]);
-                  }
-                }
-              }
-              return outputString;
+              })
+              return overallSectionsWithPurposes.join(' and ');
           });
           
         }
