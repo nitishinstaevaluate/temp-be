@@ -18,6 +18,7 @@ import { ChangeInNCA } from './fcfeAndFCFF.method';
 import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
+import { formatPositiveAndNegativeValues } from 'src/report/report-common-functions';
 require('dotenv').config();
 
 @Injectable()
@@ -466,19 +467,22 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayPAT.push({fcfePat:response.pat ? parseFloat(response?.pat).toFixed(2) : ''})
+                const pat = formatPositiveAndNegativeValues(response.pat);
+                arrayPAT.push({fcfePat:pat})
               })
               arrayPAT.unshift({fcfePat:"PAT"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayPAT.push({fcffPat:response.pat ? parseFloat(response?.pat).toFixed(2) : ''})
+                const pat = formatPositiveAndNegativeValues(response.pat);
+                arrayPAT.push({fcffPat:pat})
               })
               arrayPAT.unshift({fcffPat:"PAT"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayPAT.push({excessEarningPat:response.pat ? parseFloat(response?.pat).toFixed(2) : ''})
+                const pat = formatPositiveAndNegativeValues(response.pat);
+                arrayPAT.push({excessEarningPat:pat})
               })
               arrayPAT.unshift({excessEarningPat:"PAT"});
             }
@@ -491,13 +495,15 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arraydepAndAmortisation.push({fcfeDepAmortisation:response.depAndAmortisation ? parseFloat(response?.depAndAmortisation).toFixed(2) : ''})
+                const depAndAmortisation = formatPositiveAndNegativeValues(response.depAndAmortisation);
+                arraydepAndAmortisation.push({fcfeDepAmortisation:depAndAmortisation})
               })
               arraydepAndAmortisation.unshift({fcfeDepAmortisation:"Dept And Amortisation"});
             }
             else if (result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arraydepAndAmortisation.push({fcffDepAmortisation:response.depAndAmortisation ? parseFloat(response?.depAndAmortisation).toFixed(2) : ''})
+                const depAndAmortisation = formatPositiveAndNegativeValues(response.depAndAmortisation);
+                arraydepAndAmortisation.push({fcffDepAmortisation:depAndAmortisation})
               })
               arraydepAndAmortisation.unshift({fcffDepAmortisation:"Dept And Amortisation"});
               
@@ -511,13 +517,15 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:response.addInterestAdjTaxes ? parseFloat(response?.addInterestAdjTaxes).toFixed(2)  : response?.addInterestAdjTaxes === 0 ? 0 : ''})
+                const addInterestAdjTaxes = formatPositiveAndNegativeValues(response.addInterestAdjTaxes);
+                arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:addInterestAdjTaxes})
               })
               arrayaddInterestAdjTaxes.unshift({fcfeAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:response.addInterestAdjTaxes ? parseFloat(response?.addInterestAdjTaxes).toFixed(2)  : response?.addInterestAdjTaxes === 0 ? 0 : ''})
+                const addInterestAdjTaxes = formatPositiveAndNegativeValues(response.addInterestAdjTaxes);
+                arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:addInterestAdjTaxes})
               })
               arrayaddInterestAdjTaxes.unshift({fcffAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
               
@@ -531,273 +539,303 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayonCashItems.push({fcfeOnCashItems:response.onCashItems ? parseFloat(response?.onCashItems).toFixed(2) : response.onCashItems === 0 ? 0 : ''})
+                const onCashItems = formatPositiveAndNegativeValues(response.onCashItems);
+                arrayonCashItems.push({fcfeOnCashItems:onCashItems})
               })
               arrayonCashItems.unshift({fcfeOnCashItems:"Other Non Cash items"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayonCashItems.push({fcffOnCashItems:response.onCashItems ? parseFloat(response?.onCashItems).toFixed(2) : response.onCashItems === 0 ? 0 : ''})
+                const onCashItems = formatPositiveAndNegativeValues(response.onCashItems);
+                arrayonCashItems.push({fcffOnCashItems:onCashItems})
               })
               arrayonCashItems.unshift({fcffOnCashItems:"Other Non Cash items"});
             }
           })
           return arrayonCashItems;
         });
-
+        
         hbs.registerHelper('NCA', () => {
           let arrayNca = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayNca.push({fcfeNca:response.nca ? parseFloat(response?.nca).toFixed(2) : response.nca === 0 ? 0 : ''})
+                const nca = formatPositiveAndNegativeValues(response.nca);
+                arrayNca.push({fcfeNca:nca})
               })
               arrayNca.unshift({fcfeNca:"Change in NCA"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayNca.push({fcffNca:response.nca ? parseFloat(response?.nca).toFixed(2) : response.nca === 0 ? 0 : ''})
+                const nca = formatPositiveAndNegativeValues(response.nca);
+                arrayNca.push({fcffNca:nca})
               })
               arrayNca.unshift({fcffNca:"Change in NCA"});
             }
           })
           return arrayNca;
         });
-
+        
         hbs.registerHelper('defferTaxAssets', () => {
           let arraydefferedTaxAssets = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arraydefferedTaxAssets.push({fcfeDefferedTaxAssets:response?.defferedTaxAssets ? parseFloat(response?.defferedTaxAssets).toFixed(2) : response.defferedTaxAssets === 0 ? 0 : ''})
+                const defferedTaxAssets = formatPositiveAndNegativeValues(response.defferedTaxAssets);
+                arraydefferedTaxAssets.push({fcfeDefferedTaxAssets:defferedTaxAssets})
               })
               arraydefferedTaxAssets.unshift({fcfeDefferedTaxAssets:"Add/Less: Deferred Tax Assets(Net)"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arraydefferedTaxAssets.push({fcffDefferedTaxAssets:response?.defferedTaxAssets ? parseFloat(response?.defferedTaxAssets).toFixed(2) : response.defferedTaxAssets === 0 ? 0 : ''})
+                const defferedTaxAssets = formatPositiveAndNegativeValues(response.defferedTaxAssets);
+                arraydefferedTaxAssets.push({fcffDefferedTaxAssets:defferedTaxAssets})
               })
               arraydefferedTaxAssets.unshift({fcffDefferedTaxAssets:"Add/Less: Deferred Tax Assets(Net)"});
             }
           })
           return arraydefferedTaxAssets;
         });
-
+        
         hbs.registerHelper('netCshFlow', () => {
           let arrayNetCashFlow = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayNetCashFlow.push({fcfeNetCashFlow:response?.netCashFlow ? parseFloat(response?.netCashFlow).toFixed(2) : response.netCashFlow === 0 ? 0 : ''})
+                const netCashFlow = formatPositiveAndNegativeValues(response.netCashFlow);
+                arrayNetCashFlow.push({fcfeNetCashFlow:netCashFlow})
               })
               arrayNetCashFlow.unshift({fcfeNetCashFlow:"Net Cash Flow"});
             }
             if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayNetCashFlow.push({fcffNetCashFlow:response?.netCashFlow ? parseFloat(response?.netCashFlow).toFixed(2) : response.netCashFlow === 0 ? 0 : ''})
+                const netCashFlow = formatPositiveAndNegativeValues(response.netCashFlow);
+                arrayNetCashFlow.push({fcffNetCashFlow:netCashFlow})
               })
               arrayNetCashFlow.unshift({fcffNetCashFlow:"Net Cash Flow"});
             }
           })
           return arrayNetCashFlow;
         });
-
-
+        
+        
         hbs.registerHelper('fxdCshFlow', () => {
           let arrayFixedAssets = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayFixedAssets.push({fcfeFixedAssets:response?.fixedAssets ? parseFloat(response?.fixedAssets).toFixed(2) : response.fixedAssets === 0 ? 0 : ''})
+                const fixedAssets = formatPositiveAndNegativeValues(response.fixedAssets);
+                arrayFixedAssets.push({fcfeFixedAssets:fixedAssets})
               })
               arrayFixedAssets.unshift({fcfeFixedAssets:"Change in fixed assets"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayFixedAssets.push({fcffFixedAssets:response?.fixedAssets ? parseFloat(response?.fixedAssets).toFixed(2) : response.fixedAssets === 0 ? 0 : ''})
+                const fixedAssets = formatPositiveAndNegativeValues(response.fixedAssets);
+                arrayFixedAssets.push({fcffFixedAssets:fixedAssets})
               })
               arrayFixedAssets.unshift({fcffFixedAssets:"Change in fixed assets"});
             }
           })
           return arrayFixedAssets;
         });
-
+        
         hbs.registerHelper('FCFF', () => {
           let arrayfcff = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayfcff.push({fcff:response?.fcff ? parseFloat(response?.fcff).toFixed(2) : response.fcff === 0 ? 0 : ''})
+                const fcff = formatPositiveAndNegativeValues(response.fcff);
+                arrayfcff.push({fcff:fcff})
               })
               arrayfcff.unshift({fcff:"FCFF"});
             }
           })
           return arrayfcff;
         });
-
+        
         hbs.registerHelper('discPeriod', () => {
           let arrayDiscountingPeriod = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayDiscountingPeriod.push({fcfeDiscountingPeriod:response?.discountingPeriod ? parseFloat(response?.discountingPeriod).toFixed(2) : response.discountingPeriod === 0 ? 0 : ''})
+                const discountingPeriod = formatPositiveAndNegativeValues(response.discountingPeriod);
+                arrayDiscountingPeriod.push({fcfeDiscountingPeriod:discountingPeriod})
               })
               arrayDiscountingPeriod.unshift({fcfeDiscountingPeriod:"Discounting Period"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayDiscountingPeriod.push({fcffDiscountingPeriod:response?.discountingPeriod ? parseFloat(response?.discountingPeriod).toFixed(2) : response.discountingPeriod === 0 ? 0 : ''})
+                const discountingPeriod = formatPositiveAndNegativeValues(response.discountingPeriod);
+                arrayDiscountingPeriod.push({fcffDiscountingPeriod:discountingPeriod})
               })
               arrayDiscountingPeriod.unshift({fcffDiscountingPeriod:"Discounting Period"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayDiscountingPeriod.push({excessEarningDiscountingPeriod:response?.discountingPeriod ? parseFloat(response?.discountingPeriod).toFixed(2) : response.discountingPeriod === 0 ? 0 : ''})
+                const discountingPeriod = formatPositiveAndNegativeValues(response.discountingPeriod);
+                arrayDiscountingPeriod.push({excessEarningDiscountingPeriod:discountingPeriod})
               })
               arrayDiscountingPeriod.unshift({excessEarningDiscountingPeriod:"Discounting Period"});
             }
           })
           return arrayDiscountingPeriod;
         });
-
+        
         hbs.registerHelper('discFactor', () => {
           let arrayDiscountingFactor = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayDiscountingFactor.push({fcfeDiscountingFactor:response?.discountingFactor ? parseFloat(response?.discountingFactor).toFixed(2) : response.discountingFactor === 0 ? 0 : ''})
+                const discountingFactor = formatPositiveAndNegativeValues(response.discountingFactor);
+                arrayDiscountingFactor.push({fcfeDiscountingFactor:discountingFactor})
               })
               arrayDiscountingFactor.unshift({fcfeDiscountingFactor:"Discounting Factor"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayDiscountingFactor.push({fcffDiscountingFactor:response?.discountingFactor ? parseFloat(response?.discountingFactor).toFixed(2) : response.discountingFactor === 0 ? 0 : ''})
+                const discountingFactor = formatPositiveAndNegativeValues(response.discountingFactor);
+                arrayDiscountingFactor.push({fcffDiscountingFactor:discountingFactor})
               })
               arrayDiscountingFactor.unshift({fcffDiscountingFactor:"Discounting Factor"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayDiscountingFactor.push({excessEarningDiscountingFactor:response?.discountingFactor ? parseFloat(response?.discountingFactor).toFixed(2) : response.discountingFactor === 0 ? 0 : ''})
+                const discountingFactor = formatPositiveAndNegativeValues(response.discountingFactor);
+                arrayDiscountingFactor.push({excessEarningDiscountingFactor:discountingFactor})
               })
               arrayDiscountingFactor.unshift({excessEarningDiscountingFactor:"Discounting Factor"});
             }
           })
           return arrayDiscountingFactor;
         });
-
+        
         hbs.registerHelper('prsntFCFF', () => {
           let arrayPresentFCFF = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayPresentFCFF.push({fcfePresentFCFF:response?.presentFCFF ? parseFloat(response?.presentFCFF).toFixed(2) : response.presentFCFF === 0 ? 0 : ''})
+                const presentFCFF = formatPositiveAndNegativeValues(response.presentFCFF);
+                arrayPresentFCFF.push({fcfePresentFCFF:presentFCFF})
               })
               arrayPresentFCFF.unshift({fcfePresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayPresentFCFF.push({fcffPresentFCFF:response?.presentFCFF ? parseFloat(response?.presentFCFF).toFixed(2) : response.presentFCFF === 0 ? 0 : ''})
+                const presentFCFF = formatPositiveAndNegativeValues(response.presentFCFF);
+                arrayPresentFCFF.push({fcffPresentFCFF:presentFCFF})
               })
               arrayPresentFCFF.unshift({fcffPresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
             }
           })
           return arrayPresentFCFF;
         });
-
+        
         hbs.registerHelper('sumCashFlow', () => {
           let arraySumOfCashFlows = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arraySumOfCashFlows.push({fcfeSumOfCashFlows:response?.sumOfCashFlows ? parseFloat(response?.sumOfCashFlows).toFixed(2) : response.sumOfCashFlows === 0 ? 0 : ''})
+                const sumOfCashFlows = formatPositiveAndNegativeValues(response.sumOfCashFlows);
+                arraySumOfCashFlows.push({fcfeSumOfCashFlows:sumOfCashFlows})
               })
               arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Cash Flows"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arraySumOfCashFlows.push({fcffSumOfCashFlows:response?.sumOfCashFlows ? parseFloat(response?.sumOfCashFlows).toFixed(2) : response.sumOfCashFlows === 0 ? 0 : ''})
+                const sumOfCashFlows = formatPositiveAndNegativeValues(response.sumOfCashFlows);
+                arraySumOfCashFlows.push({fcffSumOfCashFlows:sumOfCashFlows})
               })
               arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Cash Flows"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arraySumOfCashFlows.push({excessEarningSumOfCashFlows:response?.sumOfCashFlows ? parseFloat(response?.sumOfCashFlows).toFixed(2) : response.sumOfCashFlows === 0 ? 0 : ''})
+                const sumOfCashFlows = formatPositiveAndNegativeValues(response.sumOfCashFlows);
+                arraySumOfCashFlows.push({excessEarningSumOfCashFlows:sumOfCashFlows})
               })
               arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Cash Flows"});
             }
           })
           return arraySumOfCashFlows;
         });
-
+        
         hbs.registerHelper('debtDate', () => {
           let arrayDebtOnDate = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayDebtOnDate.push({fcfeDebtOnDate:response?.debtOnDate ? parseFloat(response?.debtOnDate).toFixed(2) : response.debtOnDate === 0 ? 0 : ''})
+                const debtOnDate = formatPositiveAndNegativeValues(response.debtOnDate);
+                arrayDebtOnDate.push({fcfeDebtOnDate:debtOnDate})
               })
               arrayDebtOnDate.unshift({fcfeDebtOnDate:"Less: Debt as on Date"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayDebtOnDate.push({fcffDebtOnDate:response?.debtOnDate ? parseFloat(response?.debtOnDate).toFixed(2) : response.debtOnDate === 0 ? 0 : ''})
+                const debtOnDate = formatPositiveAndNegativeValues(response.debtOnDate);
+                arrayDebtOnDate.push({fcffDebtOnDate:debtOnDate})
               })
               arrayDebtOnDate.unshift({fcffDebtOnDate:"Less: Debt as on Date"});
             }
           })
           return arrayDebtOnDate;
         });
-
+        
         hbs.registerHelper('cashEquvlnt', () => {
           let arrayCashEquivalents = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayCashEquivalents.push({fcfeCashEquivalents:response?.cashEquivalents ? parseFloat(response?.cashEquivalents).toFixed(2) : response.cashEquivalents === 0 ? 0 : ''})
+                const cashEquivalents = formatPositiveAndNegativeValues(response.cashEquivalents);
+                arrayCashEquivalents.push({fcfeCashEquivalents:cashEquivalents})
               })
               arrayCashEquivalents.unshift({fcfeCashEquivalents:"Add: Cash & Cash Equivalents"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayCashEquivalents.push({fcffCashEquivalents:response?.cashEquivalents ? parseFloat(response?.cashEquivalents).toFixed(2) : response.cashEquivalents === 0 ? 0 : ''})
+                const cashEquivalents = formatPositiveAndNegativeValues(response.cashEquivalents);
+                arrayCashEquivalents.push({fcffCashEquivalents:cashEquivalents})
               })
               arrayCashEquivalents.unshift({fcffCashEquivalents:"Add: Cash & Cash Equivalents"});
             }
           })
           return arrayCashEquivalents;
         });
-
+        
         hbs.registerHelper('surplusAsset', () => {
           let arraySurplusAssets = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arraySurplusAssets.push({fcfeSurplusAssets:response?.surplusAssets ? parseFloat(response?.surplusAssets).toFixed(2) : response.surplusAssets === 0 ? 0 : ''})
+                const surplusAssets = formatPositiveAndNegativeValues(response.surplusAssets);
+                arraySurplusAssets.push({fcfeSurplusAssets:surplusAssets})
               })
               arraySurplusAssets.unshift({fcfeSurplusAssets:"Add: Surplus Assets/Investments"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arraySurplusAssets.push({fcffSurplusAssets:response?.surplusAssets ? parseFloat(response?.surplusAssets).toFixed(2) : response.surplusAssets === 0 ? 0 : ''})
+                const surplusAssets = formatPositiveAndNegativeValues(response.surplusAssets);
+                arraySurplusAssets.push({fcffSurplusAssets:surplusAssets})
               })
               arraySurplusAssets.unshift({fcffSurplusAssets:"Add: Surplus Assets/Investments"});
             }
           })
           return arraySurplusAssets;
         });
-
+        
         hbs.registerHelper('otherAdjustment', () => {
           let arrayOtherAdj = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayOtherAdj.push({fcfeOtherAdj:response?.otherAdj ? parseFloat(response?.otherAdj).toFixed(2) : response.otherAdj === 0 ? 0 : ''})
+                const otherAdj = formatPositiveAndNegativeValues(response.otherAdj);
+                arrayOtherAdj.push({fcfeOtherAdj:otherAdj})
               })
               arrayOtherAdj.unshift({fcfeOtherAdj:"Add/Less: Other Adjustments(if any)"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayOtherAdj.push({fcffOtherAdj:response?.otherAdj ? parseFloat(response?.otherAdj).toFixed(2) : response.otherAdj === 0 ? 0 : ''})
+                const otherAdj = formatPositiveAndNegativeValues(response.otherAdj);
+                arrayOtherAdj.push({fcffOtherAdj:otherAdj})
               })
               arrayOtherAdj.unshift({fcffOtherAdj:"Add/Less: Other Adjustments(if any)"});
             }
@@ -815,7 +853,8 @@ export class ExcelSheetService {
             }
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayEquityValue.push({fcfeEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
+                const equityValue = formatPositiveAndNegativeValues(response.equityValue);
+                arrayEquityValue.push({fcfeEquityValue:equityValue})
               })
               if(checkiIfStub){
                 // arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
@@ -827,7 +866,8 @@ export class ExcelSheetService {
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayEquityValue.push({fcffEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
+                const equityValue = formatPositiveAndNegativeValues(response.equityValue);
+                arrayEquityValue.push({fcffEquityValue:equityValue})
               })
               if(checkiIfStub){
                 // arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
@@ -839,7 +879,8 @@ export class ExcelSheetService {
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayEquityValue.push({excessEarningEquityValue:response?.equityValue ? parseFloat(response?.equityValue).toFixed(2) : response.equityValue === 0 ? 0 : ''})
+                const equityValue = formatPositiveAndNegativeValues(response.equityValue);
+                arrayEquityValue.push({excessEarningEquityValue:equityValue})
               })
               if(checkiIfStub){
                 // arrayEquityValue.unshift({excessEarningEquityValue:`Equity Value as on ${result.valuationData[0].particulars}`});
@@ -852,25 +893,28 @@ export class ExcelSheetService {
           })
           return arrayEquityValue;
         });
-
+        
         hbs.registerHelper('stubValue',()=>{
           let arrayStubValue = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === MODEL[0]){
               result.valuationData.map((response:any)=>{
-                arrayStubValue.push({fcfeStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+                const stubAdjValue = formatPositiveAndNegativeValues(response.stubAdjValue);
+                arrayStubValue.push({fcfeStubAdjValue:stubAdjValue})
               })
               arrayStubValue.unshift({fcfeStubAdjValue:"Add:Stub Period Adjustment"});
             }
             else if (result.model === MODEL[1]){
               result.valuationData.map((response:any)=>{
-                arrayStubValue.push({fcffStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+                const stubAdjValue = formatPositiveAndNegativeValues(response.stubAdjValue);
+                arrayStubValue.push({fcffStubAdjValue:stubAdjValue})
               })
               arrayStubValue.unshift({fcffStubAdjValue:"Add:Stub Period Adjustment"});
             }
             else if (result.model ===MODEL[3]){
               result.valuationData.map((response:any)=>{
-                arrayStubValue.push({excessEarnStubAdjValue:response?.stubAdjValue ? parseFloat(response?.stubAdjValue).toFixed(2) : response.stubAdjValue === 0 ? 0 : ''})
+                const stubAdjValue = formatPositiveAndNegativeValues(response.stubAdjValue);
+                arrayStubValue.push({excessEarnStubAdjValue:stubAdjValue})
               })
               arrayStubValue.unshift({excessEarnStubAdjValue:"Add:Stub Period Adjustment"});
             }
@@ -882,44 +926,50 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === MODEL[0]){
               result.valuationData.map((response:any)=>{
-                arrayProvisionalVal.push({fcfeequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+                const equityValueNew = formatPositiveAndNegativeValues(response.equityValueNew);
+                arrayProvisionalVal.push({fcfeequityValueNew:equityValueNew})
               })
               arrayProvisionalVal.unshift({fcfeequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
             }
             else if (result.model === MODEL[1]){
               result.valuationData.map((response:any)=>{
-                arrayProvisionalVal.push({fcffequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+                const equityValueNew = formatPositiveAndNegativeValues(response.equityValueNew);
+                arrayProvisionalVal.push({fcffequityValueNew:equityValueNew})
               })
               arrayProvisionalVal.unshift({fcffequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
             }
             else if (result.model ===MODEL[3]){
               result.valuationData.map((response:any)=>{
-                arrayProvisionalVal.push({excessEarnequityValueNew:response?.equityValueNew ? parseFloat(response?.equityValueNew).toFixed(2) : response.equityValueNew === 0 ? 0 : ''})
+                const equityValueNew = formatPositiveAndNegativeValues(response.equityValueNew);
+                arrayProvisionalVal.push({excessEarnequityValueNew:equityValueNew})
               })
               arrayProvisionalVal.unshift({excessEarnequityValueNew:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
             }
           })
           return arrayProvisionalVal;
         })
-
+        
         hbs.registerHelper('shares', () => {
           let arrayNoOfShares = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayNoOfShares.push({fcfeNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
+                const noOfShares = formatPositiveAndNegativeValues(response.noOfShares);
+                arrayNoOfShares.push({fcfeNoOfShares:noOfShares})
               })
               arrayNoOfShares.unshift({fcfeNoOfShares:"No. of o/s Shares"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayNoOfShares.push({fcffNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
+                const noOfShares = formatPositiveAndNegativeValues(response.noOfShares);
+                arrayNoOfShares.push({fcffNoOfShares:noOfShares})
               })
               arrayNoOfShares.unshift({fcffNoOfShares:"No. of o/s Shares"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayNoOfShares.push({excessEarningNoOfShares:response?.noOfShares ? parseFloat(response?.noOfShares).toFixed(2) : response.noOfShares === 0 ? 0 : ''})
+                const noOfShares = formatPositiveAndNegativeValues(response.noOfShares);
+                arrayNoOfShares.push({excessEarningNoOfShares:noOfShares})
               })
               arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of o/s Shares"});
             }
@@ -932,19 +982,22 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayValuePerShare.push({fcfeValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
+                const valuePerShare = formatPositiveAndNegativeValues(response.valuePerShare);
+                arrayValuePerShare.push({fcfeValuePerShare:valuePerShare})
               })
               arrayValuePerShare.unshift({fcfeValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
-                arrayValuePerShare.push({fcffValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
+                const valuePerShare = formatPositiveAndNegativeValues(response.valuePerShare);
+                arrayValuePerShare.push({fcffValuePerShare:valuePerShare})
               })
               arrayValuePerShare.unshift({fcffValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayValuePerShare.push({excessEarningValuePerShare:response?.valuePerShare ? parseFloat(response?.valuePerShare).toFixed(2) : response.valuePerShare === 0 ? 0 : ''})
+                const valuePerShare = formatPositiveAndNegativeValues(response.valuePerShare);
+                arrayValuePerShare.push({excessEarningValuePerShare:valuePerShare})
               })
               arrayValuePerShare.unshift({excessEarningValuePerShare:`Value per Share (${valuationResult.inputData[0].currencyUnit})`});
             }
@@ -957,7 +1010,8 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayChangeInBorrowings.push({changeInBorrowings:response?.changeInBorrowings ? parseFloat(response?.changeInBorrowings).toFixed(2) : response.changeInBorrowings === 0 ? 0 : ''})
+                const changeInBorrowings = formatPositiveAndNegativeValues(response.changeInBorrowings);
+                arrayChangeInBorrowings.push({changeInBorrowings:changeInBorrowings})
               })
               arrayChangeInBorrowings.unshift({changeInBorrowings:"Change in Borrowings"});
             }
@@ -970,7 +1024,8 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
               result.valuationData.map((response:any)=>{
-                arrayfcff.push({fcff:response?.fcff ? parseFloat(response?.fcff).toFixed(2) : response.fcff === 0 ? 0 : ''})
+                const fcff = formatPositiveAndNegativeValues(response.fcff);
+                arrayfcff.push({fcff:fcff})
               })
               arrayfcff.unshift({fcff:"FCFE"});
             }
@@ -984,7 +1039,8 @@ export class ExcelSheetService {
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
-                arrayNetWorth.push({netWorth:response?.netWorth ? parseFloat(response?.netWorth).toFixed(2) : response.netWorth === 0 ? 0 : ''})
+                const netWorth = formatPositiveAndNegativeValues(response.netWorth);
+                arrayNetWorth.push({netWorth:netWorth})
               })
               arrayNetWorth.unshift({netWorth:"Networth"});
             }
@@ -1074,20 +1130,20 @@ export class ExcelSheetService {
                   const netWorthObj = {
                     srNo:'',
                     particular:'Net Worth Of Company',
-                    avg:response.netWorthAvg?.toFixed(2),
-                    med:response.netWorthMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.netWorthAvg),
+                    med:formatPositiveAndNegativeValues(response.netWorthMed)
                   }
                   const industryObj = {
                     srNo:'',
                     particular:'P/B Ratio of Industry',
-                    avg:response.pbRatioAvg?.toFixed(2),
-                    med:response.pbRatioMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.pbRatioAvg),
+                    med:formatPositiveAndNegativeValues(response.pbRatioMed)
                   }
                   const fairValEquity = {
                     srNo:'',
                     particular:'PFair Value of Equity',
-                    avg:response.pbMarketPriceAvg?.toFixed(2),
-                    med:response.pbMarketPriceMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.pbMarketPriceAvg),
+                    med:formatPositiveAndNegativeValues(response.pbMarketPriceMed)
                   }
                   arrayPbRatio.push(pbRatioHead,netWorthObj,industryObj,fairValEquity)
                 }
@@ -1107,20 +1163,20 @@ export class ExcelSheetService {
                   const patObj={
                     srNo:'',
                     particular:'Profit after Taxes',
-                    avg:response.pat?.toFixed(2),
-                    med:response.pat?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.pat),
+                    med:formatPositiveAndNegativeValues(response.pat)
                   }
                   const peRatioIndObj={
                     srNo:'',
                     particular:'P/E Ratio of Industry',
-                    avg:response.peRatioAvg?.toFixed(2),
-                    med:response.peRatioMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.peRatioAvg),
+                    med:formatPositiveAndNegativeValues(response.peRatioMed)
                   }
                   const peRatioMrktPrceObj={
                     srNo:'',
                     particular:'Fair Value of Equity',
-                    avg:response.peMarketPriceAvg?.toFixed(2),
-                    med:response.peMarketPriceMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.peMarketPriceAvg),
+                    med:formatPositiveAndNegativeValues(response.peMarketPriceMed)
                   }
                   arrayPbRatio.push(peRatioHead,patObj,peRatioIndObj,peRatioMrktPrceObj)
                 }
@@ -1140,32 +1196,32 @@ export class ExcelSheetService {
                   const ebitDaObj={
                     srNo:'',
                     particular:'EBITDA',
-                    avg:response.ebitda?.toFixed(2),
-                    med:response.ebitda?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.ebitda),
+                    med:formatPositiveAndNegativeValues(response.ebitda)
                   }
                   const evEbitDaObj={
                     srNo:'',
                     particular:'EV/EBITDA',
-                    avg:response.evAvg?.toFixed(2),
-                    med:response.evMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.evAvg),
+                    med:formatPositiveAndNegativeValues(response.evMed)
                   }
                   const entprseObj={
                     srNo:'',
                     particular:'Enterprise Value',
-                    avg:response.enterpriseAvg?.toFixed(2),
-                    med:response.enterpriseMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.enterpriseAvg),
+                    med:formatPositiveAndNegativeValues(response.enterpriseMed)
                   }
                   const valDebtObj={
                     srNo:'',
                     particular:'Less : Value of Debt',
-                    avg:response.debtAvg?.toFixed(2),
-                    med:response.debtMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.debtAvg),
+                    med:formatPositiveAndNegativeValues(response.debtMed)
                   }
                   const valEquityObj={
                     srNo:'',
                     particular:'Value of Equity',
-                    avg:response.ebitdaEquityAvg?.toFixed(2),
-                    med:response.ebitdaEquityMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.ebitdaEquityAvg),
+                    med:formatPositiveAndNegativeValues(response.ebitdaEquityMed)
                   }
                   arrayPbRatio.push(ebitDatHead,ebitDaObj,evEbitDaObj,entprseObj,valDebtObj,valEquityObj)
                 }
@@ -1185,14 +1241,14 @@ export class ExcelSheetService {
                   const companySalesObj = {
                     srNo:'',
                     particular:'Sales of company',
-                    avg:response.salesAvg?.toFixed(2),
-                    med:response.salesMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.salesAvg),
+                    med:formatPositiveAndNegativeValues(response.salesMed)
                   }
                   const salesRatioObj = {
                     srNo:'',
                     particular:'P/S Ratio',
-                    avg:response.salesRatioAvg?.toFixed(2),
-                    med:response.salesRatioMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.salesRatioAvg),
+                    med:formatPositiveAndNegativeValues(response.salesRatioMed)
                   }
                   const salesEquityObj = {
                     srNo:'',
@@ -1212,32 +1268,32 @@ export class ExcelSheetService {
                   const resultHead = {
                     srNo:'',
                     particular:'Average value of Equity',
-                    avg:response.avgPricePerShareAvg?.toFixed(2),
-                    med:response.avgPricePerShareMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.avgPricePerShareAvg),
+                    med:formatPositiveAndNegativeValues(response.avgPricePerShareMed)
                   }
                   const illiquidityObj = {
                     srNo:'',
-                    particular:'Less: Illiquidity',
-                    avg:response.locAvg?.toFixed(2),
-                    med:response.locMed?.toFixed(2)
+                    particular:'Less:Discount',
+                    avg:formatPositiveAndNegativeValues(response.locAvg),
+                    med:formatPositiveAndNegativeValues(response.locMed)
                   }
                   const finalPriceObj = {
                     srNo:'',
                     particular:'Final Price',
-                    avg:response.finalPriceAvg?.toFixed(2),
-                    med:response.finalPriceMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.finalPriceAvg),
+                    med:formatPositiveAndNegativeValues(response.finalPriceMed)
                   }
                   const sharesObj = {
                     srNo:'',
                     particular:'No. of Shares',
-                    avg:response.outstandingShares,
-                    med:response.outstandingShares
+                    avg:formatPositiveAndNegativeValues(response.outstandingShares),
+                    med:formatPositiveAndNegativeValues(response.outstandingShares)
                   }
                   const valPrShareObj = {
                     srNo:'',
                     particular:`Fair Value per Share  (${valuationResult.inputData[0].currencyUnit})`,
-                    avg:response.fairValuePerShareAvg?.toFixed(2),
-                    med:response.fairValuePerShareMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.fairValuePerShareAvg),
+                    med:formatPositiveAndNegativeValues(response.fairValuePerShareMed)
                   }
                   arrayPbRatio.push(resultHead,illiquidityObj,finalPriceObj,sharesObj,valPrShareObj)
                 }
@@ -1245,6 +1301,7 @@ export class ExcelSheetService {
             }
           
           })
+          console.log(arrayPbRatio,"entire array")
           if(valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[0]){
             arrayPbRatio.forEach(item => delete item.med);   
           }
@@ -1393,23 +1450,23 @@ export class ExcelSheetService {
             }
             arrayCompany.push(obj)
           })
-          if(isCompany){
-            const avgObj = {
-              'company':'Average',
-              'peRatio':this.findAverage(isCompany ? 'peRatio' : 'currentPE' ,data).toFixed(2),
-              'pbRatio':this.findAverage(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
-              'ebitda':this.findAverage(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
-              'sales': this.findAverage(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
-            }
-            const medObj = {
-              'company':'Median',
-              'peRatio':this.findMedian(isCompany ? 'peRatio' : 'currentPE',data).toFixed(2),
-              'pbRatio':this.findMedian(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
-              'ebitda':this.findMedian(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
-              'sales': this.findMedian(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
-            }
-            arrayCompany.push(avgObj,medObj);
-          }
+          // if(isCompany){
+          //   const avgObj = {
+          //     'company':'Average',
+          //     'peRatio':this.findAverage(isCompany ? 'peRatio' : 'currentPE' ,data).toFixed(2),
+          //     'pbRatio':this.findAverage(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
+          //     'ebitda':this.findAverage(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
+          //     'sales': this.findAverage(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
+          //   }
+          //   const medObj = {
+          //     'company':'Median',
+          //     'peRatio':this.findMedian(isCompany ? 'peRatio' : 'currentPE',data).toFixed(2),
+          //     'pbRatio':this.findMedian(isCompany ? 'pbRatio' : 'pbv',data).toFixed(2),
+          //     'ebitda':this.findMedian(isCompany ? 'ebitda' : 'evEBITDA_PV',data).toFixed(2),
+          //     'sales': this.findMedian(isCompany ? 'sales' : 'priceSales',data).toFixed(2)
+          //   }
+          //   arrayCompany.push(avgObj,medObj);
+          // }
           
         return arrayCompany;
       }

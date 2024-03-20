@@ -1391,6 +1391,19 @@ export class ReportService {
         })
         return arrayDebtOnDate;
       });
+
+      hbs.registerHelper('hasDebtDate', () => {
+        let hasDebt = false;
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFE'){
+            hasDebt = result.valuationData.some((response:any)=>response.debtOnDate);
+          }
+          else if(result.model === 'FCFF'){
+            hasDebt = result.valuationData.some((response:any)=>response.debtOnDate);
+          }
+        })
+        return hasDebt;
+      });
       
       hbs.registerHelper('sumCashFlow', () => {
         let arraySumOfCashFlows = [];
@@ -1461,6 +1474,19 @@ export class ReportService {
         })
         return arraySurplusAssets;
       });
+
+      hbs.registerHelper('hasSurplusAssets', () => {
+        let hasSurplus = false;
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFE'){
+            hasSurplus = result.valuationData.some((response:any)=>response.surplusAssets);
+          }
+          else if(result.model === 'FCFF'){
+            hasSurplus = result.valuationData.some((response:any)=>response.surplusAssets);
+          }
+        })
+        return hasSurplus;
+      });
       
       hbs.registerHelper('otherAdjustment', () => {
         let arrayOtherAdj = [];
@@ -1481,6 +1507,20 @@ export class ReportService {
           }
         })
         return arrayOtherAdj;
+      });
+
+      hbs.registerHelper('hasOtherAdjustment', () => {
+        let hasOtherAdj = false;
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFE'){
+            hasOtherAdj = result.valuationData.some((response:any)=>response.otherAdj);
+            
+          }
+          else if(result.model === 'FCFF'){
+            hasOtherAdj = result.valuationData.some((response:any)=>response.otherAdj);
+          }
+        })
+        return hasOtherAdj;
       });
 
       hbs.registerHelper('eqtValue', () => {
@@ -1993,7 +2033,7 @@ export class ReportService {
         })
 
         hbs.registerHelper('weightedAvgValuePrShare',()=>{
-          let evSales:any=[],evEbitda:any=[],priceToBookValue:any=[],priceToEarnings:any=[],avgValuePerShare:any=[],totalWeightedAvgValuePrShare:any=[];
+          let evSales:any=[],evEbitda:any=[],priceToBookValue:any=[],priceToEarnings:any=[],avgValuePerShare:any=[],totalWeightedAvgValuePrShare:any=[],outstandingShares:any=[], total:any=[],sumOfWeightedValue=0;
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
@@ -2005,6 +2045,7 @@ export class ReportService {
                       weights:'25%',
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.salesEquityAvg * 100) / 100))/100),  //only for calculating average
                     }
+                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.salesEquityAvg * 100) / 100))/100;
                   }
                   if(valuationDetails.particular === 'ebitda'){
                     evEbitda = {
@@ -2013,8 +2054,10 @@ export class ReportService {
                       weights:'25%',
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100))/100) //only for calculating average
                     }
+                    
+                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100))/100;
                   }
-
+                  
                   if(valuationDetails.particular === 'pbRatio'){
                     priceToBookValue = {
                       particular:'Value as per P/BV',
@@ -2022,8 +2065,9 @@ export class ReportService {
                       weights:'25%',
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100))/100) //only for calculating average
                     }
+                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100))/100;
                   }
-
+                  
                   if(valuationDetails.particular === 'peRatio'){
                     priceToEarnings = {
                       particular:'Value as per P/E',
@@ -2031,6 +2075,7 @@ export class ReportService {
                       weights:'25%',
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100))/100) //only for calculating average
                     }
+                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100))/100;
                   }
                   if(valuationDetails.particular === 'result'){
                     avgValuePerShare = {
@@ -2039,11 +2084,25 @@ export class ReportService {
                       weights:'',
                       weightedVal: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.fairValuePerShareAvg * 100) / 100) //selected fair value of equity for average calculation
                     }
+                   
+                    outstandingShares = {
+                      particular:`No. of outstanding shares`,
+                      fairValOfEquity:'', //selected fair value of equity for average calculation
+                      weights:'',
+                      weightedVal: this.formatPositiveAndNegativeValues(valuationResult.inputData[0].outstandingShares) //selected fair value of equity for average calculation
+                    }
                   }
+
                 })
               }
             })
-            totalWeightedAvgValuePrShare.push(evSales,evEbitda,priceToBookValue,priceToEarnings,avgValuePerShare);
+            total = {
+              particular:`Total weighted average`,
+              fairValOfEquity:'', 
+              weights:'',
+              weightedVal: this.formatPositiveAndNegativeValues(sumOfWeightedValue)
+            }
+            totalWeightedAvgValuePrShare.push(evSales,evEbitda,priceToBookValue,priceToEarnings,total,outstandingShares,avgValuePerShare);
           }
           return totalWeightedAvgValuePrShare;
         })
@@ -2146,6 +2205,12 @@ export class ReportService {
 
     hbs.registerHelper('checkIfValuePerShare',(particular,stringToCheck)=>{
       if(stringToCheck === 'Value per Share' && particular.includes('Value per Share')){
+        return true;
+      }
+      return false;
+    })
+    hbs.registerHelper('checkIfTotalOrOutstandingShares',(particular,stringToCheck)=>{
+      if(stringToCheck === 'Total weighted average' && particular.includes('Total weighted average') || stringToCheck === 'No. of outstanding shares' && particular.includes('No. of outstanding shares')){
         return true;
       }
       return false;
@@ -2612,6 +2677,48 @@ export class ReportService {
       return 0;
     })
 
+    hbs.registerHelper('priceToSalesMean',()=>{
+      let mean = 0;
+      if(financialData){
+        financialData.map((elements)=>{
+          mean += convertToNumberOrZero(elements.sales);
+        })
+        return (mean/financialData.length).toFixed(2);
+      }
+      return 0;
+    })
+    hbs.registerHelper('priceToBookMean',()=>{
+      let mean = 0;
+      if(financialData){
+        financialData.map((elements)=>{
+          mean += convertToNumberOrZero(elements.pbRatio);
+        })
+        return (mean/financialData.length).toFixed(2);
+      }
+      return 0;
+    })
+
+    hbs.registerHelper('priceToEquityMean',()=>{
+      let mean = 0;
+      if(financialData){
+        financialData.map((elements)=>{
+          mean += convertToNumberOrZero(elements.peRatio);
+        })
+        return (mean/financialData.length).toFixed(2);
+      }
+      return 0;
+    })
+    hbs.registerHelper('priceToEquityMean',()=>{
+      let mean = 0;
+      if(financialData){
+        financialData.map((elements)=>{
+          mean += convertToNumberOrZero(elements.peRatio);
+        })
+        return (mean/financialData.length).toFixed(2);
+      }
+      return 0;
+    })
+
     hbs.registerHelper('fixDecimalUptoTwo',(val)=>{
       if (val) {
         return this.formatPositiveAndNegativeValues(val);
@@ -2634,7 +2741,7 @@ export class ReportService {
     })
     hbs.registerHelper('postDiscount',(mean)=>{
       if (mean || valuationDetails.inputData[0].discountRateValue) {
-        return (convertToNumberOrZero(mean) * convertToNumberOrZero(+valuationDetails.inputData[0].discountRateValue/100)).toFixed(2);
+        return (convertToNumberOrZero(mean) * (1 - convertToNumberOrZero(+valuationDetails.inputData[0].discountRateValue/100))).toFixed(2);
       }
       return '-';
     })
@@ -2654,13 +2761,15 @@ export class ReportService {
     try{
       const fetchStageThreeDetails = await this.processStateManagerService.fetchStageWiseDetails(reportDetails.processStateId,'thirdStageInput');
 
-      let industryList = []
+      let industryList = [];
+      let companyMeanMedian = [];
       if(fetchStageThreeDetails.data){
         fetchStageThreeDetails.data.thirdStageInput.map((stateThreeDetails:any)=>{
           if(stateThreeDetails.model === MODEL[2]){
             stateThreeDetails?.companies.map((companyDetails:any,i:number)=>{
               if(companyDetails.companyId){
-                industryList.push({COMPANYID:companyDetails.companyId,COMPANYNAME:companyDetails.company})
+                industryList.push({COMPANYID:companyDetails.companyId,COMPANYNAME:companyDetails.company});
+                companyMeanMedian.push(companyDetails);
               } 
             })
           }
@@ -2691,8 +2800,18 @@ export class ReportService {
       financialLog.valuationDate = date;
       
       const elasticfinancialSegmentDetails = await axiosInstance.post(`${CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT}`, financialLog, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
-      
-      return elasticfinancialSegmentDetails.data.data;
+      const financialData = elasticfinancialSegmentDetails.data.data;
+      let companyFinancialAndMultiples = [];
+
+      for await (const indFinancialData of financialData){
+        for await (const indMeanMedianData of companyMeanMedian){
+          if(indFinancialData.companyId === indMeanMedianData.companyId){
+            companyFinancialAndMultiples.push({...indFinancialData, ...indMeanMedianData});
+            break;
+          }
+        }
+      }
+      return companyFinancialAndMultiples;
     }
     catch(error){
       return {

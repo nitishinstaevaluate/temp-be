@@ -52,12 +52,14 @@ export class ExportTemplateController {
     ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
+    if(modelName !== 'marketApproach'){
     let count = 0;
     for (let i = 1; i <= projectionYears; i++) {
       worksheet.getColumn(columnsList[i]).header = `${+currentYear + count}-${
         currentYear + i
       }`;
       count++;
+    }
     }
 
     const getProfitLossFirstRow = await this.getFirstRowIndexName(worksheet);
@@ -69,6 +71,7 @@ export class ExportTemplateController {
     ).header = `'{{Add provisional financial date in DD-MM-YYYY}}`
     // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
     // Add new columns with headers
+    if(modelName !== 'marketApproach'){
     let count2 = 0;
     for (let i = 1; i <= projectionYears; i++) {
       worksheet2.getColumn(columnsList[i]).header = `${currentYear + count2}-${
@@ -76,6 +79,7 @@ export class ExportTemplateController {
       }`;
       count2++;
     }
+  }
   
     const getBalanceSheetFirstRow = await this.getFirstRowIndexName(worksheet2)
     await this.updateExcelFormulas(worksheet2,getBalanceSheetFirstRow)

@@ -28,6 +28,7 @@ export const sheet1_PLObj={
     deferredTax:"40",
     patRow:"42",
     profitLossDiscontinuingOpsNetTax:"52",
+    profitLossOfYear:"54",
     earningPerShareRow:"58",
 
     // =+B36+B37+B38+B39+B40

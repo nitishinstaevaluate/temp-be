@@ -20,6 +20,7 @@ import {
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_MULTIPLIER_UNITS, RELATIVE_PREFERENCE_RATIO } from 'src/constants/constants';
+import { versionTwoNetWorthOfCompany, versionTwoProfitLossValues } from 'src/excelFileServices/v2-relative-valuation.method';
 @Injectable()
 export class RelativeValuationService {
   constructor(private readonly customLogger: CustomLogger) {}
@@ -36,7 +37,7 @@ export class RelativeValuationService {
     });
     const { outstandingShares, discountRateValue, valuationDate } = inputs;
     const years = await getYearsList(worksheet1);
-    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];;
+    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
     if (years === null)
       return {
         result: null,
@@ -142,26 +143,34 @@ export class RelativeValuationService {
     // console.log('Hello Abc - ', abc);
 
     // Valuation based on P/B Ratio
-    const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
-    let netWorth = 0;
-    netWorth = await getShareholderFunds(0, worksheet2);        // Always need the first column
-    netWorth = netWorth - prefShareCap;
+
+    // version 1 starts
+    // const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
+    // let netWorth = 0;
+    // netWorth = await getShareholderFunds(0, worksheet2);        // Always need the first column
+    // version 1 ends
+    let netWorth = await versionTwoNetWorthOfCompany(0, worksheet2);
 
     const bookValue = netWorth * multiplier / outstandingShares;
-    const pbMarketPriceAvg = netWorth * newPbRatioAvg;
-    const pbMarketPriceMed = netWorth * newPbRatioMed;
+    const pbMarketPriceAvg = netWorth * newPbRatioAvg.toFixed(2);
+    const pbMarketPriceMed = netWorth * newPbRatioMed.toFixed(2);
 
     // Valuation based on P/E Ratio
-    let resProfitLoss = await profitLossValues(colNum-1, worksheet1);
-    let eps = (resProfitLoss.profitLossForYear * multiplier) / outstandingShares;
-    const peMarketPriceAvg = resProfitLoss.profitLossForYear * newPeRatioAvg;
-    const peMarketPriceMed = resProfitLoss.profitLossForYear * newPeRatioMed;
+    // version 1 starts
+    // let resProfitLoss = await profitLossValues(colNum-1, worksheet1);
+    // let eps = (resProfitLoss.profitLossForYear * multiplier) / outstandingShares;
+    // const peMarketPriceAvg = resProfitLoss.profitLossForYear * newPeRatioAvg;
+    // const peMarketPriceMed = resProfitLoss.profitLossForYear * newPeRatioMed;
+    // version 1 ends
+    let profitLossOfYear = await versionTwoProfitLossValues(0, worksheet1);
+    const peMarketPriceAvg = profitLossOfYear * newPeRatioAvg.toFixed(2);
+    const peMarketPriceMed = profitLossOfYear * newPeRatioMed.toFixed(2);
 
     // Valuation based on EV/EBITDA
     const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
     const cashEquivalent = await cashAndCashEquivalent(colNum-1, worksheet2);
-    const enterpriseAvg = ebitdaValue * newEbitdaAvg;
-    const enterpriseMed = ebitdaValue * newEbitdaMed;
+    const enterpriseAvg = ebitdaValue * newEbitdaAvg.toFixed(2);
+    const enterpriseMed = ebitdaValue * newEbitdaMed.toFixed(2);
 
     const debt = await debtMethod(colNum-1, worksheet2);
 
@@ -172,8 +181,8 @@ export class RelativeValuationService {
 
     // Valuation based on Price/Sales
     const salesValue = await incomeFromOperation(colNum-1, worksheet1);
-    const salesEquityAvg = salesValue * newSalesAvg;
-    const salesEquityMed = salesValue * newSalesMed;
+    const salesEquityAvg = salesValue * newSalesAvg.toFixed(2);
+    const salesEquityMed = salesValue * newSalesMed.toFixed(2);
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
     const salesMarketPriceMed = salesEquityMed  / outstandingShares;
 
@@ -223,9 +232,11 @@ export class RelativeValuationService {
         },
         {
           particular: 'peRatio',
-          pat:resProfitLoss.profitLossForYear,
-          epsAvg: eps,
-          epsMed: eps,
+          pat:profitLossOfYear,
+          // version 1 starts
+          // epsAvg: eps,
+          // epsMed: eps,
+          // version 1 ends
           peRatioAvg: newPeRatioAvg,
           peRatioMed: newPeRatioMed,
           peMarketPriceAvg: peMarketPriceAvg,
