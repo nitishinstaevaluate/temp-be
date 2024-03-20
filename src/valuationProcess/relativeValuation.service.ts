@@ -152,8 +152,8 @@ export class RelativeValuationService {
     let netWorth = await versionTwoNetWorthOfCompany(0, worksheet2);
 
     const bookValue = netWorth * multiplier / outstandingShares;
-    const pbMarketPriceAvg = netWorth * newPbRatioAvg;
-    const pbMarketPriceMed = netWorth * newPbRatioMed;
+    const pbMarketPriceAvg = netWorth * newPbRatioAvg.toFixed(2);
+    const pbMarketPriceMed = netWorth * newPbRatioMed.toFixed(2);
 
     // Valuation based on P/E Ratio
     // version 1 starts
@@ -163,14 +163,14 @@ export class RelativeValuationService {
     // const peMarketPriceMed = resProfitLoss.profitLossForYear * newPeRatioMed;
     // version 1 ends
     let profitLossOfYear = await versionTwoProfitLossValues(0, worksheet1);
-    const peMarketPriceAvg = profitLossOfYear * newPeRatioAvg;
-    const peMarketPriceMed = profitLossOfYear * newPeRatioMed;
+    const peMarketPriceAvg = profitLossOfYear * newPeRatioAvg.toFixed(2);
+    const peMarketPriceMed = profitLossOfYear * newPeRatioMed.toFixed(2);
 
     // Valuation based on EV/EBITDA
     const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
     const cashEquivalent = await cashAndCashEquivalent(colNum-1, worksheet2);
-    const enterpriseAvg = ebitdaValue * newEbitdaAvg;
-    const enterpriseMed = ebitdaValue * newEbitdaMed;
+    const enterpriseAvg = ebitdaValue * newEbitdaAvg.toFixed(2);
+    const enterpriseMed = ebitdaValue * newEbitdaMed.toFixed(2);
 
     const debt = await debtMethod(colNum-1, worksheet2);
 
@@ -181,8 +181,8 @@ export class RelativeValuationService {
 
     // Valuation based on Price/Sales
     const salesValue = await incomeFromOperation(colNum-1, worksheet1);
-    const salesEquityAvg = salesValue * newSalesAvg;
-    const salesEquityMed = salesValue * newSalesMed;
+    const salesEquityAvg = salesValue * newSalesAvg.toFixed(2);
+    const salesEquityMed = salesValue * newSalesMed.toFixed(2);
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
     const salesMarketPriceMed = salesEquityMed  / outstandingShares;
 

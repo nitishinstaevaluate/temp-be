@@ -2383,15 +2383,15 @@
                                 </tr>
                             </table>
                             {{#if (checkIfFcff)}}
-                            <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 13%;">Present Value of
+                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
                                Free Cash Flow to Firm(ie. FCFF)</h1>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;">Based on the DCF method, the
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected FCFF has been computed in the table below:</p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
 
                             <!-- fcff table starts -->
                             <div style="">
-                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 3%;" >
+                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 2%;" >
                                 <tr style="height:15pt">
                                     <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         colspan="{{calculateColspan}}" bgcolor="#001F5F">
@@ -2662,14 +2662,14 @@
                             <!-- fcff table ends -->
                             {{else}}
 
-                            <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 13%;">Present Value of
+                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
                                 FCFE</h1>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;">Based on the DCF method, the
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
                             <!-- fcfe table starts -->
                             <div style="">
-                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 3%;" >
+                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 2%;" >
                                 <tr style="height:15pt">
                                     <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         colspan="{{calculateColspan}}" bgcolor="#001F5F">
@@ -2936,18 +2936,18 @@
                             
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
+                            <h1 style="padding-left: 15pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
                                 Method</h1>
-                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;"><span
+                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;"><span
                                     class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
                                     class="s2" style=" ">{{strdate}}</span><span class="p"> is calculated
                                     as </span><span class="h1">{{currencyUnit}} </span><span class="s1"
                                     style="">{{modelValuePerShare 'FCFE,FCFF'}}</span><span class="h1"> </span><span class="p">as presented below.</span></p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
 
                             {{#if (checkIfFcff)}}
                             <!-- fcff table starts -->
-                            <table style="border-collapse:collapse;margin-left:28pt;width: 90%;" cellspacing="0">
+                            <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
                                  <tr style="height:14pt">
                                     <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                         bgcolor="#001F5F">
@@ -2981,6 +2981,7 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{#if (hasDebtDate)}}
                                 <tr>
                                     {{#each (debtDate data)}}
                                     {{#ifZero fcffDebtOnDate}}
@@ -2998,6 +2999,7 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{/if}}
                                 <tr>
                                     {{#each (cashEquvlnt data)}}
                                     {{#ifZero fcffCashEquivalents}}
@@ -3015,6 +3017,7 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{#if (hasSurplusAssets)}}
                                 <tr>
                                     {{#each (surplusAsset data)}}
                                     {{#ifZero fcffSurplusAssets}}
@@ -3032,6 +3035,8 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{/if}}
+                                {{#if (hasOtherAdjustment)}}
                                 <tr>
                                     {{#each (otherAdjustment data)}}
                                     {{#ifZero fcffOtherAdj}}
@@ -3049,6 +3054,7 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{/if}}
                                 <tr>
                                     {{#each (eqtValue data)}}
                                     {{#ifZero fcffEquityValue}}
@@ -3144,7 +3150,7 @@
                             <!-- fcff table ends -->
                             {{else}}
                             <!-- fcfe table starts -->
-                            <table style="border-collapse:collapse;margin-left:28pt;width: 90%;" cellspacing="0">
+                            <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
                                  <tr style="height:14pt">
                                     <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                         bgcolor="#001F5F">
@@ -3193,6 +3199,7 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{#if (hasSurplusAssets)}}
                                 <tr>
                                     {{#each (surplusAsset data)}}
                                     {{#ifZero fcfeSurplusAssets}}
@@ -3210,6 +3217,8 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{/if}}
+                                {{#if (hasOtherAdjustment)}}
                                 <tr>
                                     {{#each (otherAdjustment data)}}
                                     {{#ifZero fcfeOtherAdj}}
@@ -3227,6 +3236,7 @@
                                     {{/ifZero}}
                                     {{/each}}
                                 </tr>
+                                {{/if}}
                                 <tr>
                                     {{#each (eqtValue data)}}
                                     {{#ifZero fcfeEquityValue}}

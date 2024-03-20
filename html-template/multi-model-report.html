@@ -2010,7 +2010,7 @@
                                                     {{/if}}
                                                 </li>
                                                 {{#if (hasBetaWorking)}}
-                                                    <li data-list-text="4.">
+                                                    <li data-list-text="4." style="page-break-before: always;padding-top: 10%;">
                                                         <p style="padding-top: 7%;padding-left: 30pt;text-indent: -18pt;line-height: 140%;text-align: left;">
                                                             The alpha/company specific risk premium is adjusted on account of micro
                                                             factors associated with the company. 
@@ -2160,16 +2160,14 @@
                                 </tr>
                             </table>
                              {{#if (checkIfFcff)}}
-                             <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 13%;">Present Value of
+                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
                                 Free Cash Flow to Firm(ie. FCFF)</h1>
-                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                             <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;">Based on the DCF method, the
+                             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                  present value of the projected FCFF has been computed in the table below:</p>
-                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
  
                              <!-- fcff table starts -->
                              <div style="">
-                                <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 3%;" >
+                                <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 2%;" >
                                     <tr style="height:15pt">
                                         <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                             colspan="{{calculateColspan}}" bgcolor="#001F5F">
@@ -2440,14 +2438,13 @@
                              <!-- fcff table ends -->
                              {{else}}
  
-                             <h1 style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 13%;">Present Value of
+                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
                                 FCFE</h1>
-                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;">Based on the DCF method, the
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <!-- fcfe table starts -->
                             <div style="">
-                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 3%;" >
+                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 2%;" >
                                 <tr style="height:15pt">
                                     <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         colspan="{{calculateColspan}}" bgcolor="#001F5F">
@@ -2714,18 +2711,17 @@
                              
                              <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
+                            <h1 style="padding-left: 15pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
                                 Method</h1>
-                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 5pt;"><span
+                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;"><span
                                     class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
                                     class="s2" style=" ">{{strdate}}</span><span class="p"> is calculated
                                     as </span><span class="h1">{{currencyUnit}} </span><span class="s1"
                                     style="">{{modelValuePerShare 'FCFE,FCFF'}}</span><span class="h1"> </span><span class="p">as presented below.</span></p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
  
                              {{#if (checkIfFcff)}}
                              <!-- fcff table starts -->
-                             <table style="border-collapse:collapse;margin-left:28pt;width: 90%;" cellspacing="0">
+                             <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
                                 <tr style="height:14pt">
                                    <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                        bgcolor="#001F5F">
@@ -2759,6 +2755,7 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{#if (hasDebtDate)}}
                                <tr>
                                    {{#each (debtDate data)}}
                                    {{#ifZero fcffDebtOnDate}}
@@ -2776,6 +2773,7 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{/if}}
                                <tr>
                                    {{#each (cashEquvlnt data)}}
                                    {{#ifZero fcffCashEquivalents}}
@@ -2793,6 +2791,7 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{#if (hasSurplusAssets)}}
                                <tr>
                                    {{#each (surplusAsset data)}}
                                    {{#ifZero fcffSurplusAssets}}
@@ -2810,6 +2809,8 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{/if}}
+                               {{#if (hasOtherAdjustment)}}
                                <tr>
                                    {{#each (otherAdjustment data)}}
                                    {{#ifZero fcffOtherAdj}}
@@ -2827,6 +2828,7 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{/if}}
                                <tr>
                                    {{#each (eqtValue data)}}
                                    {{#ifZero fcffEquityValue}}
@@ -2922,7 +2924,7 @@
                              <!-- fcff table ends -->
                              {{else}}
                              <!-- fcfe table starts -->
-                             <table style="border-collapse:collapse;margin-left:28pt;width: 90%;" cellspacing="0">
+                             <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
                                 <tr style="height:14pt">
                                    <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                        bgcolor="#001F5F">
@@ -2971,6 +2973,7 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{#if (hasSurplusAssets)}}
                                <tr>
                                    {{#each (surplusAsset data)}}
                                    {{#ifZero fcfeSurplusAssets}}
@@ -2988,6 +2991,8 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{/if}}
+                               {{#if (hasOtherAdjustment)}}
                                <tr>
                                    {{#each (otherAdjustment data)}}
                                    {{#ifZero fcfeOtherAdj}}
@@ -3005,6 +3010,7 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               {{/if}}
                                <tr>
                                    {{#each (eqtValue data)}}
                                    {{#ifZero fcfeEquityValue}}
@@ -3185,61 +3191,72 @@
                         <table style="border-collapse:collapse;" cellspacing="0">
                             <tr style="padding-top: 3%;padding-bottom: 1%;">
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
-                                    <p
-                                        style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                    <p style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
                                         S.NO</p>
                                 </td>
                                 
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
-                                    
-                                        <p
-                                        style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
-                                        NAME OF PEERS</p>
+                                    <p style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        NAME OF PEERS
+                                    </p>
                                 </td>
-                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
                                     <p
                                     style="text-align: center !important;color: black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
-                                    STOCK PRICE AS ON {{strdate}} (USD)</p>
+                                    STOCK PRICE AS ON {{strdate}} (INR)</p>
                                 </td>
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
                                     <p
                                         style="text-align: center !important;color: black;;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
                                         SHARE O/S AS ON {{strdate}} (IN MN)   
                                     </p>
-                                </td>
+                                </td> -->
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
-                                    <p
-                                        style="text-align: center !important;color: black;;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
-                                        MARKET CAP AS ON {{strdate}} (IN USD MN)                            
+                                    <p style="text-align: center !important;color: black;;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        MARKET CAP AS ON {{strdate}} (IN INR MN)                            
                                     </p>
                                 </td>
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
-                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">CASH &amp; CASH EQUIVALENTS AS ON {{strdate}} (IN USD MN)
-                                            </p>
+                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        CASH &amp; CASH EQUIVALENTS AS ON {{strdate}} (IN INR MN)
+                                    </p>
                                     
                                 </td>
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
                                     <p
-                                        style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">DEBT AS ON {{strdate}} (IN USD MN)
+                                        style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">DEBT AS ON {{strdate}} (IN INR MN)
                                         
                                     </p>
                                 </td>
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
-                                    <p
-                                        style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
-                                        ENTERPRISE VALUE AS ON {{strdate}} (IN USD MN)
-                                        </p>
-                                </td>
-                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;"
-                                    >
-                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">REVENUE AS ON {{strdate}} (IN USD MN)
+                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        ENTERPRISE VALUE AS ON {{strdate}} (IN INR MN)
                                     </p>
                                 </td>
-                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;"
-                                    >
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
                                     <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
-                                        EV/REVENUE (X)
+                                        REVENUE AS ON {{strdate}} (IN INR MN)
+                                    </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                    EV/S (X)
+                                    </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        P/E (X)
                                         </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        P/B (X)
+                                        </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;">
+                                    <p style="text-align: center !important;color:black;font-size: 11px !important;font-family: 'Times New Roman', Times, serif !important;" class="s11">
+                                        P/S (X)
+                                    </p>
                                 </td>
                             </tr>
                 
@@ -3251,12 +3268,12 @@
                                 <td style="width:20% !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{company}}</p>
                                 </td>
-                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo stockPrice}}</p>
                                 </td>
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo outstandingShares}}</p>
-                                </td>
+                                </td> -->
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo marketCap}}</p>
                                 </td>
@@ -3275,33 +3292,84 @@
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo evByRevenue}}</p>
                                 </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo peRatio}}</p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo pbRatio}}</p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo sales}}</p>
+                                </td>
                             </tr>
                             {{/each}}
                             <tr style="padding-top: 1%;padding-bottom: 1%;">
-                                <td colspan="9" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
+                                <td colspan="7" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">MEAN</p>
                                 </td>
                                 
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fiancialMean}}</p>
                                 </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{priceToEquityMean}}</p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{priceToBookMean}}</p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{priceToSalesMean}}</p>
+                                </td>
                             </tr>
                             <tr style="padding-top: 1%;padding-bottom: 1%;">
-                                <td colspan="9" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
+                                <td colspan="7" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">LESS:DISCOUNT*</p>
                                 </td>
                                 
-                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                <td colspan="4" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{lessDiscountRate}}%</p>
                                 </td>
                             </tr>
                             <tr style="padding-top: 1%;padding-bottom: 1%;">
-                                <td colspan="9" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
+                                <td colspan="7" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
                                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">POST DISCOUNT EV/REVENUE MULTIPLE</p>
                                 </td>
                                 
                                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
-                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{postDiscount (fiancialMean)}}</p>
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">
+                                        {{#if (fiancialMean)}}
+                                        {{postDiscount (fiancialMean)}}
+                                        {{else}}
+                                        -
+                                        {{/if}}
+                                    </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">
+                                        {{#if (priceToEquityMean)}}
+                                        {{postDiscount (priceToEquityMean)}}
+                                        {{else}}
+                                        -
+                                        {{/if}}
+                                    </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">
+                                        {{#if (priceToBookMean)}}
+                                        {{postDiscount (priceToBookMean)}}
+                                        {{else}}
+                                        -
+                                        {{/if}}
+                                    </p>
+                                </td>
+                                <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">
+                                        {{#if (priceToSalesMean)}}
+                                        {{postDiscount (priceToSalesMean)}}
+                                        {{else}}
+                                        -
+                                        {{/if}}
+                                    </p>
                                 </td>
                             </tr>
                                 </table>
@@ -3698,49 +3766,83 @@
                         </tr>
 
                         {{#each (weightedAvgValuePrShare data)}}
-                        {{#if (checkIfValuePerShare particular 'Value per Share')}}
-                        <tr>
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-weight: bold;font-size: 13px !important">{{particular}}</p>
-                            </td>
-                            
-                            <td colspan="3"
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-weight: bold;font-size: 13px !important">{{weightedVal}}
-                                </p>
-                            </td>
-                        </tr>
+                        {{#if (checkIfTotalOrOutstandingShares particular 'No. of outstanding shares')}}
+                            <tr>
+                                <td
+                                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16"
+                                        style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-weight: bold;font-size: 13px !important">{{particular}}</p>
+                                </td>
+                                
+                                <td colspan="3"
+                                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16"
+                                        style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-weight: bold;font-size: 13px !important">{{weightedVal}}
+                                    </p>
+                                </td>
+                            </tr>
                         {{else}}
-                        <tr>
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">{{particular}}</p>
-                            </td>
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{fairValOfEquity}}
-                                </p>
-                            </td>
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{weights}}
-                                </p>
-                            </td>
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{weightedVal}}
-                                </p>
-                            </td>
-                        </tr>
+                            {{#if (checkIfTotalOrOutstandingShares particular 'Total weighted average')}}
+                            <tr>
+                                <td
+                                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16"
+                                        style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">{{particular}}</p>
+                                </td>
+                                
+                                <td colspan="3"
+                                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16"
+                                        style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">{{weightedVal}}
+                                    </p>
+                                </td>
+                            </tr>
+                            {{else}}
+                                {{#if (checkIfValuePerShare particular 'Value per Share')}}
+                                    <tr>
+                                        <td
+                                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16"
+                                                style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-weight: bold;font-size: 13px !important">{{particular}}</p>
+                                        </td>
+                                        
+                                        <td colspan="3"
+                                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16"
+                                                style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-weight: bold;font-size: 13px !important">{{weightedVal}}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                {{else}}
+                                    <tr>
+                                        <td
+                                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16"
+                                                style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">{{particular}}</p>
+                                        </td>
+                                        <td
+                                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16"
+                                                style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{fairValOfEquity}}
+                                            </p>
+                                        </td>
+                                        <td
+                                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16"
+                                                style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{weights}}
+                                            </p>
+                                        </td>
+                                        <td
+                                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16"
+                                                style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{weightedVal}}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                {{/if}}
                         {{/if}}
-                        {{/each}}
+                    {{/if}}
+                    {{/each}}
                         
                     </table>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
