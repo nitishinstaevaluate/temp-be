@@ -77,7 +77,7 @@ export class UploadController {
     );
   }
 
-  @UseGuards(KeyCloakAuthGuard)
+  // @UseGuards(KeyCloakAuthGuard)
   @Get('generate/:reportId/:model/:specificity')
   async generatePdf(
     @Param('reportId') reportId : string,

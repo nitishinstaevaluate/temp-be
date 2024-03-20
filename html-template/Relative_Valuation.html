@@ -121,7 +121,7 @@
 
     <table>
         <thead>
-          <tr>
+          <tr style="font-size: 13px;">
             <th>Company</th>
             <th>P/E</th>
             <th>P/B</th>
@@ -131,8 +131,8 @@
         </thead>
         {{#each (companies data)}}
           <tbody>
-            <tr>
-              <td>{{company}}</td>
+            <tr style="font-size: 13px;">
+              <td style="text-align: left;padding-left: 2%;">{{company}}</td>
               <td>{{peRatio}}</td>
               <td>{{pbRatio}}</td>
               <td>{{ebitda}}</td>
@@ -146,9 +146,9 @@
     </div>
     <div style="page-break-before: always;margin-top:6.5%" class="container">
         <table cellspacing="0">
-            <tr>
+            <tr style="font-size: 13px;">
                 <th  colspan="2" style="border-right: none;text-align: center;">
-                  Valuation of <span style="font-size: 13xpx;font-weight: 600;text-transform: uppercase;color: #b8b8b8 !important;">{{companyName}}</span> 
+                  Valuation of <span style="font-size: 13px;font-weight: 600;text-transform: uppercase;color: #b8b8b8 !important;">{{companyName}}</span> 
                 </th>
                 {{#if (checkPreferenceRatio)}}
                 <th colspan="2" style="border-left: none;text-align: right !important;">
@@ -160,7 +160,7 @@
                   </th>
                 {{/if}}
               </tr>
-            <tr>
+            <tr style="font-size: 13px;">
                 <th style="color: #3d3d3d !important">Sr.No</th>
                 <th style="color: #3d3d3d !important">Particulars</th>
                 <th style="color: #3d3d3d !important">As on {{strdate}}</th>
@@ -169,7 +169,7 @@
                 {{/if}}
             </tr>
             {{#if (checkPreferenceRatio)}}
-            <tr >
+            <tr style="font-size: 13px;">
                 <td></td>
                 <td></td>
                 <td>Average</td>
@@ -178,7 +178,7 @@
             {{/if}}
             {{#each (relativeVal data)}}
             {{#if (checkHead srNo "srNo")}}
-            <tr style="font-weight: bold !important;">
+            <tr style="font-weight: bold !important;font-size: 13px;">
                 <td>{{srNo}}</td>
                 <td>{{particular}}</td>
                 <td>{{avg}}</td>
@@ -188,7 +188,7 @@
             </tr>
             {{else}}
             {{#if (checkHead particular "particular")}}
-            <tr style="height: 25px;">
+            <tr style="height: 25px;font-size: 13px;">
                 <td>{{srNo}}</td>
                 <td>{{particular}}</td>
                 <td>{{avg}}</td>
@@ -197,7 +197,7 @@
                 {{/if}}
             </tr>
             {{else}}
-            <tr>
+            <tr style="font-size: 13px;">
                 <td>{{srNo}}</td>
                 <td>{{particular}}</td>
                 <td>{{avg}}</td>
