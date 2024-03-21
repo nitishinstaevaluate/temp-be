@@ -88,10 +88,9 @@ export class authenticationTokenService {
         catch(error){
           throw new HttpException(
             {
-              error: error.response.error,
-              errorDescription: error.response.error_description,
+              error: error,
               status: false,
-              msg: error.response.message,
+              msg: 'User fetch failed',
             },
             HttpStatus.UNAUTHORIZED,
           );
