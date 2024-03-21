@@ -1,3 +1,4 @@
+import { Expose } from "class-transformer";
 import { IsNotEmpty, IsString, IsArray, ValidateNested } from "class-validator";
 
 export class KCloginAuthDto {
@@ -22,4 +23,21 @@ export class authTokenDto {
     @IsNotEmpty({ message: 'refreshToken cannot be empty' })
     @IsString({ message: 'refreshToken should be string' })
     refreshToken: string;
+  }
+  
+export class authUserDto {
+    @Expose()
+    @IsString()
+    @IsNotEmpty()
+    session_state: string;
+    
+    @Expose()
+    @IsString()
+    @IsNotEmpty()
+    given_name: string;
+
+    @Expose()
+    @IsString()
+    @IsNotEmpty()
+    email: string;
   }
