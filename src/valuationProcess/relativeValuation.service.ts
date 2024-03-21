@@ -64,16 +64,16 @@ export class RelativeValuationService {
 
       companies.map((indCompanies)=>{
         if(indCompanies.company === 'Average'){
-          newPeRatioAvg = indCompanies.peRatio;
-          newPbRatioAvg = indCompanies.pbRatio;
-          newEbitdaAvg = indCompanies.ebitda;
-          newSalesAvg = indCompanies.sales;
+          newPeRatioAvg = indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100);
+          newPbRatioAvg = indCompanies.pbRatio.toFixed(2) * (1-discountRateValue/100);
+          newEbitdaAvg = indCompanies.ebitda.toFixed(2) * (1-discountRateValue/100);
+          newSalesAvg = indCompanies.sales.toFixed(2) * (1-discountRateValue/100);
         }
         if(indCompanies.company === 'Median'){
-          newPeRatioMed = indCompanies.peRatio;
-          newPbRatioMed = indCompanies.pbRatio;
-          newEbitdaMed = indCompanies.ebitda;
-          newSalesMed = indCompanies.sales;
+          newPeRatioMed = indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100);
+          newPbRatioMed = indCompanies.pbRatio.toFixed(2) * (1-discountRateValue/100);
+          newEbitdaMed = indCompanies.ebitda.toFixed(2) * (1-discountRateValue/100);
+          newSalesMed = indCompanies.sales.toFixed(2) * (1-discountRateValue/100);
         }
       })
     // const companiesInfo = {
@@ -201,16 +201,16 @@ export class RelativeValuationService {
       salesEquityMed,
     ]);
 
-    const locAvg = avgPricePerShareAvg * discountRateValue/100;
-    const locMed = avgPricePerShareMed * discountRateValue/100;
+    const locAvg = avgPricePerShareAvg;
+    const locMed = avgPricePerShareAvg;
     const finalPriceAvg = avgPricePerShareAvg - locAvg;
     const finalPriceMed = avgPricePerShareMed - locMed;
-    const fairValuePerShareAvg = finalPriceAvg * multiplier / outstandingShares;
-    const fairValuePerShareMed = finalPriceMed * multiplier / outstandingShares
+    const fairValuePerShareAvg = avgPricePerShareAvg * multiplier / outstandingShares;
+    const fairValuePerShareMed = avgPricePerShareAvg * multiplier / outstandingShares
 
-    const tentativeIssuePrice = Math.round(
-      findAverage([finalPriceAvg, finalPriceMed]),
-    );
+    // const tentativeIssuePrice = Math.round(
+    //   findAverage([finalPriceAvg, finalPriceMed]),
+    // );
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
@@ -299,7 +299,7 @@ export class RelativeValuationService {
     });
     return {
       result: finalResult,
-      valuation: { finalPriceAvg: finalPriceAvg, finalPriceMed: finalPriceMed },
+      valuation: { finalPriceAvg: avgPricePerShareAvg, finalPriceMed: avgPricePerShareAvg },
       msg: 'Executed Successfully',
     };
  }

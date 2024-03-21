@@ -25,6 +25,7 @@ import {
   fcffTerminalValue,
   interestAdjustedTaxesWithStubPeriod,
   changeInNcaFromAssessment,
+  versionTwoInterestAdjustedTaxesWithStubPeriod,
   // differenceAssetsLiabilities
 } from '../excelFileServices/fcfeAndFCFF.method';
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference } from '../excelFileServices/common.methods';
@@ -724,7 +725,12 @@ export class FCFEAndFCFFService {
 
             // Please verify this stub value, stub is working,but not sure about the value 
             if(aggregatePayload.isStubRequired){
-              addInterestAdjTaxes = await interestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
+              if(counter === 0){
+                addInterestAdjTaxes = await interestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
+              }
+              else{
+                addInterestAdjTaxes = await versionTwoInterestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
+              }
             }
             else{
               addInterestAdjTaxes = await interestAdjustedTaxes(counter, worksheet1, aggregatePayload?.inputs?.taxRate)
