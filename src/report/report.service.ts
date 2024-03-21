@@ -1854,7 +1854,7 @@ export class ReportService {
                 dcfApproachString = {
                   particulars:'Value as DCF Method',
                   weights:(data.weight * 100)?.toFixed(1),
-                  weightedValue: this.formatPositiveAndNegativeValues(Math.floor(data.weightedValue * 100) / 100)
+                  weightedValue: this.formatPositiveAndNegativeValues(data.weightedValue)
                 };
                 totalWeightage.push(dcfApproachString);
               }
@@ -1862,7 +1862,7 @@ export class ReportService {
                 netAssetValueString = {
                   particulars:'Value as NAV Method',
                   weights:(data.weight * 100)?.toFixed(1),
-                  weightedValue: this.formatPositiveAndNegativeValues(Math.floor(data.weightedValue * 100) / 100)
+                  weightedValue: this.formatPositiveAndNegativeValues(data.weightedValue)
                 };
                 totalWeightage.push(netAssetValueString);
               }
@@ -1870,7 +1870,7 @@ export class ReportService {
                 marketPriceString = {
                   particulars:'Value as CCM Method',
                   weights:(data.weight * 100)?.toFixed(1),
-                  weightedValue: this.formatPositiveAndNegativeValues(Math.floor(data.weightedValue * 100) / 100)
+                  weightedValue: this.formatPositiveAndNegativeValues(data.weightedValue)
                 };
                 totalWeightage.push(marketPriceString);
               }
@@ -1888,20 +1888,20 @@ export class ReportService {
                   if(valuationDetails.particular === 'peRatio'){
                     pat = {
                       particular:'Profit after Taxes',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pat * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pat * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.pat),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.pat)
                     }
 
                     eps = {
                       particular:'P/E Ratio of Industry',
-                      avg: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.peRatioAvg * 100) / 100),
-                      med: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.peRatioMed * 100) / 100)
+                      avg: this.formatPositiveAndNegativeValues(valuationDetails.peRatioAvg),
+                      med: this.formatPositiveAndNegativeValues(valuationDetails.peRatioMed)
                     }
 
                     marketPrice = {
                       particular:'Fair Value of Equity',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.peMarketPriceMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceMed)
                     }
 
                     totalPeRatio.push(pat,eps,marketPrice)
@@ -1923,19 +1923,19 @@ export class ReportService {
                   if(valuationDetails.particular === 'pbRatio'){
                     networth = {
                       particular:'Net Worth of Company',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.netWorthAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.netWorthMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.netWorthAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.netWorthMed)
                     }
                     pbShares = {
                       particular:'P/B Ratio of Industry',
-                      avg: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pbRatioAvg * 100) / 100),
-                      med: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pbRatioMed * 100) / 100)
+                      avg: this.formatPositiveAndNegativeValues(valuationDetails.pbRatioAvg),
+                      med: this.formatPositiveAndNegativeValues(valuationDetails.pbRatioMed)
                     }
 
                     equityVal = {
                       particular:'Fair Value of Equity',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pbMarketPriceMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceMed)
                     }
 
                     totalPbRatio.push(networth,pbShares,equityVal);
@@ -1956,36 +1956,36 @@ export class ReportService {
                   if(valuationDetails.particular === 'ebitda'){
                     ebitda = {
                       particular:'EBITDA',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitda * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitda * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.ebitda),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.ebitda)
                     }
 
                     evEbitda = {
                       particular:'EV/EBITDA',
-                      avg: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.evAvg * 100) / 100),
-                      med: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.evMed * 100) / 100)
+                      avg: this.formatPositiveAndNegativeValues(valuationDetails.evAvg),
+                      med: this.formatPositiveAndNegativeValues(valuationDetails.evMed)
                     }
 
                     enterpriseVal = {
                       particular:'Enterprise Value',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.enterpriseAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.enterpriseMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.enterpriseAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.enterpriseMed)
                     }
 
                     debtVal = {
                       particular:'Less : Value of Debt',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.debtAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.debtMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.debtAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.debtMed)
                     }
                     cashEquivalent = {
                       particular:'Cash and cash equivalent',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.cashEquivalent * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.cashEquivalent * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.cashEquivalent),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.cashEquivalent)
                     }
                     equityVal = {
                       particular:'Value of Equity',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityMed)
                     }
                     totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,cashEquivalent,equityVal);
                   }
@@ -2007,20 +2007,20 @@ export class ReportService {
                   if(valuationDetails.particular === 'sales'){
                     sales = {
                       particular:'Sales of company',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.salesAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.salesMed)
                     }
 
                     psRatio = {
                       particular:'P/S Ratio',
-                      avg: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesRatioAvg * 100) / 100),
-                      med: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesRatioMed * 100) / 100)
+                      avg: this.formatPositiveAndNegativeValues(valuationDetails.salesRatioAvg),
+                      med: this.formatPositiveAndNegativeValues(valuationDetails.salesRatioMed)
                     }
 
                     equityVal = {
                       particular:'Value of Equity',
-                      avg:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesEquityAvg * 100) / 100),
-                      med:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesEquityMed * 100) / 100)
+                      avg:this.formatPositiveAndNegativeValues(valuationDetails.salesEquityAvg),
+                      med:this.formatPositiveAndNegativeValues(valuationDetails.salesEquityMed)
                     }
 
                     totalPriceToSalesRatio.push(sales,psRatio,equityVal);
@@ -2041,48 +2041,48 @@ export class ReportService {
                   if(valuationDetails.particular === 'sales'){
                     evSales = {
                       particular:'Value as per P/Sales',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.salesEquityAvg * 100) / 100), // only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.salesEquityAvg), // only for calculating average
                       weights:'25%',
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.salesEquityAvg * 100) / 100))/100),  //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.salesEquityAvg))/100),  //only for calculating average
                     }
-                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.salesEquityAvg * 100) / 100))/100;
+                    sumOfWeightedValue += (25 * (valuationDetails.salesEquityAvg))/100;
                   }
                   if(valuationDetails.particular === 'ebitda'){
                     evEbitda = {
                       particular:'Value as per EV/EBITDA',
-                      fairValOfEquity: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100), //only for calculating average
+                      fairValOfEquity: this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityAvg), //only for calculating average
                       weights:'25%',
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.ebitdaEquityAvg))/100) //only for calculating average
                     }
                     
-                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.ebitdaEquityAvg * 100) / 100))/100;
+                    sumOfWeightedValue += (25 * (valuationDetails.ebitdaEquityAvg))/100;
                   }
                   
                   if(valuationDetails.particular === 'pbRatio'){
                     priceToBookValue = {
                       particular:'Value as per P/BV',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100), //only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceAvg), //only for calculating average
                       weights:'25%',
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.pbMarketPriceAvg))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.pbMarketPriceAvg * 100) / 100))/100;
+                    sumOfWeightedValue += (25 * (valuationDetails.pbMarketPriceAvg))/100;
                   }
                   
                   if(valuationDetails.particular === 'peRatio'){
                     priceToEarnings = {
                       particular:'Value as per P/E',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100), //only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceAvg), //only for calculating average
                       weights:'25%',
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.peMarketPriceAvg))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += (25 * (Math.floor(valuationDetails.peMarketPriceAvg * 100) / 100))/100;
+                    sumOfWeightedValue += (25 * (valuationDetails.peMarketPriceAvg))/100;
                   }
                   if(valuationDetails.particular === 'result'){
                     avgValuePerShare = {
                       particular:`Value per Share (${valuationResult.inputData[0].currencyUnit})`,
                       fairValOfEquity:'', //selected fair value of equity for average calculation
                       weights:'',
-                      weightedVal: this.formatPositiveAndNegativeValues(Math.floor(valuationDetails.fairValuePerShareAvg * 100) / 100) //selected fair value of equity for average calculation
+                      weightedVal: this.formatPositiveAndNegativeValues(valuationDetails.fairValuePerShareAvg) //selected fair value of equity for average calculation
                     }
                    
                     outstandingShares = {
@@ -2708,11 +2708,11 @@ export class ReportService {
       }
       return 0;
     })
-    hbs.registerHelper('priceToEquityMean',()=>{
+    hbs.registerHelper('evByEbitdaMean',()=>{
       let mean = 0;
       if(financialData){
         financialData.map((elements)=>{
-          mean += convertToNumberOrZero(elements.peRatio);
+          mean += convertToNumberOrZero(elements.ebitda);
         })
         return (mean/financialData.length).toFixed(2);
       }
@@ -2741,7 +2741,7 @@ export class ReportService {
     })
     hbs.registerHelper('postDiscount',(mean)=>{
       if (mean || valuationDetails.inputData[0].discountRateValue) {
-        return (convertToNumberOrZero(mean) * (1 - convertToNumberOrZero(+valuationDetails.inputData[0].discountRateValue/100))).toFixed(2);
+        return (mean * (1 - (+valuationDetails.inputData[0].discountRateValue/100))).toFixed(2);
       }
       return '-';
     })
