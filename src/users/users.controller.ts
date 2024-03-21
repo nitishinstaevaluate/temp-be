@@ -10,6 +10,7 @@ import {
     ParseFilePipe,
     FileTypeValidator,
     MaxFileSizeValidator,
+    Req,
   } from '@nestjs/common';
 
 import { AuthGuard } from '@nestjs/passport';
@@ -44,7 +45,13 @@ export class UsersController {
     async getAllUsers() {
       return this.userService.getUsers();
     }
-  
+    
+    @UseGuards(KeyCloakAuthGuard)
+    @Get('fetch-user')
+    async getUserDetails(@Req() request: Request) {
+      return await this.userService.getUserData(request);
+    }
+
     @UseGuards(KeyCloakAuthGuard)
     @Get(':id')
     async getMe(@Param() params) {

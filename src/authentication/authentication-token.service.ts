@@ -2,9 +2,10 @@ import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { authenticationTokenDocument } from "./schema/authentication-token.schema";
-import { authTokenDto } from "./dto/authentication.dto";
+import { authTokenDto, authUserDto } from "./dto/authentication.dto";
 import { plainToClass } from "class-transformer";
 import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
+const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class authenticationTokenService {
@@ -73,6 +74,23 @@ export class authenticationTokenService {
               errorDescription: error.response.error_description,
               status: false,
               msg: error.response.message,
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      }
+
+      async fetchUserDetails(request){
+        try{
+          const accessToken = request.headers.authorization;
+          return plainToClass(authUserDto, jwt.decode(accessToken), {excludeExtraneousValues:true});
+        }
+        catch(error){
+          throw new HttpException(
+            {
+              error: error,
+              status: false,
+              msg: 'User fetch failed',
             },
             HttpStatus.UNAUTHORIZED,
           );

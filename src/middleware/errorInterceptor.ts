@@ -29,7 +29,7 @@ async intercept(context: ExecutionContext, next: CallHandler): Promise<Observabl
         // const response = context.switchToHttp().getResponse();
         const delay = Date.now() - now;
         this.logger.error(
-          `${moment(now)} | ${error.response.statusCode} | [${method}] ${url} - ${delay}ms ${JSON.stringify(
+          `${moment(now)} | ${error.response?.statusCode} | [${method}] ${url} - ${delay}ms ${JSON.stringify(
             request.body,
           )} ${JSON.stringify(error)} | ${JSON.stringify(userInfo)}`,
         );
@@ -40,7 +40,7 @@ async intercept(context: ExecutionContext, next: CallHandler): Promise<Observabl
         log.response = JSON.stringify(res);
         log.type = method;
         log.url = url;
-        log.statusCode = error.response.statusCode;
+        log.statusCode = error.response?.statusCode;
         log.loginUser =  JSON.stringify(userInfo);
         return throwError(error);
       }),

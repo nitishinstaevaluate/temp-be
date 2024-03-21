@@ -3,11 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schema/user.schema';
 import { CreateUserDto } from './dto/createuser.dto';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel('user') private readonly userModel: Model<UserDocument>,
+    private authenticationTokenService:authenticationTokenService
     // private readonly httpService: HttpService,
   ) { }
 
@@ -43,5 +45,9 @@ export class UsersService {
       throw 'User not found';
     }
     return user;
+  }
+
+  async getUserData(request){
+    return await this.authenticationTokenService.fetchUserDetails(request);
   }
 }
