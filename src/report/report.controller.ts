@@ -38,7 +38,7 @@ export class ReportController {
     @Req() req
   ) {
     try {
-      const result = await this.reportService.getReport(reportId, res, req, approach);
+      const result = await this.reportService.generateReport(reportId, res, req, approach);
       if (result.status) {
          return result;
       } else {

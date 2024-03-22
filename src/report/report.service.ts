@@ -29,7 +29,7 @@ import { mrlReportService } from './mrl-report.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 import { navReportService } from './nav-report.service';
-
+import { PDFDocument } from 'pdf-lib'
 @Injectable()
 export class ReportService {
     totalA=0;
@@ -54,38 +54,132 @@ export class ReportService {
     private navReportService: navReportService
     ){}
 
-    async getReport(id,res, req,approach){
+  //   async getReport(id,res, req,approach){
+  //     try {
+  //         const transposedData = [];
+  //         let  getCapitalStructure;
+  //         let htmlFilePath, pdfFilePath,docFilePath,pdf;
+  //         const reportDetails = await this.reportModel.findById(id);
+  //         const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+
+  //         const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
+
+  //         if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+  //           htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+  //         }
+          
+  //         pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+  //         docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
+          
+  //         if(reportDetails?.fileName){
+  //           const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
+
+  //           res.setHeader('Content-Type', 'application/pdf');
+  //           res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
+  //           res.send(convertDocxToPdf);
+
+  //            return {
+  //                 msg: "PDF download Success",
+  //                 status: true,
+  //             };
+  //         }
+
+  //         if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
+  //           const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
+  //           this.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
+  //         }
+
+  //         if(valuationResult.inputData[0].model.includes(MODEL[1])){
+  //           const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
+  //            getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(
+  //             +valuationResult.inputData[0].adjustedCostOfEquity,
+  //             valuationResult.inputData[0].excelSheetId,+valuationResult.inputData[0].costOfDebt,
+  //             +valuationResult.inputData[0].copShareCapital,+valuationResult.inputData[0].capitalStructure.deRatio,
+  //             valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
+  //             );
+  //         }
+  
+  //         for await (let data of valuationResult.modelResults) {
+  //             if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+  //                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
+  //             }
+  //         }
+  //         this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking);
+  
+  //         if (valuationResult.modelResults.length > 0) {
+  //             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+  //             const template = hbs.compile(htmlContent);
+  //             const html = template(valuationResult);
+            
+  //             if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+  //               pdf = await this.generatePdf(html, pdfFilePath);
+  //               // pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
+  //             }
+  //             // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
+  //             //   pdf = await this.generateSebiReport(html, pdfFilePath);
+  //             //   // pdf = await this.sebiReportService.computeSEBIReport(html, pdfFilePath, req, valuationResult, reportDetails)
+  //             // }
+  
+  //             res.setHeader('Content-Type', 'application/pdf');
+  //             res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
+  //             res.send(pdf);
+  
+  //             return {
+  //                 msg: "PDF download Success",
+  //                 status: true,
+  //             };
+  //         } else {
+  //             console.log("Data not found");
+  //             return {
+  //                 msg: "No data found for PDF generation",
+  //                 status: false
+  //             };
+  //         }
+  //     } catch (error) {
+  //       console.error("Error generating PDF:", error);
+  //       return {
+  //           msg: "Error generating PDF",
+  //           status: false,
+  //           error: error.message
+  //       };
+  //     }
+  // }
+
+    async generateReport(id,res, req,approach){
       try {
           const transposedData = [];
           let  getCapitalStructure;
-          let htmlFilePath, pdfFilePath,docFilePath,pdf;
+          let htmlFilePathFirstPart, htmlFilePathSecondPart, htmlFilePathDcfValuation, pdfFilePathFirst, docFilePath, pdf, pdfFilePathSecond, pdfFilePathDcf, pdfFilePathActual;
           const reportDetails = await this.reportModel.findById(id);
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
 
           const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
           if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
-            htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
-            // htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
+            // htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+            htmlFilePathFirstPart = path.join(process.cwd(), 'html-template', 'part-one-dcf-report.html');
+            htmlFilePathSecondPart = path.join(process.cwd(), 'html-template', 'part-two-dcf-report.html');
+            htmlFilePathDcfValuation = path.join(process.cwd(), 'html-template', 'dcf-valuation.html');
           }
-          // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
-          //   htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
-          // }
-          pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+
+          pdfFilePathActual = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+          pdfFilePathFirst = path.join(process.cwd(), 'pdf', `first-part-${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+          pdfFilePathSecond = path.join(process.cwd(), 'pdf', `second-part-${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
+          pdfFilePathDcf = path.join(process.cwd(), 'pdf', `dcf-${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
           docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
           
-          if(reportDetails?.fileName){
-            const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
+          // if(reportDetails?.fileName){
+          //   const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
-            res.send(convertDocxToPdf);
+          //   res.setHeader('Content-Type', 'application/pdf');
+          //   res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
+          //   res.send(convertDocxToPdf);
 
-             return {
-                  msg: "PDF download Success",
-                  status: true,
-              };
-          }
+          //    return {
+          //         msg: "PDF download Success",
+          //         status: true,
+          //     };
+          // }
 
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
@@ -110,22 +204,50 @@ export class ReportService {
           this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking);
   
           if (valuationResult.modelResults.length > 0) {
-              const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-              const template = hbs.compile(htmlContent);
-              const html = template(valuationResult);
+
+              // First part
+              const htmlContentFirst = fs.readFileSync(htmlFilePathFirstPart, 'utf8');
+              const templateOne = hbs.compile(htmlContentFirst);
+              const htmlFirst = templateOne(valuationResult);
             
-              if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
-                pdf = await this.generatePdf(html, pdfFilePath);
-                // pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
-              }
-              // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
-              //   pdf = await this.generateSebiReport(html, pdfFilePath);
-              //   // pdf = await this.sebiReportService.computeSEBIReport(html, pdfFilePath, req, valuationResult, reportDetails)
-              // }
-  
+              await this.generatePdf(htmlFirst, pdfFilePathFirst);
+
+              // Second part
+              const htmlContentSecond = fs.readFileSync(htmlFilePathSecondPart, 'utf8');
+              const templateTwo = hbs.compile(htmlContentSecond);
+              const htmlSecond = templateTwo(valuationResult);
+            
+              await this.generatePdf(htmlSecond, pdfFilePathSecond);
+
+              // Dcf part
+              const htmlContentDcf = fs.readFileSync(htmlFilePathDcfValuation, 'utf8');
+              const templateThree = hbs.compile(htmlContentDcf);
+              const htmlDcf = templateThree(valuationResult);
+            
+
+              await this.generateDcf(htmlDcf, pdfFilePathDcf);
+              const mergedPdf = await PDFDocument.create();
+
+              const pdfA = await PDFDocument.load(fs.readFileSync(pdfFilePathFirst));
+              const pdfB = await PDFDocument.load(fs.readFileSync(pdfFilePathDcf));
+              const pdfC = await PDFDocument.load(fs.readFileSync(pdfFilePathSecond));
+              
+              const copiedPagesA = await mergedPdf.copyPages(pdfA, pdfA.getPageIndices());
+              copiedPagesA.forEach((page) => mergedPdf.addPage(page));
+              
+              const copiedPagesB = await mergedPdf.copyPages(pdfB, pdfB.getPageIndices());
+              copiedPagesB.forEach((page) => mergedPdf.addPage(page));
+
+              const copiedPagesC = await mergedPdf.copyPages(pdfC, pdfC.getPageIndices());
+              copiedPagesC.forEach((page) => mergedPdf.addPage(page));
+              
+              const outputPath = pdfFilePathActual;
+                const mergedPdfBytes = await mergedPdf.save();
+               fs.writeFileSync(outputPath, mergedPdfBytes);
+        
               res.setHeader('Content-Type', 'application/pdf');
               res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
-              res.send(pdf);
+              res.send('');
   
               return {
                   msg: "PDF download Success",
@@ -488,6 +610,37 @@ export class ReportService {
             path: pdfFilePath,
             format: 'A4' as puppeteer.PaperFormat,
             displayHeaderFooter: true,
+            printBackground: true,
+            footerTemplate:`<div style="width:100%;margin-top:5%">
+            <hr style="border:1px solid #bbccbb">
+            <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
+            </div>` ,
+            margin: {
+              right: "20px",
+          },          
+          });
+          return pdf;
+        } catch (error) {
+          console.error('Error generating PDF:', error);
+        } finally {
+          await browser.close();
+        }
+      }
+
+    async generateDcf(htmlContent: any, pdfFilePath: string) {
+        const browser = await puppeteer.launch({
+          headless:"new",
+          executablePath: process.env.PUPPETEERPATH
+        });
+        const page = await browser.newPage();
+
+        try {
+          const contenread = await page.setContent(htmlContent);
+          const pdf = await page.pdf({
+            path: pdfFilePath,
+            format: 'A4' as puppeteer.PaperFormat,
+            displayHeaderFooter: true,
+            landscape:true,
             printBackground: true,
             footerTemplate:`<div style="width:100%;margin-top:5%">
             <hr style="border:1px solid #bbccbb">

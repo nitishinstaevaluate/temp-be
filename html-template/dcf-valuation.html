@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-indent: 0;
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 15px !important;
+        }
+
+        .h1,
+        h1 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s1 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .p,
+        p {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+            margin: 0pt;
+        }
+
+        .s2 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s3 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 12pt;
+        }
+        .s80 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-size: 12pt;
+        }
+
+        .h2,
+        h2 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11.5pt;
+        }
+
+        .a,
+        a {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s4 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11.5pt;
+        }
+
+        .s5 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s6 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s7 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: underline;
+            font-size: 12pt;
+        }
+
+        .s8 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: italic;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s9 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s10 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: italic;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s11 {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s12 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        .s13 {
+            color: #FFF;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+
+        .s14 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+
+        .s15 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+
+        .s16 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+
+        .s17 {
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 12pt;
+        }
+
+        li {
+            display: block;
+        }
+
+        #l1 {
+            padding-left: 0pt;
+            counter-reset: c1 1;
+        }
+
+        #l1>li>*:first-child:before {
+            counter-increment: c1;
+            content: counter(c1, upper-roman)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 11.5pt;
+        }
+
+        #l1>li:first-child>*:first-child:before {
+            counter-increment: c1 0;
+        }
+
+        #l2 {
+            padding-left: 0pt;
+            counter-reset: c2 1;
+        }
+
+        #l2>li>*:first-child:before {
+            counter-increment: c2;
+            content: counter(c2, upper-latin)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l2>li:first-child>*:first-child:before {
+            counter-increment: c2 0;
+        }
+
+        #l3 {
+            padding-left: 0pt;
+            counter-reset: c2 1;
+        }
+        #l80 {
+            padding-left: 0pt;
+            counter-reset: c2 1;
+        }
+
+        #l3>li>*:first-child:before {
+            counter-increment: c2;
+            content: counter(c2, upper-latin)". ";
+            color: black;
+            font-family:'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        #l80>li>*:first-child:before {
+            counter-increment: c2;
+            content: counter(c2, upper-latin)". ";
+            color: black;
+            font-family:'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l3>li:first-child>*:first-child:before {
+            counter-increment: c2 0;
+        }
+        #l80>li:first-child>*:first-child:before {
+            counter-increment: c2 0;
+        }
+
+        li {
+            display: block;
+        }
+
+        #l4 {
+            padding-left: 0pt;
+            counter-reset: d1 1;
+        }
+
+        #l4>li>*:first-child:before {
+            counter-increment: d1;
+            content: counter(d1, upper-latin)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l4>li:first-child>*:first-child:before {
+            counter-increment: d1 0;
+        }
+
+        li {
+            display: block;
+        }
+
+        #l5 {
+            padding-left: 0pt;
+            counter-reset: e1 1;
+        }
+
+        #l5>li>*:first-child:before {
+            counter-increment: e1;
+            content: counter(e1, upper-roman)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l5>li:first-child>*:first-child:before {
+            counter-increment: e1 0;
+        }
+
+        #l6 {
+            padding-left: 0pt;
+            counter-reset: e2 1;
+        }
+
+        #l6>li>*:first-child:before {
+            counter-increment: e2;
+            content: counter(e2, upper-latin)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l6>li:first-child>*:first-child:before {
+            counter-increment: e2 0;
+        }
+
+        #l7 {
+            padding-left: 0pt;
+            counter-reset: f1 1;
+        }
+
+        #l7>li>*:first-child:before {
+            counter-increment: f1;
+            content: counter(f1, decimal)".0 ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l7>li:first-child>*:first-child:before {
+            counter-increment: f1 0;
+        }
+
+        #l8 {
+            padding-left: 0pt;
+            counter-reset: e3 1;
+        }
+
+        #l8>li>*:first-child:before {
+            counter-increment: e3;
+            content: counter(e3, lower-roman)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l8>li:first-child>*:first-child:before {
+            counter-increment: e3 0;
+        }
+
+        #l9 {
+            padding-left: 0pt;
+            counter-reset: e2 1;
+        }
+
+        #l9>li>*:first-child:before {
+            counter-increment: e2;
+            content: counter(e2, upper-latin)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l9>li:first-child>*:first-child:before {
+            counter-increment: e2 0;
+        }
+
+        #l10 {
+            padding-left: 0pt;
+            counter-reset: e2 1;
+        }
+
+        #l10>li>*:first-child:before {
+            counter-increment: e2;
+            content: counter(e2, upper-latin)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l10>li:first-child>*:first-child:before {
+            counter-increment: e2 0;
+        }
+
+        #l11 {
+            padding-left: 0pt;
+            counter-reset: g1 1;
+        }
+
+        #l11>li>*:first-child:before {
+            counter-increment: g1;
+            content: counter(g1, decimal)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l11>li:first-child>*:first-child:before {
+            counter-increment: g1 0;
+        }
+
+        #l12 {
+            padding-left: 0pt;
+            counter-reset: g2 1;
+        }
+
+        #l12>li>*:first-child:before {
+            counter-increment: g2;
+            content: counter(g2, upper-latin)") ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l12>li:first-child>*:first-child:before {
+            counter-increment: g2 0;
+        }
+
+        #l13 {
+            padding-left: 0pt;
+            counter-reset: g3 1;
+        }
+
+        #l13>li>*:first-child:before {
+            counter-increment: g3;
+            content: "(" counter(g3, lower-latin)") ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l13>li:first-child>*:first-child:before {
+            counter-increment: g3 0;
+        }
+
+        #l14 {
+            padding-left: 0pt;
+            counter-reset: h1 1;
+        }
+
+        #l14>li>*:first-child:before {
+            counter-increment: h1;
+            content: "(" counter(h1, lower-latin)") ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l14>li:first-child>*:first-child:before {
+            counter-increment: h1 0;
+        }
+
+        #l15 {
+            padding-left: 0pt;
+            counter-reset: i1 1;
+        }
+
+        #l15>li>*:first-child:before {
+            counter-increment: i1;
+            content: counter(i1, decimal)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l15>li:first-child>*:first-child:before {
+            counter-increment: i1 0;
+        }
+
+        #l16 {
+            padding-left: 0pt;
+            counter-reset: i2 1;
+        }
+
+        #l16>li>*:first-child:before {
+            counter-increment: i2;
+            content: "(" counter(i2, lower-latin)") ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l16>li:first-child>*:first-child:before {
+            counter-increment: i2 0;
+        }
+
+        #l17 {
+            padding-left: 0pt;
+            counter-reset: i3 1;
+        }
+
+        #l17>li>*:first-child:before {
+            counter-increment: i3;
+            content: counter(i3, decimal)". ";
+            color: black;
+            font-family: 'Roboto', sans-serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 12pt;
+        }
+
+        #l17>li:first-child>*:first-child:before {
+            counter-increment: i3 0;
+        }
+
+        table,
+        tbody {
+            vertical-align: top;
+            overflow: visible;
+        }
+        .container-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            font-size: 16px;
+            
+        }
+        .column {
+            width: 50%; /* Adjust the width as needed */
+            /* padding: 10px; */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .larger-bullet {
+        list-style-type: none;
+        padding-left: 20px;
+        }
+
+        .larger-bullet::before {
+        content: "\2022";
+        font-size: 20px;
+        margin-right: 5px;
+        vertical-align: bottom !important;
+        }
+
+        #l81 {
+            padding-left: 0pt;
+        }
+
+        #l81>li>*:first-child:before {
+            content: " ";
+            color: black;
+            font-family: Symbol, serif;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            font-size: 11pt;
+        }
+        .report-date,
+        .board-of-directors,
+        .company-name,
+        .add-text {
+            text-align: left;
+            width: 100%;
+            padding-top: 1%;
+            padding-left:2.7%;
+        }
+        .alpha-restyle{
+            span{
+                text-align: left !important;
+            }
+            p{
+                text-align: left !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        {{#if (checkIfFcff)}}
+                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
+                               Free Cash Flow to Firm(ie. FCFF)</h1>
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
+                                present value of the projected FCFF has been computed in the table below:</p>
+                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
+
+                            <!-- fcff table starts -->
+                            <div style="">
+                            <table style="border-collapse:collapse;width: 100%;border: 1px solid black !important;margin-left: 2%;" >
+                                <tr style="height:15pt">
+                                    <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                                        colspan="{{calculateColspan}}" bgcolor="#001F5F">
+                                        <p class="s13"
+                                            style="text-align: left;padding-left: 2pt;font-size: 13px !important;">
+                                            For the Year ending 31st March
+                                        <span style="float: right;font-size: 13px !important">Amount In {{currencyUnit}}
+                                            {{#if (reportingUnit)}}
+                                            ({{reportingUnit}})
+                                            {{/if}}
+                                        </span></p>
+                                    </td>
+                                    <!-- <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                                         bgcolor="#001F5F">
+                                        <p class="s13"
+                                            style="text-align: right;">
+                                            </p>
+                                    </td> -->
+                                </tr>
+
+                                <tr style="background-color: #001F5F;height: 10px;">
+                                    {{#each (projectionResultTableHeader data)}}
+                                    {{#if (isLineItemCheck columnHeader)}}
+                                        <td style="width: auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p  style="text-align: right;font-size: 13px !important;padding-right: 3px;color: white !important;font-weight: bold;">
+                                                {{columnHeader}}
+                                            </p>
+                                        </td>
+                                        {{else}}
+                                        <td style="width: auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p  style="text-align: left;font-size: 13px !important;padding-left: 4px;color: white;font-weight: bold;">
+                                                {{columnHeader}}
+                                            </p>
+                                        </td>
+                                        {{/if}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (PAT data)}}
+                                    {{#ifZero fcffPat}}
+                                    {{#if (isLineItemCheck fcffPat)}}
+                                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                                {{fcffPat}}
+                                            </p>
+                                        </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffPat}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (depAndAmortisation data)}}
+                                    {{#ifZero fcffDepAmortisation}}
+                                    {{#if (isLineItemCheck fcffDepAmortisation)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffDepAmortisation}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffDepAmortisation}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (InterestAdjTaxes data)}}
+                                    {{#ifZero fcffAddInterestAdjTaxes}}
+                                    {{#if (isLineItemCheck fcffAddInterestAdjTaxes)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffAddInterestAdjTaxes}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffAddInterestAdjTaxes}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (nonCashItem data)}}
+                                    {{#ifZero fcffOnCashItems}}
+                                    {{#if (isLineItemCheck fcffOnCashItems)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffOnCashItems}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffOnCashItems}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (NCA data)}}
+                                    {{#ifZero fcffNca}}
+                                    {{#if (isLineItemCheck fcffNca)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffNca}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffNca}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (defferTaxAssets data)}}
+                                    {{#ifZero fcffDefferedTaxAssets}}
+                                    {{#if (isLineItemCheck fcffDefferedTaxAssets)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffDefferedTaxAssets}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffDefferedTaxAssets}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (netCshFlow data)}}
+                                    {{#ifZero fcffNetCashFlow}}
+                                    {{#if (isLineItemCheck fcffNetCashFlow)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffNetCashFlow}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffNetCashFlow}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (fxdCshFlow data)}}
+                                    {{#ifZero fcffFixedAssets}}
+                                    {{#if (isLineItemCheck fcffFixedAssets)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffFixedAssets}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffFixedAssets}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (FCFF data)}}
+                                    {{#ifZero fcff}}
+                                    {{#if (isLineItemCheck fcff)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                            {{fcff}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;display: inline-block;font-size: 13px !important;">
+                                            {{fcff}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (discPeriod data)}}
+                                    {{#ifZero fcffDiscountingPeriod}}
+                                    {{#if (isLineItemCheck fcffDiscountingPeriod)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffDiscountingPeriod}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffDiscountingPeriod}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (discFactor data)}}
+                                    {{#ifZero fcffDiscountingFactor}}
+                                    {{#if (isLineItemCheck fcffDiscountingFactor)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcffDiscountingFactor}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                            {{fcffDiscountingFactor}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (prsntFCFF data)}}
+                                    {{#ifZero fcffPresentFCFF}}
+                                    {{#if (isLineItemCheck fcffPresentFCFF)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                            {{fcffPresentFCFF}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;display: inline-block;font-size: 13px !important;">
+                                            {{fcffPresentFCFF}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                            </table>
+                        </div>
+                            <!-- fcff table ends -->
+                            {{else}}
+
+                            <h1 style="padding-top: 3pt;padding-left: 15px;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;padding-right: 15px;">Present Value of
+                                FCFE</h1>
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
+                                present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
+                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
+                            <!-- fcfe table starts -->
+                            <div style="text-align: center;">
+                            <table style="border-collapse:collapse;width: 95%;border: 1px solid black !important;margin: auto;" >
+                                <tr style="height:15pt">
+                                    <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                                        colspan="{{calculateColspan}}" bgcolor="#001F5F">
+                                        <p class="s13"
+                                            style="text-align: left;padding-left: 2pt;font-size: 13px;">
+                                            For the Year ending 31st March
+                                            <span style="float: right;font-size: 13px;">Amount In {{currencyUnit}}
+                                                {{#if (reportingUnit)}}
+                                                ({{reportingUnit}})
+                                                {{/if}}
+                                        </span></p>
+                                    </td>
+                                </tr>
+
+                                <tr style="background-color: #001F5F;height: 10px;">
+                                    {{#each (projectionResultTableHeader data)}}
+                                    {{#if (isLineItemCheck columnHeader)}}
+                                    <td style="width: auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p  style="text-align: right;font-size: 13px !important;padding-right: 3px;color: white !important;font-weight: bold;">
+                                            {{columnHeader}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width: auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p  style="text-align: left;font-size: 13px !important;padding-left: 4px;color: white;font-weight: bold;">
+                                            {{columnHeader}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (PAT data)}}
+                                        {{#ifZero fcfePat}}
+                                        {{#if (isLineItemCheck fcfePat)}}
+                                            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                                <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                                    {{fcfePat}}
+                                                </p>
+                                            </td>
+                                            {{else}}
+                                            <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                                <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block !important;font-size: 13px !important;">
+                                                    {{fcfePat}}
+                                                </p>
+                                            </td>
+                                            {{/if}}
+                                        {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (depAndAmortisation data)}}
+                                    {{#ifZero fcfeDepAmortisation}}
+                                    {{#if (isLineItemCheck fcfeDepAmortisation)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeDepAmortisation}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeDepAmortisation}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (nonCashItem data)}}
+                                    {{#ifZero fcfeOnCashItems}}
+                                    {{#if (isLineItemCheck fcfeOnCashItems)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeOnCashItems}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeOnCashItems}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (NCA data)}}
+                                    {{#ifZero fcfeNca}}
+                                    {{#if (isLineItemCheck fcfeNca)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeNca}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeNca}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (changeInBorrowing data)}}
+                                    {{#ifZero changeInBorrowings}}
+                                    {{#if (isLineItemCheck changeInBorrowings)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{changeInBorrowings}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{changeInBorrowings}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (defferTaxAssets data)}}
+                                    {{#ifZero fcfeDefferedTaxAssets}}
+                                    {{#if (isLineItemCheck fcfeDefferedTaxAssets)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeDefferedTaxAssets}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeDefferedTaxAssets}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (netCshFlow data)}}
+                                    {{#ifZero fcfeNetCashFlow}}
+                                    {{#if (isLineItemCheck fcfeNetCashFlow)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeNetCashFlow}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeNetCashFlow}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (fxdCshFlow data)}}
+                                    {{#ifZero fcfeFixedAssets}}
+                                    {{#if (isLineItemCheck fcfeFixedAssets)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeFixedAssets}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeFixedAssets}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (FCFE data)}}
+                                    {{#ifZero fcff}}
+                                    {{#if (isLineItemCheck fcff)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;font-size: 13px !important;">
+                                            {{fcff}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;font-size: 13px !important;">
+                                            {{fcff}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (discPeriod data)}}
+                                    {{#ifZero fcfeDiscountingPeriod}}
+                                    {{#if (isLineItemCheck fcfeDiscountingPeriod)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeDiscountingPeriod}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeDiscountingPeriod}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (discFactor data)}}
+                                    {{#ifZero fcfeDiscountingFactor}}
+                                    {{#if (isLineItemCheck fcfeDiscountingFactor)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            {{fcfeDiscountingFactor}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                            {{fcfeDiscountingFactor}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr style="padding-top: 4pt;padding-bottom: 4pt;">
+                                    {{#each (prsntFCFF data)}}
+                                    {{#ifZero fcfePresentFCFF}}
+                                    {{#if (isLineItemCheck fcfePresentFCFF)}}
+                                    <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;font-size: 13px !important;">
+                                            {{fcfePresentFCFF}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;font-size: 13px !important;">
+                                            {{fcfePresentFCFF}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                            </table>
+                        </div>
+                            <!-- fcfe table ends -->
+                            {{/if}}
+                            
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <h1 style="padding-left: 15pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
+                                Method</h1>
+                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;"><span
+                                    class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
+                                    class="s2" style=" ">{{strdate}}</span><span class="p"> is calculated
+                                    as </span><span class="h1">{{currencyUnit}} </span><span class="s1"
+                                    style="">{{modelValuePerShare 'FCFE,FCFF'}}</span><span class="h1"> </span><span class="p">as presented below.</span></p>
+                            <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
+
+                            {{#if (checkIfFcff)}}
+                            <!-- fcff table starts -->
+                            <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
+                                 <tr style="height:14pt">
+                                    <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
+                                        bgcolor="#001F5F">
+                                        <p class="s11"
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;">
+                                            Particulars</p>
+                                    </td>
+                                    <td style="width:30%;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
+                                        bgcolor="#001F5F">
+                                        <p class="s11"
+                                            style="text-indent: 0pt;line-height: 13pt;text-align: right;padding-right: 4pt;font-size: 13px !important;">
+                                            Amount ({{currencyUnit}} {{reportingUnit}})</p>
+                                    </td>
+                                </tr>
+                               
+
+                                <tr>
+                                    {{#each (sumCashFlow data)}}
+                                    {{#ifZero fcffSumOfCashFlows}}
+                                    {{#if (isLineItemCheck fcffSumOfCashFlows)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSumOfCashFlows}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSumOfCashFlows}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{#if (hasDebtDate)}}
+                                <tr>
+                                    {{#each (debtDate data)}}
+                                    {{#ifZero fcffDebtOnDate}}
+                                    {{#if (isLineItemCheck fcffDebtOnDate)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffDebtOnDate}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffDebtOnDate}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/if}}
+                                <tr>
+                                    {{#each (cashEquvlnt data)}}
+                                    {{#ifZero fcffCashEquivalents}}
+                                    {{#if (isLineItemCheck fcffCashEquivalents)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffCashEquivalents}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffCashEquivalents}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{#if (hasSurplusAssets)}}
+                                <tr>
+                                    {{#each (surplusAsset data)}}
+                                    {{#ifZero fcffSurplusAssets}}
+                                    {{#if (isLineItemCheck fcffSurplusAssets)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSurplusAssets}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSurplusAssets}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/if}}
+                                {{#if (hasOtherAdjustment)}}
+                                <tr>
+                                    {{#each (otherAdjustment data)}}
+                                    {{#ifZero fcffOtherAdj}}
+                                    {{#if (isLineItemCheck fcffOtherAdj)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffOtherAdj}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffOtherAdj}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/if}}
+                                <tr>
+                                    {{#each (eqtValue data)}}
+                                    {{#ifZero fcffEquityValue}}
+                                    {{#if (isLineItemCheck fcffEquityValue)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffEquityValue}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffEquityValue}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                
+                                {{#ifStub}}
+                                <tr>
+                                    {{#each (stubValue data)}}
+                                    {{#ifZero fcffStubAdjValue}}
+                                    {{#if (isLineItemCheck fcffStubAdjValue)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffStubAdjValue}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffStubAdjValue}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/ifStub}}
+                
+                                {{#ifEquityValProvisional}}
+                                <tr>
+                                    {{#each (provisionalEquityValue data)}}
+                                    {{#ifZero fcffequityValueNew}}
+                                    {{#if (isLineItemCheck fcffequityValueNew)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffequityValueNew}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffequityValueNew}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/ifEquityValProvisional}}
+                                <tr>
+                                    {{#each (shares data)}}
+                                    {{#ifZero fcffNoOfShares}}
+                                    {{#if (isLineItemCheck fcffNoOfShares)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffNoOfShares}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffNoOfShares}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr >
+                                    {{#each (valuePrShare data)}}
+                                    {{#ifZero fcffValuePerShare}}
+                                    {{#if (isLineItemCheck fcffValuePerShare)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffValuePerShare}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffValuePerShare}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                            </table>
+                            <!-- fcff table ends -->
+                            {{else}}
+                            <!-- fcfe table starts -->
+                            <table style="border-collapse:collapse;margin-left:2%;width: 95%;" cellspacing="0">
+                                 <tr style="height:14pt">
+                                    <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
+                                        bgcolor="#001F5F">
+                                        <p class="s11"
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
+                                            Particulars</p>
+                                    </td>
+                                    <td style="width:30%;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
+                                        bgcolor="#001F5F">
+                                        <p class="s11"
+                                            style="text-indent: 0pt;line-height: 13pt;text-align: right;padding-right: 4pt;">
+                                            Amount ({{currencyUnit}} {{reportingUnit}})</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    {{#each (sumCashFlow data)}}
+                                    {{#ifZero fcfeSumOfCashFlows}}
+                                    {{#if (isLineItemCheck fcfeSumOfCashFlows)}}
+                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSumOfCashFlows}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSumOfCashFlows}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr>
+                                    {{#each (cashEquvlnt data)}}
+                                    {{#ifZero fcfeCashEquivalents}}
+                                    {{#if (isLineItemCheck fcfeCashEquivalents)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeCashEquivalents}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeCashEquivalents}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{#if (hasSurplusAssets)}}
+                                <tr>
+                                    {{#each (surplusAsset data)}}
+                                    {{#ifZero fcfeSurplusAssets}}
+                                    {{#if (isLineItemCheck fcfeSurplusAssets)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSurplusAssets}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSurplusAssets}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/if}}
+                                {{#if (hasOtherAdjustment)}}
+                                <tr>
+                                    {{#each (otherAdjustment data)}}
+                                    {{#ifZero fcfeOtherAdj}}
+                                    {{#if (isLineItemCheck fcfeOtherAdj)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeOtherAdj}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeOtherAdj}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/if}}
+                                <tr>
+                                    {{#each (eqtValue data)}}
+                                    {{#ifZero fcfeEquityValue}}
+                                    {{#if (isLineItemCheck fcfeEquityValue)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeEquityValue}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeEquityValue}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+
+                                {{#ifStub}}
+                                <tr>
+                                    {{#each (stubValue data)}}
+                                    {{#ifZero fcfeStubAdjValue}}
+                                    {{#if (isLineItemCheck fcfeStubAdjValue)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeStubAdjValue}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeStubAdjValue}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/ifStub}}
+                
+                                {{#ifEquityValProvisional}}
+                                <tr>
+                                    {{#each (provisionalEquityValue data)}}
+                                    {{#ifZero fcfeequityValueNew}}
+                                    {{#if (isLineItemCheck fcfeequityValueNew)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeequityValueNew}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeequityValueNew}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                {{/ifEquityValProvisional}}
+                                <tr>
+                                    {{#each (shares data)}}
+                                    {{#ifZero fcfeNoOfShares}}
+                                    {{#if (isLineItemCheck fcfeNoOfShares)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeNoOfShares}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeNoOfShares}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr >
+                                    {{#each (valuePrShare data)}}
+                                    {{#ifZero fcfeValuePerShare}}
+                                    {{#if (isLineItemCheck fcfeValuePerShare)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeValuePerShare}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeValuePerShare}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                            </table>
+                            <!-- fcfe table ends -->
+                            {{/if}}
+    </div>
+</body>
+</html>
