@@ -1779,8 +1779,8 @@ export class ReportService {
               return {
                 fieldName:indNav.fieldName,
                 // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? this.formatPositiveAndNegativeValues(Math.floor(parseFloat(indNav.bookValue) * 100) / 100) : indNav?.bookValue,
-                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? this.formatPositiveAndNegativeValues(Math.floor(parseFloat(indNav.fairValue) * 100) / 100) : indNav.value  === 0 || indNav?.value ? this.formatPositiveAndNegativeValues(Math.floor(parseFloat(indNav.value) * 100) / 100): indNav?.value
+                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? this.formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
+                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? this.formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? this.formatPositiveAndNegativeValues(indNav.value): indNav?.value
               }
              })
             }
@@ -2356,6 +2356,14 @@ export class ReportService {
         return elevenUaData.data?.inputData?.currencyUnit;
       return 'INR';
     })
+
+    hbs.registerHelper('valuePerShareAndCurrencyElevenUa',()=>{
+      if(this.unqotedEquityShareVal && !`${this.unqotedEquityShareVal}`.includes('-'))
+        return `${elevenUaData.data?.inputData?.currencyUnit} ${this.formatPositiveAndNegativeValues(this.unqotedEquityShareVal)}`;
+      return 'NIL';
+    })
+
+
     hbs.registerHelper('reportingUnit',()=>{
       if(elevenUaData)
         return elevenUaData.data?.inputData?.reportingUnit === REPORTING_UNIT.ABSOLUTE ? '' : elevenUaData.data?.inputData?.reportingUnit;
@@ -2460,6 +2468,25 @@ export class ReportService {
       return '-'
     })
 
+    hbs.registerHelper('hasFairValueinvstShareSec',()=>{
+      if(elevenUaData){
+        let investment=0;
+        const investmentTotalFromExcel = elevenUaData?.data?.totalInvestmentSharesAndSecurities;
+        const elevenUaInvestment = elevenUaData.data?.inputData?.fairValueinvstShareSec;
+        investment = elevenUaInvestment;
+        if(!elevenUaInvestment){
+          investment =  investmentTotalFromExcel;
+        }
+        this.totalC = investment;
+        if(convertToNumberOrZero(investment)){
+          return true
+        } 
+        else {
+         return false;
+        }
+      }
+    })
+
     hbs.registerHelper('totalC',()=>{
       if(elevenUaData){
         let investment=0;
@@ -2480,6 +2507,27 @@ export class ReportService {
         return elevenUaData.data?.inputData?.fairValueImmovableProp ? this.formatPositiveAndNegativeValues(elevenUaData.data?.inputData?.fairValueImmovableProp) : '-';
       return '-'
     })
+    hbs.registerHelper('hasFairValueImmovableProp',()=>{
+      if(elevenUaData){
+        if(convertToNumberOrZero(elevenUaData.data?.inputData?.fairValueImmovableProp)){
+          return true
+        } 
+        else {
+         return false;
+        }
+      }
+    })
+    hbs.registerHelper('hasEitherImmovableOrInvstShare',()=>{
+      if(elevenUaData){
+        if(convertToNumberOrZero(elevenUaData.data?.inputData?.fairValueImmovableProp) || this.totalC){
+          return true
+        } 
+        else {
+         return false;
+        }
+      }
+    })
+    
     
     hbs.registerHelper('totalD',()=>{
       if(elevenUaData){
