@@ -46,7 +46,7 @@ export class NetAssetValueService {
     // Read NAV Inputs
     let fixedAssetVal, longTermLoansAdvancesVal, nonCurrentInvestmentVal, deferredTaxAssetVal, inventoriesVal,
       shortTermLoanAdvancesVal, tradeReceivablesVal, cashVal, otherCurrentAssetsVal, shortTermProvisionsVal, shortTermBorrowingsVal,
-      tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal;
+      tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal, contingentLiabilityMarketVal, deferredTaxLiabilityMarketVal;
     
     let fixedAssetValAtBook, longTermLoansAdvancesValAtBook, nonCurrentInvestmentValAtBook, deferredTaxAssetValAtBook, inventoriesValAtBook,
       shortTermLoanAdvancesValAtBook, tradeReceivablesValAtBook, cashValAtBook, otherCurrentAssetsValAtBook, shortTermProvisionsValAtBook, shortTermBorrowingsValAtBook,
@@ -55,7 +55,7 @@ export class NetAssetValueService {
     let fixedAssetObj,longTermLoansAdvancesObj,nonCurrentInvestmentObj,deferredTaxAssetObj,inventoriesObj,
     shortTermLoanAdvancesObj,tradeReceivablesObj,cashObj,otherCurrentAssetsObj,shortTermProvisionsObj,
     shortTermBorrowingsObj,tradePayablesObj,otherCurrentLiabilitiesObj,lessLongTermBorrowingsObj,
-    lessLongTermProvisionsObj,shareApplicationMoneyObj;
+    lessLongTermProvisionsObj,shareApplicationMoneyObj,contingentLiabilityObj;
 
     
     for await(let resp of inputs.navInputs){ 
@@ -181,6 +181,10 @@ export class NetAssetValueService {
           }
 
           break;
+        case ('deferredTaxLiability'):
+          deferredTaxLiabilityMarketVal = resp.value;
+
+          break;
         case ('otherCurrentAssets'):
           otherCurrentAssetsValAtBook = await getCellValue(
             worksheet2,
@@ -295,6 +299,7 @@ export class NetAssetValueService {
             fairValue: lessLongTermProvisionsVal,
             type: resp.type
           }
+        break;
 
         case ('shareApplicationMoney'):
           shareApplicationMoneyValAtBook = await getCellValue(
@@ -311,15 +316,28 @@ export class NetAssetValueService {
           }
 
           break;
+        case ('contingentLiability'):     //For now we need to add contingent liability from form since we dont have line-item for contingent liability in excel
+          contingentLiabilityMarketVal = resp.value
+
+          contingentLiabilityObj = {
+            fieldName: "Less: Contingent Liability",
+            bookValue : 0,
+            fairValue: contingentLiabilityMarketVal,
+            type: resp.type
+          }
+
+          break;
         default:
           console.log('Undefined fieldValue Traced')
       }
     }
 
+    // Modifying Other current liabilities payload 
+    otherCurrentLiabilitiesObj.fairValue = otherCurrentLiabilitiesObj.fairValue + deferredTaxLiabilityMarketVal;
     const totalNonCurrentAssets = fixedAssetVal + longTermLoansAdvancesVal + nonCurrentInvestmentVal + deferredTaxAssetVal;
     const totalNonCurrentAssetsAtBook = fixedAssetValAtBook + longTermLoansAdvancesValAtBook + nonCurrentInvestmentValAtBook + deferredTaxAssetValAtBook;
 
-    const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + otherCurrentAssetsVal -
+    const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + otherCurrentAssetsVal + deferredTaxLiabilityMarketVal-
       shortTermProvisionsVal - shortTermBorrowingsVal - tradePayablesVal - otherCurrentLiabilitiesVal;
 
     const netCurrentAssetAtBook = inventoriesValAtBook + shortTermLoanAdvancesValAtBook + tradeReceivablesValAtBook + cashValAtBook + otherCurrentAssetsValAtBook -
@@ -328,7 +346,7 @@ export class NetAssetValueService {
     const firmValue = totalNonCurrentAssets + netCurrentAsset
     const firmValueAtBook = totalNonCurrentAssetsAtBook + netCurrentAssetAtBook
     
-    const equityValue = firmValue - lessLongTermBorrowingsVal - lessLongTermProvisionsVal - shareApplicationMoneyVal;
+    const equityValue = firmValue - lessLongTermBorrowingsVal - lessLongTermProvisionsVal - shareApplicationMoneyVal - contingentLiabilityMarketVal;
     console.log(equityValue ,firmValue , lessLongTermBorrowingsVal,lessLongTermProvisionsVal,shareApplicationMoneyVal  );
     const equityValueAtBook = firmValueAtBook - lessLongTermBorrowingsValAtBook - lessLongTermProvisionsValAtBook - shareApplicationMoneyValAtBook;
 
@@ -384,6 +402,7 @@ export class NetAssetValueService {
       longTermBorrowings: lessLongTermBorrowingsObj,
       longTermProvision: lessLongTermProvisionsObj,
       shareApplicationMoney: shareApplicationMoneyObj,
+      contingentLiability: contingentLiabilityObj,
       equityValue: {
         fieldName:'Equity Value',
         bookValue : equityValueAtBook,

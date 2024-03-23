@@ -279,8 +279,8 @@ export class navReportService {
                 return {
                 fieldName:indNav.fieldName,
                 // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? formatPositiveAndNegativeValues(Math.floor(parseFloat(indNav.bookValue) * 100) / 100) : indNav?.bookValue,
-                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? formatPositiveAndNegativeValues(Math.floor(parseFloat(indNav.fairValue) * 100) / 100) : indNav.value  === 0 || indNav?.value ? formatPositiveAndNegativeValues(Math.floor(parseFloat(indNav.value) * 100) / 100): indNav?.value
+                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
+                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? formatPositiveAndNegativeValues(indNav.value): indNav?.value
                 }
             })
             }
