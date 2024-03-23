@@ -244,22 +244,26 @@ export class NetAssetValueService {
 
           break;
         case ('otherCurrentLiabilities'):
-          otherCurrentLiabilitiesValAtBook = await getCellValue(
-            worksheet2,
-            `${columnsList[0] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
-          )
-
+          
           const deferredTaxLiability = await getCellValue(
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.deferredTaxLiabilityRow}`,
-          )
+            )
 
-          otherCurrentLiabilitiesVal = (resp.type === 'book_value') ? otherCurrentLiabilitiesValAtBook : resp.value
+            otherCurrentLiabilitiesValAtBook = (
+              await getCellValue(
+              worksheet2,
+              `${columnsList[0] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
+              ) + 
+              convertToNumberOrZero(deferredTaxLiability)
+            )
+
+          otherCurrentLiabilitiesVal = (resp.type === 'book_value') ? otherCurrentLiabilitiesValAtBook : (resp.value + convertToNumberOrZero(deferredTaxLiability))
 
           otherCurrentLiabilitiesObj = {
             fieldName: "Other current liabilities ",
-            bookValue : otherCurrentLiabilitiesValAtBook + convertToNumberOrZero(deferredTaxLiability),
-            fairValue: otherCurrentLiabilitiesVal + convertToNumberOrZero(deferredTaxLiability),
+            bookValue : otherCurrentLiabilitiesValAtBook,
+            fairValue: otherCurrentLiabilitiesVal,
             type: resp.type
           }
 
