@@ -28,6 +28,7 @@ import { mandateReportService } from './mandate-report.service';
 import { mrlReportService } from './mrl-report.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
+import { navReportService } from './nav-report.service';
 
 @Injectable()
 export class ReportService {
@@ -49,7 +50,8 @@ export class ReportService {
     private sebiReportService:sebiReportService,
     private mandateReportService: mandateReportService,
     private mrlReportService: mrlReportService,
-    private thirdpartyApiAggregateService: thirdpartyApiAggregateService
+    private thirdpartyApiAggregateService: thirdpartyApiAggregateService,
+    private navReportService: navReportService
     ){}
 
     async getReport(id,res, req,approach){
@@ -63,7 +65,7 @@ export class ReportService {
           const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
           if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
-            htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+            htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
             // htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
           }
           // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
@@ -157,7 +159,7 @@ export class ReportService {
     const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
     if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
-      htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : approach === METHODS_AND_APPROACHES[1] ? 'nav-report' :  (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
+      htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
     // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
     //   htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
@@ -2885,6 +2887,38 @@ export class ReportService {
           error: error,
           status: false,
           msg: 'beta working fetch failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async navReport(id, res){
+    try{
+     return await this.navReportService.generateNavReport(id,res);
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'nav report generation failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async previewNavReport(id, res){
+    try{
+     return await this.navReportService.navReportPreview(id,res);
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'nav report generation failed',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

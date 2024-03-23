@@ -71,6 +71,22 @@ export class ReportController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
+  @Get('nav-report/:reportId')
+  async generateNavReport(
+  @Param('reportId') reportId : string,
+  @Res() res) {
+    return await this.reportService.navReport(reportId, res);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('preview-nav-report/:reportId')
+  async previewNavReport(
+  @Param('reportId') reportId : string,
+  @Res() res) {
+    return await this.reportService.previewNavReport(reportId, res);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
   @Get('sebi-report/:reportId')
   async generateSebiReport(
   @Param('reportId') reportId : string,

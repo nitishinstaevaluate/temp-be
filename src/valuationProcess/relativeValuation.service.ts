@@ -206,7 +206,7 @@ export class RelativeValuationService {
     const finalPriceAvg = avgPricePerShareAvg - locAvg;
     const finalPriceMed = avgPricePerShareMed - locMed;
     const fairValuePerShareAvg = avgPricePerShareAvg * multiplier / outstandingShares;
-    const fairValuePerShareMed = avgPricePerShareAvg * multiplier / outstandingShares
+    const fairValuePerShareMed = avgPricePerShareMed * multiplier / outstandingShares
 
     // const tentativeIssuePrice = Math.round(
     //   findAverage([finalPriceAvg, finalPriceMed]),
