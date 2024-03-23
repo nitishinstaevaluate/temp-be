@@ -1127,6 +1127,8 @@ export const ASSESSMENT_DATA = [
           sysCode:1034,
           editable:false,
           header:true,
+          dependent:[1035,1036,1037,1038,1039],
+          formula:"currentOne45+currentOne46+currentOne48+currentOne49+currentOne50",
           rowNumber:44
           }
     },
@@ -1176,7 +1178,9 @@ export const ASSESSMENT_DATA = [
           particulars : "Profit / (Loss) from discontinuing operations net of tax",
           sysCode:1040,
           header:true,
-          editable:true,
+          editable:false,
+          dependent:[1002, 1003, 1004, 1006, 1007, 1008, 1010, 1011, 1012, 1013, 1014, 1015, 1018, 1020, 1021, 1023, 1025, 1028, 1029, 1030, 1031, 1032, 1035, 1036, 1037, 1038, 1039],
+          formula:"currentOne7 + currentOne8 - (currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22) - currentOne13 - currentOne14 - currentOne15 - currentOne26 - currentOne28 + currentOne29 - currentOne31 - currentOne33 - (currentOne36 + currentOne37 + currentOne38 + currentOne39 + currentOne40) - (currentOne45 + currentOne46+ currentOne47+currentOne48 +currentOne49 +currentOne50)",
           rowNumber:52
           }
     },
