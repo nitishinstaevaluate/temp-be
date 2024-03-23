@@ -4,7 +4,8 @@ import {
   getYearsList,
   getCellValue,
   parseDate,
-  getFormattedProvisionalDate
+  getFormattedProvisionalDate,
+  convertToNumberOrZero
 } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj, sheet1_PLObj } from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -46,7 +47,7 @@ export class NetAssetValueService {
     // Read NAV Inputs
     let fixedAssetVal, longTermLoansAdvancesVal, nonCurrentInvestmentVal, deferredTaxAssetVal, inventoriesVal,
       shortTermLoanAdvancesVal, tradeReceivablesVal, cashVal, otherCurrentAssetsVal, shortTermProvisionsVal, shortTermBorrowingsVal,
-      tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal, contingentLiabilityMarketVal, deferredTaxLiabilityMarketVal;
+      tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal, contingentLiabilityMarketVal;
     
     let fixedAssetValAtBook, longTermLoansAdvancesValAtBook, nonCurrentInvestmentValAtBook, deferredTaxAssetValAtBook, inventoriesValAtBook,
       shortTermLoanAdvancesValAtBook, tradeReceivablesValAtBook, cashValAtBook, otherCurrentAssetsValAtBook, shortTermProvisionsValAtBook, shortTermBorrowingsValAtBook,
@@ -181,10 +182,7 @@ export class NetAssetValueService {
           }
 
           break;
-        case ('deferredTaxLiability'):
-          deferredTaxLiabilityMarketVal = resp.value;
 
-          break;
         case ('otherCurrentAssets'):
           otherCurrentAssetsValAtBook = await getCellValue(
             worksheet2,
@@ -250,12 +248,18 @@ export class NetAssetValueService {
             worksheet2,
             `${columnsList[0] + sheet2_BSObj.otherCurrentLiabilitiesRow}`,
           )
+
+          const deferredTaxLiability = await getCellValue(
+            worksheet2,
+            `${columnsList[0] + sheet2_BSObj.deferredTaxLiabilityRow}`,
+          )
+
           otherCurrentLiabilitiesVal = (resp.type === 'book_value') ? otherCurrentLiabilitiesValAtBook : resp.value
 
           otherCurrentLiabilitiesObj = {
             fieldName: "Other current liabilities ",
-            bookValue : otherCurrentLiabilitiesValAtBook,
-            fairValue: otherCurrentLiabilitiesVal,
+            bookValue : otherCurrentLiabilitiesValAtBook + convertToNumberOrZero(deferredTaxLiability),
+            fairValue: otherCurrentLiabilitiesVal + convertToNumberOrZero(deferredTaxLiability),
             type: resp.type
           }
 
@@ -333,11 +337,10 @@ export class NetAssetValueService {
     }
 
     // Modifying Other current liabilities payload 
-    otherCurrentLiabilitiesObj.fairValue = otherCurrentLiabilitiesObj.fairValue + deferredTaxLiabilityMarketVal;
     const totalNonCurrentAssets = fixedAssetVal + longTermLoansAdvancesVal + nonCurrentInvestmentVal + deferredTaxAssetVal;
     const totalNonCurrentAssetsAtBook = fixedAssetValAtBook + longTermLoansAdvancesValAtBook + nonCurrentInvestmentValAtBook + deferredTaxAssetValAtBook;
 
-    const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + otherCurrentAssetsVal + deferredTaxLiabilityMarketVal-
+    const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + otherCurrentAssetsVal -
       shortTermProvisionsVal - shortTermBorrowingsVal - tradePayablesVal - otherCurrentLiabilitiesVal;
 
     const netCurrentAssetAtBook = inventoriesValAtBook + shortTermLoanAdvancesValAtBook + tradeReceivablesValAtBook + cashValAtBook + otherCurrentAssetsValAtBook -
