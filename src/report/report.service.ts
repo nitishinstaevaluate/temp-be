@@ -2255,7 +2255,10 @@ export class ReportService {
     })
     
     hbs.registerHelper('hasBetaWorking',()=>{
-      return betaWorking?.coreBetaWorking?.length;
+      if(valuationResult.inputData[0].betaType === BETA_TYPE[0] || valuationResult.inputData[0].betaType === BETA_TYPE[1]){
+        return true;
+      }
+      return false;
     })
 
     hbs.registerHelper('coreBetaWorking',()=>{
@@ -2519,7 +2522,7 @@ export class ReportService {
     })
     hbs.registerHelper('hasEitherImmovableOrInvstShare',()=>{
       if(elevenUaData){
-        if(convertToNumberOrZero(elevenUaData.data?.inputData?.fairValueImmovableProp) || this.totalC){
+        if(convertToNumberOrZero(elevenUaData.data?.inputData?.fairValueImmovableProp) || convertToNumberOrZero(this.totalC)){
           return true
         } 
         else {
