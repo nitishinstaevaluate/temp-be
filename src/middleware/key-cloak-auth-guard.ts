@@ -1,10 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, LoggerService, Inject, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, LoggerService, Inject, HttpException, HttpStatus, ConflictException } from '@nestjs/common';
 import { Observable, from, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import axios, { HttpStatusCode } from 'axios';
 import * as qs from 'qs';  
 import moment = require('moment');
-import { KEY_CLOAK_INTROSPECT, KEY_CLOAK_TOKEN } from 'src/library/interfaces/api-endpoints.prod';
+import { KEY_CLOAK_CREATE_USER, KEY_CLOAK_INTROSPECT, KEY_CLOAK_TOKEN, KEY_CLOAK_USER_SEARCH_TOKEN } from 'src/library/interfaces/api-endpoints.prod';
 import { utilities as nestWinstonModuleUtilities, WinstonModule,  } from 'nest-winston';
 import { transports,format } from 'winston';
 import { KCloginAuthDto, authTokenDto } from 'src/authentication/dto/authentication.dto';
@@ -12,6 +12,7 @@ const path = require('path');
 import { Reflector } from '@nestjs/core';
 import { axiosInstance, axiosRejectUnauthorisedAgent } from './axiosConfig';
 import { CREATE_TOKEN, FETCH_TOKEN } from 'src/library/interfaces/api-endpoints.local';
+import { KCcreatUserDto } from 'src/users/dto/createuser.dto';
 const fs = require('fs');
 require('dotenv').config();
 
@@ -258,6 +259,134 @@ export class KeyCloakAuthGuard implements CanActivate {
             {token:error.response.error.config.data},
           )} ${JSON.stringify(error.response.error.data)} | ${JSON.stringify({message:error.response.message})}`,
         );
+        throw new UnauthorizedException(
+          {
+            status: false,
+            msg: error.response.message,
+          }
+        );
+      })
+    );
+  }
+
+  createAuthUser(payload){
+    let KCUserConfig = new KCcreatUserDto();
+    KCUserConfig.email = payload.email;
+    KCUserConfig.username = payload.username;
+    return from(this.checkUserExistence(KCUserConfig.email, KCUserConfig.username)).pipe(
+      switchMap((userExistence)=>{
+      if(userExistence.isEmailExisting || userExistence.isUserNameExisting)
+        throw new ConflictException(userExistence).getResponse();
+      return from(this.getAccessToken()).pipe(
+        switchMap((accessTokenResponse)=>{
+          return from(
+            axios.post(
+              KEY_CLOAK_CREATE_USER,
+              payload,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessTokenResponse.access_token}`
+                },
+              }
+            )
+          ).pipe(
+            switchMap((response:any) => {
+                return of(response.data);                
+            }),
+            catchError((error:any) => {
+              logger.error(
+                `${moment(now)} | ${error.response.status} | [${error?.request?.method.toUpperCase()}] ${error.response.config.url} - ${delay}ms ${JSON.stringify(
+                  {token:error.response.config.data},
+                )} ${JSON.stringify(error.response.data)} | ${JSON.stringify({message:error.response.message})}`,
+              );
+              throw new UnauthorizedException(error.response?.data).getResponse();
+            })
+          );
+        })
+      )
+    }))
+  }
+
+  checkUserExistence(email, username) {
+    return from(this.getAccessToken()).pipe(
+      switchMap((accessTokenResponse)=>{
+        return from(
+          axios.get(
+            `${KEY_CLOAK_USER_SEARCH_TOKEN}?username=${username}`,
+            {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${accessTokenResponse.access_token}`
+              },
+            },
+          )
+        ).pipe(
+          switchMap((response:any) => {
+            let isEmailExisting = false,isUserNameExisting = false;
+            if (response.data?.length) {
+              response.data.forEach(indUser => {
+                  if (indUser.email === `${email}`) {
+                      isEmailExisting = true;
+                      return;
+                  }
+              });
+              isUserNameExisting = true;
+            }
+            return of({isEmailExisting, isUserNameExisting});
+          }),
+          catchError((error:any) => {
+            logger.error(
+              `${moment(now)} | ${error.response?.status} | [${error.request?.method.toUpperCase()}] ${error.response?.config?.url} - ${delay}ms ${JSON.stringify(
+                {token:error.response.config.data},
+              )} ${JSON.stringify(error.response?.data)} | ${JSON.stringify({message:error.response?.statusText})}`,
+            );
+            throw new UnauthorizedException(
+              {
+                status: false,
+                msg: error.response.message,
+              }
+            );
+          })
+        );
+    }),catchError((error)=>{
+      throw new UnauthorizedException(
+        {
+          status: false,
+          msg: error.response.message,
+        }
+      );
+    })
+    )
+  }
+
+  getAccessToken(){
+    return from(
+      axios.post(
+        KEY_CLOAK_TOKEN,
+        qs.stringify(
+          { 
+            client_secret: process.env.KEY_CLOAK_CLIENT_SECRET,
+            client_id: process.env.KEY_CLOAK_CLIENT_ID,
+            grant_type: 'client_credentials',
+          }
+        ),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      )
+    ).pipe(
+      switchMap((response:any) => {
+          if(!response.data.access_token)
+            throw new UnauthorizedException({error:response,message:'Invalid access token'});
+
+          return of(response.data);
+          
+      }),
+      catchError((error:any) => {
+        console.log(error)
         throw new UnauthorizedException(
           {
             status: false,

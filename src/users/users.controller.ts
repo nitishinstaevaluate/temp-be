@@ -11,6 +11,8 @@ import {
     FileTypeValidator,
     MaxFileSizeValidator,
     Req,
+    ValidationPipe,
+    UsePipes,
   } from '@nestjs/common';
 
 import { AuthGuard } from '@nestjs/passport';
@@ -19,6 +21,7 @@ import { UsersService } from './users.service';
 import { User } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { KCcreatUserDto } from './dto/createuser.dto';
 
 @Controller('users')
 export class UsersController {
@@ -50,6 +53,12 @@ export class UsersController {
     @Get('fetch-user')
     async getUserDetails(@Req() request: Request) {
       return await this.userService.getUserData(request);
+    }
+
+    @Post('create-user')
+    @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
+    async createKCUser(@Body(ValidationPipe) payload: KCcreatUserDto) {
+      return await this.userService.createKeyCloakUser(payload);
     }
 
     @UseGuards(KeyCloakAuthGuard)
