@@ -1,9 +1,10 @@
 import { Model } from 'mongoose';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schema/user.schema';
 import { CreateUserDto } from './dto/createuser.dto';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 
 @Injectable()
 export class UsersService {
@@ -49,5 +50,27 @@ export class UsersService {
 
   async getUserData(request){
     return await this.authenticationTokenService.fetchUserDetails(request);
+  }
+
+  async createKeyCloakUser(payload){
+    try{
+      payload.enabled = true;   //If enabled is not set to true flag, created user will be set as disabled by default
+      const KCGuard = new KeyCloakAuthGuard();
+      await KCGuard.createAuthUser(payload).toPromise();
+      return {
+        status:true,
+        msg:"user creation success",
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'User creation failed',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 }
