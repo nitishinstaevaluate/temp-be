@@ -60,6 +60,10 @@ export class ElevenUaDTO {
     @IsOptional()
     @IsString()
     status:string;
+
+    @IsOptional()
+    @IsString()
+    financialBasis:string;
   }
 
   export class FetchElevenUaDto {

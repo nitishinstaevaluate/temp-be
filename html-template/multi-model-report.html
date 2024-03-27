@@ -597,6 +597,13 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+        @page rotated {
+            size: landscape;
+            }
+
+        .rotated_class {
+        page: rotated;
+        }
         .alpha-restyle{
             span{
                 text-align: left !important;
@@ -2159,8 +2166,13 @@
                                     </td>
                                 </tr>
                             </table>
+                            {{#if (valuationLengthGreater)}}
+                            <div class="rotated_class">
+                            {{else}}
+                            <div>
+                            {{/if}}
                              {{#if (checkIfFcff)}}
-                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
+                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 4%;">Present Value of
                                 Free Cash Flow to Firm(ie. FCFF)</h1>
                              <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                  present value of the projected FCFF has been computed in the table below:</p>
@@ -2438,7 +2450,7 @@
                              <!-- fcff table ends -->
                              {{else}}
  
-                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 8%;">Present Value of
+                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 4%;">Present Value of
                                 FCFE</h1>
                             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
@@ -2721,7 +2733,7 @@
  
                              {{#if (checkIfFcff)}}
                              <!-- fcff table starts -->
-                             <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
+                             <table style="border-collapse:collapse;margin:auto;width: 70%;" cellspacing="0">
                                 <tr style="height:14pt">
                                    <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                        bgcolor="#001F5F">
@@ -2924,7 +2936,7 @@
                              <!-- fcff table ends -->
                              {{else}}
                              <!-- fcfe table starts -->
-                             <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
+                             <table style="border-collapse:collapse;margin:auto;width: 70%;" cellspacing="0">
                                 <tr style="height:14pt">
                                    <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                        bgcolor="#001F5F">
@@ -3106,6 +3118,7 @@
                              <!-- fcfe table ends -->
                              {{/if}}
                              {{/modelIncludes}}
+                        </div>
                          </li>
                      </ol>
                  </li>

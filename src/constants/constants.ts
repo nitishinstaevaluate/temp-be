@@ -1895,6 +1895,8 @@ export const BETA_SUB_TYPE = ['meanBeta', 'medianBeta'];
 
 export const BETA_TYPE = ['levered', 'unlevered', 'market_beta'];
 
+export const FINANCIAL_BASIS_TYPE = ['audited', 'managementCertified'];
+
 export const REPORT_BETA_TYPES = {
   levered: 'Relevered Beta',
   unlevered: 'Unlevered Beta',

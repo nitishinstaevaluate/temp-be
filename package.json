@@ -60,6 +60,7 @@
     "nodemailer": "^6.9.9",
     "npm": "^10.2.4",
     "number-to-words": "^1.2.4",
+    "otplib": "^12.0.1",
     "passport": "^0.6.0",
     "passport-auth0": "^1.4.3",
     "passport-jwt": "^4.0.1",

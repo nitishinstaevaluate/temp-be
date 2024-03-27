@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -2282,6 +2282,32 @@ export class ReportService {
       }
       return '-';
     })
+
+    hbs.registerHelper('auditedfinancialBasis',()=>{
+      if(valuationResult.inputData[0].financialBasis === FINANCIAL_BASIS_TYPE[0]){
+        return true;
+      }
+      return false;
+    })
+
+    hbs.registerHelper('valuationLengthGreater',()=>{
+      let boolValuationLength = false;
+      valuationResult.modelResults.forEach((result)=>{
+        if(result.model === 'FCFE'){
+          if(result.valuationData.length > 4)
+            boolValuationLength = true;
+        }
+        else if(result.model === 'FCFF'){
+          if(result.valuationData.length > 4)
+            boolValuationLength = true;
+        }
+        else if(result.model === 'Excess_Earnings'){
+          if(result.valuationData.length > 4)
+            boolValuationLength = true;
+        }
+      })
+      return boolValuationLength;
+    })
     
     }
      
@@ -2708,6 +2734,11 @@ export class ReportService {
       if(reportDetails)
           return reportDetails.companyAddress;
       return '';
+    })
+    hbs.registerHelper('financialBasis',()=>{
+      if(elevenUaData.data?.inputData?.financialBasis === 'audited')
+          return true;
+      return false;
     })
 }
 
