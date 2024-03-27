@@ -365,7 +365,13 @@
     <p style="padding-top: 11pt;text-indent: 0pt;line-height: 190%;text-align: justify;"><span
             class="p">I have been appointed as an independent valuer to derive the fair value of Equity Shares of {{companyName}}
             (“the Company” and/or
-            “<span style="font-weight: bold;">{{companyName}}</span>”) basis of the Audited Financials/Management Certified Financials provided
+            “<span style="font-weight: bold;">{{companyName}}</span>”) basis of the
+            {{#if (financialBasis)}}
+            Audited Financials
+            {{else}}
+            Management Certified Financials
+            {{/if}}
+             provided
             by the management of the Company for the period
             ended <span style="font-weight: bold;">{{strdate}}</span>. The valuation of the Company in this report is being done as per the provisions stipulated under
             Section 56(2)(x) of the Income tax Act, 1961 (“IT Act”). Accordingly, the ‘Fair Market Value’ of Company is
@@ -405,8 +411,13 @@
         Management of the Company and the following information and documents made available to me:</p>
     <ul>
         <li>
-            <p style="padding-left: 48pt;text-indent: -14pt;line-height: 160%;text-align: justify;">1. Audited/Management Certified  Financial
-                    statements provided by the management of {{companyName}} for the  year/period ended 31st March, 2023.</p>
+            <p style="padding-left: 48pt;text-indent: -17pt;line-height: 160%;text-align: justify;">1. 
+                {{#if (financialBasis)}}
+                Audited Financial
+                {{else}}
+                Management Certified  Financial 
+                {{/if}}
+                statements provided by the management of {{companyName}} for the  year/period ended 31st March, 2023.</p>
         </li>
         <li>
             <p style="padding-left: 52pt;text-indent: -18pt;text-align: justify;padding-top: 2%;">2. Other information as required and
@@ -552,7 +563,13 @@
                     colspan="4" bgcolor="#BEBEBE">
                     <p
                         style="padding-left: 15pt;padding-right: 15pt;text-indent: 0pt;line-height: 13pt;text-align: justify;">
-                        <span class="s12">Audited/Management Certified Financials for the year/period ended {{strdate}}</span></p>
+                        <span class="s12">
+                            {{#if (financialBasis)}}
+                            Audited Financials for the year
+                            {{else}}
+                            Management Certified Financials for the period 
+                            {{/if}}
+                            ended {{strdate}}</span></p>
                 </td>
             </tr>
             <tr style="height:15pt">

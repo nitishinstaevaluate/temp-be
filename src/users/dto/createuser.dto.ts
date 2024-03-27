@@ -42,3 +42,13 @@ export class KCcreatUserDto{
   @Type(() => credDto) 
   credentials: credDto;
 }
+export class KCResetPasswordDto{
+
+  @IsNotEmpty({ message: 'email is required eg.sanket@ifinworth.com' })
+  @IsString({ message: 'email should be string eg. sanket@ifinworth.com' })
+  email: string;
+  
+  @IsNotEmpty({ message: 'password is required ' })
+  @IsString({ message: 'password should be string ' })
+  password: string;
+}
