@@ -6,3 +6,4 @@ export const KEY_CLOAK_INTROSPECT = 'https://auth.ifinworth.com/realms/ivalrealm
 export const KEY_CLOAK_TOKEN = 'https://auth.ifinworth.com/realms/ivalrealm/protocol/openid-connect/token';
 export const KEY_CLOAK_USER_SEARCH_TOKEN = 'https://auth.ifinworth.com/admin/realms/ivalrealm/users';
 export const KEY_CLOAK_CREATE_USER = 'https://auth.ifinworth.com/admin/realms/ivalrealm/users';
+export const KEY_CLOAK_RESET_PASSWORD = 'https://auth.ifinworth.com/admin/realms/ivalrealm/users/';

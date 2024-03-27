@@ -73,4 +73,33 @@ export class UsersService {
       );
     }
   }
+
+  async resetKeyCloakUserPassword(payload){
+    try{
+      const KCGuard = new KeyCloakAuthGuard();
+      const resetPayload = {
+        email:payload.email,
+        cred:{
+          type:"password",
+          temporary:false,
+          value:payload.password
+        }
+      }
+      await KCGuard.resetPassword(resetPayload).toPromise();
+      return {
+        status:true,
+        msg:"password reset success",
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'password reset failed',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
 }

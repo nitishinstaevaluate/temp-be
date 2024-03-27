@@ -21,7 +21,7 @@ import { UsersService } from './users.service';
 import { User } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
-import { KCcreatUserDto } from './dto/createuser.dto';
+import { KCResetPasswordDto, KCcreatUserDto } from './dto/createuser.dto';
 
 @Controller('users')
 export class UsersController {
@@ -59,6 +59,12 @@ export class UsersController {
     @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
     async createKCUser(@Body(ValidationPipe) payload: KCcreatUserDto) {
       return await this.userService.createKeyCloakUser(payload);
+    }
+
+    @Post('reset-password')
+    @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
+    async resetPassword(@Body(ValidationPipe) payload: KCResetPasswordDto) {
+      return await this.userService.resetKeyCloakUserPassword(payload);
     }
 
     @UseGuards(KeyCloakAuthGuard)

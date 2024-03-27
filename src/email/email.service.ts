@@ -67,4 +67,36 @@ export class EmailService {
           throw error
         }
       }
+
+      async sendEmailVerificationOtp(payload){
+        try{
+          return await this.emailDataCheckListAggregateService.sendEmailOtp(payload)
+        }
+        catch(error){
+          throw new HttpException(
+            {
+              error: error,
+              status: false,
+              msg: 'email verification failed',
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
+
+      async verifyEmailOtp(payload){
+        try{
+          return await this.emailDataCheckListAggregateService.verifyEmailOtp(payload)
+        }
+        catch(error){
+          throw new HttpException(
+            {
+              error: error,
+              status: false,
+              msg: 'otp verification failed',
+            },
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
+      }
 }

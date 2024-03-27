@@ -53,5 +53,17 @@ export class EmailController {
     async versionTwosendDataCheckList(@Body(ValidationPipe) emailPayload: emailDto ) {
         return await this.emailService.sendDataCheckListViaEmailVersionTwo(emailPayload);
     }
+
+    // https://localhost:3000/email/send-email-otp
+    @Post('send-email-otp')
+    async sendEmailOtp(@Body() emailPayload ) {
+        return await this.emailService.sendEmailVerificationOtp(emailPayload);
+    }
+
+    // https://localhost:3000/email/verify-email-otp
+    @Post('verify-email-otp')
+    async verifyOtp(@Body() emailPayload ) {
+        return await this.emailService.verifyEmailOtp(emailPayload);
+    }
 }
 

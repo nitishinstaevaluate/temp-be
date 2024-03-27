@@ -4,7 +4,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import axios, { HttpStatusCode } from 'axios';
 import * as qs from 'qs';  
 import moment = require('moment');
-import { KEY_CLOAK_CREATE_USER, KEY_CLOAK_INTROSPECT, KEY_CLOAK_TOKEN, KEY_CLOAK_USER_SEARCH_TOKEN } from 'src/library/interfaces/api-endpoints.prod';
+import { KEY_CLOAK_CREATE_USER, KEY_CLOAK_INTROSPECT, KEY_CLOAK_RESET_PASSWORD, KEY_CLOAK_TOKEN, KEY_CLOAK_USER_SEARCH_TOKEN } from 'src/library/interfaces/api-endpoints.prod';
 import { utilities as nestWinstonModuleUtilities, WinstonModule,  } from 'nest-winston';
 import { transports,format } from 'winston';
 import { KCloginAuthDto, authTokenDto } from 'src/authentication/dto/authentication.dto';
@@ -358,6 +358,108 @@ export class KeyCloakAuthGuard implements CanActivate {
       );
     })
     )
+  }
+
+  checkEmailExistence(email) {
+    return from(this.getAccessToken()).pipe(
+      switchMap((accessTokenResponse)=>{
+        return from(
+          axios.get(
+            `${KEY_CLOAK_USER_SEARCH_TOKEN}?email=${email}`,
+            {
+              headers: {
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${accessTokenResponse.access_token}`
+              },
+            },
+          )
+        ).pipe(
+          switchMap((response:any) => {
+            console.log(response,"email response")
+            let isEmailExisting = false;
+            if (response.data?.length) {
+              isEmailExisting = true;
+            }
+            return of({isEmailExisting, userDetails:response?.data});
+          }),
+          catchError((error:any) => {
+            console.log(error,"email check error")
+            logger.error(
+              `${moment(now)} | ${error.response?.status} | [${error.request?.method.toUpperCase()}] ${error.response?.config?.url} - ${delay}ms ${JSON.stringify(
+                {token:error.response.config.data},
+              )} ${JSON.stringify(error.response?.data)} | ${JSON.stringify({message:error.response?.statusText})}`,
+            );
+            throw new UnauthorizedException(
+              {
+                status: false,
+                msg: error.response.message,
+              }
+            );
+          })
+        );
+    }),catchError((error)=>{
+      throw new UnauthorizedException(
+        {
+          status: false,
+          msg: error.response.message,
+        }
+      );
+    })
+    )
+  }
+
+  resetPassword(body) {
+    return from(this.getAccessToken()).pipe(
+      switchMap((accessTokenResponse)=>{
+      return from(this.checkEmailExistence(body.email)).pipe(
+        switchMap((userExistence)=>{
+          const userId = userExistence.userDetails[0].id;
+          return from(
+            axios.put(
+              `${KEY_CLOAK_RESET_PASSWORD}${userId}/reset-password`,
+              body.cred,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${accessTokenResponse.access_token}`
+                },
+              },
+            )
+          ).pipe(
+            switchMap((response:any) => {
+              return of(true)
+            }),
+            catchError((error:any) => {
+              logger.error(
+                `${moment(now)} | ${error.response?.status} | [${error.request?.method.toUpperCase()}] ${error.response?.config?.url} - ${delay}ms ${JSON.stringify(
+                  {token:error.response.config.data},
+                )} ${JSON.stringify(error.response?.data)} | ${JSON.stringify({message:error.response?.statusText})}`,
+              );
+              throw new UnauthorizedException(
+                {
+                  status: false,
+                  msg: error.response.message,
+                }
+              );
+            })
+          );
+      }),catchError((error)=>{
+        throw new UnauthorizedException(
+          {
+            status: false,
+            msg: error.response.message,
+          }
+        );
+      })
+      )
+    }),catchError((error)=>{
+      throw new UnauthorizedException(
+        {
+          status: false,
+          msg: error.response.message,
+        }
+      );
+    }))
   }
 
   getAccessToken(){
