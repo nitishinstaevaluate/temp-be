@@ -19,6 +19,8 @@ import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
+import { terminalValueWorkingService } from './terminal-value-working.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
@@ -46,7 +48,9 @@ import { MandateSchema } from 'src/utils/schema/mandate.schema';
     ExcessEarningsService,
     NetAssetValueService,
     utilsService,
-    AuthenticationService
+    AuthenticationService,
+    terminalValueWorkingService,
+    ProcessStatusManagerService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService],
 })

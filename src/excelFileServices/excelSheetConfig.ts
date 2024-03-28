@@ -92,7 +92,9 @@ export const sheet3_assWCObj={
     otherOperatingAssetsRow : "10",
     totalOperatingAssetsRow : "11",
     otherOperatingLiabilitiesRow : "20",
-    totalOperatingLiabilitiesRow : "21"
+    totalOperatingLiabilitiesRow : "21",
+    netOperatingAssets : "23",
+    changeInNca : "24",
 }
 
 export const sheet4_ruleElevenUaObj={

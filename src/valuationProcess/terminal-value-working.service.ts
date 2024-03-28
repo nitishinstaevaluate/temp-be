@@ -1,0 +1,69 @@
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { ValuationsService } from "./valuationProcess.service";
+import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
+import { MODEL } from "src/constants/constants";
+import { TerminalValueWorkingDto } from "./dto/valuations.dto";
+import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
+
+@Injectable()
+export class terminalValueWorkingService{
+    constructor(private processManagerService: ProcessStatusManagerService,
+        private valuationService: ValuationsService){}
+    async computeTerminalValue(id){
+        try{
+            let dcfValuation;
+            const process = await this.processManagerService.fetchProcess(id);
+            const fourthStageDetails:any = process.stateInfo.fourthStageInput;
+
+            const valuationModelResult:any = await this.valuationService.getValuationById(fourthStageDetails.appData.reportId);
+
+            const valuationResult = valuationModelResult.modelResults;
+            const boolContainsDcf = valuationResult.some((indValuation)=>indValuation.model === MODEL[0] || indValuation.model === MODEL[1]);
+
+            if(!boolContainsDcf)
+                throw new NotFoundException({msg:'DCF model not found'}).getResponse();
+
+            valuationResult.map((indValuation)=>{
+                if(indValuation.model === MODEL[0] || indValuation.model === MODEL[1]){
+                    dcfValuation = indValuation;
+                }
+            })
+            const dcfValuationData = dcfValuation.valuationData;
+
+            let terminalValueWorking = new TerminalValueWorkingDto();
+            terminalValueWorking.terminalGrowthRate = valuationModelResult.inputData[0].terminalGrowthRate;
+            terminalValueWorking.costOfEquity = valuationModelResult.inputData[0].costOfEquity;
+
+            dcfValuationData.map((indElements)=>{
+                if(indElements.particulars === 'Terminal Value'){
+                    terminalValueWorking.freeCashFlow = indElements.fcff;
+                    terminalValueWorking.pvFactor = indElements.discountingFactor;
+                }
+            })
+
+            terminalValueWorking.terminalYearValue =convertToNumberOrZero(terminalValueWorking.freeCashFlow)/
+                (
+                    convertToNumberOrZero(terminalValueWorking.costOfEquity) -
+                    convertToNumberOrZero(terminalValueWorking.terminalGrowthRate)
+                    
+                );
+                
+            terminalValueWorking.pvTerminalValue = (convertToNumberOrZero(terminalValueWorking.pvFactor) * convertToNumberOrZero(terminalValueWorking.terminalYearValue));
+            return {
+                status: true,
+                terminalValueWorking,
+                msg:"Terminal value working success"
+            };
+        }
+        catch(error){
+            throw new HttpException(
+                {
+                  error: error,
+                  status: false,
+                  msg: 'terminal value computation failed',
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
+        }
+    }
+}
