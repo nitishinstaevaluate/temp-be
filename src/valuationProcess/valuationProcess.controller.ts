@@ -24,6 +24,7 @@ import { MODEL } from 'src/constants/constants';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { terminalValueWorkingService } from './terminal-value-working.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -388,7 +389,14 @@ let workbook=null;
 export class ValuationsController {
   
   constructor(private valuationsService: ValuationsService,
-    private readonly utilsService: utilsService) {}
+    private readonly utilsService: utilsService,
+    private terminalWorkingService: terminalValueWorkingService) {}
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('calculate-terminal-value')
+  async processTerminalValue(@Query('id') valuationId:any){
+    return await this.terminalWorkingService.computeTerminalValue(valuationId);
+  }
 
   @UseGuards(KeyCloakAuthGuard)
   @Get(':userId')
