@@ -65,7 +65,9 @@ export class NetAssetValueService {
         case ('fixedAsset'):
           fixedAssetValAtBook = await getCellValue(
             worksheet2,
-            `${columnsList[0] + sheet2_BSObj.tangibleAssetsRow}`,
+            //As per Nitish, fixed assets should come from net fixed assets row in BS
+            //and not from tangible assets - (29-03-2024)
+            `${columnsList[0] + sheet2_BSObj.netFixedAssetsRow}`,
           )
           fixedAssetVal = (resp.type === 'book_value') ? fixedAssetValAtBook : resp.value
             
