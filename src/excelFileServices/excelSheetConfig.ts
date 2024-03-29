@@ -66,6 +66,7 @@ export const sheet2_BSObj={
     interCoRow:"40",
     totalRow:"41",
     fixedAssetsRow:"46",
+    netFixedAssetsRow:"47",
 
     tangibleAssetsRow:"48",
     intangibleAssetsRow:"49",
