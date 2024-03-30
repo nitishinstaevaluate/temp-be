@@ -413,11 +413,11 @@
         <li>
             <p style="padding-left: 48pt;text-indent: -17pt;line-height: 160%;text-align: justify;">1. 
                 {{#if (financialBasis)}}
-                Audited Financial
+                Audited Financial statements provided by the management of {{companyName}} for the year 
                 {{else}}
-                Management Certified  Financial 
+                Management Certified  Financial statements provided by the management of {{companyName}} for the period 
                 {{/if}}
-                statements provided by the management of {{companyName}} for the  year/period ended 31st March, 2023.</p>
+                ended {{strdate}}.</p>
         </li>
         <li>
             <p style="padding-left: 52pt;text-indent: -18pt;text-align: justify;padding-top: 2%;">2. Other information as required and
@@ -1212,7 +1212,13 @@
                     </li>
                     <li>
                         <p style="padding-left: 52pt;text-indent: -14pt;line-height: 190%;text-align: justify;">c. In the course of my
-                            analysis, I have received management certified financial statements of the Company and other information
+                            analysis, I have received 
+                            {{#if (financialBasis)}}
+                            audited 
+                            {{else}}
+                            management certified 
+                            {{/if}}
+                            financial statements of the Company and other information
                             from the management of the Company. While I have no reason to doubt their reasonableness / accuracy. My
                             work was limited by the quality and degree of data that was supplied to me. I have relied upon all
                             documents, records and information provided by the management of the Company and considered them in the
