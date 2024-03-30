@@ -75,7 +75,9 @@ export const sheet2_BSObj={
     capitalAdvancesRow:"52",
     capitalLiabilitiesRow:"53",
 
+    goodwillRow:"55",
     nonCurrentInvestmentRow:"56",
+    interCoInvRow:"57",
     otherNonCurrentAssetsRow:"58",
     deferredTaxAssetsRow:"59",
     cashEquivalentsRow:"62",

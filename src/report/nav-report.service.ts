@@ -190,8 +190,12 @@ export class navReportService {
                 formattedValues = modelName.flatMap((models) => {
                     return valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
-                        const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                        return `${formattedNumber.replace(/,/g, ',')}/-`;
+                        // const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
+                        const formattedNumber = formatPositiveAndNegativeValues(response?.valuationData?.valuePerShare?.bookValue);
+                        if(`${response?.valuationData?.valuePerShare?.bookValue}`.includes('-')){
+                            return `10/-`
+                        }
+                        return `${formattedNumber}/-`;
                     }
                     return [];
                     });
