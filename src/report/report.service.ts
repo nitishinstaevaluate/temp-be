@@ -1040,12 +1040,21 @@ export class ReportService {
       })
 
       hbs.registerHelper('capitalStructureRatio', ()=>{
-        const debtRate = getCapitalStructure.result.capitalStructure.debtProp.toFixed(2)
-        const equityProp = getCapitalStructure.result.capitalStructure.equityProp.toFixed(2)
-        if(debtRate && equityProp){
-          return `${debtRate}:${equityProp}`;
+        if(valuationResult.inputData[0].capitalStructureType === 'Industry_Based'){
+          const deRatio = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.deRatio)/100).toFixed(2)
+          const equityProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.equityProp)/100).toFixed(2)
+          return `${deRatio}:${equityProp}`;
         }
-        return '';
+        else if(valuationResult.inputData[0].capitalStructureType === 'Target_Based'){
+          const debtProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.debtProp)/100).toFixed(2);
+          const equityProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.equityProp)/100)?.toFixed(2);
+          return `${debtProp}:${equityProp}`;
+        }
+        else{   //This is for company based capital structure --- (needs verification)
+          const debtProp = getCapitalStructure.result.capitalStructure.debtProp;
+          const equityProp = getCapitalStructure.result.capitalStructure.equityProp;
+          return `${debtProp}:${equityProp}`;
+        }
       })
 
       hbs.registerHelper('capitalStructureType', ()=>{
