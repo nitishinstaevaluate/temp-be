@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ElevenUaDocument } from './schema/eleven-ua.schema';
@@ -11,6 +11,7 @@ import { plainToClass } from 'class-transformer';
 import { ElevenUaDTO, FetchElevenUaDto } from './dto/eleven-ua.dto';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { convertToRomanNumeral, formatPositiveAndNegativeValues } from 'src/report/report-common-functions';
 
 @Injectable()
 export class ElevenUaService {
@@ -103,6 +104,7 @@ export class ElevenUaService {
                     userId:authorizeUser.userId,
                     inputData:payload
                 }
+                // let computations = await this.calculateElevenUaParameters(createPayload)
 
                 let elevenUaResponse;
 
@@ -160,6 +162,134 @@ export class ElevenUaService {
                 msg:'eleven ua record not found',
                 status:false
             } 
+        }
+    }
+
+    // Currently Not In Use
+    // Use this function to compute valuation related parameters like value per share,etc
+    // Code optimisation, no need to perform similar below operation on front-end and while generating report  
+    async calculateElevenUaParameters(preParameters){
+        try{
+            let totalCalculationA, totalCalculationB, totalCalculationC, totalCalculationD, totalCalculationL;
+
+                //Calculation at A 
+                const totalIncomeTaxPaid = convertToNumberOrZero(preParameters.totalIncomeTaxPaid);
+                const unamortisedAmountOfDeferredExpenditure = convertToNumberOrZero(preParameters.unamortisedAmountOfDeferredExpenditure);
+                const bookValueOfAllAssets = convertToNumberOrZero(preParameters.bookValueOfAllAssets);
+                totalCalculationA = preParameters.bookValueOfAllAssets -  (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure); 
+                const calculationAtA =  (bookValueOfAllAssets -  (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure));
+
+                // Calculation of jwellery and artistic works
+                let jewelleryOrArtisticWork=[];
+                const jewellery = preParameters.inputData?.fairValueJewellery;
+                const artisticWork = preParameters.inputData?.fairValueArtistic;
+                const jewelleryAndArtisticWorkArray = [
+                  {
+                    name:"Jewellery",
+                    value:jewellery
+                  },
+                  {
+                    name:"Artistic Value",
+                    value:artisticWork
+                  }
+                ]
+                for(let i = 0; i <= jewelleryAndArtisticWorkArray.length; i++){
+                  if(jewelleryAndArtisticWorkArray[i]?.name){
+                      const romanNumeral = convertToRomanNumeral(i);
+                      const obj = {
+                        index:romanNumeral,
+                        label:jewelleryAndArtisticWorkArray[i]?.name,
+                        value:formatPositiveAndNegativeValues(jewelleryAndArtisticWorkArray[i].value) 
+                      }
+                      jewelleryOrArtisticWork.push(obj);
+                    }
+                  }
+
+                let totalValue = 0;
+                totalValue = convertToNumberOrZero(jewellery) + convertToNumberOrZero(artisticWork);
+                totalCalculationB = totalValue ? totalValue : 0;
+                const calculationAtB = convertToNumberOrZero(totalValue);
+
+                // calculation at C
+                let investment=0;
+                const investmentTotalFromExcel = preParameters.totalInvestmentSharesAndSecurities;
+                const elevenUaInvestment = preParameters.inputData.fairValueinvstShareSec;
+                investment = elevenUaInvestment;
+                if(!elevenUaInvestment){
+                   investment =  investmentTotalFromExcel;
+                }
+                totalCalculationC = investment;
+                const calculationAtC = convertToNumberOrZero(investment);
+
+                // calculation at D
+                totalCalculationD = preParameters?.inputData?.fairValueImmovableProp ? parseFloat(preParameters?.inputData.fairValueImmovableProp) : 0;
+                const calculationAtD = convertToNumberOrZero(preParameters?.inputData.fairValueImmovableProp);
+
+                // calculation at L
+                const paidUpCapital = preParameters.paidUpCapital;
+                const paymentDividends = preParameters.paymentDividends;
+                const reservAndSurplus = preParameters.reserveAndSurplus;
+                const provisionForTaxation = preParameters.provisionForTaxation;
+                totalCalculationL = (convertToNumberOrZero(preParameters.bookValueOfLiabilities) - 
+                (convertToNumberOrZero(paidUpCapital) +
+                    convertToNumberOrZero(paymentDividends) + 
+                    convertToNumberOrZero(reservAndSurplus) + 
+                    convertToNumberOrZero(provisionForTaxation) + 
+                    convertToNumberOrZero(preParameters.inputData?.contingentLiability) + 
+                    convertToNumberOrZero(preParameters.inputData?.otherThanAscertainLiability)));
+                
+                    const calculationAtL = (
+                    convertToNumberOrZero(preParameters.bookValueOfLiabilities) - 
+                (
+                    convertToNumberOrZero(paidUpCapital) + 
+                    convertToNumberOrZero(paymentDividends) + 
+                    convertToNumberOrZero(reservAndSurplus) + 
+                    convertToNumberOrZero(provisionForTaxation) + 
+                    convertToNumberOrZero(preParameters.inputData?.contingentLiability) + 
+                    convertToNumberOrZero(preParameters.inputData?.otherThanAscertainLiability)
+                )
+                );
+
+                // calculation of A + B + C + D - L
+                const totalCalculation = convertToNumberOrZero(convertToNumberOrZero(totalCalculationA)+ convertToNumberOrZero(totalCalculationB) + convertToNumberOrZero(totalCalculationC) + convertToNumberOrZero(totalCalculationD) - convertToNumberOrZero(totalCalculationL));
+
+
+                // calculating Value Per share
+                const phaseValue = !isNaN(parseFloat(preParameters?.inputData?.phaseValue)) ? parseFloat(preParameters?.inputData?.phaseValue) : 1;
+                const newPaidUpCapital = !isNaN(parseFloat(preParameters?.paidUpCapital)) ? parseFloat(preParameters?.paidUpCapital) : 1;
+            
+                const totalSum = convertToNumberOrZero(totalCalculationA) + convertToNumberOrZero(totalCalculationB) + convertToNumberOrZero(totalCalculationC) + convertToNumberOrZero(totalCalculationD) - convertToNumberOrZero(totalCalculationL);
+            
+                let result;
+            
+                if (!isNaN(totalSum) && !isNaN(newPaidUpCapital) ) {
+                    result = (totalSum * phaseValue) / newPaidUpCapital;
+                } else {
+                    result = 0;
+                }
+            
+                const valuePerShare =  convertToNumberOrZero(result);
+
+                return {
+                    calculationAtA,
+                    calculationAtB,
+                    calculationAtC,
+                    calculationAtD,
+                    calculationAtL,
+                    totalCalculation,
+                    valuePerShare,
+                    jewelleryOrArtisticArray: jewelleryOrArtisticWork
+                }
+        }
+        catch(error){
+            throw new HttpException(
+                {
+                  error: error,
+                  status: false,
+                  msg: 'post-calculation of eleven ua failed',
+                },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
         }
     }
 }

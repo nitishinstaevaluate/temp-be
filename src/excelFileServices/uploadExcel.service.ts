@@ -2025,6 +2025,11 @@ async generatePayload(years,balanceSheet){
 }
 
 async assessmentCalculations(payload,balanceSheet){
+  /*
+  *This function gets called twice
+  *Once while appending assessment sheet for the first time
+  *Second time when you modify assessment sheet [Recalculation purpose]
+  */
   await Promise.all(payload.map(async (data,i) => {
     let keysToProcess = Object.keys(data).filter(key => key !== 'Particulars');
         if (i === 1) {
@@ -2066,10 +2071,15 @@ async assessmentCalculations(payload,balanceSheet){
         if(i === 5){
 
           for (const key of keysToProcess) {
-              data[key] = (await getCellValue(
-                  balanceSheet,
-                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermInvestmentsRow}`
-              ))?.toFixed(2);
+            /*
+            *Please make sure to re-update/comment whichever formula want to remove directly in this function block [ related to asssessment sheet only ]
+            *If don't, will make you cry
+            */
+            // data[key] = (await getCellValue(
+            //     balanceSheet,
+            //     `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermInvestmentsRow}`
+            // ))?.toFixed(2);
+             data[key] = 0;
           }
         }
         if(i === 6){
