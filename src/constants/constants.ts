@@ -129,7 +129,7 @@ export const ASSESSMENT_DATA = [
           }
     },
     {
-      "lineEntry": {
+      "lineEntry": { // This object block is not in use [redundant]
           particulars : "Short Term Investments",
           sysCode:3006,
           rowNumber:7
