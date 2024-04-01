@@ -111,3 +111,13 @@ export function  formatDate(date: Date): string {
       }
     }
   }
+
+  export function convertToRomanNumeral(num:any) {
+    const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+  
+    if (num === undefined || num === null || num > romanNumerals.length) {
+      return '';
+    }
+  
+    return romanNumerals[num];
+  }
