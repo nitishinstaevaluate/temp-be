@@ -1658,9 +1658,14 @@
           </tbody>
           {{/each}}
         </table>
+        {{#if (isValuePerShareNegative 'NAV')}}
+        <p style="line-height: 150%;text-align: justify;margin-left:8pt;padding-top: 2%;" >
+            *Since the fair value of the company comes out to be negative and as per the provisions of Companies Act, 
+            2013 a company cannot issue shares at a discount, 
+            the face value per share of the company is considered as Fair Value per share i.e INR 10.00/- (Rupees Ten Only).
+        </p>
+        {{/if}}
     </div>
 </body>
 
 </html>
-<p class="s15"
-style="padding-top: 1pt;padding-left: 11pt;text-indent: 0pt;line-height: 11pt;text-align: left;">

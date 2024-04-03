@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -444,6 +444,11 @@ export class ExcelSheetService {
           } else {
             return ''; // Return an empty string if the condition is not met
           }
+        })
+        hbs.registerHelper('reportingUnit',()=>{
+          if(valuationResult.inputData[0].reportingUnit)
+            return valuationResult.inputData[0].reportingUnit === REPORTING_UNIT.ABSOLUTE ? '' : `( ${valuationResult.inputData[0].reportingUnit} )`;
+          return '( Lakhs )';
         })
         hbs.registerHelper('fcfeColumnHeader', () => {
           let fcfeHeader = [];
