@@ -215,6 +215,22 @@ export class navReportService {
             return '';
             })
 
+            hbs.registerHelper('isValuePerShareNegative',(modelName)=>{
+            modelName = modelName.split(',');
+            let isNegativeValuePerShare = false;
+                 modelName.flatMap((models) => {
+                    valuationResult.modelResults.flatMap((response) => {
+                    if (response.model === models && models === 'NAV') {
+                        if(`${response?.valuationData?.valuePerShare?.bookValue}`.includes('-')){
+                            isNegativeValuePerShare = true
+                        }
+                    }
+                    });
+                });
+                return isNegativeValuePerShare;
+             
+            })
+
             hbs.registerHelper('modelValuePerShareNumbersToWords',(modelName)=>{
             modelName = modelName.split(',');
             if(modelName.length <= 2 ){
