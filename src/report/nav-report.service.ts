@@ -11,6 +11,7 @@ import { ReportDocument } from "./schema/report.schema";
 import { Model } from "mongoose";
 import { ValuationsService } from "src/valuationProcess/valuationProcess.service";
 import { InjectModel } from "@nestjs/mongoose";
+import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 @Injectable()
 export class navReportService {
     constructor(private thirdpartyApiAggregateService: thirdpartyApiAggregateService,
@@ -191,7 +192,7 @@ export class navReportService {
                     return valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
                         // const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                        const formattedNumber = formatPositiveAndNegativeValues(response?.valuationData?.valuePerShare?.bookValue);
+                        const formattedNumber = formatPositiveAndNegativeValues(response?.valuationData?.valuePerShare?.bookValue || 0);
                         if(`${response?.valuationData?.valuePerShare?.bookValue}`.includes('-')){
                             return `10/-`
                         }
@@ -222,9 +223,12 @@ export class navReportService {
                     return valuationResult.modelResults.flatMap((response) => {
                     
                     if (response.model === models && models === 'NAV') {
-                        let formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
+                        let formattedNumber = convertToNumberOrZero(response?.valuationData?.valuePerShare?.bookValue || 0).toLocaleString('en-IN');
                         if(`${formattedNumber}`.includes('-')){
                         formattedNumber = Math.floor(10).toLocaleString('en-IN');
+                        }
+                        if(`${formattedNumber}`.includes('.')){
+                            return `${this.convertToIndianCurrency((+formattedNumber).toFixed(2))} Only`;
                         }
                         return `Rupees ${converter.toWords(formattedNumber)} Only`;
                     }
@@ -370,6 +374,24 @@ export class navReportService {
             status:false
             }
         }
+    }
+
+    convertToIndianCurrency(number) {
+        const [rupees, paise] = number.split('.');
+        
+        let rupeesInWords = converter.toWords(rupees);
+        
+        let paiseInWords = '';
+        if (paise) {
+            paiseInWords = 'and ' + converter.toWords(paise) + ' paise';
+        }
+        
+        let result = 'Rupees ' + rupeesInWords;
+        if (paise) {
+            result += ' ' + paiseInWords;
+        }
+        
+        return result;
     }
 
     async generateNavPdf(htmlContent: any, pdfFilePath: string) {
