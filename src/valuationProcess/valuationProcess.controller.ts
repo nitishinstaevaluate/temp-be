@@ -254,12 +254,14 @@ let workbook=null;
                   model: MODEL[0],
                   valuationData: fcfeResponse.result,
                   valuation:fcfeResponse.valuation,
+                  terminalYearWorking:fcfeResponse.terminalValueWorking,
                   provisionalDate:fcfeResponse.provisionalDate
                   });
                 tableResult.push({
                 model: MODEL[0],
                 valuationData: fcfeResponse.tableData,
                 valuation:fcfeResponse.valuation,
+                terminalYearWorking:fcfeResponse.terminalValueWorking,
                 columnHeader:fcfeResponse.columnHeader,
                 provisionalDate:fcfeResponse.provisionalDate
                 });
@@ -274,12 +276,14 @@ let workbook=null;
                   model: MODEL[1],
                   valuationData: fcffResponse.result,
                   valuation:fcffResponse.valuation,
+                  terminalYearWorking:fcfeResponse.terminalValueWorking,
                   provisionalDate:fcffResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.tableData,
                   valuation:fcffResponse.valuation,
+                  terminalYearWorking:fcfeResponse.terminalValueWorking,
                   columnHeader:fcffResponse.columnHeader,
                   provisionalDate:fcffResponse.provisionalDate
                   });

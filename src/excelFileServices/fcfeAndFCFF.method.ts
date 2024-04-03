@@ -239,7 +239,12 @@ export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
 }
 
 export async function changeInNcaFromAssessment(counter, worksheet3){
-  return convertToNumberOrZero(worksheet3[`${columnsList[counter + 1]}24`].v);
+  return convertToNumberOrZero(worksheet3[`${columnsList[counter + 1]}${sheet3_assWCObj.changeInNca}`].v);
+}
+
+export async function netOperatingAssetsFromAssessment(counter, worksheet3){
+  console.log(`${columnsList[counter]}${sheet3_assWCObj.netOperatingAssets}`,"net operating assets")
+  return convertToNumberOrZero(worksheet3[`${columnsList[counter]}${sheet3_assWCObj.netOperatingAssets}`].v);
 }
 
 export async function DeferredTaxAssets(i: number, worksheet2: any) {

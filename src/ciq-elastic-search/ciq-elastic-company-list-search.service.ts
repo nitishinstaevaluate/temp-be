@@ -101,6 +101,7 @@ export class ciqElasticCompanyListSearchService {
                 }
             }
             const addMarketCapDetails = await this.elasticSearchMarketCap(listedCompanyList, date);
+            // const addReturnOfCapitalEmployee = await this.elasticSearchReturnOfCapitalEmployee(addMarketCapDetails, date);
 
             const addEbitdaDetails = await this.elasticSearchEbitda(addMarketCapDetails, date);
             const addSalesDetails = await this.elasticSearchSales(addEbitdaDetails, date);
@@ -185,6 +186,89 @@ export class ciqElasticCompanyListSearchService {
                 error:error,
                 status:false,
                 msg:"Market Cap search failed"
+            }
+        }
+    }
+
+    async elasticSearchReturnOfCapitalEmployee(companyList, date){
+        try{
+            let companyId = [];
+            let companyDetailsList = [];
+            companyList.map((elements)=>{
+                companyId.push(elements.COMPANYID)
+            })
+            const criteria = {
+                query:{
+                    bool :{
+                        must:[
+                            {
+                                terms: {
+                                    [elasticSearchKey.COMPANYID]: companyId
+                                }
+                            },
+                            // {
+                            //     term:{
+                            //         [elasticSearchKey.CALENDARYEAR]:`${convertUnixTimestampToQuarterAndYear(date).year}`
+                            //     }
+                            // },
+                            // {
+                            //     term:{
+                            //         [elasticSearchKey.CALENDARQUARTER]:`${convertUnixTimestampToQuarterAndYear(date).quarter}`
+                            //     }
+                            // },
+                            {
+                                range: {
+                                    [elasticSearchKey.PERIODENDDATE]: {
+                                    lte: `${convertUnixTimestampToQuarterAndYear(date).date.toISOString()}`
+                                  }
+                                }
+                            },
+                            {
+                                term:{
+                                    [elasticSearchKey.DATAITEMID]:'4363' //using Return of capital employee code
+                                }
+                            },
+                            {
+                                term: {
+                                    [elasticSearchKey.PERIODTYPEID]: '4'
+                                }
+                            },
+                        ]
+                    }
+                },
+                sort : [
+                    { 
+                        [elasticSearchKey.PERIODENDDATE] : {
+                            "order" : "desc"
+                        }
+                    },
+                  ]
+            }
+            const companyEbitdaData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
+
+            for await(const individualCompanyDetails of companyList){
+                let returnOfCapitalEmployeeFound = false;
+                for await(const individualRoceOfCompany of companyEbitdaData.data){
+                    if(individualRoceOfCompany.COMPANYID === individualCompanyDetails.COMPANYID){
+                        const ebidaValue = { ROCE: individualRoceOfCompany.DATAITEMVALUE};
+                        companyDetailsList.push({ ...individualCompanyDetails, ...ebidaValue});
+                        returnOfCapitalEmployeeFound = true;
+                        break;
+                    }
+                }
+                if (!returnOfCapitalEmployeeFound) {
+                    companyDetailsList.push({ ...individualCompanyDetails });
+                }
+            }
+            console.log(companyDetailsList,"company details")
+            return companyDetailsList;
+        }
+
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"Return search failed"
             }
         }
     }
