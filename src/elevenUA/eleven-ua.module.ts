@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ElevenUaService } from './eleven-ua.service';
 import { ElevenUaController } from './eleven-ua.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -20,6 +20,7 @@ import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { authenticationTokenSchema } from 'src/authentication/schema/authentication-token.schema';
+import { ReportModule } from 'src/report/report.module';
 
 @Module({
   providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService],
@@ -33,10 +34,12 @@ import { authenticationTokenSchema } from 'src/authentication/schema/authenticat
     { name: 'token', schema: authenticationTokenSchema }
   ]),
   UsersModule,
+  forwardRef(() => ReportModule),
   JwtModule.register({
     secret: process.env.JWT_SECRET,
     signOptions: { expiresIn: '24h' },
   })
-]
+],
+exports:[ElevenUaService]
 })
 export class ElevenUaModule {}

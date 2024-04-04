@@ -124,4 +124,8 @@ export class ElevenUaDTO {
     @IsOptional()
     @IsObject()
     inputData:object;
+
+    @Expose()
+    @IsOptional()
+    createdAt:Date;
   }
