@@ -7,12 +7,12 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
 import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
@@ -1140,13 +1140,13 @@ export class ExcelSheetService {
                   }
                   const industryObj = {
                     srNo:'',
-                    particular:'P/B Ratio of Industry',
+                    particular:'P/B Ratio of Industry (x)',
                     avg:formatPositiveAndNegativeValues(response.pbRatioAvg),
                     med:formatPositiveAndNegativeValues(response.pbRatioMed)
                   }
                   const fairValEquity = {
                     srNo:'',
-                    particular:'PFair Value of Equity',
+                    particular:'Fair Value of Equity',
                     avg:formatPositiveAndNegativeValues(response.pbMarketPriceAvg),
                     med:formatPositiveAndNegativeValues(response.pbMarketPriceMed)
                   }
@@ -1173,7 +1173,7 @@ export class ExcelSheetService {
                   }
                   const peRatioIndObj={
                     srNo:'',
-                    particular:'P/E Ratio of Industry',
+                    particular:'P/E Ratio of Industry (x)',
                     avg:formatPositiveAndNegativeValues(response.peRatioAvg),
                     med:formatPositiveAndNegativeValues(response.peRatioMed)
                   }
@@ -1206,7 +1206,7 @@ export class ExcelSheetService {
                   }
                   const evEbitDaObj={
                     srNo:'',
-                    particular:'EV/EBITDA',
+                    particular:'EV/EBITDA (x)',
                     avg:formatPositiveAndNegativeValues(response.evAvg),
                     med:formatPositiveAndNegativeValues(response.evMed)
                   }
@@ -1218,9 +1218,15 @@ export class ExcelSheetService {
                   }
                   const valDebtObj={
                     srNo:'',
-                    particular:'Less : Value of Debt',
+                    particular:'Less:Value of Debt',
                     avg:formatPositiveAndNegativeValues(response.debtAvg),
                     med:formatPositiveAndNegativeValues(response.debtMed)
+                  }
+                  const cashAndCashEquObj={
+                    srNo:'',
+                    particular:'Add:Cash and cash equivalent',
+                    avg:formatPositiveAndNegativeValues(response.cashEquivalent),
+                    med:formatPositiveAndNegativeValues(response.cashEquivalent)
                   }
                   const valEquityObj={
                     srNo:'',
@@ -1228,7 +1234,7 @@ export class ExcelSheetService {
                     avg:formatPositiveAndNegativeValues(response.ebitdaEquityAvg),
                     med:formatPositiveAndNegativeValues(response.ebitdaEquityMed)
                   }
-                  arrayPbRatio.push(ebitDatHead,ebitDaObj,evEbitDaObj,entprseObj,valDebtObj,valEquityObj)
+                  arrayPbRatio.push(ebitDatHead,ebitDaObj,evEbitDaObj,entprseObj,valDebtObj,cashAndCashEquObj,valEquityObj)
                 }
                 else if(response?.particular === 'sales'){
                   arrayPbRatio.push({ //make sure to push empty object to have empty space between rows
@@ -1251,15 +1257,15 @@ export class ExcelSheetService {
                   }
                   const salesRatioObj = {
                     srNo:'',
-                    particular:'P/S Ratio',
+                    particular:'P/S Ratio (x)',
                     avg:formatPositiveAndNegativeValues(response.salesRatioAvg),
                     med:formatPositiveAndNegativeValues(response.salesRatioMed)
                   }
                   const salesEquityObj = {
                     srNo:'',
                     particular:'Value of Equity',
-                    avg:response.salesEquityAvg?.toFixed(2),
-                    med:response.salesEquityMed?.toFixed(2)
+                    avg:formatPositiveAndNegativeValues(response.salesEquityAvg?.toFixed(2)),
+                    med:formatPositiveAndNegativeValues(response.salesEquityMed?.toFixed(2))
                   }
                   arrayPbRatio.push(salesHead,companySalesObj,salesRatioObj,salesEquityObj)
                 }
@@ -1276,18 +1282,18 @@ export class ExcelSheetService {
                     avg:formatPositiveAndNegativeValues(response.avgPricePerShareAvg),
                     med:formatPositiveAndNegativeValues(response.avgPricePerShareMed)
                   }
-                  const illiquidityObj = {
-                    srNo:'',
-                    particular:'Less:Discount',
-                    avg:formatPositiveAndNegativeValues(response.locAvg),
-                    med:formatPositiveAndNegativeValues(response.locMed)
-                  }
-                  const finalPriceObj = {
-                    srNo:'',
-                    particular:'Final Price',
-                    avg:formatPositiveAndNegativeValues(response.finalPriceAvg),
-                    med:formatPositiveAndNegativeValues(response.finalPriceMed)
-                  }
+                  // const illiquidityObj = {
+                  //   srNo:'',
+                  //   particular:'Less:Discount',
+                  //   avg:formatPositiveAndNegativeValues(response.locAvg),
+                  //   med:formatPositiveAndNegativeValues(response.locMed)
+                  // }
+                  // const finalPriceObj = {
+                  //   srNo:'',
+                  //   particular:'Final Price',
+                  //   avg:formatPositiveAndNegativeValues(response.finalPriceAvg),
+                  //   med:formatPositiveAndNegativeValues(response.finalPriceMed)
+                  // }
                   const sharesObj = {
                     srNo:'',
                     particular:'No. of Shares',
@@ -1300,13 +1306,12 @@ export class ExcelSheetService {
                     avg:formatPositiveAndNegativeValues(response.fairValuePerShareAvg),
                     med:formatPositiveAndNegativeValues(response.fairValuePerShareMed)
                   }
-                  arrayPbRatio.push(resultHead,illiquidityObj,finalPriceObj,sharesObj,valPrShareObj)
+                  arrayPbRatio.push(resultHead,sharesObj,valPrShareObj)
                 }
               })
             }
           
           })
-          console.log(arrayPbRatio,"entire array")
           if(valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[0]){
             arrayPbRatio.forEach(item => delete item.med);   
           }
@@ -1338,11 +1343,17 @@ export class ExcelSheetService {
           if(txt === '' && val === 'particular'){
             return true;
           }
-          if(txt === 'Value per share' || txt === 'Equity Value' || txt === 'Firm Value'|| txt === 'Net Current Assets' || txt === 'Non Current Assets')
+          if(txt === 'Value per share' || txt === 'Equity Value' || txt === 'Firm Value'|| txt === 'Net Current Assets' || txt === 'Non Current Assets' || MARKET_APPROACH_REPORT_LINE_ITEM.includes(txt))
           {
             return true;
           }
           return false
+        })
+
+        hbs.registerHelper('formatPositiveAndNegativeNumber',(val)=>{
+          if(!val)
+            return '-';
+          return formatPositiveAndNegativeValues(val);
         })
 
         hbs.registerHelper('generatedOn',(txt,val)=>{
@@ -1433,15 +1444,60 @@ export class ExcelSheetService {
               return {
                 fieldName:indNav.fieldName,
                 // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue ? parseFloat(indNav.bookValue)?.toFixed(3) : indNav?.bookValue,
-                fairValue:indNav?.fairValue ? parseFloat(indNav.fairValue)?.toFixed(3) : indNav.value ? parseFloat(indNav.value)?.toFixed(3) : indNav.fairValue
+                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
+                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? formatPositiveAndNegativeValues(indNav.value): indNav?.value
               }
              })
             }
           })
           return navData;
         })
+
+        hbs.registerHelper('companies', () => {
+          let arrayCompany = [];
+          let isCompany = false;
+          if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
+            isCompany=true;
+          }
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.model === MODEL[2] || result.model === MODEL[4]){
+              const companiesMultiplesRecaculated = this.createPrfnceRtio(isCompany ? result.valuationData?.companies : result.valuationData.industries,isCompany);
+               arrayCompany = this.loadPostDiscountMultiples(companiesMultiplesRecaculated, valuationResult.inputData[0].discountRateValue);
+            }
+          })
+          return arrayCompany;
+        });
       }  
+
+      loadPostDiscountMultiples(companyData, discountRateValue){
+        let postMultipleAverage:any = [], postMultipleMedian:any = [], modifiedMultiples = companyData || [];
+        if(discountRateValue){
+          companyData.map((indCompanyData:any)=>{  
+            if(indCompanyData.company === 'Average'){
+              console.log(indCompanyData,"company data")
+              postMultipleAverage = {
+                company: 'Post Discount Multiple (Average)',
+                peRatio: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.peRatio) * (1-discountRateValue/100)),
+                pbRatio: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.pbRatio) * (1-discountRateValue/100)),
+                ebitda: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.ebitda) * (1-discountRateValue/100)),
+                sales: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.sales) * (1-discountRateValue/100))
+              }
+            }
+            if(indCompanyData.company === 'Median'){
+              postMultipleMedian = {
+                company: 'Post Discount Multiple (Median)',
+                peRatio: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.peRatio) * (1-discountRateValue/100)),
+                pbRatio: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.pbRatio) * (1-discountRateValue/100)),
+                ebitda: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.ebitda) * (1-discountRateValue/100)),
+                sales: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.sales) * (1-discountRateValue/100))
+              }
+            }
+          })
+          modifiedMultiples.push(postMultipleAverage, postMultipleMedian);
+          console.log(modifiedMultiples,"company data");
+          return modifiedMultiples
+        }
+      }
 
       createPrfnceRtio(data,isCompany){
         const arrayCompany = [];

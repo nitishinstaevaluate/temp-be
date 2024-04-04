@@ -3,7 +3,7 @@
 
 <head>
     <style>
-        body {
+         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin-top: 6%;
@@ -59,7 +59,7 @@
         table,
         th,
         td {
-            border: 1px solid #333;
+            border: 1px solid #c1c1c1;
         }
 
         th,
@@ -80,6 +80,9 @@
 
         a:hover {
             text-decoration: underline;
+        }
+        tr{
+            font-size: 13px !important;
         }
     </style>
 </head>
@@ -115,7 +118,8 @@
                 </div>
             </div>
             <!-- <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p> -->
-            <table>
+            <div style="padding:1% ;">
+            <table style="width: 100% !important;">
                 <tr>
                     {{#each (fcfeColumnHeader data)}}
                     <th style="text-transform: capitalize;">{{headers}}</th>
@@ -282,6 +286,7 @@
                     {{/each}}
                 </tr>
             </table>
+        </div>
     </div>
 </body>
 </html>

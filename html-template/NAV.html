@@ -67,7 +67,7 @@
 
         th,
         td {
-            padding: 5px;
+            padding: 0px;
             text-align: center;
         }
 
@@ -83,6 +83,9 @@
 
         a:hover {
             text-decoration: underline;
+        }
+        tr{
+            font-size: 13px !important;
         }
     </style>
 </head>
@@ -115,7 +118,7 @@
         </thead>
         {{#each (netAssetValue data)}}
           <tbody>
-            <tr style="height: 30px;">
+            <tr style="height: 23px;">
                 {{#if (checkHead fieldName "")}}
                 <td style="font-weight: 700;">{{fieldName}}</td>
                 {{else}}
