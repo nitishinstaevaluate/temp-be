@@ -276,14 +276,14 @@ let workbook=null;
                   model: MODEL[1],
                   valuationData: fcffResponse.result,
                   valuation:fcffResponse.valuation,
-                  terminalYearWorking:fcfeResponse.terminalValueWorking,
+                  terminalYearWorking:fcffResponse.terminalValueWorking,
                   provisionalDate:fcffResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.tableData,
                   valuation:fcffResponse.valuation,
-                  terminalYearWorking:fcfeResponse.terminalValueWorking,
+                  terminalYearWorking:fcffResponse.terminalValueWorking,
                   columnHeader:fcffResponse.columnHeader,
                   provisionalDate:fcffResponse.provisionalDate
                   });
