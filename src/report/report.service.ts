@@ -29,6 +29,7 @@ import { mrlReportService } from './mrl-report.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 import { navReportService } from './nav-report.service';
+import { convertToRomanNumeral } from './report-common-functions';
 
 @Injectable()
 export class ReportService {
@@ -649,6 +650,15 @@ export class ReportService {
       
         const upsertReportDetails = await this.reportModel.findOneAndUpdate(filter, update, options);
         return upsertReportDetails._id;
+      } catch (e) {
+        throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    async fetchReportDetails(id){
+      try {
+        const reportDetails = await this.reportModel.findOne({_id: id});
+        return reportDetails;
       } catch (e) {
         throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
       }
@@ -2393,6 +2403,13 @@ export class ReportService {
   }
 
   loadElevenUaHelpers(elevenUaData,reportDetails){
+    hbs.registerHelper('generatedOn',(txt,val)=>{
+      console.log(elevenUaData,"eleven ua data")
+      if(elevenUaData?.data?.createdAt)
+        return new Date(elevenUaData?.data?.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      return '';
+    })
+    
     hbs.registerHelper('companyName',()=>{
       if(elevenUaData)
         return elevenUaData.data?.inputData?.company;
@@ -2483,7 +2500,7 @@ export class ReportService {
         
         for(let i = 0; i <= jewelleryAndArtisticWorkArray.length; i++){
           if(jewelleryAndArtisticWorkArray[i]?.name){
-              const romanNumeral = this.convertToRomanNumeral(i);
+              const romanNumeral = convertToRomanNumeral(i);
               const obj = {
                 index:romanNumeral,
                 label:jewelleryAndArtisticWorkArray[i]?.name,
@@ -2856,15 +2873,6 @@ export class ReportService {
     })
   }
 
-  convertToRomanNumeral(num:any) {
-    const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
-  
-    if (num === undefined || num === null || num > romanNumerals.length) {
-      return '';
-    }
-  
-    return romanNumerals[num];
-  }
 
   async getFinancialSegment(reportDetails, valuationResult, request){
     try{
