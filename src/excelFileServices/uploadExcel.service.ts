@@ -19,13 +19,23 @@ import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { formatPositiveAndNegativeValues } from 'src/report/report-common-functions';
+import { ReportService } from 'src/report/report.service';
+import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 require('dotenv').config();
 
 @Injectable()
 export class ExcelSheetService {
+  totalA=0;
+    totalB=0;
+    totalC=0;
+    totalD=0;
+    totalL=0;
+    unqotedEquityShareVal=0;
   constructor( private valuationService:ValuationsService,
     private fcfeService:FCFEAndFCFFService,
-    private thirdpartyApiAggregateService: thirdpartyApiAggregateService){}
+    private thirdpartyApiAggregateService: thirdpartyApiAggregateService,
+    private readonly reportService: ReportService,
+    private readonly elevenUaService: ElevenUaService){}
     getSheetData(fileName: string, sheetName: string): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
@@ -332,6 +342,43 @@ export class ExcelSheetService {
           };
         }
       }
+
+      async exportElevenUaPdf(id,res) {
+        try {
+          const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(id);
+          let htmlFilePath,pdfFilePath;
+          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
+          htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua.html`);
+          pdfFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.pdf`);
+
+          this.reportService.loadElevenUaHelpers(elevenUaData, null);   //Providing null since we don't generate/store report details on stepper 5
+        
+          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+          const template = hbs.compile(htmlContent);
+          const html = template(elevenUaData);
+    
+          const pdf = await this.generatePdf(html, pdfFilePath);
+
+
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.pdf"`);
+          res.send(pdf);
+    
+          return {
+            msg: "PDF download Success",
+            status: true,
+          };
+       
+        } catch (error) {
+          console.error("Error:", error);
+        
+          return {
+            msg: "Download Failed. An error occurred during processing.",
+            status: false,
+            error:error.message
+          };
+        }
+      }
     
       async generatePdf(htmlContent: any, pdfFilePath: string) {
         const browser = await puppeteer.launch({
@@ -355,7 +402,7 @@ export class ExcelSheetService {
                     <td style="width: 70%; text-align: center;">
                       <span style="font-size: 10px;">Ifinworth | Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
                     </td>
-                    <td style="width: 15%; font-size: 10px;">V1/ Sept / 2023</td>
+                    <td style="width: 15%; font-size: 10px;">V1/ March / 2024</td>
                   </tr>
                 </table>
               </td>

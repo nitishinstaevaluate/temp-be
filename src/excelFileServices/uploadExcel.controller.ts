@@ -88,6 +88,15 @@ export class UploadController {
     return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res);
   }
 
+  // @UseGuards(KeyCloakAuthGuard)
+  @Get('export-eleven-ua/:elevenUaId')
+  async generateElevenUApdf(
+    @Param('elevenUaId') id : string,
+    @Res() res
+  ) {
+    return await this.excelSheetService.exportElevenUaPdf(id,res);
+  }
+
   @UseGuards(KeyCloakAuthGuard)
   @Post('modifyExcel')
   async modifyExcel(@Body() excelData){
