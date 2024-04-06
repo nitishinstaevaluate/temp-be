@@ -16,3 +16,17 @@ export class TerminalValueWorkingDto {
   pvFactor: number;
   pvTerminalValue: number;
 }
+
+export class PostMainValuationDto {
+  reportId: string;
+  valuationResult: [];
+}
+
+export class PostDcfValuationDto {
+  model: string;
+  valuationData: [];
+  valuation: [];
+  terminalYearWorking: object;
+  columnHeader: [];
+  provisionalDate: any;
+}

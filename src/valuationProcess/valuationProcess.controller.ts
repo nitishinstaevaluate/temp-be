@@ -8,7 +8,8 @@ import {
   Query,
   ParseIntPipe,
   UseGuards,
-  Request
+  Request,
+  Headers
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
@@ -25,6 +26,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { terminalValueWorkingService } from './terminal-value-working.service';
+import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -394,12 +396,21 @@ export class ValuationsController {
   
   constructor(private valuationsService: ValuationsService,
     private readonly utilsService: utilsService,
-    private terminalWorkingService: terminalValueWorkingService) {}
+    private terminalWorkingService: terminalValueWorkingService,
+    private readonly fcfeService: FCFEAndFCFFService) {}
 
   @UseGuards(KeyCloakAuthGuard)
   @Get('calculate-terminal-value')
   async processTerminalValue(@Query('id') valuationId:any){
     return await this.terminalWorkingService.computeTerminalValue(valuationId);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('re-valuation/:id/:type')
+  async recalculateValuePerShare(@Param('id') processId:any,
+  @Param('type') type:any,
+  @Headers() headers: Headers){
+    return await this.fcfeService.recalculateValuePerShare(processId, type, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)
