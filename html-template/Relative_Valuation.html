@@ -89,7 +89,7 @@
 
 <body>
     <div class="container">
-        <h4>Valuation Report</h1>
+        <h4>Valuation Result</h1>
 
             <!-- <div class="container-top">
                 <div class="column">
@@ -157,15 +157,15 @@
     <div style="page-break-before: always;margin-top:6.5%" class="container">
         <table cellspacing="0">
             <tr style="font-size: 13px;">
-                <th  colspan="2" style="border-right: none;text-align: center;">
+                <th  colspan="2" style="border-right: none;text-align: center;color: #3d3d3d !important">
                   Valuation of <span style="font-size: 13px;font-weight: 600;text-transform: uppercase;color: #b8b8b8 !important;">{{companyName}}</span> 
                 </th>
                 {{#if (checkPreferenceRatio)}}
-                <th colspan="2" style="border-left: none;text-align: right !important;">
+                <th colspan="2" style="border-left: none;text-align: right !important;color: #3d3d3d !important">
                   Amount in INR {{reportingUnit}}
                 </th>
                 {{else}}
-                <th colspan="1" style="border-left: none;text-align: right !important;">
+                <th colspan="1" style="border-left: none;text-align: right !important;color: #3d3d3d !important">
                     Amount in INR {{reportingUnit}}
                   </th>
                 {{/if}}

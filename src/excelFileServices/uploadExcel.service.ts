@@ -791,21 +791,21 @@ export class ExcelSheetService {
                 const sumOfCashFlows = formatPositiveAndNegativeValues(response.sumOfCashFlows);
                 arraySumOfCashFlows.push({fcfeSumOfCashFlows:sumOfCashFlows})
               })
-              arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Cash Flows"});
+              arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Discounted Cash Flows"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
                 const sumOfCashFlows = formatPositiveAndNegativeValues(response.sumOfCashFlows);
                 arraySumOfCashFlows.push({fcffSumOfCashFlows:sumOfCashFlows})
               })
-              arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Cash Flows"});
+              arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Discounted  Cash Flows"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
                 const sumOfCashFlows = formatPositiveAndNegativeValues(response.sumOfCashFlows);
                 arraySumOfCashFlows.push({excessEarningSumOfCashFlows:sumOfCashFlows})
               })
-              arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Cash Flows"});
+              arraySumOfCashFlows.unshift({excessEarningSumOfCashFlows:"Sum of Discounted Cash Flows"});
             }
           })
           return arraySumOfCashFlows;
@@ -1009,21 +1009,21 @@ export class ExcelSheetService {
                 const noOfShares = formatPositiveAndNegativeValues(response.noOfShares);
                 arrayNoOfShares.push({fcfeNoOfShares:noOfShares})
               })
-              arrayNoOfShares.unshift({fcfeNoOfShares:"No. of o/s Shares"});
+              arrayNoOfShares.unshift({fcfeNoOfShares:"No. of Shares"});
             }
             else if(result.model === 'FCFF'){
               result.valuationData.map((response:any)=>{
                 const noOfShares = formatPositiveAndNegativeValues(response.noOfShares);
                 arrayNoOfShares.push({fcffNoOfShares:noOfShares})
               })
-              arrayNoOfShares.unshift({fcffNoOfShares:"No. of o/s Shares"});
+              arrayNoOfShares.unshift({fcffNoOfShares:"No. of Shares"});
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
                 const noOfShares = formatPositiveAndNegativeValues(response.noOfShares);
                 arrayNoOfShares.push({excessEarningNoOfShares:noOfShares})
               })
-              arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of o/s Shares"});
+              arrayNoOfShares.unshift({excessEarningNoOfShares:"No. of Shares"});
             }
           })
           return arrayNoOfShares;
@@ -1514,6 +1514,25 @@ export class ExcelSheetService {
           })
           return arrayCompany;
         });
+
+        hbs.registerHelper('valuationLengthGreater',()=>{
+          let boolValuationLength = false;
+          valuationResult.modelResults.forEach((result)=>{
+            if(result.model === 'FCFE'){
+              if(result.valuationData.length > 4)
+                boolValuationLength = true;
+            }
+            else if(result.model === 'FCFF'){
+              if(result.valuationData.length > 4)
+                boolValuationLength = true;
+            }
+            else if(result.model === 'Excess_Earnings'){
+              if(result.valuationData.length > 4)
+                boolValuationLength = true;
+            }
+          })
+          return boolValuationLength;
+        })
       }  
 
       loadPostDiscountMultiples(companyData, discountRateValue){
