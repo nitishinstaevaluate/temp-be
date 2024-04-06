@@ -56,6 +56,9 @@ import { navReportService } from './nav-report.service';
   ElevenUaModule,
   ValuationProcessModule,
   AuthenticationModule
+  ],
+  exports:[
+    ReportService
   ]
 })
 export class ReportModule {}
