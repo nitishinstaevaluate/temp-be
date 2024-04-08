@@ -918,7 +918,8 @@ export class FCFEAndFCFFService {
                 discountingFactor: discountingFactorWacc,
                 presentFCFF: presentFCFF,
                 finalYearfreeCashFlow: fcff,
-                terminalValueBasedOnLastYear:fcfeValueAtTerminalRate
+                terminalValueBasedOnLastYear:fcfeValueAtTerminalRate,
+                explicitYear: `${parseInt(individualYear)-1}-${parseInt(individualYear)}`
               }
             }
             
