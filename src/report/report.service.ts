@@ -1084,7 +1084,7 @@ export class ReportService {
               }
             })
             headers.unshift({columnHeader:'Particulars'});
-            headers.push({columnHeader:'Terminal Year'});
+            headers.push({columnHeader:'Terminal Period'});
           }
         })
         return headers;
@@ -1154,7 +1154,6 @@ export class ReportService {
           }
           else if(result.model === 'FCFF'){
             const terminalYearPat = result.terminalYearWorking.pat;
-            console.log(terminalYearPat,"terminal year pat found")
             result.valuationData.map((response:any)=>{
               const patValue = this.formatPositiveAndNegativeValues(response?.pat);
               arrayPAT.push({fcffPat:patValue})
@@ -1459,8 +1458,8 @@ export class ReportService {
       
       hbs.registerHelper('discPeriod', () => {
         let arrayDiscountingPeriod = [];
-        // const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
-        // let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             const terminalValueDiscountingPeriod = result.terminalYearWorking.discountingPeriod;
@@ -1469,9 +1468,9 @@ export class ReportService {
               arrayDiscountingPeriod.push({fcfeDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({fcfeDiscountingPeriod:"Discounting Period"});
-            // if(!boolTvCashFlowBased){
-              // arrayDiscountingPeriod.push({fcfeDiscountingPeriod:this.formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
-            // }
+            if(boolTvCashFlowBased){
+              arrayDiscountingPeriod.push({fcfeDiscountingPeriod:this.formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
+            }
           }
           else if(result.model === 'FCFF'){
             const terminalValueDiscountingPeriod = result.terminalYearWorking.discountingPeriod;
@@ -1480,9 +1479,9 @@ export class ReportService {
               arrayDiscountingPeriod.push({fcffDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({fcffDiscountingPeriod:"Discounting Period"});
-            // if(!boolTvCashFlowBased){
-              // arrayDiscountingPeriod.push({fcffDiscountingPeriod:this.formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
-            // }
+            if(boolTvCashFlowBased){
+              arrayDiscountingPeriod.push({fcffDiscountingPeriod:this.formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
+            }
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
@@ -1497,8 +1496,8 @@ export class ReportService {
       
       hbs.registerHelper('discFactor', () => {
         let arrayDiscountingFactor = [];
-        // const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
-        // let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             const terminalValueDiscountingFactor = result.terminalYearWorking.discountingFactor;
@@ -1507,9 +1506,9 @@ export class ReportService {
               arrayDiscountingFactor.push({fcfeDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({fcfeDiscountingFactor:"Discounting Factor"});
-            // if(!boolTvCashFlowBased){
-              // arrayDiscountingFactor.push({fcfeDiscountingFactor:this.formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
-            // }
+            if(boolTvCashFlowBased){
+              arrayDiscountingFactor.push({fcfeDiscountingFactor:this.formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
+            }
           }
           else if(result.model === 'FCFF'){
             const terminalValueDiscountingFactor = result.terminalYearWorking.discountingFactor;
@@ -1518,9 +1517,9 @@ export class ReportService {
               arrayDiscountingFactor.push({fcffDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({fcffDiscountingFactor:"Discounting Factor"});
-            // if(!boolTvCashFlowBased){
-              // arrayDiscountingFactor.push({fcffDiscountingFactor:this.formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
-            // }
+            if(boolTvCashFlowBased){
+              arrayDiscountingFactor.push({fcffDiscountingFactor:this.formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
+            }
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
@@ -1535,38 +1534,40 @@ export class ReportService {
       
       hbs.registerHelper('prsntFCFF', () => {
         let arrayPresentFCFF = [];
-        // const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
-        // let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
-            // const terminalValuePresentFCFFBasedOnPat = terminalYearWorkings?.terminalValueWorking?.pvTerminalValue || 0;
-            // const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
+            const terminalValuePresentFCFFBasedOnPat = terminalYearWorkings?.terminalValueWorking?.pvTerminalValue || 0;
+            const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
             result.valuationData.map((response:any)=>{
               const presentFCFFValue = this.formatPositiveAndNegativeValues(response?.presentFCFF);
               arrayPresentFCFF.push({fcfePresentFCFF:presentFCFFValue})
             })
             arrayPresentFCFF.unshift({fcfePresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
             // if(!boolTvCashFlowBased){
-            //   arrayPresentFCFF.push({fcfePresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnPat)});
-            // }
-            // else{
-            //   arrayPresentFCFF.push({fcfePresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
-            // }
+              //   arrayPresentFCFF.push({fcfePresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnPat)});
+              // }
+              // else{
+            if(boolTvCashFlowBased){
+              arrayPresentFCFF.push({fcfePresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
+            }
           }
           else if(result.model === 'FCFF'){
-            // const terminalValuePresentFCFFBasedOnPat = terminalYearWorkings?.terminalValueWorking?.pvTerminalValue || 0;
-            // const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
+            const terminalValuePresentFCFFBasedOnPat = terminalYearWorkings?.terminalValueWorking?.pvTerminalValue || 0;
+            const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
             result.valuationData.map((response:any)=>{
               const presentFCFFValue = this.formatPositiveAndNegativeValues(response?.presentFCFF);
               arrayPresentFCFF.push({fcffPresentFCFF:presentFCFFValue})
             })
             arrayPresentFCFF.unshift({fcffPresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
             // if(!boolTvCashFlowBased){
-            //   arrayPresentFCFF.push({fcffPresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnPat)});
-            // }
-            // else{
-            //   arrayPresentFCFF.push({fcffPresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
-            // }
+              //   arrayPresentFCFF.push({fcffPresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnPat)});
+              // }
+              // else{
+            if(boolTvCashFlowBased){
+              arrayPresentFCFF.push({fcffPresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
+            }
           }
         })
         return arrayPresentFCFF;
