@@ -506,7 +506,7 @@ export class ExcelSheetService {
               fcfeHeader = result.data.columnHeader.map((headers)=>{
                 return {headers};
               }); 
-              fcfeHeader.push({headers:'Terminal Year'});
+              fcfeHeader.push({headers:'Terminal Period'});
             }
             else if (result.model === 'Excess_Earnings') {
               fcfeHeader = result.data.columnHeader.map((headers)=>{
@@ -788,20 +788,30 @@ export class ExcelSheetService {
         
         hbs.registerHelper('discPeriod', () => {
           let arrayDiscountingPeriod = [];
+        const terminalValueType = terminalType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
+              const terminalValueDiscountingPeriod = result.terminalYearWorking.discountingPeriod;
               result.valuationData.map((response:any)=>{
                 const discountingPeriod = formatPositiveAndNegativeValues(response.discountingPeriod);
                 arrayDiscountingPeriod.push({fcfeDiscountingPeriod:discountingPeriod})
               })
               arrayDiscountingPeriod.unshift({fcfeDiscountingPeriod:"Discounting Period"});
+              if(boolTvCashFlowBased){
+                arrayDiscountingPeriod.push({fcfeDiscountingPeriod:formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
+              }
             }
             else if(result.model === 'FCFF'){
+              const terminalValueDiscountingPeriod = result.terminalYearWorking.discountingPeriod;
               result.valuationData.map((response:any)=>{
                 const discountingPeriod = formatPositiveAndNegativeValues(response.discountingPeriod);
                 arrayDiscountingPeriod.push({fcffDiscountingPeriod:discountingPeriod})
               })
               arrayDiscountingPeriod.unshift({fcffDiscountingPeriod:"Discounting Period"});
+              if(boolTvCashFlowBased){
+                arrayDiscountingPeriod.push({fcffDiscountingPeriod:formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
+              }
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
@@ -816,20 +826,30 @@ export class ExcelSheetService {
         
         hbs.registerHelper('discFactor', () => {
           let arrayDiscountingFactor = [];
+          const terminalValueType = terminalType ||  'tvCashFlowBased';
+          let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
+              const terminalValueDiscountingFactor = result.terminalYearWorking.discountingFactor;
               result.valuationData.map((response:any)=>{
                 const discountingFactor = formatPositiveAndNegativeValues(response.discountingFactor);
                 arrayDiscountingFactor.push({fcfeDiscountingFactor:discountingFactor})
               })
               arrayDiscountingFactor.unshift({fcfeDiscountingFactor:"Discounting Factor"});
+              if(boolTvCashFlowBased){
+                arrayDiscountingFactor.push({fcfeDiscountingFactor:formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
+              }
             }
             else if(result.model === 'FCFF'){
+              const terminalValueDiscountingFactor = result.terminalYearWorking.discountingFactor;
               result.valuationData.map((response:any)=>{
                 const discountingFactor = formatPositiveAndNegativeValues(response.discountingFactor);
                 arrayDiscountingFactor.push({fcffDiscountingFactor:discountingFactor})
               })
               arrayDiscountingFactor.unshift({fcffDiscountingFactor:"Discounting Factor"});
+              if(boolTvCashFlowBased){
+                arrayDiscountingFactor.push({fcffDiscountingFactor:formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
+              }
             }
             else if(result.model === 'Excess_Earnings'){
               result.valuationData.map((response:any)=>{
@@ -844,20 +864,30 @@ export class ExcelSheetService {
         
         hbs.registerHelper('prsntFCFF', () => {
           let arrayPresentFCFF = [];
+          const terminalValueType = terminalType ||  'tvCashFlowBased';
+          let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFE'){
+              const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
               result.valuationData.map((response:any)=>{
                 const presentFCFF = formatPositiveAndNegativeValues(response.presentFCFF);
                 arrayPresentFCFF.push({fcfePresentFCFF:presentFCFF})
               })
               arrayPresentFCFF.unshift({fcfePresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
+              if(boolTvCashFlowBased){
+                arrayPresentFCFF.push({fcfePresentFCFF:formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
+              }
             }
             else if(result.model === 'FCFF'){
+              const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
               result.valuationData.map((response:any)=>{
                 const presentFCFF = formatPositiveAndNegativeValues(response.presentFCFF);
                 arrayPresentFCFF.push({fcffPresentFCFF:presentFCFF})
               })
               arrayPresentFCFF.unshift({fcffPresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
+              if(boolTvCashFlowBased){
+                arrayPresentFCFF.push({fcffPresentFCFF:formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
+              }
             }
           })
           return arrayPresentFCFF;
