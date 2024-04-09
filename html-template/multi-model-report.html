@@ -2011,8 +2011,12 @@
                                                             <span style="font-size: 13px !important;font-weight: bold;float: left;padding-left: 10pt;font-family: 'Times New Roman', Times, serif !important;">Source- Capital IQ</span>
                                                     {{else}}
                                                     <p style="padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
-                                                        The beta is arrived using {{betaName}} of the comparable companies in
-                                                        the similar sector.
+                                                        {{#if (isBetaFromAd)}}
+                                                            The beta is considered as <span>{{beta}}</span> of {{betaAdIndustryName}} from Prof. Aswath Damodaran dababase.
+                                                        {{else}}
+                                                            The beta is arrived using {{betaName}} of the comparable companies in
+                                                            the similar sector.
+                                                        {{/if}}
                                                     </p>
                                                     {{/if}}
                                                 </li>

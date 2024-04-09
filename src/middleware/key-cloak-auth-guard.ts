@@ -107,7 +107,7 @@ export class KeyCloakAuthGuard implements CanActivate {
           throw new UnauthorizedException(
             {
               status: false,
-              msg: error.response.message,
+              msg: error.response?.message,
             }
           );
         })

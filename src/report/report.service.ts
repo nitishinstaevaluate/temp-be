@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -1092,9 +1092,20 @@ export class ReportService {
 
       hbs.registerHelper('capitalStructureRatio', ()=>{
         if(valuationResult.inputData[0].capitalStructureType === 'Industry_Based'){
-          const deRatio = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.deRatio)/100).toFixed(2)
-          const equityProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.equityProp)/100).toFixed(2)
-          return `${deRatio}:${equityProp}`;
+          let debtToCapital, equityToCapital;
+          if(valuationResult.inputData[0]?.formTwoData.betaFrom !== BETA_FROM.ASWATHDAMODARAN){
+            betaWorking?.betaMeanMedianWorking.map((indRatios:any)=>{        
+              if(valuationResult.inputData[0]?.betaSubType === indRatios.betaType){
+                debtToCapital = convertToNumberOrZero(indRatios.debtToCapital/100).toFixed(2);
+                equityToCapital = convertToNumberOrZero(indRatios.equityToCapital/100).toFixed(2);
+              }
+            })
+          }
+          else{
+            debtToCapital = '___ ';
+            equityToCapital = ' ___';
+          }
+          return `${debtToCapital}:${equityToCapital}`;
         }
         else if(valuationResult.inputData[0].capitalStructureType === 'Target_Based'){
           const debtProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.debtProp)/100).toFixed(2);
@@ -2482,10 +2493,36 @@ export class ReportService {
     })
     
     hbs.registerHelper('hasBetaWorking',()=>{
-      if(valuationResult.inputData[0].betaType === BETA_TYPE[0] || valuationResult.inputData[0].betaType === BETA_TYPE[1]){
+      const betaFrom = valuationResult.inputData[0].formTwoData?.betaFrom || BETA_FROM.CAPITALIQ;
+      if(
+        betaFrom !== BETA_FROM.ASWATHDAMODARAN && 
+        (
+          valuationResult.inputData[0].betaType === BETA_TYPE[0] || 
+          valuationResult.inputData[0].betaType === BETA_TYPE[1]
+        )
+      ){
         return true;
       }
       return false;
+    })
+
+    hbs.registerHelper('isBetaFromAd',()=>{
+      const betaFrom = valuationResult.inputData[0].formTwoData?.betaFrom || BETA_FROM.CAPITALIQ;
+      if(
+        betaFrom === BETA_FROM.ASWATHDAMODARAN
+      ){
+        return true;
+      }
+      return false;
+    })
+    hbs.registerHelper('betaAdIndustryName',()=>{
+      const betaIndustryAd = valuationResult.inputData[0].formTwoData?.industryAD;
+      if(
+        betaIndustryAd
+      ){
+        return betaIndustryAd;
+      }
+      return '';
     })
 
     hbs.registerHelper('coreBetaWorking',()=>{
