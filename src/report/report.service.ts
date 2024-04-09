@@ -1093,7 +1093,7 @@ export class ReportService {
       hbs.registerHelper('capitalStructureRatio', ()=>{
         if(valuationResult.inputData[0].capitalStructureType === 'Industry_Based'){
           let debtToCapital, equityToCapital;
-          if(valuationResult.inputData[0]?.formTwoData.betaFrom !== BETA_FROM.ASWATHDAMODARAN){
+          if(valuationResult.inputData[0]?.formTwoData?.betaFrom !== BETA_FROM.ASWATHDAMODARAN){
             betaWorking?.betaMeanMedianWorking.map((indRatios:any)=>{        
               if(valuationResult.inputData[0]?.betaSubType === indRatios.betaType){
                 debtToCapital = convertToNumberOrZero(indRatios.debtToCapital/100).toFixed(2);
