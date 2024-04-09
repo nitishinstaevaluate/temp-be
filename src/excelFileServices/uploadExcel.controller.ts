@@ -78,14 +78,16 @@ export class UploadController {
   }
 
   // @UseGuards(KeyCloakAuthGuard)
-  @Get('generate/:reportId/:model/:specificity')
+  @Get('generate/:reportId/:model/:specificity/:processId/:terminalType')
   async generatePdf(
     @Param('reportId') reportId : string,
     @Param('model') model : string = null,
     @Param('specificity') specificity : boolean = false, 
+    @Param('processId') processId : string, 
+    @Param('terminalType') terminalType : string, 
     @Res() res
   ) {
-    return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res);
+    return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res, processId, terminalType);
   }
 
   // @UseGuards(KeyCloakAuthGuard)

@@ -901,7 +901,7 @@
         <div class="container-top" style="padding-top: 25%;padding-left: 1%;">
             <div class="column">
                 <p>Date: {{reportDate}}</p>
-                <p style="padding-top: 5px;">Place: ______________</p>
+                <p style="padding-top: 5px;">Place: Mumbai</p>
             </div>
             <div class="column">
                 <p><strong>{{registeredValuerName}}</strong> </p>
@@ -2334,30 +2334,35 @@
                                 <tr style="height:14pt">
                                     <td
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s5" style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">Free
-                                            Cash Flows at end of FY {{explicitYear}}</p>
+                                        <p class="s5" style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding:2px">
+                                            {{#if (checkTerminalValueType)}}
+                                            Free Cash Flows at end of FY {{explicitYear}}
+                                            {{else}}
+                                            Terminal Year Cash Flow
+                                            {{/if}}
+                                        </p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">{{freeCashFlow}}</p>
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding:2px">{{freeCashFlow}}</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
                                     <td
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s5"
-                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding:2px">
                                             Terminal Growth Rate</p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         >
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">{{terminalGrowthRate}}%</p>
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding:2px">{{terminalGrowthRate}}%</p>
                                     </td>
                                 </tr>
                                 <tr style="height:14pt">
                                     <td
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s5"
-                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding:2px">
                                             {{#if (checkIfFcff)}} 
                                                 Wacc 
                                             {{else}}
@@ -2367,7 +2372,7 @@
                                         </p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding:2px">
                                             {{#if (checkIfFcff)}}
                                                 {{wacc}}%
                                             {{else}}
@@ -2380,12 +2385,12 @@
                                     <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-left-style:solid;border-left-width:1pt;border-left-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4"> -->
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s12"
-                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding:2px">
                                             Terminal Value</p>
                                         </td>
                                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                     <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-top-color:#A4A4A4;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:#A4A4A4;border-right-style:solid;border-right-width:1pt;border-right-color:#A4A4A4"> -->
-                                        <p style="text-indent: 0pt;text-align: right;padding-right: 5pt;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;font-weight: bold;">{{terminalValue}}</p>
+                                        <p style="text-indent: 0pt;text-align: right;font-size: 13px !important;font-weight: bold;padding:2px">{{terminalValue}}</p>
                                     </td>
                                 </tr>
                             </table>
@@ -2395,7 +2400,7 @@
                             <div>
                             {{/if}}
                             {{#if (checkIfFcff)}}
-                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 4%;">Present Value of
+                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 2%;">Present Value of
                                Free Cash Flow to Firm</h1>
                             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected FCFF has been computed in the table below:</p>
@@ -2674,7 +2679,7 @@
                             <!-- fcff table ends -->
                             {{else}}
 
-                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 4%;">Present Value of
+                            <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 2%;">Present Value of
                                 FCFE</h1>
                             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
@@ -2947,7 +2952,6 @@
                             {{/if}}
                             
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <h1 style="padding-left: 15pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
                                 Method</h1>
                             <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;"><span
@@ -2987,6 +2991,24 @@
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSumOfCashFlows}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                
+                                <tr>
+                                    {{#each (prsntValOfTerminalVal data)}}
+                                    {{#ifZero fcffPvTerminalVal}}
+                                    {{#if (isLineItemCheck fcffPvTerminalVal)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffPvTerminalVal}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffPvTerminalVal}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3195,6 +3217,23 @@
                                     {{/each}}
                                 </tr>
                                 <tr>
+                                    {{#each (prsntValOfTerminalVal data)}}
+                                    {{#ifZero fcfePvTerminalVal}}
+                                    {{#if (isLineItemCheck fcfePvTerminalVal)}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfePvTerminalVal}}
+                                        </p>
+                                    </td>
+                                    {{else}}
+                                    <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfePvTerminalVal}}
+                                        </p>
+                                    </td>
+                                    {{/if}}
+                                    {{/ifZero}}
+                                    {{/each}}
+                                </tr>
+                                <tr>
                                     {{#each (cashEquvlnt data)}}
                                     {{#ifZero fcfeCashEquivalents}}
                                     {{#if (isLineItemCheck fcfeCashEquivalents)}}
@@ -3383,7 +3422,7 @@
     <div class="container-top" style="padding-top: 20%;padding-left: 4%;">
         <div class="column">
             <p>Date: {{reportDate}}</p>
-            <p style="padding-top: 5px;">Place: ______________</p>
+            <p style="padding-top: 5px;">Place: Mumbai</p>
         </div>
         <div class="column">
             <p><strong>{{registeredValuerName}}</strong> </p>
@@ -3398,6 +3437,14 @@
     <h1 style="text-align: center">ANNEXURE B</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h1 style="text-align: center;">PROFILE OF REGISTERED VALUER</h1>
+
+    <p style="text-align: justify;padding-top: 3%;padding-left: 3%;padding-right: 1%;line-height: 170%;">
+        <span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
+        from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
+        field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
+        more than 500 Valuation assignments in a span of around 4 years. He has performed on transactions covering 
+        diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.
+    </p>
    </div>
 </body>
 

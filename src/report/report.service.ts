@@ -29,6 +29,7 @@ import { mrlReportService } from './mrl-report.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 import { navReportService } from './nav-report.service';
+import { terminalValueWorkingService } from 'src/valuationProcess/terminal-value-working.service';
 import { convertToRomanNumeral } from './report-common-functions';
 
 @Injectable()
@@ -52,7 +53,8 @@ export class ReportService {
     private mandateReportService: mandateReportService,
     private mrlReportService: mrlReportService,
     private thirdpartyApiAggregateService: thirdpartyApiAggregateService,
-    private navReportService: navReportService
+    private navReportService: navReportService,
+    private terminalValueWorkingService: terminalValueWorkingService
     ){}
 
     async getReport(id,res, req,approach){
@@ -62,6 +64,8 @@ export class ReportService {
           let htmlFilePath, pdfFilePath,docFilePath,pdf;
           const reportDetails = await this.reportModel.findById(id);
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+          const terminalYearWorkings:any = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+          const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
 
           const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
@@ -108,7 +112,7 @@ export class ReportService {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
-          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking);
+          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalYearWorkings);
   
           if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -157,6 +161,8 @@ export class ReportService {
 
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
+    const terminalValueWorking:any = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+    const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
     const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
     if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
@@ -200,7 +206,7 @@ export class ReportService {
             transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
         }
     }
-    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking);
+    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalValueWorking);
 
     if (valuationResult.modelResults.length > 0) {
         const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -663,8 +669,7 @@ export class ReportService {
         throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
       }
     }
-
-   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure, betaWorking){
+   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalYearWorkings){
      try{
       hbs.registerHelper('companyName',()=>{
         if(valuationResult.inputData[0].company)
@@ -969,25 +974,44 @@ export class ReportService {
       })
       hbs.registerHelper('freeCashFlow',()=>{
         let freeCashFlow = []
-        if(transposedData[0].data.transposedResult[1])
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
+        if(boolTvCashFlowBased){
+        if(transposedData[0].data.transposedResult[1]){
            valuationResult.modelResults.map((response)=>{
             if(response.model===MODEL[0] || response.model === MODEL[1]){
-              freeCashFlow.push(this.formatPositiveAndNegativeValues(response?.valuationData[response.valuationData.length -2].fcff)); // subtract (- 2) to get last year fcfe/fcff data 
+              freeCashFlow.push(this.formatPositiveAndNegativeValues(response?.valuationData[response.valuationData.length - 1].fcff)); // subtract (- 2) to get last year fcfe/fcff data 
             }
           });
-          return freeCashFlow;
+        }
+      }
+        else{
+          const terminalYearFreeCashFlowPatBased = terminalYearWorkings?.terminalValueWorking?.freeCashFlow || 0;
+          freeCashFlow.push(this.formatPositiveAndNegativeValues(terminalYearFreeCashFlowPatBased))
+        }
+        return freeCashFlow;
       })
       hbs.registerHelper('terminalValue',()=>{
         let terminalVal='';
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
+        if(boolTvCashFlowBased){
         if(valuationResult.modelResults){
           valuationResult.modelResults.map((response)=>{
-            if(response.model===MODEL[0] || response.model === MODEL[1])
-               response?.valuationData.map((perYearData)=>{
-                if(perYearData.particulars === 'Terminal Value'){
-                  terminalVal = this.formatPositiveAndNegativeValues(perYearData?.fcff);
-                }
-              });
+            if(response.model===MODEL[0] || response.model === MODEL[1]){
+              terminalVal = this.formatPositiveAndNegativeValues(response.terminalYearWorking.terminalValueBasedOnLastYear);
+            }
+              // response?.valuationData.map((perYearData)=>{
+              //   if(perYearData.particulars === 'Terminal Value'){
+              //     terminalVal = this.formatPositiveAndNegativeValues(perYearData?.fcff);
+              //   }
+              // });
           });
+          return terminalVal;
+          }
+        }
+        else{
+          terminalVal = this.formatPositiveAndNegativeValues(terminalYearWorkings?.terminalValueWorking?.terminalYearValue || 0) ;
           return terminalVal;
         }
         return terminalVal
@@ -1059,7 +1083,8 @@ export class ReportService {
                 return {columnHeader:columnHeader.particulars}
               }
             })
-            headers.unshift({columnHeader:'Particulars'})
+            headers.unshift({columnHeader:'Particulars'});
+            headers.push({columnHeader:'Terminal Period'});
           }
         })
         return headers;
@@ -1098,12 +1123,12 @@ export class ReportService {
           valuationResult.modelResults.map((result)=>{
 
             if( result?.model === MODEL[0] ||  result?.model === MODEL[1]){
-              result?.valuationData.map((response,i)=>{
-                if(response.particulars === 'Terminal Value'){
-                  index = i
-                }
-              })
-              explicitYear = result.valuationData[index-1]['particulars'];
+              // result?.valuationData.map((response,i)=>{
+              //   if(response.particulars === 'Terminal Value'){
+              //     index = i
+              //   }
+              // })
+              explicitYear = result.valuationData[result?.valuationData.length-1]['particulars'];
             }
           })
           explicitYear = `20${explicitYear.split('-')[1]}`
@@ -1113,20 +1138,30 @@ export class ReportService {
 
       hbs.registerHelper('PAT', () => {
         let arrayPAT = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalYearPat = result.terminalYearWorking.pat;
             result.valuationData.map((response:any)=>{              
               const patValue = this.formatPositiveAndNegativeValues(response?.pat);
-              arrayPAT.push({fcfePat:patValue})
+              arrayPAT.push({fcfePat:patValue});
             })
             arrayPAT.unshift({fcfePat:"PAT"});
+            if(!boolTvCashFlowBased){
+              arrayPAT.push({fcfePat: this.formatPositiveAndNegativeValues(terminalYearPat)});
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalYearPat = result.terminalYearWorking.pat;
             result.valuationData.map((response:any)=>{
               const patValue = this.formatPositiveAndNegativeValues(response?.pat);
               arrayPAT.push({fcffPat:patValue})
             })
             arrayPAT.unshift({fcffPat:"PAT"});
+            if(!boolTvCashFlowBased){
+              arrayPAT.push({fcffPat: this.formatPositiveAndNegativeValues(terminalYearPat)});
+            }
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
@@ -1141,13 +1176,22 @@ export class ReportService {
 
       hbs.registerHelper('FCFF', () => {
         let arrayfcff = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFF'){
+            const terminalValueFcffBasedOnPat = result.terminalYearWorking.fcff;
+            const terminalValueFcffBasedOnLastYear = result.terminalYearWorking.terminalValueBasedOnLastYear;
             result.valuationData.map((response:any)=>{
               const fcffValue = this.formatPositiveAndNegativeValues(response.fcff);
               arrayfcff.push({fcff:fcffValue})
             })
             arrayfcff.unshift({fcff:"FCFF"});
+            if(!boolTvCashFlowBased){
+              arrayfcff.push({fcff:this.formatPositiveAndNegativeValues(terminalValueFcffBasedOnPat)});
+            }else{
+              arrayfcff.push({fcff:this.formatPositiveAndNegativeValues(terminalValueFcffBasedOnLastYear)});
+            }
           }
         })
         return arrayfcff;
@@ -1155,21 +1199,30 @@ export class ReportService {
 
       hbs.registerHelper('depAndAmortisation', () => {
         let arraydepAndAmortisation = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalYearDepnAndAmortisation = result.terminalYearWorking.depAndAmortisation;
             result.valuationData.map((response:any)=>{
               const depAndAmortisation = this.formatPositiveAndNegativeValues(response?.depAndAmortisation);
               arraydepAndAmortisation.push({fcfeDepAmortisation:depAndAmortisation})
             })
             arraydepAndAmortisation.unshift({fcfeDepAmortisation:"Depn. and Amortn."});
+            if(!boolTvCashFlowBased){
+              arraydepAndAmortisation.push({fcfeDepAmortisation:this.formatPositiveAndNegativeValues(terminalYearDepnAndAmortisation)});
+            }
           }
           else if (result.model === 'FCFF'){
+            const terminalYearDepnAndAmortisation = result.terminalYearWorking.depAndAmortisation;
             result.valuationData.map((response:any)=>{
              const depAndAmortisation = this.formatPositiveAndNegativeValues(response.depAndAmortisation)
               arraydepAndAmortisation.push({fcffDepAmortisation:depAndAmortisation})
             })
             arraydepAndAmortisation.unshift({fcffDepAmortisation:"Depn. and Amortn."});
-            
+            if(!boolTvCashFlowBased){
+              arraydepAndAmortisation.push({fcffDepAmortisation:this.formatPositiveAndNegativeValues(terminalYearDepnAndAmortisation)});
+            }
           }
         })
         return arraydepAndAmortisation;
@@ -1177,21 +1230,30 @@ export class ReportService {
 
       hbs.registerHelper('InterestAdjTaxes', () => {
         let arrayaddInterestAdjTaxes = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueInterestAdjTax = result.terminalYearWorking.addInterestAdjTaxes;
             result.valuationData.map((response:any)=>{
               const addInterestAdjTaxesValue = this.formatPositiveAndNegativeValues(response?.addInterestAdjTaxes);
               arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:addInterestAdjTaxesValue})
             })
             arrayaddInterestAdjTaxes.unshift({fcfeAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
+            if(!boolTvCashFlowBased){
+              arrayaddInterestAdjTaxes.push({fcfeAddInterestAdjTaxes:this.formatPositiveAndNegativeValues(terminalValueInterestAdjTax)})
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValueInterestAdjTax = result.terminalYearWorking.addInterestAdjTaxes;
             result.valuationData.map((response:any)=>{
               const addInterestAdjTaxesValue = this.formatPositiveAndNegativeValues(response?.addInterestAdjTaxes);
               arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:addInterestAdjTaxesValue})
             })
             arrayaddInterestAdjTaxes.unshift({fcffAddInterestAdjTaxes:"Add: Interest Adjusted Taxes"});
-            
+            if(!boolTvCashFlowBased){
+              arrayaddInterestAdjTaxes.push({fcffAddInterestAdjTaxes:this.formatPositiveAndNegativeValues(terminalValueInterestAdjTax)})
+            }
           }
         })
         return arrayaddInterestAdjTaxes;
@@ -1199,6 +1261,8 @@ export class ReportService {
 
       hbs.registerHelper('nonCashItem', () => {
         let arrayonCashItems = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
             result.valuationData.map((response:any)=>{
@@ -1206,6 +1270,9 @@ export class ReportService {
               arrayonCashItems.push({fcfeOnCashItems:nonCashItem})
             })
             arrayonCashItems.unshift({fcfeOnCashItems:"Other Non Cash items"});
+            if(!boolTvCashFlowBased){
+              arrayonCashItems.push({fcfeOnCashItems:'-'})    //Purposely pushing empty object since for terminal year column non cash item is 0
+            }
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
@@ -1214,6 +1281,9 @@ export class ReportService {
               arrayonCashItems.push({fcffOnCashItems:nonCashItem})
             })
             arrayonCashItems.unshift({fcffOnCashItems:"Other Non Cash items"});
+            if(!boolTvCashFlowBased){
+              arrayonCashItems.push({fcffOnCashItems:'-'})    //Purposely pushing empty object since for terminal year column non cash item is 0
+            }
           }
         })
         return arrayonCashItems;
@@ -1221,20 +1291,30 @@ export class ReportService {
 
       hbs.registerHelper('NCA', () => {
         let arrayNca = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueNca = result.terminalYearWorking.nca;
             result.valuationData.map((response:any)=>{
               const ncaValue = this.formatPositiveAndNegativeValues(response?.nca);
               arrayNca.push({fcfeNca:ncaValue})
             })
             arrayNca.unshift({fcfeNca:"Change in NCA"});
+            if(!boolTvCashFlowBased){
+              arrayNca.push({fcfeNca:this.formatPositiveAndNegativeValues(terminalValueNca)})
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValueNca = result.terminalYearWorking.nca;
             result.valuationData.map((response:any)=>{
               const ncaValue = this.formatPositiveAndNegativeValues(response?.nca);
               arrayNca.push({fcffNca:ncaValue})
             })
             arrayNca.unshift({fcffNca:"Change in NCA"});
+            if(!boolTvCashFlowBased){
+              arrayNca.push({fcffNca:this.formatPositiveAndNegativeValues(terminalValueNca)})
+            }
           }
         })
         return arrayNca;
@@ -1242,20 +1322,30 @@ export class ReportService {
 
       hbs.registerHelper('defferTaxAssets', () => {
         let arraydefferedTaxAssets = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueDeferredTaxAsset = result.terminalYearWorking.defferedTaxAssets;
             result.valuationData.map((response:any)=>{
               const deferredTaxValue = this.formatPositiveAndNegativeValues(response?.defferedTaxAssets);
               arraydefferedTaxAssets.push({fcfeDefferedTaxAssets:deferredTaxValue})
             })
             arraydefferedTaxAssets.unshift({fcfeDefferedTaxAssets:"Add/Less: Deferred Tax Assets(Net)"});
+            if(!boolTvCashFlowBased){
+              arraydefferedTaxAssets.push({fcfeDefferedTaxAssets:this.formatPositiveAndNegativeValues(terminalValueDeferredTaxAsset)});
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValueDeferredTaxAsset = result.terminalYearWorking.defferedTaxAssets;
             result.valuationData.map((response:any)=>{
               const deferredTaxValue = this.formatPositiveAndNegativeValues(response?.defferedTaxAssets);
               arraydefferedTaxAssets.push({fcffDefferedTaxAssets:deferredTaxValue})
             })
             arraydefferedTaxAssets.unshift({fcffDefferedTaxAssets:"Add/Less: Deferred Tax Assets(Net)"});
+            if(!boolTvCashFlowBased){
+              arraydefferedTaxAssets.push({fcffDefferedTaxAssets:this.formatPositiveAndNegativeValues(terminalValueDeferredTaxAsset)});
+            }
           }
         })
         return arraydefferedTaxAssets;
@@ -1263,13 +1353,19 @@ export class ReportService {
 
       hbs.registerHelper('changeInBorrowing', () => {
         let arrayChangeInBorrowings = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueChangeInBorrowings = result.terminalYearWorking.changeInBorrowings;
             result.valuationData.map((response:any)=>{
               const changeInBorrowingValue = this.formatPositiveAndNegativeValues(response?.changeInBorrowings);
               arrayChangeInBorrowings.push({changeInBorrowings:changeInBorrowingValue})
             })
             arrayChangeInBorrowings.unshift({changeInBorrowings:"Change in Borrowings"});
+            if(!boolTvCashFlowBased){
+              arrayChangeInBorrowings.push({changeInBorrowings:this.formatPositiveAndNegativeValues(terminalValueChangeInBorrowings)});
+            }
           }
         })
         return arrayChangeInBorrowings;
@@ -1277,20 +1373,30 @@ export class ReportService {
 
       hbs.registerHelper('netCshFlow', () => {
         let arrayNetCashFlow = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueNetCashFlow = result.terminalYearWorking.netCashFlow;
             result.valuationData.map((response:any)=>{
               const netCashFlowValue = this.formatPositiveAndNegativeValues(response?.netCashFlow);
               arrayNetCashFlow.push({fcfeNetCashFlow:netCashFlowValue})
             })
             arrayNetCashFlow.unshift({fcfeNetCashFlow:"Net Cash Flow"});
+            if(!boolTvCashFlowBased){
+              arrayNetCashFlow.push({fcfeNetCashFlow:this.formatPositiveAndNegativeValues(terminalValueNetCashFlow)});
+            }
           }
           if(result.model === 'FCFF'){
+            const terminalValueNetCashFlow = result.terminalYearWorking.netCashFlow;
             result.valuationData.map((response:any)=>{
               const netCashFlowValue = this.formatPositiveAndNegativeValues(response?.netCashFlow);
               arrayNetCashFlow.push({fcffNetCashFlow:netCashFlowValue})
             })
             arrayNetCashFlow.unshift({fcffNetCashFlow:"Net Cash Flow"});
+            if(!boolTvCashFlowBased){
+              arrayNetCashFlow.push({fcffNetCashFlow:this.formatPositiveAndNegativeValues(terminalValueNetCashFlow)});
+            }
           }
         })
         return arrayNetCashFlow;
@@ -1298,20 +1404,30 @@ export class ReportService {
 
       hbs.registerHelper('fxdCshFlow', () => {
         let arrayFixedAssets = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueFixedAssets = result.terminalYearWorking.fixedAssets;
             result.valuationData.map((response:any)=>{
               const fixedAssetsValue = this.formatPositiveAndNegativeValues(response?.fixedAssets);
               arrayFixedAssets.push({fcfeFixedAssets:fixedAssetsValue})
             })
             arrayFixedAssets.unshift({fcfeFixedAssets:"Change in fixed assets"});
+            if(!boolTvCashFlowBased){
+              arrayFixedAssets.push({fcfeFixedAssets:this.formatPositiveAndNegativeValues(terminalValueFixedAssets)});
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValueFixedAssets = result.terminalYearWorking.fixedAssets;
             result.valuationData.map((response:any)=>{
               const fixedAssetsValue = this.formatPositiveAndNegativeValues(response?.fixedAssets);
               arrayFixedAssets.push({fcffFixedAssets:fixedAssetsValue})
             })
             arrayFixedAssets.unshift({fcffFixedAssets:"Change in fixed assets"});
+            if(!boolTvCashFlowBased){
+              arrayFixedAssets.push({fcffFixedAssets:this.formatPositiveAndNegativeValues(terminalValueFixedAssets)});
+            }
           }
         })
         return arrayFixedAssets;
@@ -1319,13 +1435,22 @@ export class ReportService {
       
       hbs.registerHelper('FCFE', () => {
         let arrayfcff = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueFcffBasedOnPat = result.terminalYearWorking.fcff;
+            const terminalValueFcffBasedOnLastYear = result.terminalYearWorking.terminalValueBasedOnLastYear;
             result.valuationData.map((response:any)=>{
               const fcffValue = this.formatPositiveAndNegativeValues(response?.fcff);
               arrayfcff.push({fcff:fcffValue})
             })
             arrayfcff.unshift({fcff:"FCFE"});
+            if(!boolTvCashFlowBased){
+              arrayfcff.push({fcff:this.formatPositiveAndNegativeValues(terminalValueFcffBasedOnPat)});
+            }else{
+              arrayfcff.push({fcff:this.formatPositiveAndNegativeValues(terminalValueFcffBasedOnLastYear)});
+            }
           }
         })
         return arrayfcff;
@@ -1333,20 +1458,30 @@ export class ReportService {
       
       hbs.registerHelper('discPeriod', () => {
         let arrayDiscountingPeriod = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueDiscountingPeriod = result.terminalYearWorking.discountingPeriod;
             result.valuationData.map((response:any)=>{
               const discountingPeriodValue = this.formatPositiveAndNegativeValues(response?.discountingPeriod);
               arrayDiscountingPeriod.push({fcfeDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({fcfeDiscountingPeriod:"Discounting Period"});
+            if(boolTvCashFlowBased){
+              arrayDiscountingPeriod.push({fcfeDiscountingPeriod:this.formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValueDiscountingPeriod = result.terminalYearWorking.discountingPeriod;
             result.valuationData.map((response:any)=>{
               const discountingPeriodValue = this.formatPositiveAndNegativeValues(response?.discountingPeriod);
               arrayDiscountingPeriod.push({fcffDiscountingPeriod:discountingPeriodValue})
             })
             arrayDiscountingPeriod.unshift({fcffDiscountingPeriod:"Discounting Period"});
+            if(boolTvCashFlowBased){
+              arrayDiscountingPeriod.push({fcffDiscountingPeriod:this.formatPositiveAndNegativeValues(terminalValueDiscountingPeriod)});
+            }
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
@@ -1361,20 +1496,30 @@ export class ReportService {
       
       hbs.registerHelper('discFactor', () => {
         let arrayDiscountingFactor = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValueDiscountingFactor = result.terminalYearWorking.discountingFactor;
             result.valuationData.map((response:any)=>{
               const discountingFactorValue = this.formatPositiveAndNegativeValues(response?.discountingFactor);
               arrayDiscountingFactor.push({fcfeDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({fcfeDiscountingFactor:"Discounting Factor"});
+            if(boolTvCashFlowBased){
+              arrayDiscountingFactor.push({fcfeDiscountingFactor:this.formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValueDiscountingFactor = result.terminalYearWorking.discountingFactor;
             result.valuationData.map((response:any)=>{
               const discountingFactorValue = this.formatPositiveAndNegativeValues(response?.discountingFactor);
               arrayDiscountingFactor.push({fcffDiscountingFactor:discountingFactorValue})
             })
             arrayDiscountingFactor.unshift({fcffDiscountingFactor:"Discounting Factor"});
+            if(boolTvCashFlowBased){
+              arrayDiscountingFactor.push({fcffDiscountingFactor:this.formatPositiveAndNegativeValues(terminalValueDiscountingFactor)});
+            }
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
@@ -1389,20 +1534,40 @@ export class ReportService {
       
       hbs.registerHelper('prsntFCFF', () => {
         let arrayPresentFCFF = [];
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
         valuationResult.modelResults.forEach((result)=>{
           if(result.model === 'FCFE'){
+            const terminalValuePresentFCFFBasedOnPat = terminalYearWorkings?.terminalValueWorking?.pvTerminalValue || 0;
+            const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
             result.valuationData.map((response:any)=>{
               const presentFCFFValue = this.formatPositiveAndNegativeValues(response?.presentFCFF);
               arrayPresentFCFF.push({fcfePresentFCFF:presentFCFFValue})
             })
             arrayPresentFCFF.unshift({fcfePresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
+            // if(!boolTvCashFlowBased){
+              //   arrayPresentFCFF.push({fcfePresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnPat)});
+              // }
+              // else{
+            if(boolTvCashFlowBased){
+              arrayPresentFCFF.push({fcfePresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
+            }
           }
           else if(result.model === 'FCFF'){
+            const terminalValuePresentFCFFBasedOnPat = terminalYearWorkings?.terminalValueWorking?.pvTerminalValue || 0;
+            const terminalValuePresentFCFFBasedOnLastYear = result.terminalYearWorking.presentFCFF || 0;
             result.valuationData.map((response:any)=>{
               const presentFCFFValue = this.formatPositiveAndNegativeValues(response?.presentFCFF);
               arrayPresentFCFF.push({fcffPresentFCFF:presentFCFFValue})
             })
             arrayPresentFCFF.unshift({fcffPresentFCFF:result?.model === 'FCFF' ? "Present Value of FCFF" : "Present Value of FCFE"});
+            // if(!boolTvCashFlowBased){
+              //   arrayPresentFCFF.push({fcffPresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnPat)});
+              // }
+              // else{
+            if(boolTvCashFlowBased){
+              arrayPresentFCFF.push({fcffPresentFCFF:this.formatPositiveAndNegativeValues(terminalValuePresentFCFFBasedOnLastYear)});
+            }
           }
         })
         return arrayPresentFCFF;
@@ -1450,14 +1615,14 @@ export class ReportService {
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({fcfeSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Discounted Cash Flows"});
+            arraySumOfCashFlows.unshift({fcfeSumOfCashFlows:"Sum of Discounted Cash Flows (Explicit Period)"});
           }
           else if(result.model === 'FCFF'){
             result.valuationData.map((response:any)=>{
               const sumOfCashFlowsValue = this.formatPositiveAndNegativeValues(response?.sumOfCashFlows);
               arraySumOfCashFlows.push({fcffSumOfCashFlows:sumOfCashFlowsValue})
             })
-            arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Discounted Cash Flows"});
+            arraySumOfCashFlows.unshift({fcffSumOfCashFlows:"Sum of Discounted Cash Flows (Explicit Period)"});
           }
           else if(result.model === 'Excess_Earnings'){
             result.valuationData.map((response:any)=>{
@@ -1468,6 +1633,27 @@ export class ReportService {
           }
         })
         return arraySumOfCashFlows;
+      });
+
+      hbs.registerHelper('prsntValOfTerminalVal', () => {
+        let arrayPvTerminalValue = [];
+        valuationResult.modelResults.forEach((result)=>{
+          if(result.model === 'FCFE'){
+            result.valuationData.map((response:any)=>{
+              const pvTerminalValue = this.formatPositiveAndNegativeValues(response?.pvTerminalValue);
+              arrayPvTerminalValue.push({fcfePvTerminalVal:pvTerminalValue})
+            })
+            arrayPvTerminalValue.unshift({fcfePvTerminalVal:"Present Value of Terminal Value"});
+          }
+          else if(result.model === 'FCFF'){
+            result.valuationData.map((response:any)=>{
+              const pvTerminalValue = this.formatPositiveAndNegativeValues(response?.pvTerminalValue);
+              arrayPvTerminalValue.push({fcffPvTerminalVal:pvTerminalValue})
+            })
+            arrayPvTerminalValue.unshift({fcffPvTerminalVal:"Present Value of Terminal Value"});
+          }
+        })
+        return arrayPvTerminalValue;
       });
       
       hbs.registerHelper('cashEquvlnt', () => {
@@ -1622,6 +1808,12 @@ export class ReportService {
           })
         }
         return isFcff;
+      })
+
+      hbs.registerHelper('checkTerminalValueType',()=>{
+        const terminalValueType = allProcessStageDetails.stateInfo?.fifthStageInput?.terminalValueSelectedType ||  'tvCashFlowBased';
+        let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased'; 
+        return boolTvCashFlowBased;
       })
       hbs.registerHelper('displayValuationHeader',()=>{
         let modelArray = [];
@@ -2264,7 +2456,7 @@ export class ReportService {
       let colspan;
       valuationResult.modelResults.map((response)=>{
         if(response.model === MODEL[0] || response.model === MODEL[1]){
-          colspan = response?.valuationData.length;
+          colspan = response?.valuationData.length + 1;     //Adding one here since we remove terminal year working from the valuation array, and re-add in the above helper somewhere at the top
         }
       })
       return colspan + 1;  //add one since column starts from particulars

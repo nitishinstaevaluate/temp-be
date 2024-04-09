@@ -725,7 +725,7 @@
 <div class="container-top" style="padding-top: 25%;padding-left: 5%;">
     <div class="column">
         <p>Date: {{reportDate}}</p>
-        <p style="padding-top: 5px;">Place: ______________</p>
+        <p style="padding-top: 5px;">Place: Mumbai</p>
     </div>
     <div class="column">
         <p><strong>{{registeredValuerName}}</strong> </p>
@@ -814,7 +814,7 @@
                     </li>
                     <li data-list-text="B.">
                         <p style="padding-left: 76pt;text-indent: -24pt;text-align: left;"><a href="#bookmark21" class="a" style="width: 20%;">Valuation
-                                of the Company via the Discounted Cash Flow Method (‘DCF’) </a>
+                                of the Company via {{displayValuationHeader}} </a>
                                 <span href="#bookmark21" style="padding-right: 0.4%;width: 5%;float: right;">15</span>
                             
                             </p>
@@ -2109,8 +2109,13 @@
                                     <td
                                         style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s5"
-                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">Free
-                                            Cash Flows at end of FY {{explicitYear}}</p>
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;padding-top: 2px;padding-bottom: 2px;">
+                                            {{#if (checkTerminalValueType)}}
+                                            Free Cash Flows at end of FY {{explicitYear}}
+                                            {{else}}
+                                            Terminal Year Cash Flow
+                                            {{/if}}
+                                        </p>
                                     </td>
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         >
@@ -2172,7 +2177,7 @@
                             <div>
                             {{/if}}
                              {{#if (checkIfFcff)}}
-                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 4%;">Present Value of
+                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 2%;">Present Value of
                                 Free Cash Flow to Firm</h1>
                              <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                  present value of the projected FCFF has been computed in the table below:</p>
@@ -2450,7 +2455,7 @@
                              <!-- fcff table ends -->
                              {{else}}
  
-                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 4%;">Present Value of
+                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 2%;">Present Value of
                                 FCFE</h1>
                             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
@@ -2767,6 +2772,23 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               <tr>
+                                {{#each (prsntValOfTerminalVal data)}}
+                                {{#ifZero fcffPvTerminalVal}}
+                                {{#if (isLineItemCheck fcffPvTerminalVal)}}
+                                <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffPvTerminalVal}}
+                                    </p>
+                                </td>
+                                {{else}}
+                                <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffPvTerminalVal}}
+                                    </p>
+                                </td>
+                                {{/if}}
+                                {{/ifZero}}
+                                {{/each}}
+                                </tr>
                                {{#if (hasDebtDate)}}
                                <tr>
                                    {{#each (debtDate data)}}
@@ -2968,6 +2990,23 @@
                                    {{/ifZero}}
                                    {{/each}}
                                </tr>
+                               <tr>
+                                {{#each (prsntValOfTerminalVal data)}}
+                                {{#ifZero fcfePvTerminalVal}}
+                                {{#if (isLineItemCheck fcfePvTerminalVal)}}
+                                <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfePvTerminalVal}}
+                                    </p>
+                                </td>
+                                {{else}}
+                                <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfePvTerminalVal}}
+                                    </p>
+                                </td>
+                                {{/if}}
+                                {{/ifZero}}
+                                {{/each}}
+                            </tr>
                                <tr>
                                    {{#each (cashEquvlnt data)}}
                                    {{#ifZero fcfeCashEquivalents}}
@@ -4124,7 +4163,7 @@
     <div class="container-top" style="padding-top: 25%;padding-left: 5%;">
         <div class="column">
             <p>Date: {{reportDate}}</p>
-            <p style="padding-top: 5px;">Place: ______________</p>
+            <p style="padding-top: 5px;">Place: Mumbai</p>
         </div>
         <div class="column">
             <p><strong>{{registeredValuerName}}</strong> </p>
@@ -4139,6 +4178,13 @@
     <h1 style="text-align: center">ANNEXURE B</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h1 style="text-align: center;">PROFILE OF REGISTERED VALUER</h1>
+    <p style="text-align: justify;padding-top: 3%;padding-left: 3%;padding-right: 1%;line-height: 170%;">
+        <span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
+        from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
+        field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
+        more than 500 Valuation assignments in a span of around 4 years. He has performed on transactions covering 
+        diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.
+    </p>
    </div>
 </body>
 

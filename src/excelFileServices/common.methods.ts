@@ -144,7 +144,7 @@ export async function getYearsList(worksheet1: any): Promise<any> {
 }
 
 export async function computeFinancialYearEndDate(provisionalDate){    //Always pass provisioanl date it will give you  only financial year
-  const cleanProvisionalDate = new Date(provisionalDate);
+  const cleanProvisionalDate:any = new Date(provisionalDate);
 
   const currentFinancialYearEnd = cleanProvisionalDate.getFullYear();
 
@@ -156,7 +156,31 @@ export async function computeFinancialYearEndDate(provisionalDate){    //Always 
 
   const fiscalYearEnd:any = new Date(currentYear, 2, 31); // March is month index 2
 
-  const finalYear =  cleanProvisionalDate <= fiscalYearEnd ? ( cleanProvisionalDate.getFullYear() === new Date().getFullYear() ? new Date(currentFinancialYearEnd - 1, 2, 31) : provisionalBasedFinancialYear ) : currentFinancialDate; 
+  // Old condition
+  // const finalYear =  cleanProvisionalDate <= fiscalYearEnd ? ( 
+  //   cleanProvisionalDate === fiscalYearEnd ? cleanProvisionalDate : 
+  //   (
+  //     cleanProvisionalDate.getFullYear() === new Date().getFullYear() ? 
+  //     new Date(currentFinancialYearEnd - 1, 2, 31) : 
+  //     provisionalBasedFinancialYear) 
+  // ) : currentFinancialDate;
+  
+  // New condition
+  let finalYear;
+  if(cleanProvisionalDate.getTime() === fiscalYearEnd.getTime()){
+    finalYear = cleanProvisionalDate
+  }
+  else if(cleanProvisionalDate < fiscalYearEnd){
+    if(cleanProvisionalDate.getFullYear() === new Date().getFullYear){
+      finalYear = new Date(currentFinancialYearEnd - 1, 2, 31)
+    }
+    else{
+      finalYear = provisionalBasedFinancialYear;
+    }
+  }
+  else{
+    finalYear = currentFinancialDate
+  }
   console.log(finalYear,"final year calculations----->125")
   console.log(fiscalYearEnd,"fiscal year end----->126")
   console.log(cleanProvisionalDate,"provisional date----->127", provisionalDate)

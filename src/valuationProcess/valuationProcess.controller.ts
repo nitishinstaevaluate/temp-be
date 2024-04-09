@@ -8,7 +8,8 @@ import {
   Query,
   ParseIntPipe,
   UseGuards,
-  Request
+  Request,
+  Headers
 } from '@nestjs/common';
 import * as XLSX from 'xlsx';
 import { ValuationsService } from './valuationProcess.service';
@@ -25,6 +26,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { terminalValueWorkingService } from './terminal-value-working.service';
+import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -254,12 +256,14 @@ let workbook=null;
                   model: MODEL[0],
                   valuationData: fcfeResponse.result,
                   valuation:fcfeResponse.valuation,
+                  terminalYearWorking:fcfeResponse.terminalValueWorking,
                   provisionalDate:fcfeResponse.provisionalDate
                   });
                 tableResult.push({
                 model: MODEL[0],
                 valuationData: fcfeResponse.tableData,
                 valuation:fcfeResponse.valuation,
+                terminalYearWorking:fcfeResponse.terminalValueWorking,
                 columnHeader:fcfeResponse.columnHeader,
                 provisionalDate:fcfeResponse.provisionalDate
                 });
@@ -274,12 +278,14 @@ let workbook=null;
                   model: MODEL[1],
                   valuationData: fcffResponse.result,
                   valuation:fcffResponse.valuation,
+                  terminalYearWorking:fcffResponse.terminalValueWorking,
                   provisionalDate:fcffResponse.provisionalDate
                   });
                 tableResult.push({
                   model: MODEL[1],
                   valuationData: fcffResponse.tableData,
                   valuation:fcffResponse.valuation,
+                  terminalYearWorking:fcffResponse.terminalValueWorking,
                   columnHeader:fcffResponse.columnHeader,
                   provisionalDate:fcffResponse.provisionalDate
                   });
@@ -390,12 +396,21 @@ export class ValuationsController {
   
   constructor(private valuationsService: ValuationsService,
     private readonly utilsService: utilsService,
-    private terminalWorkingService: terminalValueWorkingService) {}
+    private terminalWorkingService: terminalValueWorkingService,
+    private readonly fcfeService: FCFEAndFCFFService) {}
 
   @UseGuards(KeyCloakAuthGuard)
   @Get('calculate-terminal-value')
   async processTerminalValue(@Query('id') valuationId:any){
     return await this.terminalWorkingService.computeTerminalValue(valuationId);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('re-valuation/:id/:type')
+  async recalculateValuePerShare(@Param('id') processId:any,
+  @Param('type') type:any,
+  @Headers() headers: Headers){
+    return await this.fcfeService.recalculateValuePerShare(processId, type, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)
