@@ -10,8 +10,11 @@ export class ValuationsService {
     private readonly valuationModel: Model<ValuationDocument>,
   ) {}
 
-  async createValuation(valuation: object): Promise<string> {
+  async createValuation(valuation: any, id?): Promise<string> {
     try {
+      if(id){
+        return await this.valuationModel.findByIdAndUpdate(id, valuation, {new : true});
+      }
       const createdFoo = await this.valuationModel.create(valuation);
       return createdFoo._id;
     } catch (e) {

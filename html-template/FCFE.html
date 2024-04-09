@@ -233,6 +233,13 @@
                     {{/each}}
                 </tr>
                 <tr>
+                    {{#each (prsntValOfTerminalVal data)}}
+                    {{#ifZero fcfePvTerminalVal}}
+                    <td style="font-size: 13px !important;">{{fcfePvTerminalVal}}</td>
+                    {{/ifZero}}
+                    {{/each}}
+                </tr>
+                <tr>
                     {{#each (cashEquvlnt data)}}
                     {{#ifZero fcfeCashEquivalents}}
                     <td style="font-size: 13px !important;">{{fcfeCashEquivalents}}</td>

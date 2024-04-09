@@ -229,6 +229,13 @@
                     {{/each}}
                 </tr>
                 <tr>
+                    {{#each (prsntValOfTerminalVal data)}}
+                    {{#ifZero fcffPvTerminalVal}}
+                    <td style="font-size: 13px !important;">{{fcffPvTerminalVal}}</td>
+                    {{/ifZero}}
+                    {{/each}}
+                </tr>
+                <tr>
                     {{#each (debtDate data)}}
                     {{#ifZero fcffDebtOnDate}}
                     <td style="font-size: 13px;">{{fcffDebtOnDate}}</td>

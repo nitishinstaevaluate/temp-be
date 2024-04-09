@@ -28,23 +28,26 @@ export class terminalValueWorkingService{
                     dcfValuation = indValuation;
                 }
             })
-            const dcfValuationData = dcfValuation.valuationData;
+            const dcfTerminalYearValuationData = dcfValuation.terminalYearWorking;
+            const dcfRemainingYrsValuationData = dcfValuation.valuationData;
 
             let terminalValueWorking = new TerminalValueWorkingDto();
             terminalValueWorking.terminalGrowthRate = valuationModelResult.inputData[0].terminalGrowthRate;
-            terminalValueWorking.costOfEquity = valuationModelResult.inputData[0].costOfEquity;
+            terminalValueWorking.costOfEquity = valuationModelResult.inputData[0].adjustedCostOfEquity;
 
-            dcfValuationData.map((indElements)=>{
-                if(indElements.particulars === 'Terminal Value'){
-                    terminalValueWorking.freeCashFlow = indElements.fcff;
-                    terminalValueWorking.pvFactor = indElements.discountingFactor;
-                }
-            })
+            // dcfValuationData.map((indElements)=>{
+            //     if(indElements.particulars === 'Terminal Value'){
+            //         terminalValueWorking.freeCashFlow = indElements.fcff;
+            //         terminalValueWorking.pvFactor = indElements.discountingFactor;
+            //     }
+            // })
+            terminalValueWorking.freeCashFlow = dcfTerminalYearValuationData.fcff;
+            terminalValueWorking.pvFactor = dcfRemainingYrsValuationData[dcfRemainingYrsValuationData.length - 1].discountingFactor;
 
             terminalValueWorking.terminalYearValue =convertToNumberOrZero(terminalValueWorking.freeCashFlow)/
                 (
-                    convertToNumberOrZero(terminalValueWorking.costOfEquity) -
-                    convertToNumberOrZero(terminalValueWorking.terminalGrowthRate)
+                    (convertToNumberOrZero(terminalValueWorking.costOfEquity))/100 -
+                    (convertToNumberOrZero(terminalValueWorking.terminalGrowthRate))/100
                     
                 );
                 

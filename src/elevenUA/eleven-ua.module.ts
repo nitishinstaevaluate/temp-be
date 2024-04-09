@@ -20,6 +20,8 @@ import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { authenticationTokenSchema } from 'src/authentication/schema/authentication-token.schema';
+import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.module';
+import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { ReportModule } from 'src/report/report.module';
 
 @Module({
@@ -34,6 +36,8 @@ import { ReportModule } from 'src/report/report.module';
     { name: 'token', schema: authenticationTokenSchema }
   ]),
   UsersModule,
+  ValuationProcessModule,
+  ProcessStatusManagerModule,
   forwardRef(() => ReportModule),
   JwtModule.register({
     secret: process.env.JWT_SECRET,

@@ -52,6 +52,6 @@ import { ProcessStatusManagerService } from 'src/processStatusManager/process-st
     terminalValueWorkingService,
     ProcessStatusManagerService
   ], //ImportService
-  exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService],
+  exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService, terminalValueWorkingService],
 })
 export class ValuationProcessModule {}
