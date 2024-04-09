@@ -937,7 +937,7 @@ export class ReportService {
       hbs.registerHelper('equityPerShare',()=>{
         let equityPerShare = [];
         let checkiIfStub = false;
-        if(reportDetails?.modelWeightageValue){
+        if(reportDetails?.modelWeightageValue && valuationResult?.modelResults?.length > 1){
           const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
           return `${number.replace(/,/g, ',')}`
         }
