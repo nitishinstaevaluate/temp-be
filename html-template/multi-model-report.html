@@ -2012,7 +2012,13 @@
                                                     {{else}}
                                                     <p style="padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
                                                         {{#if (isBetaFromAd)}}
-                                                            The beta is considered as <span>{{beta}}</span> of {{betaAdIndustryName}} from Prof. Aswath Damodaran dababase.
+                                                             The beta is considered as <span>{{beta}}.</span><br>
+                                                             <!-- of {{betaAdIndustryName}} from Prof. Aswath Damodaran dababase. -->
+                                                             <i style="font-weight: bold;font-size: 13px !important;font-family: 'Times New Roman', Times, serif !important;">Source: 
+                                                                <span style="font-weight: 500;color: #000000;font-size: 13px !important;font-family: 'Times New Roman', Times, serif !important;">
+                                                                    Aswath Damodaran Database
+                                                                </span>
+                                                            </i>
                                                         {{else}}
                                                             The beta is arrived using {{betaName}} of the comparable companies in
                                                             the similar sector.

@@ -1899,7 +1899,7 @@ export const BETA_TYPE = ['levered', 'unlevered', 'market_beta'];
 
 export const BETA_FROM = {
   ASWATHDAMODARAN:'aswathDamodaran',
-  CAPITALIQ:'capitalIq'
+  CAPITALIQ:'capitalIqBeta'
 }
 
 export const FINANCIAL_BASIS_TYPE = ['audited', 'managementCertified'];

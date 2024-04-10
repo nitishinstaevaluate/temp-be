@@ -1099,8 +1099,15 @@ export class ReportService {
             })
           }
           else{
-            debtToCapital = '___ ';
-            equityToCapital = ' ___';
+            const deRatio = valuationResult.inputData[0]?.formTwoData?.aswathDamodaranSelectedBetaObj?.deRatio;
+            if(deRatio){
+              const updateDeRatio = `${deRatio}`.includes('%') ? deRatio.split('%')[0] : deRatio;
+              debtToCapital = (convertToNumberOrZero(updateDeRatio)/100).toFixed(2);
+              equityToCapital = 1;
+            }else{
+              debtToCapital = '___ ';
+              equityToCapital = ' ___';
+            }
           }
           return `${debtToCapital}:${equityToCapital}`;
         }
