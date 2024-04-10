@@ -13,7 +13,7 @@ import {
   } from '@nestjs/common';
 
   import {
-    BetaIndustry,
+    // BetaIndustry,
     IndustriesRatio,
     HistoricalReturns,
     HistoricalBSE500Returns,
@@ -40,18 +40,25 @@ export class DataReferencesController {}
 export class BetaIndustriesController {
   constructor(private betaIndustriesService: BetaIndustriesService) { }
 
-  @UseGuards(KeyCloakAuthGuard)
-  @Get()
-  async findAll(
-    // @Param('industryId') industryId: string,
-  ): Promise<BetaIndustry[]> {
-    return this.betaIndustriesService.getBetaIndustries();
-  }
+  // @UseGuards(KeyCloakAuthGuard)
+  // @Get()
+  // async findAll(
+  //   // @Param('industryId') industryId: string,
+  // ): Promise<BetaIndustry[]> {
+  //   return this.betaIndustriesService.getBetaIndustries();
+  // }
 
+  // @UseGuards(KeyCloakAuthGuard)
+  // @Get(':industryId')
+  // async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
+  //   return this.betaIndustriesService.getBetaIndustriesById(id);
+  // }
+
+  // Load indian Beta industries only
   @UseGuards(KeyCloakAuthGuard)
-  @Get(':industryId')
-  async findByID(@Param('industryId') id: string): Promise<BetaIndustry[]> {
-    return this.betaIndustriesService.getBetaIndustriesById(id);
+  @Get('fetch-indian-beta-industry-list')
+  async findAllIndianBetaIndustries(){
+    return this.betaIndustriesService.getIndianBetaIndustries();
   }
 
 }

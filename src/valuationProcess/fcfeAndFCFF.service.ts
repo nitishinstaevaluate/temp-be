@@ -830,11 +830,11 @@ export class FCFEAndFCFFService {
                 terminalValueNca = netOperatingAssets - terminalValueNetOperatingAsset;
 
                 // calculating Change in Borrowings
-                terminalValueChangeInBorrowings = changeInBorrowing - changeInBorrowing * (1 + (aggregatePayload.inputs.terminalGrowthRate/100));
+                terminalValueChangeInBorrowings = changeInBorrowing - (changeInBorrowing * (1 + (aggregatePayload.inputs.terminalGrowthRate/100)));
                 
                 // calculating add:Interest
-                terminalValueAddInterestAdjTaxes = addInterestAdjTaxes - addInterestAdjTaxes * (1 + (aggregatePayload.inputs.terminalGrowthRate/100));
-                console.log(changeInBorrowing,"change in borrowings")
+                terminalValueAddInterestAdjTaxes = addInterestAdjTaxes - (addInterestAdjTaxes * (1 + (aggregatePayload.inputs.terminalGrowthRate/100)));
+                console.log(changeInBorrowing,"change in borrowings", terminalValueChangeInBorrowings)
             } else {
               presentFCFF = discountingFactorWacc * fcff
               sumOfCashFlows = presentFCFF + sumOfCashFlows;

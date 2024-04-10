@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -60,11 +60,13 @@ export class ReportService {
     async getReport(id,res, req,approach){
       try {
           const transposedData = [];
-          let  getCapitalStructure;
+          let  getCapitalStructure, terminalYearWorkings;
           let htmlFilePath, pdfFilePath,docFilePath,pdf;
           const reportDetails = await this.reportModel.findById(id);
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
-          const terminalYearWorkings:any = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+          if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
+            terminalYearWorkings = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+          }
           const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
 
           const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
@@ -156,12 +158,14 @@ export class ReportService {
  async previewReport(id,res, req, approach){
   try {
     const transposedData = [];
-    let  getCapitalStructure;
+    let  getCapitalStructure, terminalValueWorking;
     const reportDetails = await this.reportModel.findById(id);
 
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
-    const terminalValueWorking:any = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+    if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
+      terminalValueWorking = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+    }
     const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
     const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
@@ -606,7 +610,12 @@ export class ReportService {
           registeredValuerGeneralAddress: '94, Bheesm Kunj, Gaja Paisa, Mathura 281001',
           registeredValuerCorporateAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
           registeredvaluerDOIorConflict: 'No',
-          registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets'
+          registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets',
+          registeredValuerProfile: `<span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
+          from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
+          field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
+          more than 500 Valuation assignments in a span of around 4 years. He has performed on transactions covering 
+          diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`
         }
       }
       else{
@@ -725,6 +734,12 @@ export class ReportService {
       hbs.registerHelper('registeredValuerQualifications',()=>{
         if(reportDetails.registeredValuerDetails[0]) 
             return  reportDetails.registeredValuerDetails[0].registeredValuerQualifications; 
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerProfile',()=>{
+        if(reportDetails.registeredValuerDetails[0]?.registeredValuerProfile) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerProfile; 
         return '';
       })
       hbs.registerHelper('appointingAuthorityName',()=>{
@@ -938,8 +953,8 @@ export class ReportService {
         let equityPerShare = [];
         let checkiIfStub = false;
         if(reportDetails?.modelWeightageValue && valuationResult?.modelResults?.length > 1){
-          const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
-          return `${number.replace(/,/g, ',')}`
+          const number = this.formatPositiveAndNegativeValues(reportDetails.modelWeightageValue.weightedVal);
+          return number;
         }
         if(transposedData[0]?.data.transposedResult[1])
           valuationResult.modelResults.map((response)=>{
@@ -947,10 +962,7 @@ export class ReportService {
               checkiIfStub=true;
             }
           if(response.model===MODEL[0] || response.model === MODEL[1]){
-            const number = Math.floor(checkiIfStub ? response.valuationData[0]?.equityValueNew : response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
-            if(number){
-              equityPerShare.push( `${number.replace(/,/g, ',')}`);
-            }
+            equityPerShare.push(this.formatPositiveAndNegativeValues(checkiIfStub ? response.valuationData[0]?.equityValueNew : response?.valuationData[0]?.equityValue));
           }
         });
         return equityPerShare;
@@ -1092,9 +1104,27 @@ export class ReportService {
 
       hbs.registerHelper('capitalStructureRatio', ()=>{
         if(valuationResult.inputData[0].capitalStructureType === 'Industry_Based'){
-          const deRatio = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.deRatio)/100).toFixed(2)
-          const equityProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.equityProp)/100).toFixed(2)
-          return `${deRatio}:${equityProp}`;
+          let debtToCapital, equityToCapital;
+          if(valuationResult.inputData[0]?.formTwoData?.betaFrom !== BETA_FROM.ASWATHDAMODARAN){
+            betaWorking?.betaMeanMedianWorking.map((indRatios:any)=>{        
+              if(valuationResult.inputData[0]?.betaSubType === indRatios.betaType){
+                debtToCapital = convertToNumberOrZero(indRatios.debtToCapital/100).toFixed(2);
+                equityToCapital = convertToNumberOrZero(indRatios.equityToCapital/100).toFixed(2);
+              }
+            })
+          }
+          else{
+            const deRatio = valuationResult.inputData[0]?.formTwoData?.aswathDamodaranSelectedBetaObj?.deRatio;
+            if(deRatio){
+              const updateDeRatio = `${deRatio}`.includes('%') ? deRatio.split('%')[0] : deRatio;
+              debtToCapital = (convertToNumberOrZero(updateDeRatio)/100).toFixed(2);
+              equityToCapital = 1;
+            }else{
+              debtToCapital = '___ ';
+              equityToCapital = ' ___';
+            }
+          }
+          return `${debtToCapital}:${equityToCapital}`;
         }
         else if(valuationResult.inputData[0].capitalStructureType === 'Target_Based'){
           const debtProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.debtProp)/100).toFixed(2);
@@ -2482,10 +2512,36 @@ export class ReportService {
     })
     
     hbs.registerHelper('hasBetaWorking',()=>{
-      if(valuationResult.inputData[0].betaType === BETA_TYPE[0] || valuationResult.inputData[0].betaType === BETA_TYPE[1]){
+      const betaFrom = valuationResult.inputData[0].formTwoData?.betaFrom || BETA_FROM.CAPITALIQ;
+      if(
+        betaFrom !== BETA_FROM.ASWATHDAMODARAN && 
+        (
+          valuationResult.inputData[0].betaType === BETA_TYPE[0] || 
+          valuationResult.inputData[0].betaType === BETA_TYPE[1]
+        )
+      ){
         return true;
       }
       return false;
+    })
+
+    hbs.registerHelper('isBetaFromAd',()=>{
+      const betaFrom = valuationResult.inputData[0].formTwoData?.betaFrom || BETA_FROM.CAPITALIQ;
+      if(
+        betaFrom === BETA_FROM.ASWATHDAMODARAN
+      ){
+        return true;
+      }
+      return false;
+    })
+    hbs.registerHelper('betaAdIndustryName',()=>{
+      const betaIndustryAd = valuationResult.inputData[0].formTwoData?.industryAD;
+      if(
+        betaIndustryAd
+      ){
+        return betaIndustryAd;
+      }
+      return '';
     })
 
     hbs.registerHelper('coreBetaWorking',()=>{
