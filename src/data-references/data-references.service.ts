@@ -3,8 +3,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
 import {
-  BetaIndustry,
-  BetaIndustryDocument,
+  // BetaIndustry,
+  // BetaIndustryDocument,
   IndustriesRatio,
   IndustriesRatioDocument,
   HistoricalReturns,
@@ -13,7 +13,8 @@ import {
   HistoricalBSE500ReturnsDocument,
   IndianTreasuryYield,
   IndianTreasuryYieldDocument,
-  PurposeOfReportDocument
+  PurposeOfReportDocument,
+  IndianBetaIndustryDocument,
 } from './schema/data-references.schema';
 
 const date = require('date-and-time');
@@ -25,16 +26,21 @@ export class DataReferencesService { }
 @Injectable()
 export class BetaIndustriesService {
   constructor(
-    @InjectModel('betaIndustry')
-    private readonly betaIndustryModel: Model<BetaIndustryDocument>
+    // @InjectModel('betaIndustry')
+    // private readonly betaIndustryModel: Model<BetaIndustryDocument>
+    @InjectModel('indianBetaIndustry')
+    private readonly indianBetaIndustryModel: Model<IndianBetaIndustryDocument>
   ) { }
 
-  async getBetaIndustries(): Promise<BetaIndustry[]> {
-    return await this.betaIndustryModel.find({ 'isActive': true });
-  }
+  // async getBetaIndustries(): Promise<BetaIndustry[]> {
+  //   return await this.betaIndustryModel.find({ 'isActive': true });
+  // }
 
-  async getBetaIndustriesById(id: string): Promise<BetaIndustry[]> {
-    return await this.betaIndustryModel.findById(id);
+  // async getBetaIndustriesById(id: string): Promise<BetaIndustry[]> {
+  //   return await this.betaIndustryModel.findById(id);
+  // }
+  async getIndianBetaIndustries(){
+    return await this.indianBetaIndustryModel.find();
   }
 }
 

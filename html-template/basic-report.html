@@ -2234,8 +2234,18 @@
                                                         <span style="font-size: 13px !important;font-weight: bold;float: left;padding-left: 10pt;font-family: 'Times New Roman', Times, serif !important;">Source- Capital IQ</span>
                                                     {{else}}
                                                     <p style="padding-left: 150pt;text-indent: -18pt;line-height: 140%;text-align: left;">
-                                                        The beta is arrived using {{betaName}} of the comparable companies in
-                                                        the similar sector.
+                                                        {{#if (isBetaFromAd)}}
+                                                            The beta is considered as <span>{{beta}}.</span><br>
+                                                             <!-- of {{betaAdIndustryName}} from Prof. Aswath Damodaran dababase. -->
+                                                             <i style="font-weight: bold;font-size: 13px !important;font-family: 'Times New Roman', Times, serif !important;">Source: 
+                                                                <span style="font-weight: 500;color: #000000;font-size: 13px !important;font-family: 'Times New Roman', Times, serif !important;">
+                                                                    Aswath Damodaran Database
+                                                                </span>
+                                                            </i>
+                                                            {{else}}
+                                                            The beta is arrived using {{betaName}} of the comparable companies in
+                                                            the similar sector.
+                                                        {{/if}}
                                                     </p>
                                                     {{/if}}
 
@@ -2402,7 +2412,7 @@
                             {{#if (checkIfFcff)}}
                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 2%;">Present Value of
                                Free Cash Flow to Firm</h1>
-                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 2pt;padding-bottom: 2pt;">Based on the DCF method, the
                                 present value of the projected FCFF has been computed in the table below:</p>
                             <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
 
@@ -2413,9 +2423,9 @@
                                     <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         colspan="{{calculateColspan}}" bgcolor="#001F5F">
                                         <p class="s13"
-                                            style="text-align: left;padding-left: 2pt;font-size: 13px !important;">
+                                            style="text-align: left;padding-left: 2pt;font-size: 12px !important;">
                                             For the Year ending 31st March
-                                        <span style="float: right;font-size: 13px !important">Amount In {{currencyUnit}}
+                                        <span style="float: right;font-size: 12px !important">Amount In {{currencyUnit}}
                                             {{#if (reportingUnit)}}
                                             ({{reportingUnit}})
                                             {{/if}}
@@ -2433,13 +2443,13 @@
                                     {{#each (projectionResultTableHeader data)}}
                                     {{#if (isLineItemCheck columnHeader)}}
                                         <td style="width: auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                            <p  style="text-align: right;font-size: 13px !important;padding-right: 3px;color: white !important;font-weight: bold;">
+                                            <p  style="text-align: right;font-size: 12px !important;padding-right: 3px;color: white !important;font-weight: bold;">
                                                 {{columnHeader}}
                                             </p>
                                         </td>
                                         {{else}}
                                         <td style="width: auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                            <p  style="text-align: left;font-size: 13px !important;padding-left: 4px;color: white;font-weight: bold;">
+                                            <p  style="text-align: left;font-size: 12px !important;padding-left: 4px;color: white;font-weight: bold;">
                                                 {{columnHeader}}
                                             </p>
                                         </td>
@@ -2451,13 +2461,13 @@
                                     {{#ifZero fcffPat}}
                                     {{#if (isLineItemCheck fcffPat)}}
                                         <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                            <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                            <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                                 {{fcffPat}}
                                             </p>
                                         </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffPat}}
                                         </p>
                                     </td>
@@ -2470,13 +2480,13 @@
                                     {{#ifZero fcffDepAmortisation}}
                                     {{#if (isLineItemCheck fcffDepAmortisation)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffDepAmortisation}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffDepAmortisation}}
                                         </p>
                                     </td>
@@ -2489,13 +2499,13 @@
                                     {{#ifZero fcffAddInterestAdjTaxes}}
                                     {{#if (isLineItemCheck fcffAddInterestAdjTaxes)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffAddInterestAdjTaxes}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffAddInterestAdjTaxes}}
                                         </p>
                                     </td>
@@ -2508,13 +2518,13 @@
                                     {{#ifZero fcffOnCashItems}}
                                     {{#if (isLineItemCheck fcffOnCashItems)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffOnCashItems}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffOnCashItems}}
                                         </p>
                                     </td>
@@ -2527,13 +2537,13 @@
                                     {{#ifZero fcffNca}}
                                     {{#if (isLineItemCheck fcffNca)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffNca}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffNca}}
                                         </p>
                                     </td>
@@ -2546,13 +2556,13 @@
                                     {{#ifZero fcffDefferedTaxAssets}}
                                     {{#if (isLineItemCheck fcffDefferedTaxAssets)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffDefferedTaxAssets}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffDefferedTaxAssets}}
                                         </p>
                                     </td>
@@ -2565,13 +2575,13 @@
                                     {{#ifZero fcffNetCashFlow}}
                                     {{#if (isLineItemCheck fcffNetCashFlow)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffNetCashFlow}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffNetCashFlow}}
                                         </p>
                                     </td>
@@ -2584,13 +2594,13 @@
                                     {{#ifZero fcffFixedAssets}}
                                     {{#if (isLineItemCheck fcffFixedAssets)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffFixedAssets}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffFixedAssets}}
                                         </p>
                                     </td>
@@ -2603,13 +2613,13 @@
                                     {{#ifZero fcff}}
                                     {{#if (isLineItemCheck fcff)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;font-weight: bold;">
                                             {{fcff}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;display: inline-block;font-size: 12px !important;">
                                             {{fcff}}
                                         </p>
                                     </td>
@@ -2622,13 +2632,13 @@
                                     {{#ifZero fcffDiscountingPeriod}}
                                     {{#if (isLineItemCheck fcffDiscountingPeriod)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffDiscountingPeriod}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffDiscountingPeriod}}
                                         </p>
                                     </td>
@@ -2641,13 +2651,13 @@
                                     {{#ifZero fcffDiscountingFactor}}
                                     {{#if (isLineItemCheck fcffDiscountingFactor)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcffDiscountingFactor}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block;font-size: 12px !important;">
                                             {{fcffDiscountingFactor}}
                                         </p>
                                     </td>
@@ -2660,13 +2670,13 @@
                                     {{#ifZero fcffPresentFCFF}}
                                     {{#if (isLineItemCheck fcffPresentFCFF)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;font-weight: bold;">
                                             {{fcffPresentFCFF}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27%  !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;display: inline-block;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;display: inline-block;font-size: 12px !important;">
                                             {{fcffPresentFCFF}}
                                         </p>
                                     </td>
@@ -2681,7 +2691,7 @@
 
                             <h1 style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 2%;">Present Value of
                                 FCFE</h1>
-                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;">Based on the DCF method, the
+                            <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 2pt;padding-bottom: 2pt;">Based on the DCF method, the
                                 present value of the projected Free Cash Flow to Equity(FCFE) has been computed in the table below:</p>
                             <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
                             <!-- fcfe table starts -->
@@ -2691,9 +2701,9 @@
                                     <td style="width:100%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                                         colspan="{{calculateColspan}}" bgcolor="#001F5F">
                                         <p class="s13"
-                                            style="text-align: left;padding-left: 2pt;font-size: 13px;">
+                                            style="text-align: left;padding-left: 2pt;font-size: 13px !important;">
                                             For the Year ending 31st March
-                                            <span style="float: right;font-size: 13px;">Amount In {{currencyUnit}}
+                                            <span style="float: right;font-size: 13px !important;">Amount In {{currencyUnit}}
                                                 {{#if (reportingUnit)}}
                                                 ({{reportingUnit}})
                                                 {{/if}}
@@ -2723,13 +2733,13 @@
                                         {{#ifZero fcfePat}}
                                         {{#if (isLineItemCheck fcfePat)}}
                                             <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                                <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                                     {{fcfePat}}
                                                 </p>
                                             </td>
                                             {{else}}
                                             <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                                <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block !important;font-size: 13px !important;">
+                                                <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;display: inline-block !important;font-size: 12px !important;">
                                                     {{fcfePat}}
                                                 </p>
                                             </td>
@@ -2742,13 +2752,13 @@
                                     {{#ifZero fcfeDepAmortisation}}
                                     {{#if (isLineItemCheck fcfeDepAmortisation)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeDepAmortisation}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeDepAmortisation}}
                                         </p>
                                     </td>
@@ -2761,13 +2771,13 @@
                                     {{#ifZero fcfeOnCashItems}}
                                     {{#if (isLineItemCheck fcfeOnCashItems)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeOnCashItems}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeOnCashItems}}
                                         </p>
                                     </td>
@@ -2780,13 +2790,13 @@
                                     {{#ifZero fcfeNca}}
                                     {{#if (isLineItemCheck fcfeNca)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeNca}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeNca}}
                                         </p>
                                     </td>
@@ -2799,13 +2809,13 @@
                                     {{#ifZero changeInBorrowings}}
                                     {{#if (isLineItemCheck changeInBorrowings)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{changeInBorrowings}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{changeInBorrowings}}
                                         </p>
                                     </td>
@@ -2818,13 +2828,13 @@
                                     {{#ifZero fcfeDefferedTaxAssets}}
                                     {{#if (isLineItemCheck fcfeDefferedTaxAssets)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeDefferedTaxAssets}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeDefferedTaxAssets}}
                                         </p>
                                     </td>
@@ -2837,13 +2847,13 @@
                                     {{#ifZero fcfeNetCashFlow}}
                                     {{#if (isLineItemCheck fcfeNetCashFlow)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeNetCashFlow}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeNetCashFlow}}
                                         </p>
                                     </td>
@@ -2856,13 +2866,13 @@
                                     {{#ifZero fcfeFixedAssets}}
                                     {{#if (isLineItemCheck fcfeFixedAssets)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeFixedAssets}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeFixedAssets}}
                                         </p>
                                     </td>
@@ -2875,13 +2885,13 @@
                                     {{#ifZero fcff}}
                                     {{#if (isLineItemCheck fcff)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;font-size: 12px !important;">
                                             {{fcff}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;font-size: 12px !important;">
                                             {{fcff}}
                                         </p>
                                     </td>
@@ -2894,13 +2904,13 @@
                                     {{#ifZero fcfeDiscountingPeriod}}
                                     {{#if (isLineItemCheck fcfeDiscountingPeriod)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeDiscountingPeriod}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeDiscountingPeriod}}
                                         </p>
                                     </td>
@@ -2913,13 +2923,13 @@
                                     {{#ifZero fcfeDiscountingFactor}}
                                     {{#if (isLineItemCheck fcfeDiscountingFactor)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 12px !important;">
                                             {{fcfeDiscountingFactor}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 12px !important;">
                                             {{fcfeDiscountingFactor}}
                                         </p>
                                     </td>
@@ -2932,13 +2942,13 @@
                                     {{#ifZero fcfePresentFCFF}}
                                     {{#if (isLineItemCheck fcfePresentFCFF)}}
                                     <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-right: 2pt;padding-top:2pt;padding-bottom:2pt;padding-left:2pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-weight: bold;font-size: 12px !important;">
                                             {{fcfePresentFCFF}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td style="width:27% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;font-size: 13px !important;">
+                                        <p class="s14" style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-weight: bold;font-size: 12px !important;">
                                             {{fcfePresentFCFF}}
                                         </p>
                                     </td>
@@ -2954,7 +2964,7 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <h1 style="padding-left: 15pt;text-indent: 0pt;text-align: left;">Fair Value Indication via DCF
                                 Method</h1>
-                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 5pt;padding-bottom: 5pt;"><span
+                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;padding-top: 2pt;padding-bottom: 2pt;"><span
                                     class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
                                     class="s2" style=" ">{{strdate}}</span><span class="p"> is calculated
                                     as </span><span class="h1">{{currencyUnit}} </span><span class="s1"
@@ -2968,13 +2978,13 @@
                                     <td style="border-top-style:solid;border-top-width:1pt;border-top-color:black;border-left-style:solid;border-left-width:1pt;border-left-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black"
                                         bgcolor="#001F5F">
                                         <p class="s11"
-                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 13px !important;">
+                                            style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;font-size: 12px !important;">
                                             Particulars</p>
                                     </td>
                                     <td style="width:30%;border-top-style:solid;border-top-width:1pt;border-top-color:black;border-bottom-style:solid;border-bottom-width:1pt;border-bottom-color:black;border-right-style:solid;border-right-width:1pt;border-right-color:black"
                                         bgcolor="#001F5F">
                                         <p class="s11"
-                                            style="text-indent: 0pt;line-height: 13pt;text-align: right;padding-right: 4pt;font-size: 13px !important;">
+                                            style="text-indent: 0pt;line-height: 13pt;text-align: right;padding-right: 4pt;font-size: 12px !important;">
                                             Amount ({{currencyUnit}} {{reportingUnit}})</p>
                                     </td>
                                 </tr>
@@ -2985,12 +2995,12 @@
                                     {{#ifZero fcffSumOfCashFlows}}
                                     {{#if (isLineItemCheck fcffSumOfCashFlows)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSumOfCashFlows}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffSumOfCashFlows}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSumOfCashFlows}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffSumOfCashFlows}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3003,12 +3013,12 @@
                                     {{#ifZero fcffPvTerminalVal}}
                                     {{#if (isLineItemCheck fcffPvTerminalVal)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffPvTerminalVal}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffPvTerminalVal}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffPvTerminalVal}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffPvTerminalVal}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3021,12 +3031,12 @@
                                     {{#ifZero fcffDebtOnDate}}
                                     {{#if (isLineItemCheck fcffDebtOnDate)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffDebtOnDate}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffDebtOnDate}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffDebtOnDate}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffDebtOnDate}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3039,12 +3049,12 @@
                                     {{#ifZero fcffCashEquivalents}}
                                     {{#if (isLineItemCheck fcffCashEquivalents)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffCashEquivalents}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffCashEquivalents}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffCashEquivalents}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffCashEquivalents}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3057,12 +3067,12 @@
                                     {{#ifZero fcffSurplusAssets}}
                                     {{#if (isLineItemCheck fcffSurplusAssets)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSurplusAssets}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffSurplusAssets}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffSurplusAssets}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffSurplusAssets}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3076,12 +3086,12 @@
                                     {{#ifZero fcffOtherAdj}}
                                     {{#if (isLineItemCheck fcffOtherAdj)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffOtherAdj}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffOtherAdj}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffOtherAdj}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffOtherAdj}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3094,12 +3104,12 @@
                                     {{#ifZero fcffEquityValue}}
                                     {{#if (isLineItemCheck fcffEquityValue)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffEquityValue}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffEquityValue}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffEquityValue}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffEquityValue}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3113,12 +3123,12 @@
                                     {{#ifZero fcffStubAdjValue}}
                                     {{#if (isLineItemCheck fcffStubAdjValue)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffStubAdjValue}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffStubAdjValue}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffStubAdjValue}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffStubAdjValue}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3133,12 +3143,12 @@
                                     {{#ifZero fcffequityValueNew}}
                                     {{#if (isLineItemCheck fcffequityValueNew)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffequityValueNew}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffequityValueNew}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffequityValueNew}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffequityValueNew}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3151,12 +3161,12 @@
                                     {{#ifZero fcffNoOfShares}}
                                     {{#if (isLineItemCheck fcffNoOfShares)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffNoOfShares}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffNoOfShares}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcffNoOfShares}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcffNoOfShares}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3168,12 +3178,12 @@
                                     {{#ifZero fcffValuePerShare}}
                                     {{#if (isLineItemCheck fcffValuePerShare)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffValuePerShare}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffValuePerShare}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcffValuePerShare}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffValuePerShare}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3204,12 +3214,12 @@
                                     {{#ifZero fcfeSumOfCashFlows}}
                                     {{#if (isLineItemCheck fcfeSumOfCashFlows)}}
                                      <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSumOfCashFlows}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeSumOfCashFlows}}
                                         </p>
                                     </td>
                                     {{else}}
                                      <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSumOfCashFlows}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeSumOfCashFlows}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3221,12 +3231,12 @@
                                     {{#ifZero fcfePvTerminalVal}}
                                     {{#if (isLineItemCheck fcfePvTerminalVal)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfePvTerminalVal}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfePvTerminalVal}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfePvTerminalVal}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfePvTerminalVal}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3238,12 +3248,12 @@
                                     {{#ifZero fcfeCashEquivalents}}
                                     {{#if (isLineItemCheck fcfeCashEquivalents)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeCashEquivalents}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeCashEquivalents}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeCashEquivalents}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeCashEquivalents}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3256,12 +3266,12 @@
                                     {{#ifZero fcfeSurplusAssets}}
                                     {{#if (isLineItemCheck fcfeSurplusAssets)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSurplusAssets}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeSurplusAssets}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeSurplusAssets}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeSurplusAssets}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3275,12 +3285,12 @@
                                     {{#ifZero fcfeOtherAdj}}
                                     {{#if (isLineItemCheck fcfeOtherAdj)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeOtherAdj}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeOtherAdj}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeOtherAdj}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeOtherAdj}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3293,12 +3303,12 @@
                                     {{#ifZero fcfeEquityValue}}
                                     {{#if (isLineItemCheck fcfeEquityValue)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeEquityValue}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeEquityValue}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeEquityValue}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeEquityValue}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3312,12 +3322,12 @@
                                     {{#ifZero fcfeStubAdjValue}}
                                     {{#if (isLineItemCheck fcfeStubAdjValue)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeStubAdjValue}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeStubAdjValue}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeStubAdjValue}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeStubAdjValue}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3332,12 +3342,12 @@
                                     {{#ifZero fcfeequityValueNew}}
                                     {{#if (isLineItemCheck fcfeequityValueNew)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeequityValueNew}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeequityValueNew}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeequityValueNew}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeequityValueNew}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3350,12 +3360,12 @@
                                     {{#ifZero fcfeNoOfShares}}
                                     {{#if (isLineItemCheck fcfeNoOfShares)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeNoOfShares}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeNoOfShares}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 13px !important;">  {{fcfeNoOfShares}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-weight: 400;font-size: 12px !important;">  {{fcfeNoOfShares}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3367,12 +3377,12 @@
                                     {{#ifZero fcfeValuePerShare}}
                                     {{#if (isLineItemCheck fcfeValuePerShare)}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeValuePerShare}}
+                                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeValuePerShare}}
                                         </p>
                                     </td>
                                     {{else}}
                                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important;">  {{fcfeValuePerShare}}
+                                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeValuePerShare}}
                                         </p>
                                     </td>
                                     {{/if}}
@@ -3439,11 +3449,12 @@
     <h1 style="text-align: center;">PROFILE OF REGISTERED VALUER</h1>
 
     <p style="text-align: justify;padding-top: 3%;padding-left: 3%;padding-right: 1%;line-height: 170%;">
-        <span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
+        <!-- <span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
         from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
         field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
         more than 500 Valuation assignments in a span of around 4 years. He has performed on transactions covering 
-        diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.
+        diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc. -->
+        {{{registeredValuerProfile}}}
     </p>
    </div>
 </body>

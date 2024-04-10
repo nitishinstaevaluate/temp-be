@@ -18,18 +18,20 @@ import {
 } from './data-references.service';
 
 import {
-    BetaIndustrySchema,
+    // BetaIndustrySchema,
+    IndianBetaIndustrySchema,
     IndustriesRatioSchema,
     HistoricalReturnsSchema,
     IndianTreasuryYieldSchema,
     HistoricalBSE500ReturnsSchema,
-    PurposeOfReportSchema
+    PurposeOfReportSchema,
 } from './schema/data-references.schema';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
-          { name: 'betaIndustry', schema: BetaIndustrySchema },
+          // { name: 'betaIndustry', schema: BetaIndustrySchema },
+          { name: 'indianBetaIndustry', schema: IndianBetaIndustrySchema },
           { name: 'industriesRatio', schema: IndustriesRatioSchema },
           { name: 'historicalReturns', schema : HistoricalReturnsSchema},
           { name: 'indianTreasuryYield', schema : IndianTreasuryYieldSchema},

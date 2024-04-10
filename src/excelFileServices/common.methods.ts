@@ -171,7 +171,7 @@ export async function computeFinancialYearEndDate(provisionalDate){    //Always 
     finalYear = cleanProvisionalDate
   }
   else if(cleanProvisionalDate < fiscalYearEnd){
-    if(cleanProvisionalDate.getFullYear() === new Date().getFullYear){
+    if(cleanProvisionalDate.getFullYear() === new Date().getFullYear()){
       finalYear = new Date(currentFinancialYearEnd - 1, 2, 31)
     }
     else{
