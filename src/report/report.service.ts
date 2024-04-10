@@ -610,7 +610,12 @@ export class ReportService {
           registeredValuerGeneralAddress: '94, Bheesm Kunj, Gaja Paisa, Mathura 281001',
           registeredValuerCorporateAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
           registeredvaluerDOIorConflict: 'No',
-          registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets'
+          registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets',
+          registeredValuerProfile: `<span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
+          from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
+          field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
+          more than 500 Valuation assignments in a span of around 4 years. He has performed on transactions covering 
+          diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`
         }
       }
       else{
@@ -729,6 +734,12 @@ export class ReportService {
       hbs.registerHelper('registeredValuerQualifications',()=>{
         if(reportDetails.registeredValuerDetails[0]) 
             return  reportDetails.registeredValuerDetails[0].registeredValuerQualifications; 
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerProfile',()=>{
+        if(reportDetails.registeredValuerDetails[0]?.registeredValuerProfile) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerProfile; 
         return '';
       })
       hbs.registerHelper('appointingAuthorityName',()=>{
