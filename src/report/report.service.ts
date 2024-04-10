@@ -937,9 +937,9 @@ export class ReportService {
       hbs.registerHelper('equityPerShare',()=>{
         let equityPerShare = [];
         let checkiIfStub = false;
-        if(reportDetails?.modelWeightageValue){
-          const number = Math.floor(reportDetails.modelWeightageValue.weightedVal).toLocaleString('en-IN');
-          return `${number.replace(/,/g, ',')}`
+        if(reportDetails?.modelWeightageValue && valuationResult?.modelResults?.length > 1){
+          const number = this.formatPositiveAndNegativeValues(reportDetails.modelWeightageValue.weightedVal);
+          return number;
         }
         if(transposedData[0]?.data.transposedResult[1])
           valuationResult.modelResults.map((response)=>{
@@ -947,10 +947,7 @@ export class ReportService {
               checkiIfStub=true;
             }
           if(response.model===MODEL[0] || response.model === MODEL[1]){
-            const number = Math.floor(checkiIfStub ? response.valuationData[0]?.equityValueNew : response?.valuationData[0]?.equityValue).toLocaleString('en-IN') || 0;
-            if(number){
-              equityPerShare.push( `${number.replace(/,/g, ',')}`);
-            }
+            equityPerShare.push(this.formatPositiveAndNegativeValues(checkiIfStub ? response.valuationData[0]?.equityValueNew : response?.valuationData[0]?.equityValue));
           }
         });
         return equityPerShare;
