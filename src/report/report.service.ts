@@ -60,11 +60,13 @@ export class ReportService {
     async getReport(id,res, req,approach){
       try {
           const transposedData = [];
-          let  getCapitalStructure;
+          let  getCapitalStructure, terminalYearWorkings;
           let htmlFilePath, pdfFilePath,docFilePath,pdf;
           const reportDetails = await this.reportModel.findById(id);
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
-          const terminalYearWorkings:any = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+          if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
+            terminalYearWorkings = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+          }
           const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
 
           const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
@@ -156,12 +158,14 @@ export class ReportService {
  async previewReport(id,res, req, approach){
   try {
     const transposedData = [];
-    let  getCapitalStructure;
+    let  getCapitalStructure, terminalValueWorking;
     const reportDetails = await this.reportModel.findById(id);
 
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
-    const terminalValueWorking:any = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+    if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
+      terminalValueWorking = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+    }
     const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
     const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
