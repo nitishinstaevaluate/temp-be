@@ -3047,6 +3047,38 @@ export class ReportService {
           return true;
       return false;
     })
+
+    hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
+      let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+          if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
+            return ['Please provide data']
+          }
+
+           //Firstly create object structure with purpose of report and sections in key-value format;
+           reportDetails.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+            reportDetails.reportSection.forEach((indSection, sectionIndex) => {
+              if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                  storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                  storePurposeWiseSections[indpurpose].push(indSection);
+                }
+              }
+            });
+          })
+
+          // Use that object structure created above for looping and adding sections followed by purposes
+          reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
+           let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+            if (stockedPurposes.length <= 1) {
+              overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+            } else {
+              const lastSection = stockedPurposes[stockedPurposes.length - 1];
+              const otherSections = stockedPurposes.slice(0, -1).join(', ');
+              overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+              }
+          })
+          return overallSectionsWithPurposes.join(' and ');
+  });
 }
 
   loadFinancialTableHelper(financialData, valuationDetails){
@@ -3230,6 +3262,19 @@ export class ReportService {
       }
     }
   }
+  async elevenUaMrlReport(stateId, res){
+    try{
+      return await this.mrlReportService.generateElevenUaPdfMrl(stateId, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"mrl generation failed",
+        status:false
+      }
+    }
+  }
+
   async mrlDocxReport(stateId, res){
     try{
       return await this.mrlReportService.generateMrlDocxReport(stateId, res);   
@@ -3238,6 +3283,19 @@ export class ReportService {
       return {
         error:error,
         msg:"report generation failed",
+        status:false
+      }
+    }
+  }
+
+  async elevenUaMrlDocxReport(stateId, res){
+    try{
+      return await this.mrlReportService.generateElevenUaDocxMrl(stateId, res);   
+    }
+    catch(error){
+      return {
+        error:error,
+        msg:"mrl generation failed",
         status:false
       }
     }

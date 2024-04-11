@@ -153,4 +153,20 @@ export class ReportController {
   @Res() res) {
     return await this.reportService.mrlDocxReport(processStateId, res);
   }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('rule-eleven-mrl-report/:processStateId')
+  async generateElevenUaMrlPdfReport(
+  @Param('processStateId') processStateId : string,
+  @Res() res) {
+    return await this.reportService.elevenUaMrlReport(processStateId, res);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('rule-eleven-mrl-docx-report/:processStateId')
+  async generateElevenUaMrlDocxReport(
+  @Param('processStateId') processStateId : string,
+  @Res() res) {
+    return await this.reportService.elevenUaMrlDocxReport(processStateId, res);
+  }
 }
