@@ -2726,7 +2726,7 @@ export class ReportService {
       // const unamortisedAmountOfDeferredExpenditure = elevenUaData?.data?.unamortisedAmountOfDeferredExpenditure;
       // this.totalA = elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure);
       // return this.formatPositiveAndNegativeValues(elevenUaData?.data?.bookValueOfAllAssets - (totalIncomeTaxPaid + unamortisedAmountOfDeferredExpenditure));
-      return this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.calculationAtA);
+      return elevenUaData?.data?.computations?.calculationAtA ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.calculationAtA) : '-';
       }
       return '-';
     })
@@ -2770,7 +2770,7 @@ export class ReportService {
         // const totalValue = jewellery + artisticWork;
         // this.totalB = totalValue ? totalValue : 0;
         // return totalValue ? this.formatPositiveAndNegativeValues(totalValue) : '-';
-        return this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtB);
+        return elevenUaData.data?.computations?.calculationAtB ? this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtB) : '-';
       }
       return '-';
     })
@@ -2786,7 +2786,7 @@ export class ReportService {
         // }
         // this.totalC = investment;
         // return investment ? this.formatPositiveAndNegativeValues(investment) : '-';
-        return this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtC)
+        return elevenUaData.data?.computations?.calculationAtC ? this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtC) : '-';
       }
       return '-'
     })
@@ -2827,7 +2827,7 @@ export class ReportService {
         // }
         // this.totalC = investment;
         // return investment ? this.formatPositiveAndNegativeValues(investment) : '-';
-        return this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtC);
+        return elevenUaData.data?.computations?.calculationAtC ? this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtC) : '-';
       }
       return '-'
     })
@@ -2835,7 +2835,7 @@ export class ReportService {
     hbs.registerHelper('fairValueImmovableProp',()=>{
       if(elevenUaData)
         // return elevenUaData.data?.inputData?.fairValueImmovableProp ? this.formatPositiveAndNegativeValues(elevenUaData.data?.inputData?.fairValueImmovableProp) : '-';
-        return this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtD);
+        return elevenUaData.data?.computations?.calculationAtD ? this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtD) : '-';
       return '-'
     })
     hbs.registerHelper('hasFairValueImmovableProp',()=>{
@@ -2864,7 +2864,7 @@ export class ReportService {
       if(elevenUaData){
         // this.totalD = elevenUaData.data?.inputData?.fairValueImmovableProp ? parseFloat(elevenUaData.data?.inputData?.fairValueImmovableProp) : 0 
         // return elevenUaData.data?.inputData?.fairValueImmovableProp ? this.formatPositiveAndNegativeValues(elevenUaData.data?.inputData?.fairValueImmovableProp) : '-';
-        return this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtD);
+        return elevenUaData.data?.computations?.calculationAtD ? this.formatPositiveAndNegativeValues(elevenUaData.data?.computations?.calculationAtD) : '-';
       }
     return '-'
     })
@@ -2932,7 +2932,7 @@ export class ReportService {
           //   )
           //   )
           // );
-          return this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.calculationAtL);
+          return elevenUaData?.data?.computations?.calculationAtL ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.calculationAtL) : '-';
       }
       return '-'
     })
@@ -2941,7 +2941,7 @@ export class ReportService {
       // return this.formatPositiveAndNegativeValues(
       //   (convertToNumberOrZero(this.totalA) + convertToNumberOrZero(this.totalB) + convertToNumberOrZero(this.totalC) + convertToNumberOrZero(this.totalD) - convertToNumberOrZero(this.totalL))
       // );
-      return this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.totalCalculation);
+      return elevenUaData?.data?.computations?.totalCalculation ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.totalCalculation) : '-';
     })
 
     hbs.registerHelper('phaseValue',()=>{
@@ -2961,13 +2961,13 @@ export class ReportService {
       // this.unqotedEquityShareVal = result
 
       // return this.formatPositiveAndNegativeValues(result);
-      return this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.valuePerShare)
+      return elevenUaData?.data?.computations?.valuePerShare ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.valuePerShare) : '-';
     })
 
     hbs.registerHelper('elevenUaPerShare',()=>{
       if(this.unqotedEquityShareVal){
         // return this.formatPositiveAndNegativeValues(this.unqotedEquityShareVal);
-        return this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.valuePerShare);
+        return elevenUaData?.data?.computations?.valuePerShare ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.valuePerShare) : '-';
       }
       return '-'
     })
