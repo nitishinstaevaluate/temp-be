@@ -345,6 +345,78 @@ export class ExcelSheetService {
         }
       }
 
+      async generateDocxFromHtml(id,model,specificity,res, processId, terminalValueType) {
+        try {
+          const valuationResult = await this.valuationService.getValuationById(id);
+          const transposedData = [];
+          const modifiedDataSet = [];
+          let htmlFilePath,pdfFilePath;
+          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
+          let wordFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.docx`);
+          if (specificity === 'true' && model) {
+             htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
+             pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.pdf`);
+            for await (let data of valuationResult.modelResults) {
+              if (data.model === model) {
+                modifiedDataSet.push(data);
+                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+                  transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
+                }
+              }
+            }
+            valuationResult.modelResults = modifiedDataSet;
+          } 
+          else {
+             htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
+             pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
+            for await (let data of valuationResult.modelResults) {
+              if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+                transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
+              }  
+            }
+          }
+
+          this.loadHelpers(transposedData, valuationResult, terminalValueType);
+        
+          if (valuationResult.modelResults.length > 0) {
+            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+            const template = hbs.compile(htmlContent);
+            const html = template(valuationResult);
+      
+            await this.generatePdf(html, pdfFilePath);
+
+            await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+          
+            let wordBuffer = fs.readFileSync(wordFilePath);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.docx"`);
+
+            res.send(wordBuffer);
+      
+            return {
+              msg: "PDF download Success",
+              status: true,
+            };
+          } 
+          else {
+            console.log("Data not found");
+            return {
+              msg: "No data found for PDF generation",
+              status: false
+            };
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        
+          return {
+            msg: "Download Failed. An error occurred during processing.",
+            status: false,
+            error:error.message
+          };
+        }
+      }
+
       async exportElevenUaPdf(id,res) {
         try {
           const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(id);
@@ -365,6 +437,46 @@ export class ExcelSheetService {
           res.setHeader('Content-Type', 'application/pdf');
           res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.pdf"`);
           res.send(pdf);
+    
+          return {
+            msg: "PDF download Success",
+            status: true,
+          };
+       
+        } catch (error) {
+          console.error("Error:", error);
+        
+          return {
+            msg: "Download Failed. An error occurred during processing.",
+            status: false,
+            error:error.message
+          };
+        }
+      }
+
+      async exportElevenUaDocx(id,res) {
+        try {
+          const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(id);
+          let htmlFilePath,pdfFilePath;
+          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
+          htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua.html`);
+          pdfFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.pdf`);
+          let wordFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.pdf`);
+          this.reportService.loadElevenUaHelpers(elevenUaData, null);   //Providing null since we don't generate/store report details on stepper 5
+        
+          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+          const template = hbs.compile(htmlContent);
+          const html = template(elevenUaData);
+    
+          await this.generatePdf(html, pdfFilePath);
+          await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+          
+          let wordBuffer = fs.readFileSync(wordFilePath);
+          
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+          res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.docx"`);
+
+          res.send(wordBuffer);
     
           return {
             msg: "PDF download Success",
@@ -1686,7 +1798,6 @@ export class ExcelSheetService {
         if(discountRateValue){
           companyData.map((indCompanyData:any)=>{  
             if(indCompanyData.company === 'Average'){
-              console.log(indCompanyData,"company data")
               postMultipleAverage = {
                 company: 'Post Discount Multiple (Average)',
                 peRatio: formatPositiveAndNegativeValues(convertToNumberOrZero(indCompanyData.peRatio) * (1-discountRateValue/100)),
@@ -1706,7 +1817,6 @@ export class ExcelSheetService {
             }
           })
           modifiedMultiples.push(postMultipleAverage, postMultipleMedian);
-          console.log(modifiedMultiples,"company data");
           return modifiedMultiples
         }
       }
