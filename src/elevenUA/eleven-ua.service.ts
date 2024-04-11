@@ -104,7 +104,8 @@ export class ElevenUaService {
                     userId:authorizeUser.userId,
                     inputData:payload
                 }
-                // let computations = await this.calculateElevenUaParameters(createPayload)
+                let computations = await this.calculateElevenUaParameters(createPayload);
+                createPayload['computations'] = computations;
 
                 let elevenUaResponse;
 
@@ -165,7 +166,6 @@ export class ElevenUaService {
         }
     }
 
-    // Currently Not In Use
     // Use this function to compute valuation related parameters like value per share,etc
     // Code optimisation, no need to perform similar below operation on front-end and while generating report  
     async calculateElevenUaParameters(preParameters){
@@ -218,11 +218,11 @@ export class ElevenUaService {
                 if(!elevenUaInvestment){
                    investment =  investmentTotalFromExcel;
                 }
-                totalCalculationC = investment;
+                totalCalculationC = convertToNumberOrZero(investment);
                 const calculationAtC = convertToNumberOrZero(investment);
 
                 // calculation at D
-                totalCalculationD = preParameters?.inputData?.fairValueImmovableProp ? parseFloat(preParameters?.inputData.fairValueImmovableProp) : 0;
+                totalCalculationD = convertToNumberOrZero(preParameters?.inputData.fairValueImmovableProp);
                 const calculationAtD = convertToNumberOrZero(preParameters?.inputData.fairValueImmovableProp);
 
                 // calculation at L
