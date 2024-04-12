@@ -57,7 +57,7 @@ export class ReportService {
     private terminalValueWorkingService: terminalValueWorkingService
     ){}
 
-    async getReport(id,res, req,approach){
+    async getReport(id,res, req,approach, formatType){
       try {
           const transposedData = [];
           let  getCapitalStructure, terminalYearWorkings;
@@ -73,25 +73,35 @@ export class ReportService {
 
           if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
-            // htmlFilePath = path.join(process.cwd(), 'html-template', `transfer-of-shares-report.html`);
           }
-          // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
-          //   htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
-          // }
+
           pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
           docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
           
           if(reportDetails?.fileName){
-            const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
+            let formatExtentionHeader,formatTypeHeader, attachmentHeader;
+            if(formatType === 'DOCX'){
+              let wordBuffer = fs.readFileSync(docFilePath);
 
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
-            res.send(convertDocxToPdf);
+              formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+              formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.docx"`;
+              attachmentHeader = wordBuffer;
+            }
+            else{
+              const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
-             return {
-                  msg: "PDF download Success",
-                  status: true,
-              };
+              formatTypeHeader = 'application/pdf';
+              formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`;
+              attachmentHeader = convertDocxToPdf;
+            }
+            
+            res.setHeader('Content-Type', formatTypeHeader);
+            res.setHeader('Content-Disposition', formatExtentionHeader);
+            res.send(attachmentHeader);
+            return {
+                 msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
+                 status: true,
+             };
           }
 
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
@@ -123,32 +133,40 @@ export class ReportService {
             
               if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
                 pdf = await this.generatePdf(html, pdfFilePath);
-                // pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
               }
-              // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
-              //   pdf = await this.generateSebiReport(html, pdfFilePath);
-              //   // pdf = await this.sebiReportService.computeSEBIReport(html, pdfFilePath, req, valuationResult, reportDetails)
-              // }
-  
-              res.setHeader('Content-Type', 'application/pdf');
-              res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
-              res.send(pdf);
-  
+              let formatExtentionHeader,formatTypeHeader, attachmentHeader; 
+              if(formatType === 'DOCX'){
+                await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, docFilePath);
+          
+                let wordBuffer = fs.readFileSync(docFilePath);
+                formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.docx"`;
+                attachmentHeader = wordBuffer;
+              }
+              else{
+                formatTypeHeader = 'application/pdf';
+                formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`;
+                attachmentHeader = pdf;
+              }
+
+              res.setHeader('Content-Type', formatTypeHeader);
+              res.setHeader('Content-Disposition', formatExtentionHeader);
+              res.send(attachmentHeader);
+
               return {
-                  msg: "PDF download Success",
+                  msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
                   status: true,
               };
           } else {
-              console.log("Data not found");
               return {
-                  msg: "No data found for PDF generation",
+                  msg: `No data found for ${formatType === 'DOCX' ? 'DOCX' : 'PDF'} generation`,
                   status: false
               };
           }
       } catch (error) {
         console.error("Error generating PDF:", error);
         return {
-            msg: "Error generating PDF",
+            msg: `Error generating ${formatType === 'DOCX' ? 'DOCX' : 'PDF'}`,
             status: false,
             error: error.message
         };
@@ -172,9 +190,6 @@ export class ReportService {
     if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
-    // else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[3])){
-    //   htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
-    // }
 
     pdfFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.pdf`);
     docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
@@ -220,11 +235,6 @@ export class ReportService {
         if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
           pdf = await this.generatePdf(html, pdfFilePath);
         }
-        // else if(reportDetails.reportPurpose === Object.keys(REPORT_PURPOSE)[3]){
-        //   pdf = await this.sebiReportService.computeSEBIReport(html, pdfFilePath, req, valuationResult, reportDetails)
-          
-        //   // pdf = await this.generateSebiReport(html, pdfFilePath);
-        // }
 
         await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath,docFilePath)
         
@@ -253,7 +263,7 @@ export class ReportService {
 }
  }
 
- async ruleElevenUaReport(id,res){
+ async ruleElevenUaReport(id,res,formatType){
   try{
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
 
@@ -265,16 +275,29 @@ export class ReportService {
     docFilePath = path.join(process.cwd(), 'pdf', `${elevenUaData?.data?.inputData.company}-${reportDetails.id}.docx`);
 
     if(reportDetails?.fileName){
-      const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
+        let formatExtentionHeader,formatTypeHeader, attachmentHeader;
+        if(formatType === 'DOCX'){
+          let wordBuffer = fs.readFileSync(docFilePath);
 
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`);
-      res.send(convertDocxToPdf);
+          formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          formatExtentionHeader = `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.docx"`;
+          attachmentHeader = wordBuffer;
+        }
+        else{
+          const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
-       return {
-            msg: "PDF download Success",
-            status: true,
-        };
+          formatTypeHeader = 'application/pdf';
+          formatExtentionHeader = `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`;
+          attachmentHeader = convertDocxToPdf;
+        }
+        
+        res.setHeader('Content-Type', formatTypeHeader);
+        res.setHeader('Content-Disposition', formatExtentionHeader);
+        res.send(attachmentHeader);
+        return {
+              msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
+              status: true,
+          };
     }
 
     this.loadElevenUaHelpers(elevenUaData,reportDetails);
@@ -285,12 +308,27 @@ export class ReportService {
     
       pdf = await this.generateTransferOfSharesReport(html, pdfFilePath);
 
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`);
-      res.send(pdf);
+      let formatExtentionHeader,formatTypeHeader, attachmentHeader; 
+      if(formatType === 'DOCX'){
+          await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, docFilePath);
+  
+          let wordBuffer = fs.readFileSync(docFilePath);
+          formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          formatExtentionHeader = `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.docx"`;
+          attachmentHeader = wordBuffer;
+      }
+      else{
+          formatTypeHeader = 'application/pdf';
+          formatExtentionHeader = `attachment; filename="='${elevenUaData?.data?.inputData.company}-${reportDetails.id}'.pdf"`;
+          attachmentHeader = pdf;
+      }
+
+      res.setHeader('Content-Type', formatTypeHeader);
+      res.setHeader('Content-Disposition', formatExtentionHeader);
+      res.send(attachmentHeader);
 
       return {
-          msg: "PDF download Success",
+          msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
           status: true,
       };
   }
@@ -350,7 +388,7 @@ export class ReportService {
   }
  }
 
- async sebiReport(id,res, req){
+ async sebiReport(id,res, req, formatType){
   try{
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
 
@@ -363,25 +401,54 @@ export class ReportService {
     docFilePath = path.join(process.cwd(), 'pdf', `${companyName}-${reportDetails.id}.docx`);
 
     if(reportDetails?.fileName){
-      const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
+        let formatExtentionHeader,formatTypeHeader, attachmentHeader;
+        if(formatType === 'DOCX'){
+          let wordBuffer = fs.readFileSync(docFilePath);
 
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`);
-      res.send(convertDocxToPdf);
+          formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          formatExtentionHeader = `attachment; filename="='${companyName}-${reportDetails.id}'.docx"`;
+          attachmentHeader = wordBuffer;
+        }
+        else{
+          const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
 
-       return {
-            msg: "PDF download Success",
-            status: true,
-        };
+          formatTypeHeader = 'application/pdf';
+          formatExtentionHeader = `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`;
+          attachmentHeader = convertDocxToPdf;
+        }
+        
+        res.setHeader('Content-Type', formatTypeHeader);
+        res.setHeader('Content-Disposition', formatExtentionHeader);
+        res.send(attachmentHeader);
+        return {
+              msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
+              status: true,
+          };
     }
-      pdf =  await this.sebiReportService.computeSEBIReport(htmlFilePath, pdfFilePath, req, valuationResultDetails, reportDetails);
+    
+    pdf =  await this.sebiReportService.computeSEBIReport(htmlFilePath, pdfFilePath, req, valuationResultDetails, reportDetails);
 
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`);
-      res.send(pdf);
+      let formatExtentionHeader,formatTypeHeader, attachmentHeader; 
+      if(formatType === 'DOCX'){
+          await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, docFilePath);
+  
+          let wordBuffer = fs.readFileSync(docFilePath);
+          formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          formatExtentionHeader = `attachment; filename="='${companyName}-${reportDetails.id}'.docx"`;
+          attachmentHeader = wordBuffer;
+      }
+      else{
+          formatTypeHeader = 'application/pdf';
+          formatExtentionHeader = `attachment; filename="='${companyName}-${reportDetails.id}'.pdf"`;
+          attachmentHeader = pdf;
+      }
+
+      res.setHeader('Content-Type', formatTypeHeader);
+      res.setHeader('Content-Disposition', formatExtentionHeader);
+      res.send(attachmentHeader);
 
       return {
-          msg: "PDF download Success",
+          msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
           status: true,
       };
   }
@@ -3331,9 +3398,9 @@ export class ReportService {
     }
   }
 
-  async navReport(id, res){
+  async navReport(id, res, type){
     try{
-     return await this.navReportService.generateNavReport(id,res);
+     return await this.navReportService.generateNavReport(id,res,type);
     }
     catch(error){
       throw new HttpException(
