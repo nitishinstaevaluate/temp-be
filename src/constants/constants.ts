@@ -294,8 +294,11 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
           particulars : "Other Equity",
           sysCode:2005,
-          editable:true,
-          rowNumber:9
+          editable:false,
+          rowNumber:9,
+          header:true,
+          dependent:[2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014],
+          formula:"currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne19"
           }
     },
     {
