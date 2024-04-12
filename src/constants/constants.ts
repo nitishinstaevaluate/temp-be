@@ -268,9 +268,9 @@ export const ASSESSMENT_DATA = [
           sysCode:2002,
           header:true,
           editable:false,
-          formula:"currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22",
+          formula:"currentOne7+currentOne8+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne19",
           dependent:[2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
-                    2013,2014,2015,2016,2017],
+                    2013,2014],
           rowNumber:6
           }
     },
@@ -410,8 +410,8 @@ export const ASSESSMENT_DATA = [
           sysCode:2018,
           header:true,
           editable:false,
-          dependent:[2019,2020,2021,2022,2023,2024,2025,2026],
-          formula:"currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne32",
+          dependent:[2019,2020,2021,2022,2023,2024,2025],
+          formula:"currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31",
           rowNumber:24
           }
     },
@@ -553,9 +553,11 @@ export const ASSESSMENT_DATA = [
           particulars : "TOTAL",
           sysCode:2035,
           editable:false,
-          dependent:[2028,2029,2030,2031,2032,2033,2034,2019,2020,2021,2022,2023,2024,2025,2026,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
-            2013,2014,2015,2016,2017],
-          formula:"currentOne34+currentOne35+currentOne36+currentOne37+currentOne38+currentOne39+currentOne40+currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne32+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22",
+          dependent:[2028,2029,2030,2031,2032,2033,2034,
+            2019,2020,2021,2022,2023,2024,2025,
+            2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,
+            2013,2014,2016,2017],
+          formula:"currentOne34+currentOne35+currentOne36+currentOne37+currentOne38+currentOne39+currentOne40+currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne7+currentOne8+currentOne9+currentOne20+currentOne21+currentOne22",
           subHeader:true,
           rowNumber:41
           }
@@ -587,8 +589,8 @@ export const ASSESSMENT_DATA = [
           sysCode:2038,
           editable:false,
           subHeader:true,
-          dependent:[2040,2041,2042,2043,2044,2045],
-          formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53",
+          // dependent:[2040,2041,2042,2043,2044,2045],
+          // formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53",
           rowNumber:46
           }
     },
@@ -598,6 +600,8 @@ export const ASSESSMENT_DATA = [
           sysCode:2039,
           editable:false,
           header:true,
+          dependent:[2040,2041,2042,2043,2044,2045],
+          formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53",
           rowNumber:47
           }
     },
@@ -727,7 +731,8 @@ export const ASSESSMENT_DATA = [
           editable:false,
           dependent:[2054,2055,2056,2057,2058,2059,2060,2061],
           formula:"currentOne62+currentOne63+currentOne64+currentOne65+currentOne66+currentOne67+currentOne68+currentOne69",
-          rowNumber:61
+          rowNumber:61,
+          header:true
           }
     },
     {
@@ -819,7 +824,7 @@ export const ASSESSMENT_DATA = [
           sysCode:2064,
           editable:false,
           header:true,
-          dependent:[2038,2047,2048,2049,2050,2051,2054,2055,2056,2057,2058,2059,2060,2061],
+          dependent:[2040,2041,2042,2043,2044,2045,2038,2047,2048,2049,2050,2051,2054,2055,2056,2057,2058,2059,2060,2061],
           formula:"currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53+currentOne55+currentOne56+currentOne57+currentOne58+currentOne59+currentOne62+currentOne63+currentOne64+currentOne65+currentOne66+currentOne67+currentOne68+currentOne69",
           rowNumber:72
           }
@@ -958,8 +963,8 @@ export const ASSESSMENT_DATA = [
           particulars : "Total (A+B+C+D+E+F)",
           sysCode:1016,
           editable:false,
-          dependent:[1009,1010,1011,1012,1013,1014,1015],
-          formula:"currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22",
+          dependent:[1010,1011,1012,1013,1014,1015],
+          formula:"currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22",
           rowNumber:23
           }
     },
@@ -970,7 +975,7 @@ export const ASSESSMENT_DATA = [
           header:true,
           editable:false,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22", //wrong formula
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22", //wrong formula
           rowNumber:25
           }
     },
@@ -989,7 +994,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1019,
           editable:false,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26",
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26",
           rowNumber:27
           }
     },
@@ -1015,7 +1020,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1022,
           editable:false,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29",
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26-currentOne28+currentOne29",
           rowNumber:30
           }
     },
@@ -1033,7 +1038,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1024,
           editable:false,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31",
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26-currentOne28+currentOne29-currentOne31",
           rowNumber:32
           }
     },
@@ -1051,7 +1056,7 @@ export const ASSESSMENT_DATA = [
           sysCode:1026,
           editable:false,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023,1025],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31+currentOne33",
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26-currentOne28+currentOne29-currentOne31-currentOne33",
           rowNumber:34
           }
     },
@@ -1117,7 +1122,7 @@ export const ASSESSMENT_DATA = [
           editable:false,
           header:true,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023,1025,1028,1029,1030,1031,1032],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31+currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40",
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26-currentOne28+currentOne29-currentOne31-currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40",
           rowNumber:42
           }
     },
@@ -1179,8 +1184,8 @@ export const ASSESSMENT_DATA = [
           sysCode:1040,
           header:true,
           editable:false,
-          dependent:[1002, 1003, 1004, 1006, 1007, 1008, 1010, 1011, 1012, 1013, 1014, 1015, 1018, 1020, 1021, 1023, 1025, 1028, 1029, 1030, 1031, 1032, 1035, 1036, 1037, 1038, 1039],
-          formula:"currentOne7 + currentOne8 - (currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22) - currentOne13 - currentOne14 - currentOne15 - currentOne26 - currentOne28 + currentOne29 - currentOne31 - currentOne33 - (currentOne36 + currentOne37 + currentOne38 + currentOne39 + currentOne40) - (currentOne45 + currentOne46+ currentOne47+currentOne48 +currentOne49 +currentOne50)",
+          dependent:[1002, 1003, 1004, 1006, 1007, 1008,1009, 1010, 1011, 1012, 1013, 1014, 1015, 1018, 1020, 1021, 1023, 1025, 1028, 1029, 1030, 1031, 1032, 1035, 1036, 1037, 1038, 1039],
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26-currentOne28+currentOne29-currentOne31-currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40-currentOne45-currentOne46-currentOne48-currentOne49-currentOne50",
           rowNumber:52
           }
     },
@@ -1191,7 +1196,7 @@ export const ASSESSMENT_DATA = [
           header:true,
           editable:true,
           dependent:[1002,1003,1006,1007,1008,1009,1010,1011,1012,1013,1014,1015,1018,1020,1021,1023,1025,1028,1029,1030,1031,1032,1040],
-          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22-currentOne26-currentOne28+currentOne29+currentOne31+currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40+currentOne52",
+          formula:"currentOne7+currentOne8-currentOne13-currentOne14-currentOne15-currentOne17-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne26-currentOne28+currentOne29-currentOne31-currentOne33-currentOne36-currentOne37-currentOne38-currentOne39-currentOne40-currentOne45-currentOne46-currentOne48-currentOne49-currentOne50",
           rowNumber:54
           }
     },
