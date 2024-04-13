@@ -36,6 +36,9 @@ export class ElevenUa {
   @Prop({type:Object, required:true})
   inputData: object;
 
+  @Prop({type:Object, required:true})
+  computations: object;
+
   @Prop({ default: () => new Date() })
   createdAt: Date;
 }
