@@ -30,15 +30,16 @@ export class ReportController {
     constructor(private reportService:ReportService){}
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('getReport/:approach/:reportId')
+  @Get('getReport/:approach/:reportId/:type')
   async getReport(
     @Param('reportId') reportId : string,
     @Param('approach') approach : string,
+    @Param('type') formatType : string,
     @Res() res,
     @Req() req
   ) {
     try {
-      const result = await this.reportService.getReport(reportId, res, req, approach);
+      const result = await this.reportService.getReport(reportId, res, req, approach, formatType);
       if (result.status) {
          return result;
       } else {
@@ -63,19 +64,21 @@ export class ReportController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('rule-eleven-ua-report/:reportId')
+  @Get('rule-eleven-ua-report/:reportId/:type')
   async generateElevenUaReport(
   @Param('reportId') reportId : string,
+  @Param('type') formatType : string,
   @Res() res) {
-    return await this.reportService.ruleElevenUaReport(reportId, res);
+    return await this.reportService.ruleElevenUaReport(reportId, res, formatType);
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('nav-report/:reportId')
+  @Get('nav-report/:reportId/:type')
   async generateNavReport(
   @Param('reportId') reportId : string,
+  @Param('type') formatType : string,
   @Res() res) {
-    return await this.reportService.navReport(reportId, res);
+    return await this.reportService.navReport(reportId, res, formatType);
   }
 
   @UseGuards(KeyCloakAuthGuard)
@@ -87,12 +90,13 @@ export class ReportController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('sebi-report/:reportId')
+  @Get('sebi-report/:reportId/:type')
   async generateSebiReport(
   @Param('reportId') reportId : string,
+  @Param('type') formatType : string,
   @Res() res,
   @Req() req) {
-    return await this.reportService.sebiReport(reportId, res, req);
+    return await this.reportService.sebiReport(reportId, res, req, formatType);
   }
 
   @UseGuards(KeyCloakAuthGuard)

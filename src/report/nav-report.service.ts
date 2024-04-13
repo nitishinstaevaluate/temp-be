@@ -18,7 +18,7 @@ export class navReportService {
         @InjectModel('report') private readonly reportModel: Model<ReportDocument>,
         private valuationService:ValuationsService){
     }
-    async generateNavReport(id, res){
+    async generateNavReport(id, res, formatType){
         try{
             let htmlFilePath, pdfFilePath,docFilePath,pdf;
             const reportDetails = await this.reportModel.findById(id);
@@ -32,16 +32,29 @@ export class navReportService {
             docFilePath = path.join(process.cwd(), 'pdf', `${valuationResult.inputData[0].company}-${reportDetails.id}.docx`);
             
             if(reportDetails?.fileName){
-              const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
-      
-              res.setHeader('Content-Type', 'application/pdf');
-              res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
-              res.send(convertDocxToPdf);
-      
-               return {
-                    msg: "Nav PDF download Success",
-                    status: true,
-                };
+                let formatExtentionHeader,formatTypeHeader, attachmentHeader;
+                if(formatType === 'DOCX'){
+                  let wordBuffer = fs.readFileSync(docFilePath);
+    
+                  formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                  formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.docx"`;
+                  attachmentHeader = wordBuffer;
+                }
+                else{
+                  const convertDocxToPdf = await this.thirdpartyApiAggregateService.convertDocxToPdf(docFilePath,pdfFilePath);
+    
+                  formatTypeHeader = 'application/pdf';
+                  formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`;
+                  attachmentHeader = convertDocxToPdf;
+                }
+                
+                res.setHeader('Content-Type', formatTypeHeader);
+                res.setHeader('Content-Disposition', formatExtentionHeader);
+                res.send(attachmentHeader);
+                return {
+                     msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
+                     status: true,
+                 };
             }
             this.loadNavHelpers(valuationResult, reportDetails);
       
@@ -54,18 +67,33 @@ export class navReportService {
                   pdf = await this.generateNavPdf(html, pdfFilePath);
                 }
       
-                res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`);
-                res.send(pdf);
-      
+                let formatExtentionHeader,formatTypeHeader, attachmentHeader; 
+                if(formatType === 'DOCX'){
+                    await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, docFilePath);
+            
+                    let wordBuffer = fs.readFileSync(docFilePath);
+                    formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                    formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.docx"`;
+                    attachmentHeader = wordBuffer;
+                }
+                else{
+                    formatTypeHeader = 'application/pdf';
+                    formatExtentionHeader = `attachment; filename="='${valuationResult.inputData[0].company}-${reportDetails.id}'.pdf"`;
+                    attachmentHeader = pdf;
+                }
+
+                res.setHeader('Content-Type', formatTypeHeader);
+                res.setHeader('Content-Disposition', formatExtentionHeader);
+                res.send(attachmentHeader);
+
                 return {
-                    msg: "PDF download Success",
+                    msg: `${formatType === 'DOCX' ? 'DOCX' : 'PDF'} download Success`,
                     status: true,
                 };
             } else {
                 console.log("Data not found");
                 return {
-                    msg: "No data found for NAV PDF generation",
+                    msg: `No data found for NAV ${formatType === 'DOCX' ? 'DOCX' : 'PDF'} generation`,
                     status: false
                 };
             }
@@ -75,7 +103,7 @@ export class navReportService {
                 {
                   error: error,
                   status: false,
-                  msg: 'please check nav details, pdf generation failed',
+                  msg: `please check nav details, ${formatType === 'DOCX' ? 'DOCX' : 'PDF'} generation failed`,
                 },
                 HttpStatus.INTERNAL_SERVER_ERROR,
               );
