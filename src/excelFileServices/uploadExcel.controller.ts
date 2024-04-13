@@ -78,7 +78,7 @@ export class UploadController {
   }
 
   // @UseGuards(KeyCloakAuthGuard)
-  @Get('generate/:reportId/:model/:specificity/:processId/:terminalType')
+  @Get('generate-pdf/:reportId/:model/:specificity/:processId/:terminalType')
   async generatePdf(
     @Param('reportId') reportId : string,
     @Param('model') model : string = null,
@@ -91,12 +91,34 @@ export class UploadController {
   }
 
   // @UseGuards(KeyCloakAuthGuard)
+  @Get('generate-docx/:reportId/:model/:specificity/:processId/:terminalType')
+  async generateDocx(
+    @Param('reportId') reportId : string,
+    @Param('model') model : string = null,
+    @Param('specificity') specificity : boolean = false, 
+    @Param('processId') processId : string, 
+    @Param('terminalType') terminalType : string, 
+    @Res() res
+  ) {
+    return await this.excelSheetService.generateDocxFromHtml(reportId,model,specificity,res, processId, terminalType);
+  }
+
+  // @UseGuards(KeyCloakAuthGuard)
   @Get('export-eleven-ua/:elevenUaId')
   async generateElevenUApdf(
     @Param('elevenUaId') id : string,
     @Res() res
   ) {
     return await this.excelSheetService.exportElevenUaPdf(id,res);
+  }
+
+  // @UseGuards(KeyCloakAuthGuard)
+  @Get('export-eleven-ua-docx/:elevenUaId')
+  async generateElevenUAdocx(
+    @Param('elevenUaId') id : string,
+    @Res() res
+  ) {
+    return await this.excelSheetService.exportElevenUaDocx(id,res);
   }
 
   @UseGuards(KeyCloakAuthGuard)

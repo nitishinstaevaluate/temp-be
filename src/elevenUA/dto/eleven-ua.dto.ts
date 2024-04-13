@@ -127,5 +127,10 @@ export class ElevenUaDTO {
 
     @Expose()
     @IsOptional()
+    @IsObject()
+    computations:object;
+
+    @Expose()
+    @IsOptional()
     createdAt:Date;
   }

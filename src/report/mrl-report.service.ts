@@ -5,11 +5,12 @@ import * as puppeteer from 'puppeteer';
 import { utilsService } from "src/utils/utils.service";
 import hbs = require('handlebars');
 import * as converter from 'number-to-words'
-import { NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
-import { computedTotalYears, formatDate, transformData } from "./report-common-functions";
+import { MODEL, NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
+import { computedTotalYears, formatDate, formatPositiveAndNegativeValues, transformData } from "./report-common-functions";
 import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
 import * as xlsx from 'xlsx';
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
+import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 
 @Injectable()
 export class mrlReportService {
@@ -383,6 +384,186 @@ export class mrlReportService {
             error:error,
             status:false,
             msg:"Excel sheet computation failed"
+          }
+        }
+      }
+
+      async generateElevenUaPdfMrl(id, res){
+        try{
+          const applicationData:any = await this.processStateManagerService.fetchProcess(id);
+          if(!applicationData.status) 
+            throw new NotFoundException({
+                statusCode: HttpStatus.NOT_FOUND,
+                message: 'Application data not found, check processId',
+                error: 'Not Found',
+              }).getResponse();
+
+          let htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua-mrl.html`);
+          let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
+
+      
+          await this.loadElevenUaMrlHelpers(applicationData.stateInfo);
+      
+          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+          const template = hbs.compile(htmlContent);
+          const html = template(applicationData.stateInfo);
+      
+          let pdf =  await this.createpdf(html, pdfFilePath);
+
+          res.setHeader('Content-Type', 'application/pdf');
+          res.setHeader('Content-Disposition', `attachment; filename="='Mrl'.pdf"`);
+          res.send(pdf);
+  
+          return {
+              msg: "PDF download Success",
+              status: true,
+          };
+        }
+        catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:"Rule eleven UA mrl report generation failed"
+          }
+        }
+      }
+
+      async generateElevenUaDocxMrl(id, res){
+        try{
+          const applicationData:any = await this.processStateManagerService.fetchProcess(id);
+          if(!applicationData.status) 
+            throw new NotFoundException({
+                statusCode: HttpStatus.NOT_FOUND,
+                message: 'Application data not found, check processId',
+                error: 'Not Found',
+              }).getResponse();
+
+          let htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua-mrl.html`);
+          let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
+          let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
+      
+          await this.loadElevenUaMrlHelpers(applicationData.stateInfo);
+      
+          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
+          const template = hbs.compile(htmlContent);
+          const html = template(applicationData.stateInfo);
+      
+          await this.createpdf(html, pdfFilePath);
+          await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+          
+          let wordBuffer = fs.readFileSync(wordFilePath);
+          
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+          res.setHeader('Content-Disposition', 'attachment; filename="document.docx"');
+          res.send(wordBuffer);
+  
+          return {
+              msg: "Docx download Success",
+              status: true,
+          };
+        }
+        catch(error){
+          return {
+            error:error,
+            status:false,
+            msg:"Rule eleven UA mrl report generation failed"
+          }
+        }
+      }
+
+      async loadElevenUaMrlHelpers(processStateInfo){
+        try{
+          hbs.registerHelper('companyInfo', ()=>{
+            if(processStateInfo.sixthStageInput?.companyInfo)
+              return processStateInfo.sixthStageInput?.companyInfo;
+            return '';
+          })
+          hbs.registerHelper('dateOfAppointment',()=>{
+            if(processStateInfo.sixthStageInput.dateOfAppointment){
+              return formatDate(new Date(processStateInfo.sixthStageInput?.dateOfAppointment));
+            }
+            return '';
+          })
+          hbs.registerHelper('companyName',()=>{
+            if(processStateInfo.firstStageInput.company)
+                return processStateInfo.firstStageInput?.company;
+            return '';
+          })
+          hbs.registerHelper('valuationDate',()=>{
+            if(processStateInfo.firstStageInput.valuationDate)
+                return formatDate(new Date(processStateInfo.firstStageInput?.valuationDate));
+            return '';
+          })
+          hbs.registerHelper('noOfShares',()=>{
+            if(processStateInfo.firstStageInput.outstandingShares)
+                return formatPositiveAndNegativeValues(processStateInfo.firstStageInput.outstandingShares);
+            return '';
+          })
+
+          hbs.registerHelper('phaseValue',()=>{
+            let phaseValue = '-';
+            if(processStateInfo.thirdStageInput){
+              processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
+                if(stateThreeDetails.model === MODEL[6]){
+                  phaseValue = formatPositiveAndNegativeValues(stateThreeDetails?.phaseValue)
+                }
+              })
+            }
+            return `${phaseValue}`.includes('-') ? '-' : `${phaseValue}/-` ;
+          })
+
+          hbs.registerHelper('multiplyPhaseValueAndShares',()=>{
+            let phaseValue = 0;
+            if(processStateInfo.thirdStageInput){
+              processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
+                if(stateThreeDetails.model === MODEL[6]){
+                  phaseValue = stateThreeDetails?.phaseValue;
+                }
+              })
+            }
+            const noOfShares = processStateInfo.firstStageInput.outstandingShares
+            const value =  formatPositiveAndNegativeValues(convertToNumberOrZero(phaseValue) * convertToNumberOrZero(noOfShares));
+            return `${value}`.includes('-') ? '-' : `${value}/-`;
+          })
+
+          hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
+            let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+            if(!processStateInfo.sixthStageInput.reportPurpose?.length || !processStateInfo.sixthStageInput.reportSection?.length){
+              return ['Please provide data']
+            }
+
+
+            //Firstly create object structure with purpose of report and sections in key-value format;
+            processStateInfo.sixthStageInput.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+              processStateInfo.sixthStageInput.reportSection.forEach((indSection, sectionIndex) => {
+                if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                  if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                    storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                    storePurposeWiseSections[indpurpose].push(indSection);
+                  }
+                }
+              });
+            })
+
+            // Use that object structure created above for looping and adding sections followed by purposes 
+            processStateInfo.sixthStageInput.reportPurpose.forEach((indPurposeOfReport,index)=>{
+             let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+              if (stockedPurposes.length <= 1) {
+                overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+              } else {
+                const lastSection = stockedPurposes[stockedPurposes.length - 1];
+                const otherSections = stockedPurposes.slice(0, -1).join(', ');
+                overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                }
+            })
+            return overallSectionsWithPurposes.join(' and ');
+        });
+        }
+        catch(error){
+          console.log(error)
+          return {
+            error,
+            msg:"Rule Eleven Ua helper failed"
           }
         }
       }
