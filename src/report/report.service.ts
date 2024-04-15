@@ -34,11 +34,11 @@ import { convertToRomanNumeral } from './report-common-functions';
 
 @Injectable()
 export class ReportService {
-    totalA=0;
-    totalB=0;
-    totalC=0;
-    totalD=0;
-    totalL=0;
+    // totalA=0;
+    // totalB=0;
+    // totalC=0;
+    // totalD=0;
+    // totalL=0;
     unqotedEquityShareVal=0;
     constructor( private valuationService:ValuationsService,
       @InjectModel('report')
@@ -2744,8 +2744,8 @@ export class ReportService {
     })
 
     hbs.registerHelper('valuePerShareAndCurrencyElevenUa',()=>{
-      if(this.unqotedEquityShareVal && !`${this.unqotedEquityShareVal}`.includes('-'))
-        return `${elevenUaData.data?.inputData?.currencyUnit} ${this.formatPositiveAndNegativeValues(this.unqotedEquityShareVal)}`;
+      if(elevenUaData?.data?.computations?.valuePerShare && !`${elevenUaData?.data?.computations?.valuePerShare}`.includes('-'))
+        return `${elevenUaData.data?.inputData?.currencyUnit} ${this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.valuePerShare)}`;
       return 'NIL';
     })
 
@@ -3032,7 +3032,7 @@ export class ReportService {
     })
 
     hbs.registerHelper('elevenUaPerShare',()=>{
-      if(this.unqotedEquityShareVal){
+      if(elevenUaData?.data?.computations?.valuePerShare){
         // return this.formatPositiveAndNegativeValues(this.unqotedEquityShareVal);
         return elevenUaData?.data?.computations?.valuePerShare ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.computations?.valuePerShare) : '-';
       }
