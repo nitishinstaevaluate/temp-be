@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   netWorthOfCompany,
   profitLossValues,
@@ -16,18 +16,31 @@ import {
   getYearsList,
   findAverage,
   findMedian,
+  convertToNumberOrZero,
 } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
+import * as XLSX from 'xlsx';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { GET_MULTIPLIER_UNITS, RELATIVE_PREFERENCE_RATIO } from 'src/constants/constants';
+import { GET_MULTIPLIER_UNITS, MODEL, MULTIPLES_TYPE, RATIO_TYPE, RELATIVE_PREFERENCE_RATIO } from 'src/constants/constants';
 import { versionTwoNetWorthOfCompany, versionTwoProfitLossValues } from 'src/excelFileServices/v2-relative-valuation.method';
+import { CIQ_COMPANY_MULTIPLES_MEAN_MEDIAN, CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT } from 'src/library/interfaces/api-endpoints.local';
+import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
+import { ciqGetCompanyMeanMedianDto } from 'src/ciq-sp/dto/ciq-sp.dto';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ValuationsService } from './valuationProcess.service';
+import { PostMainValuationDto, ValuationDto } from './dto/valuations.dto';
 @Injectable()
 export class RelativeValuationService {
-  constructor(private readonly customLogger: CustomLogger) {}
+  constructor(private readonly customLogger: CustomLogger,
+    private processStateManagerService: ProcessStatusManagerService,
+    private valuationService: ValuationsService
+  ) {}
   async Relative_Valuation(
     inputs: any,
     worksheet1: any,
     worksheet2: any,
+    multiples?:any
     // companiesInfo: any,
   ): Promise<any> {
  try{
@@ -64,16 +77,16 @@ export class RelativeValuationService {
 
       companies.map((indCompanies)=>{
         if(indCompanies.company === 'Average'){
-          newPeRatioAvg = indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100);
-          newPbRatioAvg = indCompanies.pbRatio.toFixed(2) * (1-discountRateValue/100);
-          newEbitdaAvg = indCompanies.ebitda.toFixed(2) * (1-discountRateValue/100);
-          newSalesAvg = indCompanies.sales.toFixed(2) * (1-discountRateValue/100);
+          newPeRatioAvg = indCompanies?.peRatio ? indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100) : 0;
+          newPbRatioAvg = indCompanies?.pbRatio ? indCompanies.pbRatio.toFixed(2) * (1-discountRateValue/100) : 0;
+          newEbitdaAvg = indCompanies?.ebitda ? indCompanies.ebitda.toFixed(2) * (1-discountRateValue/100) : 0;
+          newSalesAvg = indCompanies?.sales ? indCompanies.sales.toFixed(2) * (1-discountRateValue/100) : 0;
         }
         if(indCompanies.company === 'Median'){
-          newPeRatioMed = indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100);
-          newPbRatioMed = indCompanies.pbRatio.toFixed(2) * (1-discountRateValue/100);
-          newEbitdaMed = indCompanies.ebitda.toFixed(2) * (1-discountRateValue/100);
-          newSalesMed = indCompanies.sales.toFixed(2) * (1-discountRateValue/100);
+          newPeRatioMed = indCompanies?.peRatio ? indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100) : 0;
+          newPbRatioMed = indCompanies?.pbRatio ?  indCompanies.pbRatio.toFixed(2) * (1-discountRateValue/100) : 0;
+          newEbitdaMed = indCompanies?.ebitda ? indCompanies.ebitda.toFixed(2) * (1-discountRateValue/100) : 0;
+          newSalesMed = indCompanies?.sales ? indCompanies.sales.toFixed(2) * (1-discountRateValue/100) : 0;
         }
       })
     // const companiesInfo = {
@@ -149,6 +162,13 @@ export class RelativeValuationService {
     // let netWorth = 0;
     // netWorth = await getShareholderFunds(0, worksheet2);        // Always need the first column
     // version 1 ends
+
+    // re-valuate company average and median
+    let selectedMultiples = [];
+    if(multiples){
+      selectedMultiples = Object.keys(multiples).filter(key => multiples[key]);
+    }
+
     let netWorth = await versionTwoNetWorthOfCompany(0, worksheet2);
 
     const bookValue = netWorth * multiplier / outstandingShares;
@@ -186,20 +206,57 @@ export class RelativeValuationService {
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
     const salesMarketPriceMed = salesEquityMed  / outstandingShares;
 
-    const avgPricePerShareAvg = findAverage([
+    let averageArray=[], medianArray=[];
+    // Mapping average and median multiples
+    // ** Do not change variable names from wholeAverage and wholeMedian
+    // If you want to change variable names, first change average and median variables names in constant file under MULTIPLE_TYPES array
+    if(selectedMultiples?.length){
+      let wholeAverage = {
+        pbMarketPriceAvg,
+        ebitdaEquityAvg,
+        salesEquityAvg,
+        peMarketPriceAvg
+      }
+      let wholeMedian = {
+        pbMarketPriceMed,
+        peMarketPriceMed,
+        ebitdaEquityMed,
+        salesEquityMed
+      }
+      selectedMultiples.map((individualMultiples)=>{
+        MULTIPLES_TYPE.map((constMultiples)=>{
+          if(individualMultiples === constMultiples.key){
+            console.log(selectedMultiples,"selected multiples")
+            console.log(constMultiples.value.avg,"multiples found")
+            averageArray.push(wholeAverage[constMultiples.value.avg]);
+            medianArray.push(wholeMedian[constMultiples.value.med]);
+          }
+        })
+      })
+      console.log(averageArray,"average array", wholeAverage)
+    }
+    
+    const avgPricePerShareAvg = findAverage(
+    averageArray?.length ? 
+    averageArray : 
+      [
       pbMarketPriceAvg,
-      peMarketPriceAvg,
-      // ebitdaMarketPriceAvg,
       ebitdaEquityAvg,
       salesEquityAvg,
-    ]);
-    const avgPricePerShareMed = findAverage([
+      peMarketPriceAvg
+    ]
+  );
+    const avgPricePerShareMed = findAverage(
+    
+    medianArray?.length ? 
+    medianArray : 
+      [
       pbMarketPriceMed,
       peMarketPriceMed,
-      // ebitdaMarketPriceMed,
       ebitdaEquityMed,
-      salesEquityMed,
-    ]);
+      salesEquityMed
+    ]
+  );
 
     const locAvg = avgPricePerShareAvg;
     const locMed = avgPricePerShareAvg;
@@ -214,7 +271,7 @@ export class RelativeValuationService {
     const finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
-      industries : industries,
+      // industries : industries,
       ratiotypebased : ratiotypebased,
       valuation: [
         {
@@ -307,5 +364,168 @@ export class RelativeValuationService {
   console.log("Relative Valuation Error:",error);
   throw error;
  }
+  }
+
+  async recalculateCcmValuation(payload, header){
+    try{
+      // const companyList = payload?.companies;
+      let companiesList = payload.companies;
+      // Firstly recalculating companies average,median based on whether they are selected or not
+      const { calculatedAverage, calculatedMedian } = await this.recalculateCompanyMeanMedian(companiesList, header);
+
+      companiesList.push(calculatedAverage, calculatedMedian)
+
+      // Fetch entire processStateInfo
+      const processStateInfo = await this.processStateManagerService.fetchProcess(payload.processStateId);
+      const fourthStageDetails:any = processStateInfo.stateInfo.fourthStageInput;
+      const valuationId = fourthStageDetails?.appData?.reportId;
+
+      const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.appData?.otherAdj);
+
+
+      // Fetch entire valuation using valuation id 
+      const fetchExistingValuation = await this.valuationService.getValuationById(valuationId);
+
+      // Send the existing valuation data and reselected companies list  for re-valuation
+      const valuationRecalculatedData = await this.computeReValuation(fetchExistingValuation, companiesList, header, otherAdjustment, payload);
+
+      return {
+        status:true,
+        msg:"Valuation recalculation success",
+        ...valuationRecalculatedData
+      }
+      
+    }
+    catch(error){
+      console.log(error,"error found")
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'valuation recalculation failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async recalculateCompanyMeanMedian(companies, header){
+    let industryAggregateList:any = [];
+      for await (const individualCompanies of companies){
+        if(individualCompanies.isSelected){
+          industryAggregateList.push(
+            {
+              COMPANYID: individualCompanies.companyId
+            }
+          )
+        }
+      }
+
+      let financialLog = new ciqGetCompanyMeanMedianDto();
+      financialLog.industryAggregateList = industryAggregateList;
+      financialLog.ratioType = RATIO_TYPE[0];
+
+      const headers = { 
+        'Authorization':`${header.authorization}`,
+        'Content-Type': 'application/json'
+      }
+
+      const companyMeanMedian = await axiosInstance.post(`${CIQ_COMPANY_MULTIPLES_MEAN_MEDIAN}`, financialLog, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+
+      let calculatedAverage,calculatedMedian; 
+      for await(const individualMeanMedian of companyMeanMedian.data.data){
+        if(individualMeanMedian.company === 'Average'){
+          calculatedAverage = individualMeanMedian;
+        }
+        if(individualMeanMedian.company === 'Median'){
+          calculatedMedian = individualMeanMedian;
+        }
+      }
+
+      return { calculatedAverage, calculatedMedian };
+  }
+
+  async computeReValuation(valuationBody, newCompanyList, header, otherAdjustment, body){
+    try{
+      // Firstly run the valuation again, using the same existing input payload
+      const inputPayload = valuationBody.inputData[0];
+      inputPayload.companies = newCompanyList;
+      // console.log(inputPayload,"input payload found")
+      const { worksheet1, worksheet2 } = await this.fetchWorksheet(inputPayload);
+      const recomputationData = await this.Relative_Valuation(inputPayload, worksheet1, worksheet2, body.multiples);
+
+      // Forcefully patching the multiples selection-deselection object in the valuationData
+        recomputationData.result['multiples'] = body.multiples;
+
+      // Replacing CCM valuation with the new one
+      for await (const individualValuation of valuationBody?.modelResults){
+        if(individualValuation.model === MODEL[2]){
+          individualValuation.valuationData = recomputationData?.result;
+          individualValuation.valuation = recomputationData?.valuation;
+        }
+      }
+      
+      const valuationWithoutInternalProps = valuationBody.toObject({ getters: true, virtuals: true });
+      const { _id, ...rest} = valuationWithoutInternalProps;
+      
+      // Updating the CCM valuation
+      await this.valuationService.createValuation(rest, _id);
+
+      // Updating process manager 
+      let mainValuationDto = new PostMainValuationDto();
+      mainValuationDto.reportId = _id;
+      mainValuationDto.valuationResult = valuationBody.modelResults;
+      const processStateModel = {
+        fourthStageInput:{
+          appData: mainValuationDto,
+          otherAdj: otherAdjustment,
+          formFillingStatus: true
+        },
+        step: 4
+      }
+      await this.processStateManagerService.upsertProcess(this.getRequestAuth(header), processStateModel, body.processStateId);
+      return mainValuationDto
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 're-valuation failed',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  getRequestAuth(headers){
+    return {
+      headers:{
+         authorization:headers.authorization
+       }
+     } 
+  }
+
+  async fetchWorksheet(inputs){
+    const valuationFileToProcess = inputs.isExcelModified === true ? inputs.modifiedExcelSheetId : inputs.excelSheetId;
+
+    let workbook;
+    try {
+      workbook = XLSX.readFile(`./uploads/${valuationFileToProcess}`);
+    } catch (error) {
+      this.customLogger.log({
+        message: `excelSheetId: ${valuationFileToProcess} not available`,
+        userId: inputs.userId,
+      });
+      return {
+        result: null,
+        msg: `excelSheetId: ${valuationFileToProcess} not available`,
+      };
+    }
+
+    const worksheet1 = workbook.Sheets['P&L'];
+    const worksheet2 = workbook.Sheets['BS'];
+
+    return { worksheet1, worksheet2 };
   }
 }

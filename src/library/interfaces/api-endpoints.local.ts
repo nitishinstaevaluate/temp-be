@@ -6,3 +6,4 @@ export const FETCH_BETA_WORKING = 'https://localhost:3000/ciq-sp/fetch-beta-work
 export const CREATE_TOKEN = 'https://localhost:3000/authentication/create-token';
 export const FETCH_TOKEN = 'https://localhost:3000/authentication/get-token';
 export const CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT = 'https://localhost:3000/ciq-elastic-search/ciq-elastic-search-financial-data';
+export const CIQ_COMPANY_MULTIPLES_MEAN_MEDIAN = 'https://localhost:3000/ciq-sp/calculate-sp-companies-mean-median';
