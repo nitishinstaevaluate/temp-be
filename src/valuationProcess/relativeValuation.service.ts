@@ -268,7 +268,7 @@ export class RelativeValuationService {
     // const tentativeIssuePrice = Math.round(
     //   findAverage([finalPriceAvg, finalPriceMed]),
     // );
-    const finalResult = {
+    let finalResult = {
       companies: companies,
       companiesInfo: companiesInfo,
       // industries : industries,
@@ -350,6 +350,8 @@ export class RelativeValuationService {
         },
       ],
     };
+    
+    finalResult = await this.factoriseResult(finalResult, selectedMultiples);
     this.customLogger.log({
       message: 'Request is sucessfully executed in Relative Valuation Service.',
       userId: inputs.userId,
@@ -361,9 +363,35 @@ export class RelativeValuationService {
     };
  }
  catch(error){
-  console.log("Relative Valuation Error:",error);
   throw error;
  }
+  }
+
+  async factoriseResult(data, selectedMultiple){
+    const valuationData = data;
+    let counter = 1, particularStruc=[];
+    if(!selectedMultiple?.length){
+      for await (const indStruc of MULTIPLES_TYPE){
+          particularStruc.push(indStruc.particular)
+      }
+    }else{
+      for await (const individualMultiple of selectedMultiple){
+        for await (const indStruc of MULTIPLES_TYPE){
+          if(individualMultiple === indStruc.key){
+            particularStruc.push(indStruc.particular)
+          }
+        }
+      }
+    }
+    for await (const indParticular of particularStruc){
+      for await (const individualObj of valuationData.valuation){
+        if( indParticular === individualObj.particular){
+          individualObj['serialNo'] = counter;
+        }
+      }
+      counter ++;
+    }
+    return valuationData;
   }
 
   async recalculateCcmValuation(payload, header){

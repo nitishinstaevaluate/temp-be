@@ -3469,11 +3469,12 @@
                                 </p>
                                 {{/if}}
                    </div>
+                {{#if (containsPsSelectionAndEvbitdaSelection)}}
                 <div style="page-break-before: always;padding-top: 5%;padding-left: 4%;padding-right:2%;">
                     <h1 style="padding-top: 3pt;padding-left: 4%;text-indent: -18pt;text-align: left;"> Fair
                         Value Indication via CCM Method</h1>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-
+                    {{#if (containsPsSelection)}}
                     <h1 style="padding-left: 16pt;text-align: left;">P/S Multiple
                     </h1>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -3567,8 +3568,10 @@
                         {{/each}}
                     </table>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    {{/if}}
 
 
+                    {{#if (containsEvbitdaSelection)}}
                     <h1 style="padding-left: 32pt;text-indent: -18pt;text-align: left;padding-top: 3%;">EV/EBITDA
                         Multiple</h1>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -3660,11 +3663,17 @@
                         {{/if}}
                         {{/each}}
                     </table>
+                    {{/if}}
                 </div>
+                {{/if}}
                 
                 <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
-                    <h1
-                style="padding-top: 3%;padding-left: 32pt;text-indent: -18pt;text-align: left;">
+                {{#if (notContainsPsAndEbitdaSelection)}}
+                <h1 style="padding-top: 3pt;padding-left: 3%;text-align: left;">3. Fair
+                    Value Indication via CCM Method</h1>
+                {{/if}}
+                {{#if (containsPbSelection)}}
+                <h1 style="padding-top: 3%;padding-left: 32pt;text-indent: -18pt;text-align: left;">
                 P/BV Multiple</h1>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;line-height: 150%;"><span class="p">We
@@ -3746,8 +3755,9 @@
                 {{/each}}
             </table>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            {{/if}}
 
-
+            {{#if (containsPeSelection)}}
             <h1 style="padding-left: 16pt;text-align: left;padding-top: 1%;">P/E Multiple
             </h1>
 
@@ -3829,6 +3839,7 @@
                     {{/if}}
                     {{/each}}
                 </table>
+                {{/if}}
                 <div>
                     <h1 style="padding-top: 6%;padding-left: 15pt;text-indent: 0pt;text-align: left;">Weighted Average
                         Value per Share</h1>

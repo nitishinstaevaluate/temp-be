@@ -161,6 +161,28 @@ export class ProcessStatusManagerService {
             msg: 'Process state updated',
           };
         }
+        else if (process.firstStageInput){
+
+          const updateFirstStage = {};
+
+          Object.keys(process.firstStageInput).forEach(key => {
+              updateFirstStage[`firstStageInput.${key}`] = process.firstStageInput[key];
+          });
+          
+          updateFirstStage['step'] = step + 1;
+          
+          existingRecord = await this.processModel.findOneAndUpdate(
+              { _id: processId },
+              { $set: updateFirstStage },
+              { new: true }
+          );
+          
+          return {
+              processId: existingRecord.id,
+              status: true,
+              msg: 'process state updated',
+          };
+        }
         else {
           existingRecord = await this.processModel.findOneAndUpdate(
             { _id: processId },
