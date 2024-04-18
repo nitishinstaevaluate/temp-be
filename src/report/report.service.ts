@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -2358,50 +2358,158 @@ export class ReportService {
           return totalPriceToSalesRatio;
         })
 
+        hbs.registerHelper('containsPsSelectionAndEvbitdaSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || (multiples?.psSelection || multiples?.evEbitdaSelection)){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsPsSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.psSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsEvbitdaSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.evEbitdaSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsPbSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.pbSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsPeSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.peSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('notContainsPsAndEbitdaSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(multiples && (!multiples.psSelection && !multiples.evEbitdaSelection)){
+                  selection = true;
+                }
+              }
+            })
+          }
+          return selection;
+        })
+        
+        hbs.registerHelper('addSerialNo', (value) => {
+          const [reportMultiple, reportDefaultIndex] = value.split(',');
+          const { multiples, selectedMultiples } = this.getSelectedMultiples(valuationResult);
+          const ccmValuationLength = valuationResult?.modelResults?.find(data => data.model === MODEL[2])?.valuationData?.valuation?.length;
+          const serialNo = this.calculateSerialNo(reportMultiple, reportDefaultIndex, multiples, selectedMultiples, ccmValuationLength);
+          return serialNo || 3;
+        });
+      
         hbs.registerHelper('weightedAvgValuePrShare',()=>{
           let evSales:any=[],evEbitda:any=[],priceToBookValue:any=[],priceToEarnings:any=[],avgValuePerShare:any=[],totalWeightedAvgValuePrShare:any=[],outstandingShares:any=[], total:any=[],sumOfWeightedValue=0;
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
+                const multiples = data.valuationData?.multiples;
+                let selectedMultiples, totalAverage;
+                if(multiples){
+                  selectedMultiples = Object.keys(multiples).filter(key => multiples[key]);
+                   totalAverage = convertToNumberOrZero(100/selectedMultiples.length).toFixed(2);
+                }
                 data.valuationData.valuation.map((valuationDetails)=>{
-                  if(valuationDetails.particular === 'sales'){
+                  if(valuationDetails.particular === 'sales' && (!multiples ? true : multiples?.psSelection)){
                     evSales = {
                       particular:'Value as per P/Sales',
                       fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.salesEquityAvg), // only for calculating average
-                      weights:'25%',
+                      weights:`${totalAverage ? totalAverage : 25}%`,
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.salesEquityAvg))/100),  //only for calculating average
                     }
                     sumOfWeightedValue += (25 * (valuationDetails.salesEquityAvg))/100;
+                    totalWeightedAvgValuePrShare.push(evSales);
                   }
-                  if(valuationDetails.particular === 'ebitda'){
+                  if(valuationDetails.particular === 'ebitda' && (!multiples ? true : multiples?.evEbitdaSelection)){
                     evEbitda = {
                       particular:'Value as per EV/EBITDA',
                       fairValOfEquity: this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityAvg), //only for calculating average
-                      weights:'25%',
+                      weights:`${totalAverage ? totalAverage : 25}%`,
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.ebitdaEquityAvg))/100) //only for calculating average
                     }
                     
                     sumOfWeightedValue += (25 * (valuationDetails.ebitdaEquityAvg))/100;
+                    totalWeightedAvgValuePrShare.push(evEbitda);
                   }
                   
-                  if(valuationDetails.particular === 'pbRatio'){
+                  if(valuationDetails.particular === 'pbRatio' && (!multiples ? true : multiples?.pbSelection)){
                     priceToBookValue = {
                       particular:'Value as per P/BV',
                       fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceAvg), //only for calculating average
-                      weights:'25%',
+                      weights:`${totalAverage ? totalAverage : 25}%`,
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.pbMarketPriceAvg))/100) //only for calculating average
                     }
                     sumOfWeightedValue += (25 * (valuationDetails.pbMarketPriceAvg))/100;
+                    totalWeightedAvgValuePrShare.push(priceToBookValue);
                   }
                   
-                  if(valuationDetails.particular === 'peRatio'){
+                  if(valuationDetails.particular === 'peRatio' && (!multiples ? true : multiples?.peSelection)){
                     priceToEarnings = {
                       particular:'Value as per P/E',
                       fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceAvg), //only for calculating average
-                      weights:'25%',
+                      weights:`${totalAverage ? totalAverage : 25}%`,
                       weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.peMarketPriceAvg))/100) //only for calculating average
                     }
                     sumOfWeightedValue += (25 * (valuationDetails.peMarketPriceAvg))/100;
+                    totalWeightedAvgValuePrShare.push(priceToEarnings);
                   }
                   if(valuationDetails.particular === 'result'){
                     avgValuePerShare = {
@@ -2428,7 +2536,7 @@ export class ReportService {
               weights:'',
               weightedVal: this.formatPositiveAndNegativeValues(sumOfWeightedValue)
             }
-            totalWeightedAvgValuePrShare.push(evSales,evEbitda,priceToBookValue,priceToEarnings,total,outstandingShares,avgValuePerShare);
+            totalWeightedAvgValuePrShare.push(total,outstandingShares,avgValuePerShare);
           }
           return totalWeightedAvgValuePrShare;
         })
@@ -3429,4 +3537,32 @@ export class ReportService {
       );
     }
   }
+
+  calculateSerialNo(reportMultiple, reportDefaultIndex, multiples, selectedMultiples, ccmValuationLength) {
+    if (reportMultiple === 'weightageAverage') {
+        return multiples ? `3.${selectedMultiples?.length + 1}` : `3.${ccmValuationLength}`;
+    } else {
+        if (!multiples || selectedMultiples.length === 4) {
+            return `3.${reportDefaultIndex}`;
+        } else {
+            const simplifiedMultipleArray = MULTIPLES_ORDER_CCM_REPORT.filter(mStruc => selectedMultiples.includes(mStruc));
+            const index = simplifiedMultipleArray.indexOf(reportMultiple);
+            return index !== -1 ? `3.${index + 1}` : '';
+        }
+    }
+}
+
+ getSelectedMultiples(valuationResult) {
+  let multiples, selectedMultiples;
+  valuationResult?.modelResults?.some((data) => {
+      if (data.model === MODEL[2]) {
+          multiples = data.valuationData?.multiples;
+          if(multiples){
+            selectedMultiples = Object.keys(multiples).filter(key => multiples[key]);
+          }
+          return true; // Exit loop once found
+      }
+  });
+  return { multiples, selectedMultiples };
+}
 }

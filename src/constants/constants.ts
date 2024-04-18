@@ -1996,3 +1996,42 @@ export const MNEMONICS_ARRAY_5 = [
 ]
 
 export const RATIO_TYPE = ['Company Based', 'Industry Based']
+
+// ** Do not change variable names whatsoever
+// If wishes, first change the variable names from relative valuation function
+export const MULTIPLES_TYPE = [
+  {
+    key:'pbSelection',
+    value:{
+      avg: 'pbMarketPriceAvg',
+      med: 'pbMarketPriceMed'
+    },
+    particular:'pbRatio'
+  },
+  {
+    key:'peSelection',
+    value:{
+      avg: 'peMarketPriceAvg',
+      med: 'peMarketPriceMed'
+    },
+    particular:'peRatio'
+  },
+  {
+    key:'evEbitdaSelection',
+    value:{
+      avg: 'ebitdaEquityAvg',
+      med: 'ebitdaEquityMed'
+    },
+    particular:'ebitda'
+  },
+  {
+    key:'psSelection',
+    value:{
+      avg: 'salesEquityAvg',
+      med: 'salesEquityMed'
+    },
+    particular:'sales'
+  }
+]
+
+export const MULTIPLES_ORDER_CCM_REPORT = ['psSelection', 'evEbitdaSelection', 'pbSelection', 'peSelection']
