@@ -27,6 +27,7 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { terminalValueWorkingService } from './terminal-value-working.service';
 import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
+import { RelativeValuationService } from './relativeValuation.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -397,7 +398,8 @@ export class ValuationsController {
   constructor(private valuationsService: ValuationsService,
     private readonly utilsService: utilsService,
     private terminalWorkingService: terminalValueWorkingService,
-    private readonly fcfeService: FCFEAndFCFFService) {}
+    private readonly fcfeService: FCFEAndFCFFService,
+  private relativeValuationService: RelativeValuationService) {}
 
   @UseGuards(KeyCloakAuthGuard)
   @Get('calculate-terminal-value')
@@ -406,11 +408,18 @@ export class ValuationsController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('re-valuation/:id/:type')
+  @Get('dcf-re-valuation/:id/:type')
   async recalculateValuePerShare(@Param('id') processId:any,
   @Param('type') type:any,
   @Headers() headers: Headers){
     return await this.fcfeService.recalculateValuePerShare(processId, type, headers);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Post('ccm-re-valuation')
+  async recalculateCcmValuation(@Body() inputPayload:any,
+  @Headers() headers: Headers){
+    return await this.relativeValuationService.recalculateCcmValuation(inputPayload, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)
