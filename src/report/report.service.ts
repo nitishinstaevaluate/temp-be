@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -2447,6 +2447,45 @@ export class ReportService {
           }
           return selection;
         })
+
+        hbs.registerHelper('loadMultipleLabel',(value)=>{
+          let strtIndex = 0, multiples, selectedMultiples = [];
+          valuationResult.modelResults.map((data)=>{
+            if(data.model === MODEL[2] || data.model === MODEL[4]){
+              multiples = data.valuationData?.multiples;
+            }
+          })
+          if(multiples){
+            // if multiples exist then take those multiples which are selected by user   
+            let multiplesArray = Object.keys(multiples).filter(key => multiples[key]);
+            multiplesArray.map((indMulitple)=>{
+              MULTIPLES_TYPE.map((multipleStruc)=>{
+                if(multipleStruc.key === indMulitple){
+                  selectedMultiples.push(multipleStruc.label);
+                }
+              })
+            })
+          }
+          else{
+            // If multiples does not exist, take all the default multiples from array
+            MULTIPLES_TYPE.map((multipleStru)=>{
+               selectedMultiples.push(multipleStru.label)
+             }
+            );
+          }
+          let str = ``;
+          for (let i = strtIndex; i < selectedMultiples.length; i ++){
+            // In this add 6 because we want to start indexing after 6th
+            str +=`<li>
+            <p
+                style="padding-left: 20pt;line-height: ${value === 'addLh' ? '190%' : '15pt'};text-align: left;">
+               ${i + 6}. ${selectedMultiples[i]}
+               </p>
+            </li>
+          `
+          }
+          return str;
+        })
         
         hbs.registerHelper('addSerialNo', (value) => {
           const [reportMultiple, reportDefaultIndex] = value.split(',');
@@ -2665,6 +2704,22 @@ export class ReportService {
         }
       })
       return colspan + 1;  //add one since column starts from particulars
+    })
+
+    hbs.registerHelper('calculatePostDiscountColspan',()=>{
+      let colspan;
+      valuationResult.modelResults.map((response)=>{
+        if(response.model === MODEL[2] || response.model === MODEL[4]){
+          const multiples = response.valuationData?.multiples;
+          if(multiples){
+            colspan = Object.keys(multiples).filter(key => multiples[key])?.length;
+          }
+          else{
+            colspan = 4
+          }
+        }
+      })
+      return colspan;
     })
 
     hbs.registerHelper('isLineItemCheck',(value)=>{
@@ -3258,8 +3313,33 @@ export class ReportService {
 
   loadFinancialTableHelper(financialData, valuationDetails){
     hbs.registerHelper('financialSegment',()=>{
+      let financiallyFilteredCompany = [], companySelectedArray = [], isSelectedExists = false;
       if(financialData){
-        return financialData;
+        valuationDetails.modelResults.map((data)=>{
+          if(data.model === MODEL[2] || data.model === MODEL[4]){
+            isSelectedExists  = data.valuationData?.companies.some((indCompanies: any) => 'isSelected' in indCompanies);
+            if(isSelectedExists){
+              companySelectedArray = data.valuationData?.companies;
+            }
+          }
+        }
+        )
+        if(isSelectedExists && companySelectedArray?.length){
+          let counter = 1;
+          companySelectedArray.map((indFilterCompany)=>{
+            financialData.map((indFinancialCompanyData)=>{
+              if(indFinancialCompanyData?.companyId === indFilterCompany?.companyId && indFilterCompany?.isSelected){
+                indFinancialCompanyData['serialNo'] = counter;
+                financiallyFilteredCompany.push(indFinancialCompanyData);
+                counter ++;
+              }
+            })
+          })
+          return financiallyFilteredCompany;
+        }
+        else{
+          return financialData;
+        }
       }
       return [];
     })
@@ -3278,20 +3358,46 @@ export class ReportService {
     hbs.registerHelper('priceToSalesMean',()=>{
       let mean = 0;
       if(financialData){
-        financialData.map((elements)=>{
-          mean += convertToNumberOrZero(elements.sales);
-        })
-        return (mean/financialData.length).toFixed(2);
+        valuationDetails.modelResults.map((data)=>{
+          if(data.model === MODEL[2] || data.model === MODEL[4]){
+            const companies = data.valuationData?.companies;
+            if(!companies?.length)
+                return mean = 0;
+            companies.map((indCompany)=>{
+              if(indCompany.company === 'Average'){
+                mean = indCompany.sales
+              }
+            })
+          }
+        }
+        )
+        // financialData.map((elements)=>{
+        //   mean += convertToNumberOrZero(elements.sales);
+        // })
+        return convertToNumberOrZero(mean).toFixed(2);
       }
       return 0;
     })
     hbs.registerHelper('priceToBookMean',()=>{
       let mean = 0;
       if(financialData){
-        financialData.map((elements)=>{
-          mean += convertToNumberOrZero(elements.pbRatio);
-        })
-        return (mean/financialData.length).toFixed(2);
+        valuationDetails.modelResults.map((data)=>{
+          if(data.model === MODEL[2] || data.model === MODEL[4]){
+            const companies = data.valuationData?.companies;
+            if(!companies?.length)
+              return mean = 0;
+            companies.map((indCompany)=>{
+              if(indCompany.company === 'Average'){
+                mean = indCompany.pbRatio;
+              }
+            })
+          }
+        }
+        )
+        // financialData.map((elements)=>{
+        //   mean += convertToNumberOrZero(elements.pbRatio);
+        // })
+        return convertToNumberOrZero(mean).toFixed(2);
       }
       return 0;
     })
@@ -3299,20 +3405,46 @@ export class ReportService {
     hbs.registerHelper('priceToEquityMean',()=>{
       let mean = 0;
       if(financialData){
-        financialData.map((elements)=>{
-          mean += convertToNumberOrZero(elements.peRatio);
-        })
-        return (mean/financialData.length).toFixed(2);
+        valuationDetails.modelResults.map((data)=>{
+          if(data.model === MODEL[2] || data.model === MODEL[4]){
+            const companies = data.valuationData?.companies;
+            if(!companies?.length)
+              return mean = 0;
+            companies.map((indCompany)=>{
+              if(indCompany.company === 'Average'){
+                mean = indCompany.peRatio;
+              }
+            })
+          }
+        }
+        )
+        // financialData.map((elements)=>{
+        //   mean += convertToNumberOrZero(elements.peRatio);
+        // })
+        return convertToNumberOrZero(mean).toFixed(2);
       }
       return 0;
     })
     hbs.registerHelper('evByEbitdaMean',()=>{
       let mean = 0;
       if(financialData){
-        financialData.map((elements)=>{
-          mean += convertToNumberOrZero(elements.ebitda);
-        })
-        return (mean/financialData.length).toFixed(2);
+        valuationDetails.modelResults.map((data)=>{
+          if(data.model === MODEL[2] || data.model === MODEL[4]){
+            const companies = data.valuationData?.companies;
+            if(!companies?.length)
+              return mean = 0;
+            companies.map((indCompany)=>{
+              if(indCompany.company === 'Average'){
+                mean = indCompany.ebitda;
+              }
+            })
+          }
+        }
+        )
+        // financialData.map((elements)=>{
+        //   mean += convertToNumberOrZero(elements.ebitda);
+        // })
+        return convertToNumberOrZero(mean).toFixed(2);
       }
       return 0;
     })
