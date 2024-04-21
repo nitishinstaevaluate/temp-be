@@ -1411,28 +1411,29 @@ export class ExcelSheetService {
         });
 
         // relative valuation helpers
-        hbs.registerHelper('companies', () => {
-          let arrayCompany = [];
-          let isCompany = false;
-          if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
-            isCompany=true;
-          }
-          valuationResult.modelResults.forEach((result)=>{
-            if(result.model === MODEL[2] || result.model === MODEL[4]){
-              arrayCompany = this.createPrfnceRtio(isCompany ? result.valuationData?.companies : result.valuationData.industries,isCompany);
-            }
-          })
-          return arrayCompany;
-        });
+        // hbs.registerHelper('companies', () => {
+        //   let arrayCompany = [];
+        //   let isCompany = false;
+        //   if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
+        //     isCompany=true;
+        //   }
+        //   valuationResult.modelResults.forEach((result)=>{
+        //     if(result.model === MODEL[2] || result.model === MODEL[4]){
+        //       arrayCompany = this.createPrfnceRtio(isCompany ? result.valuationData?.companies : result.valuationData.industries,isCompany);
+        //     }
+        //   })
+        //   return arrayCompany;
+        // });
 
         hbs.registerHelper('relativeVal', () => {
-          let arrayPbRatio = [];
+          let arrayPbRatio = [], selectedMultiples = [];
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === MODEL[2] || result.model === MODEL[4]){
+              const multiples = result.valuationData?.multiples;
               result.valuationData?.valuation.map((response)=>{
-                if(response?.particular === 'pbRatio'){
+                if(response?.particular === 'pbRatio' && (multiples ? multiples?.pbSelection : true)){
                   const pbRatioHead = {
-                    srNo:1,
+                    srNo:response.serialNo || 1,
                     particular:'P/B Ratio',
                     avg:'',
                     med:''
@@ -1457,7 +1458,7 @@ export class ExcelSheetService {
                   }
                   arrayPbRatio.push(pbRatioHead,netWorthObj,industryObj,fairValEquity)
                 }
-                else if(response?.particular === 'peRatio'){
+                else if(response?.particular === 'peRatio' && (multiples ? multiples?.peSelection : true)){
                   arrayPbRatio.push({ //make sure to push empty object to have empty space between rows
                     srNo:'',
                     particular:'',
@@ -1465,7 +1466,7 @@ export class ExcelSheetService {
                     med:''
                   })
                   const peRatioHead = {
-                    srNo:2,
+                    srNo:response?.serialNo || 2,
                     particular:'P/E Ratio',
                     avg:'',
                     med:''
@@ -1490,7 +1491,7 @@ export class ExcelSheetService {
                   }
                   arrayPbRatio.push(peRatioHead,patObj,peRatioIndObj,peRatioMrktPrceObj)
                 }
-                else if(response?.particular === 'ebitda'){
+                else if(response?.particular === 'ebitda' && (multiples ? multiples?.evEbitdaSelection : true)){
                   arrayPbRatio.push({ //make sure to push empty object to have empty space between rows
                     srNo:'',
                     particular:'',
@@ -1498,7 +1499,7 @@ export class ExcelSheetService {
                     med:''
                   })
                   const ebitDatHead = {
-                    srNo:3,
+                    srNo:response?.serialNo || 3,
                     particular:'EV/EBITDA',
                     avg:'',
                     med:''
@@ -1541,7 +1542,7 @@ export class ExcelSheetService {
                   }
                   arrayPbRatio.push(ebitDatHead,ebitDaObj,evEbitDaObj,entprseObj,valDebtObj,cashAndCashEquObj,valEquityObj)
                 }
-                else if(response?.particular === 'sales'){
+                else if(response?.particular === 'sales' && (multiples ? multiples?.psSelection : true)){
                   arrayPbRatio.push({ //make sure to push empty object to have empty space between rows
                     srNo:'',
                     particular:'',
@@ -1549,7 +1550,7 @@ export class ExcelSheetService {
                     med:''
                   })
                   const salesHead = {
-                    srNo:4,
+                    srNo:response?.serialNo || 4,
                     particular:'Price to Sales',
                     avg:'',
                     med:''
@@ -1773,6 +1774,66 @@ export class ExcelSheetService {
           return arrayCompany;
         });
 
+        hbs.registerHelper('containsPsSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.psSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsEvbitdaSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.evEbitdaSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsPbSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.pbSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsPeSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                if(!multiples || multiples?.peSelection){
+                  selection = true
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
         hbs.registerHelper('valuationLengthGreater',()=>{
           let boolValuationLength = false;
           valuationResult.modelResults.forEach((result)=>{
@@ -1822,16 +1883,26 @@ export class ExcelSheetService {
       }
 
       createPrfnceRtio(data,isCompany){
+        const isSelectedExists = data.some((indCompanies: any) => 'isSelected' in indCompanies);
         const arrayCompany = [];
           data.map((response:any)=>{
-            const obj={
-              company:isCompany ? response?.company : response.industry,
-              peRatio:isCompany && response.peRatio  ? parseFloat(response.peRatio).toFixed(2) : !isCompany && response.currentPE ?  parseFloat(response.currentPE).toFixed(2) : response.peRatio === 0 ? 0 : response.currentPE === 0 ? 0 :  '',
-              pbRatio:isCompany && response.pbRatio ? parseFloat(response.pbRatio).toFixed(2) : !isCompany &&  response.pbv ? parseFloat(response.pbv).toFixed(2) : response.pbRatio === 0 ? 0 : response.pbv === 0 ? 0 : '',
-              ebitda:isCompany && response.ebitda ? parseFloat(response.ebitda).toFixed(2) : !isCompany && response.evEBITDA_PV ? parseFloat(response.evEBITDA_PV).toFixed(2) :  response.ebitda === 0 ? 0 : response.evEBITDA_PV === 0 ? 0 :  '',
-              sales:isCompany && response.sales ? parseFloat(response.sales).toFixed(2) : !isCompany && response.priceSales ? parseFloat(response.priceSales).toFixed(2) : response.sales === 0 ? 0 : response.priceSales === 0 ? 0 : '',
+            if(
+              isSelectedExists ? 
+              (
+                response.isSelected || 
+                response.company === 'Average' || 
+                response.company === 'Median'
+              ) : true
+            ){
+              const obj={
+                company:isCompany ? response?.company : response.industry,
+                peRatio:isCompany && response.peRatio  ? parseFloat(response.peRatio).toFixed(2) : !isCompany && response.currentPE ?  parseFloat(response.currentPE).toFixed(2) : response.peRatio === 0 ? 0 : response.currentPE === 0 ? 0 :  '',
+                pbRatio:isCompany && response.pbRatio ? parseFloat(response.pbRatio).toFixed(2) : !isCompany &&  response.pbv ? parseFloat(response.pbv).toFixed(2) : response.pbRatio === 0 ? 0 : response.pbv === 0 ? 0 : '',
+                ebitda:isCompany && response.ebitda ? parseFloat(response.ebitda).toFixed(2) : !isCompany && response.evEBITDA_PV ? parseFloat(response.evEBITDA_PV).toFixed(2) :  response.ebitda === 0 ? 0 : response.evEBITDA_PV === 0 ? 0 :  '',
+                sales:isCompany && response.sales ? parseFloat(response.sales).toFixed(2) : !isCompany && response.priceSales ? parseFloat(response.priceSales).toFixed(2) : response.sales === 0 ? 0 : response.priceSales === 0 ? 0 : '',
+              }
+              arrayCompany.push(obj)
             }
-            arrayCompany.push(obj)
           })
           // if(isCompany){
           //   const avgObj = {

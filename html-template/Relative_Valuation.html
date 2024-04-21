@@ -123,10 +123,18 @@
         <thead>
           <tr style="font-size: 13px;">
             <th style="color: #5a5a5a !important">Company</th>
+            {{#if (containsPeSelection)}}
             <th style="color: #5a5a5a !important">P/E <span>(x)</span></th>
+            {{/if}}
+            {{#if (containsPbSelection)}}
             <th style="color: #5a5a5a !important">P/B <span>(x)</span></th>
+            {{/if}}
+            {{#if (containsPsSelection)}}
             <th style="color: #5a5a5a !important">P/S <span>(x)</span></th>
+            {{/if}}
+            {{#if (containsEvbitdaSelection)}}
             <th style="color: #5a5a5a !important">EV/EBITDA <span>(x)</span></th>
+            {{/if}}
           </tr>
         </thead>
         {{#each (companies data)}}
@@ -134,18 +142,34 @@
             {{#if (checkHead company "highlightLabel")}}
                 <tr style="font-size: 13px;font-weight: bold;">
                     <td style="text-align: left;padding-left: 2%;">{{company}}</td>
+                    {{#if (containsPeSelection)}}
                     <td>{{formatPositiveAndNegativeNumber peRatio}}</td>
+                    {{/if}}
+                    {{#if (containsPbSelection)}}
                     <td>{{formatPositiveAndNegativeNumber pbRatio}}</td>
+                    {{/if}}
+                    {{#if (containsPsSelection)}}
                     <td>{{formatPositiveAndNegativeNumber sales}}</td>
+                    {{/if}}
+                    {{#if (containsEvbitdaSelection)}}
                     <td>{{formatPositiveAndNegativeNumber ebitda}}</td>
+                    {{/if}}
                 </tr>
             {{else}}
                 <tr style="font-size: 13px;">
                     <td style="text-align: left;padding-left: 2%;">{{company}}</td>
+                    {{#if (containsPeSelection)}}
                     <td>{{formatPositiveAndNegativeNumber peRatio}}</td>
+                    {{/if}}
+                    {{#if (containsPbSelection)}}
                     <td>{{formatPositiveAndNegativeNumber pbRatio}}</td>
+                    {{/if}}
+                    {{#if (containsPsSelection)}}
                     <td>{{formatPositiveAndNegativeNumber sales}}</td>
+                    {{/if}}
+                    {{#if (containsEvbitdaSelection)}}
                     <td>{{formatPositiveAndNegativeNumber ebitda}}</td>
+                    {{/if}}
                 </tr>
             {{/if}}
         </tbody>
