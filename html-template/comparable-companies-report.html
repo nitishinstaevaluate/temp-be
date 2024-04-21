@@ -1185,7 +1185,7 @@
                                             style="padding-left: 20pt;line-height: 15pt;text-align: left;">
                                            5. Earnings per Share (EPS)</p>
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                         <p
                                             style="padding-left: 20pt;line-height: 15pt;text-align: left;">
                                            6. EV/S</p>
@@ -1204,7 +1204,9 @@
                                         <p
                                             style="padding-left: 20pt;line-height: 15pt;text-align: left;">
                                           9.  P/E</p>
-                                    </li>
+                                    </li> -->
+
+                                    {{{loadMultipleLabel}}}
                                 </ul>
                             </li>
                         </ol>
@@ -1276,30 +1278,38 @@
                         EV/S (X)
                         </p>
                 </td> -->
+                {{#if (containsPeSelection)}}
                 <td style="width:7% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;"
                     >
                     <p style="text-align: center !important;color:black;font-size: 11px !important;" class="s11">
                         P/E (X)
                         </p>
                 </td>
+                {{/if}}
+                {{#if (containsPbSelection)}}
                 <td style="width:7% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;"
                     >
                     <p style="text-align: center !important;color:black;font-size: 11px !important;" class="s11">
                         P/B (X)
                         </p>
                 </td>
+                {{/if}}
+                {{#if (containsPsSelection)}}
                 <td style="width:7% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;"
                     >
                     <p style="text-align: center !important;color:black;font-size: 11px !important;" class="s11">
                         P/S (X)
                         </p>
                 </td>
+                {{/if}}
+                {{#if (containsEvbitdaSelection)}}
                 <td style="width:8% !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;vertical-align: middle;"
                     >
                     <p style="text-align: center !important;color:black;font-size: 11px !important;" class="s11">
                         EV/EBIDTA (X)
                         </p>
                 </td>
+                {{/if}}
             </tr>
 
             {{#each (financialSegment data)}}
@@ -1334,18 +1344,26 @@
                 <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo evByRevenue}}</p>
                 </td> -->
+                {{#if (containsPeSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo peRatio}}</p>
                 </td>
+                {{/if}}
+                {{#if (containsPbSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo pbRatio}}</p>
                 </td>
+                {{/if}}
+                {{#if (containsPsSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo sales}}</p>
                 </td>
+                {{/if}}
+                {{#if (containsEvbitdaSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">{{fixDecimalUptoTwo ebitda}}</p>
                 </td>
+                {{/if}}
             </tr>
             {{/each}}
             <tr style="padding-top: 1%;padding-bottom: 1%;">
@@ -1356,18 +1374,26 @@
                 <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{fiancialMean}}</p>
                 </td> -->
+                {{#if (containsPeSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{priceToEquityMean}}</p>
                 </td>
+                {{/if}}
+                {{#if (containsPbSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{priceToBookMean}}</p>
                 </td>
+                {{/if}}
+                {{#if (containsPsSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{priceToSalesMean}}</p>
                 </td>
+                {{/if}}
+                {{#if (containsEvbitdaSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">{{evByEbitdaMean}}</p>
                 </td>
+                {{/if}}
             </tr>
             {{#if (lessDiscountRate)}}
             <tr style="padding-top: 1%;padding-bottom: 1%;">
@@ -1375,7 +1401,7 @@
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">LESS:DISCOUNT*</p>
                 </td>
                 
-                <td colspan="4" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
+                <td colspan="{{calculatePostDiscountColspan}}" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;">
                         {{lessDiscountRate}}%
                     </p>
@@ -1395,6 +1421,7 @@
                         {{/if}}
                     </p>
                 </td> -->
+                {{#if (containsPeSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">
                         {{#if (priceToEquityMean)}}
@@ -1404,6 +1431,8 @@
                         {{/if}}
                     </p>
                 </td>
+                {{/if}}
+                {{#if (containsPbSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">
                         {{#if (priceToBookMean)}}
@@ -1413,6 +1442,8 @@
                         {{/if}}
                     </p>
                 </td>
+                {{/if}}
+                {{#if (containsPsSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">
                         {{#if (priceToSalesMean)}}
@@ -1422,6 +1453,8 @@
                         {{/if}}
                     </p>
                 </td>
+                {{/if}}
+                {{#if (containsEvbitdaSelection)}}
                 <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
                     <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">
                         {{#if (evByEbitdaMean)}}
@@ -1431,6 +1464,7 @@
                         {{/if}}
                     </p>
                 </td>
+                {{/if}}
             </tr>
             {{/if}}
                 </table>
@@ -1816,7 +1850,7 @@
         </table>
         {{/if}}
         <div>
-            <h1 style="padding-top: 6%;padding-left: 15pt;text-indent: 0pt;text-align: left;">{{addSerialNo 'weightageAverage'}} Weighted Average
+            <h1 style="padding-top: 4%;padding-left: 15pt;text-indent: 0pt;text-align: left;">{{addSerialNo 'weightageAverage'}} Weighted Average
                 Value per Share</h1>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;">We applied the equal weightages to

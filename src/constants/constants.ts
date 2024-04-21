@@ -2006,7 +2006,8 @@ export const MULTIPLES_TYPE = [
       avg: 'pbMarketPriceAvg',
       med: 'pbMarketPriceMed'
     },
-    particular:'pbRatio'
+    particular:'pbRatio',
+    label:'P/BV'
   },
   {
     key:'peSelection',
@@ -2014,7 +2015,8 @@ export const MULTIPLES_TYPE = [
       avg: 'peMarketPriceAvg',
       med: 'peMarketPriceMed'
     },
-    particular:'peRatio'
+    particular:'peRatio',
+    label:'P/E'
   },
   {
     key:'evEbitdaSelection',
@@ -2022,7 +2024,8 @@ export const MULTIPLES_TYPE = [
       avg: 'ebitdaEquityAvg',
       med: 'ebitdaEquityMed'
     },
-    particular:'ebitda'
+    particular:'ebitda',
+    label:'EV/EBITDA'
   },
   {
     key:'psSelection',
@@ -2030,7 +2033,8 @@ export const MULTIPLES_TYPE = [
       avg: 'salesEquityAvg',
       med: 'salesEquityMed'
     },
-    particular:'sales'
+    particular:'sales',
+    label:'EV/S'
   }
 ]
 
