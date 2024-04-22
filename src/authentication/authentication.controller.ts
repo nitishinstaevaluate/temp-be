@@ -70,7 +70,7 @@ export class AuthenticationController {
   @Post('/v2/login')
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
   async loginVersionTwo(@Body() payload:KCloginAuthDto) {
-    return await this.authenticationService.loginVersionTwo(payload);
+    return await this.authenticationTokenService.loginVersionTwo(payload);
   }
 
 

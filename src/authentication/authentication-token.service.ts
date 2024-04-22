@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 
 @Injectable()
 export class authenticationTokenService {
+  refresh_token:any;
     constructor(@InjectModel('token') private readonly authTokenModel: Model<authenticationTokenDocument>){}
 
     async fetchToken(auth){
@@ -63,9 +64,9 @@ export class authenticationTokenService {
 
       async refreshToken(request){
         try{
-          const sessionState = request.headers.session_state;
+          // const sessionState = request.headers.session_state;
           const KCGuard = new KeyCloakAuthGuard();
-        return await KCGuard.refreshToken(sessionState).toPromise();
+        return await KCGuard.refreshTokenVersionTwo(this.refresh_token).toPromise();
         }
         catch(error){
           throw new HttpException(
@@ -91,6 +92,25 @@ export class authenticationTokenService {
               error: error,
               status: false,
               msg: 'User fetch failed',
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+      }
+
+      async loginVersionTwo(request){
+        try{
+          const KCGuard = new KeyCloakAuthGuard();
+          const authResponse = await KCGuard.authoriseKCUserVersionTwo(request).toPromise();
+          this.refresh_token = authResponse.refreshToken;
+          return authResponse;
+        }
+        catch(error){
+          throw new HttpException(
+            {
+              error: error.response,
+              status: false,
+              msg: error.response.message,
             },
             HttpStatus.UNAUTHORIZED,
           );

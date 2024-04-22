@@ -34,22 +34,6 @@ export class AuthenticationService {
         };
     }
 
-     async loginVersionTwo(request){
-      try{
-        const KCGuard = new KeyCloakAuthGuard();
-        return await KCGuard.authoriseKCUser(request).toPromise();
-      }
-      catch(error){
-        throw new HttpException(
-          {
-            error: error.response,
-            status: false,
-            msg: error.response.message,
-          },
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-    }
 
     getPublic(): string {
         // console.log(process.env.DBCONN);

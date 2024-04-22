@@ -114,7 +114,60 @@ export class KeyCloakAuthGuard implements CanActivate {
       );
   }
 
-  authoriseKCUser(KCAuth: KCloginAuthDto) {
+  /* Authentication using: 
+  * Verifying user credentials
+  * Storing access token and refresh token against verified user's session state id
+  */ 
+  // authoriseKCUser(KCAuth: KCloginAuthDto) {
+  //   return from(
+  //     axios.post(
+  //         KEY_CLOAK_TOKEN, 
+  //         qs.stringify(this.createLoginKCStructure(KCAuth)), 
+  //         {
+  //           headers: {
+  //             'Content-Type': 'application/x-www-form-urlencoded',
+  //           },
+  //         }
+  //       )
+  //     ).
+  //     pipe(
+  //       switchMap((loginResponse) => {
+  //         const tokenLog = new authTokenDto();
+  //         tokenLog.sessionState = loginResponse.data.session_state;
+  //         tokenLog.accessToken = loginResponse.data.access_token;
+  //         tokenLog.refreshToken = loginResponse.data.refresh_token;
+
+  //     return from(
+  //       axiosInstance.put(`${CREATE_TOKEN}`, tokenLog, { httpsAgent: axiosRejectUnauthorisedAgent })
+  //         ).
+  //         pipe(
+  //           switchMap((authCreate)=>{
+  //             logger.log(
+  //               `${moment(now)} | Authentication | [POST] ${KEY_CLOAK_TOKEN} - ${delay}ms ${JSON.stringify(
+  //                 {access_token:loginResponse.data.access_token,...KCAuth}
+  //               )}` ,
+  //             );
+  //             return of({
+  //               access_token:loginResponse.data.access_token,
+  //               refreshToken:loginResponse.data.refresh_token,
+  //               session_state:loginResponse.data.session_state
+  //             });
+  //           }),
+  //           catchError((error) => {
+  //             throw new UnauthorizedException({message:'Token creation failed, contact administrator',...error.response.data});
+  //           }
+  //           )
+  //         );
+  //       }
+  //     ),
+  //       catchError((error) => {
+  //         throw new UnauthorizedException({message:'Login failed, contact administrator',...error.response.data});
+  //       }
+  //     )
+  //   );
+  // }
+
+  authoriseKCUserVersionTwo(KCAuth: KCloginAuthDto) {
     return from(
       axios.post(
           KEY_CLOAK_TOKEN, 
@@ -128,32 +181,11 @@ export class KeyCloakAuthGuard implements CanActivate {
       ).
       pipe(
         switchMap((loginResponse) => {
-          const tokenLog = new authTokenDto();
-          tokenLog.sessionState = loginResponse.data.session_state;
-          tokenLog.accessToken = loginResponse.data.access_token;
-          tokenLog.refreshToken = loginResponse.data.refresh_token;
-          
-      return from(
-        axiosInstance.put(`${CREATE_TOKEN}`, tokenLog, { httpsAgent: axiosRejectUnauthorisedAgent })
-          ).
-          pipe(
-            switchMap((authCreate)=>{
-              logger.log(
-                `${moment(now)} | Authentication | [POST] ${KEY_CLOAK_TOKEN} - ${delay}ms ${JSON.stringify(
-                  {access_token:loginResponse.data.access_token,...KCAuth}
-                )}` ,
-              );
-              return of({
-                access_token:loginResponse.data.access_token,
-                refreshToken:loginResponse.data.refresh_token,
-                session_state:loginResponse.data.session_state
-              });
-            }),
-            catchError((error) => {
-              throw new UnauthorizedException({message:'Token creation failed, contact administrator',...error.response.data});
-            }
-            )
-          );
+        return of({
+            access_token:loginResponse.data.access_token,
+            refreshToken:loginResponse.data.refresh_token,
+            session_state:loginResponse.data.session_state
+          });
         }
       ),
         catchError((error) => {
@@ -163,54 +195,80 @@ export class KeyCloakAuthGuard implements CanActivate {
     );
   }
 
-  refreshToken(session_state){
-      return from(
-        axiosInstance.get(
-          `${FETCH_TOKEN}/${session_state}`,
-          { 
-            httpsAgent: axiosRejectUnauthorisedAgent 
-          }
-        )
-      ).pipe(
-        switchMap((authFetchToken)=>{
-          const refreshTokenDetails = authFetchToken?.data?.data;
-          return from(
-            axios.post(
-            KEY_CLOAK_TOKEN,
-            qs.stringify(this.createRefreshTokenStructure(refreshTokenDetails)), 
-            {
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-            }
-          )).pipe(
-            switchMap((authRefreshTokenDetails:any)=>{
-              const tokenLog = new authTokenDto();
-              tokenLog.sessionState = authRefreshTokenDetails.data.session_state;
-              tokenLog.accessToken = authRefreshTokenDetails.data.access_token;
-              tokenLog.refreshToken = authRefreshTokenDetails.data.refresh_token;
-              return from(
-                axiosInstance.put(`${CREATE_TOKEN}`, tokenLog, { httpsAgent: axiosRejectUnauthorisedAgent })
-              ).
-              pipe(
-                switchMap((authCreate)=>{
-                  return of({accessToken:authCreate.data.accessToken,sessionState:authCreate.data.sessionState})
-                }),
-                catchError((error) => {
-                  throw new UnauthorizedException({message:'Token upsertion failed, contact administrator',error});
-                }));
-            }),
-            catchError((error)=>{
-              throw new UnauthorizedException({message:'Token refresh failed, contact administrator',...error.response});
-            }))
+  // refreshToken(session_state){
+  //   /* To be used:
+  //   * Fetching auth data from db using session state id
+  //   * Using refresh token form corressponding session state id
+  //   * Triggering Key Cloak Refresh Token Api and upserting new credential into DB 
+  //   */ 
+  //     return from(
+  //       axiosInstance.get(
+  //         `${FETCH_TOKEN}/${session_state}`,
+  //         { 
+  //           httpsAgent: axiosRejectUnauthorisedAgent 
+  //         }
+  //       )
+  //     ).pipe(
+  //       switchMap((authFetchToken)=>{
+  //         const refreshTokenDetails = authFetchToken?.data?.data;
+  //         return from(
+  //           axios.post(
+  //           KEY_CLOAK_TOKEN,
+  //           // qs.stringify(this.createRefreshTokenStructure(refreshTokenDetails)),  //Uncomment this line 
+  //           {
+  //             headers: {
+  //               'Content-Type': 'application/x-www-form-urlencoded',
+  //             },
+  //           }
+  //         )).pipe(
+  //           switchMap((authRefreshTokenDetails:any)=>{
+  //             const tokenLog = new authTokenDto();
+  //             tokenLog.sessionState = authRefreshTokenDetails.data.session_state;
+  //             tokenLog.accessToken = authRefreshTokenDetails.data.access_token;
+  //             tokenLog.refreshToken = authRefreshTokenDetails.data.refresh_token;
+  //             return from(
+  //               axiosInstance.put(`${CREATE_TOKEN}`, tokenLog, { httpsAgent: axiosRejectUnauthorisedAgent })
+  //             ).
+  //             pipe(
+  //               switchMap((authCreate)=>{
+  //                 return of({accessToken:authCreate.data.accessToken,sessionState:authCreate.data.sessionState})
+  //               }),
+  //               catchError((error) => {
+  //                 throw new UnauthorizedException({message:'Token upsertion failed, contact administrator',error});
+  //               }));
+  //           }),
+  //           catchError((error)=>{
+  //             throw new UnauthorizedException({message:'Token refresh failed, contact administrator',...error.response});
+  //           }))
+  //       }),
+  //       catchError((error)=>{
+  //         logger.error(
+  //           `${moment(now)} | ${error.status} | [GET] ${error.config?.url} - ${delay}ms ${JSON.stringify(
+  //             {token:error.config?.data},
+  //           )} ${JSON.stringify(error.response?.data)} | ${JSON.stringify({message:error?.response?.message})}`,
+  //         );
+  //         throw new UnauthorizedException({message:'Token fetch failed - (db error), contact administrator',...error.response.data});
+  //       }))
+  // }
+
+  refreshTokenVersionTwo(refreshToken){ 
+    return from(
+      axios.post(
+        KEY_CLOAK_TOKEN,
+        qs.stringify(this.createRefreshTokenStructure(refreshToken)), 
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      )
+      ).
+      pipe(
+        switchMap((authRefreshTokenDetails:any)=>{
+          return of({accessToken:authRefreshTokenDetails.data.access_token,sessionState:authRefreshTokenDetails.data.session_state})
         }),
         catchError((error)=>{
-          logger.error(
-            `${moment(now)} | ${error.status} | [GET] ${error.config?.url} - ${delay}ms ${JSON.stringify(
-              {token:error.config?.data},
-            )} ${JSON.stringify(error.response?.data)} | ${JSON.stringify({message:error?.response?.message})}`,
-          );
-          throw new UnauthorizedException({message:'Token fetch failed - (db error), contact administrator',...error.response.data});
+          throw new UnauthorizedException({message:'Token refresh failed, contact administrator',...error.response});
         }))
   }
 
@@ -509,12 +567,12 @@ export class KeyCloakAuthGuard implements CanActivate {
     }
   }
 
-  private createRefreshTokenStructure(authToken){
+  private createRefreshTokenStructure(refreshToken){
     return {
       client_id: process.env.KEY_CLOAK_CLIENT_ID,
       client_secret: process.env.KEY_CLOAK_CLIENT_SECRET,
       grant_type: 'refresh_token',
-      refresh_token:authToken.refreshToken
+      refresh_token:refreshToken
     }
   }
 }
