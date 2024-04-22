@@ -936,8 +936,11 @@ export class ReportService {
                   return `${formattedNumber.replace(/,/g, ',')}/-`;
                 }
                 if (response.model === models && models === 'NAV') {
-                  const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                  return `${formattedNumber.replace(/,/g, ',')}/-`;
+                  const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                  const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                  const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                  const formattedNumber = this.formatPositiveAndNegativeValues(valuePerShare);
+                  return `${formattedNumber}/-`;
                 }
                 return [];
               });
@@ -962,13 +965,28 @@ export class ReportService {
              modelName.flatMap((models) => {
                 valuationResult.modelResults.flatMap((response) => {
                 if (response.model === models && models === 'NAV') {
-                    if(`${response?.valuationData?.valuePerShare?.bookValue}`.includes('-')){
+                    const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                    const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                    if(bookValue < faceValue){
                         isNegativeValuePerShare = true
                     }
                 }
                 });
             });
             return isNegativeValuePerShare;
+        })
+
+        hbs.registerHelper('faceValue',()=>{
+          if(valuationResult?.inputData[0]?.faceValue){
+              return `${valuationResult.inputData[0].faceValue}/-`;
+          }
+          return '10/-'
+        })
+        hbs.registerHelper('faceValueToWords',()=>{
+            if(valuationResult?.inputData[0]?.faceValue){
+                return `Rupees ${converter.toWords(valuationResult.inputData[0].faceValue)} Only`;
+            }
+            return 'Rupees Ten Only'
         })
 
       hbs.registerHelper('modelValuePerShareNumbersToWords',(modelName)=>{
@@ -994,10 +1012,13 @@ export class ReportService {
                   return `Rupees ${converter.toWords(formattedNumber)} Only`;
                 }
                 if (response.model === models && models === 'NAV') {
-                  let formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                  if(`${formattedNumber}`.includes('-')){
-                    formattedNumber = Math.floor(10).toLocaleString('en-IN');
-                  }
+                  const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                  const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                  const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                  let formattedNumber = Math.floor(valuePerShare).toLocaleString('en-IN');
+                  // if(`${formattedNumber}`.includes('-')){
+                  //   formattedNumber = Math.floor(10).toLocaleString('en-IN');
+                  // }
                   return `Rupees ${converter.toWords(formattedNumber)} Only`;
                 }
                 return [];
