@@ -219,11 +219,10 @@ export class navReportService {
                 formattedValues = modelName.flatMap((models) => {
                     return valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
-                        // const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                        const formattedNumber = formatPositiveAndNegativeValues(response?.valuationData?.valuePerShare?.bookValue || 0);
-                        if(`${response?.valuationData?.valuePerShare?.bookValue}`.includes('-')){
-                            return `10/-`
-                        }
+                        const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                        const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                        const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                        const formattedNumber = formatPositiveAndNegativeValues(valuePerShare);
                         return `${formattedNumber}/-`;
                     }
                     return [];
@@ -249,14 +248,29 @@ export class navReportService {
                  modelName.flatMap((models) => {
                     valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
-                        if(`${response?.valuationData?.valuePerShare?.bookValue}`.includes('-')){
-                            isNegativeValuePerShare = true
+                        const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                        const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                        if(bookValue < faceValue){
+                            isNegativeValuePerShare = true;
                         }
                     }
                     });
                 });
                 return isNegativeValuePerShare;
              
+            })
+
+            hbs.registerHelper('faceValue',()=>{
+                if(valuationResult?.inputData[0]?.faceValue){
+                    return `${valuationResult.inputData[0].faceValue}/-`;
+                }
+                return '10/-'
+            })
+            hbs.registerHelper('faceValueToWords',()=>{
+                if(valuationResult?.inputData[0]?.faceValue){
+                    return `Rupees ${converter.toWords(valuationResult.inputData[0].faceValue)} Only`;
+                }
+                return 'Rupees Ten Only'
             })
 
             hbs.registerHelper('modelValuePerShareNumbersToWords',(modelName)=>{
@@ -267,7 +281,10 @@ export class navReportService {
                     return valuationResult.modelResults.flatMap((response) => {
                     
                     if (response.model === models && models === 'NAV') {
-                        let formattedNumber = convertToNumberOrZero(response?.valuationData?.valuePerShare?.bookValue || 0).toLocaleString('en-IN');
+                        const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                        const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                        const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                        let formattedNumber = convertToNumberOrZero(valuePerShare).toLocaleString('en-IN');
                         if(`${formattedNumber}`.includes('-')){
                         formattedNumber = Math.floor(10).toLocaleString('en-IN');
                         }

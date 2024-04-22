@@ -233,4 +233,17 @@ export class ciqElasticSearchAggregateService{
             }
         }
     }
+
+    async updateCompaniesAggregate(body){
+        try{
+            return await this.ciqElasticCompanyListSearchService.updateCompaniesAggregate(body);
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"elastic search update companies aggregate failed"
+            }
+        }
+    }
 }
