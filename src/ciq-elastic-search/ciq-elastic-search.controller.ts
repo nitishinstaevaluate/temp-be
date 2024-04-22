@@ -3,7 +3,7 @@ import { CiqElasticSearchService } from './ciq-elastic-search.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ciqFetchPriceEquityDto } from './dto/ciq-elastic-search.dto';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
-import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
+import { ciqGetFinancialDto, ciqUpdateCompaniesDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 
 @Controller('ciq-elastic-search')
 export class CiqElasticSearchController {
@@ -42,5 +42,12 @@ export class CiqElasticSearchController {
     @Post('ciq-elastic-search-financial-data')
     async searchCiqFinancialData(@Body(ValidationPipe) payload: ciqGetFinancialDto) {
         return this.ciqElasticSearchService.searchEntityByFinancialData(payload)
+    }
+
+    // https://localhost:3000/ciq-elastic-search/update-selected-companies
+    @UseGuards(KeyCloakAuthGuard)
+    @Post('update-selected-companies')
+    async updateCompanies(@Body(ValidationPipe) payload: ciqUpdateCompaniesDto) {
+        return this.ciqElasticSearchService.updateSelectedCompaniesList(payload)
     }
 }

@@ -124,4 +124,22 @@ export class CiqElasticSearchService {
             }
         }
     }
+
+    async updateSelectedCompaniesList(data){
+        try{
+            const companiesData = await this.ciqElasticSearchAggregateService.updateCompaniesAggregate(data);
+            return {
+                data:companiesData,
+                status:true,
+                msg:"companies data updated"
+            }
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"Updation failed"
+            }
+        }
+    }
 }

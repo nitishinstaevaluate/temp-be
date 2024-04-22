@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
-import { CiqIndustryListDto } from "src/ciq-sp/dto/ciq-sp.dto";
+import { CiqIndustryListDto, ciqUpdateCompaniesDto } from "src/ciq-sp/dto/ciq-sp.dto";
 import { ElasticSearchService } from "src/elasticSearch/elastic-search-client.service";
 import { convertUnixTimestampToQuarterAndYear, getFormattedProvisionalDate } from "src/excelFileServices/common.methods";
 import { elasticSearchIndex } from 'src/library/enums/elastic-search-index.enum';
@@ -420,6 +420,27 @@ export class ciqElasticCompanyListSearchService {
                 error:error,
                 status:false,
                 msg:"Sales search failed"
+            }
+        }
+    }
+
+    async updateCompaniesAggregate(body: ciqUpdateCompaniesDto){
+        try{
+            const valuationDate = body.valuationDate;
+            const companyList = body.industryAggregateList;
+
+            const addMarketCapDetails = await this.elasticSearchMarketCap(companyList, valuationDate);
+            const addEbitdaDetails = await this.elasticSearchEbitda(addMarketCapDetails, valuationDate);
+            const addSalesDetails = await this.elasticSearchSales(addEbitdaDetails, valuationDate);
+
+            const mapToClass = plainToClass(CiqIndustryListDto, addSalesDetails, {excludeExtraneousValues:true});
+            return mapToClass;
+        }
+        catch(error){
+            return {
+                error:error,
+                status:false,
+                msg:"elastic search update companies failed"
             }
         }
     }
