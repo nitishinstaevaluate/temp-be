@@ -686,7 +686,11 @@
     <div>
         <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
             <span style="font-weight: 600;">
-                Securities or Financial Assets
+                {{#if (registeredValuerQualifications)}}
+                {{registeredValuerQualifications}}
+                {{else}}
+                Registered Valuer - Securities or Financial Assets
+                {{/if}}
             </span>
         </p>
     </div>
