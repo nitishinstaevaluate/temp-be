@@ -1156,7 +1156,7 @@ export class ExcelSheetService {
                 arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.provisionalDate))}`});
               }
               else{
-                arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+                arrayEquityValue.unshift({fcfeEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
               }
             }
             else if(result.model === 'FCFF'){
@@ -1169,7 +1169,7 @@ export class ExcelSheetService {
                 arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.provisionalDate))}`});
               }
               else{
-                arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
+                arrayEquityValue.unshift({fcffEquityValue:`Equity Value as on ${this.formatDate(new Date(valuationResult.inputData[0].valuationDate))}`});
               }
             }
             else if(result.model === 'Excess_Earnings'){
