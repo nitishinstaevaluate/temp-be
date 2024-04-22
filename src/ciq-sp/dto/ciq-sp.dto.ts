@@ -111,6 +111,15 @@ import { Expose, Type,} from 'class-transformer';
     industryAggregateList: [];
   }
 
+  export class ciqUpdateCompaniesDto {
+    @IsNotEmpty({ message: 'Valuation date cannot be empty' })
+    valuationDate: string;
+
+    @IsArray({ message: 'Industry aggregate list must be an array' })
+    @ValidateNested({ each: true })
+    industryAggregateList: [];
+  }
+
   export class ciqGetStockBetaDto {
     @IsNotEmpty({ message: 'valuationDate cannot be empty' })
     @IsNumber({}, { message: 'valuationDate should be a number eg.1703961000000' })
