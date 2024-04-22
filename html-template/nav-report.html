@@ -658,8 +658,13 @@
 
     <p style="padding-top: 4pt;text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3" style="text-transform: capitalize;font-weight: 500;">{{registeredValuerName}}</span></p>
     <p style="padding-top: 1%;text-indent: 0pt;text-align: center;">
-        <span style=" color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;">Registered
-            Valuer- Securities or Financial Assets </span></p>
+        <span style=" color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 10pt;">
+            {{#if (registeredValuerQualifications)}}
+                {{registeredValuerQualifications}}
+            {{else}}
+                Registered Valuer - Securities or Financial Assets 
+            {{/if}}
+            </span></p>
     <p style="text-indent: 0pt;line-height: 16pt;text-align: center;padding-top: 1%;width: 40%;margin:auto"><span class="s3" style="text-transform: capitalize;">{{registeredValuerCorporateAddress}}</span></p>
     <p style="text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 1%;width: 100% !important;"><span>
         <span style="font-weight: bold;">
