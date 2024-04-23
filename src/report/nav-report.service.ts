@@ -284,12 +284,12 @@ export class navReportService {
                         const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
                         const faceValue = valuationResult.inputData[0]?.faceValue || 0;
                         const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
-                        let formattedNumber = convertToNumberOrZero(valuePerShare).toLocaleString('en-IN');
-                        if(`${formattedNumber}`.includes('-')){
-                        formattedNumber = Math.floor(10).toLocaleString('en-IN');
-                        }
+                        let formattedNumber = convertToNumberOrZero(valuePerShare);
+                        // if(`${formattedNumber}`.includes('-')){
+                        // formattedNumber = Math.floor(10).toLocaleString('en-IN');
+                        // }
                         if(`${formattedNumber}`.includes('.')){
-                            return `${this.convertToIndianCurrency((+formattedNumber).toFixed(2))} Only`;
+                            return `${this.convertToIndianCurrency(formattedNumber ? (+formattedNumber)?.toFixed(2) : 0)} Only`;
                         }
                         return `Rupees ${converter.toWords(formattedNumber)} Only`;
                     }
