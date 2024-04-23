@@ -1015,11 +1015,11 @@ export class ReportService {
                   const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
                   const faceValue = valuationResult.inputData[0]?.faceValue || 0;
                   const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
-                  let formattedNumber = Math.floor(valuePerShare).toLocaleString('en-IN');
+                  let formattedNumber = Math.floor(valuePerShare);
                   // if(`${formattedNumber}`.includes('-')){
                   //   formattedNumber = Math.floor(10).toLocaleString('en-IN');
                   // }
-                  return `Rupees ${converter.toWords(formattedNumber)} Only`;
+                  return `Rupees ${converter.toWords(formattedNumber ? (+formattedNumber)?.toFixed(2) : 0)} Only`;
                 }
                 return [];
               });
