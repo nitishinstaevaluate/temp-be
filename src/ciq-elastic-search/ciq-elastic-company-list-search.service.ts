@@ -161,7 +161,14 @@ export class ciqElasticCompanyListSearchService {
                             }
                         ]
                     }
-                }
+                },
+                sort : [
+                    { 
+                        [elasticSearchKey.PRICINGDATE] : {
+                            "order" : "desc"
+                        }
+                    },
+                  ]
             }
             const companyMarketData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqmarketcap, criteria);
 
@@ -318,7 +325,14 @@ export class ciqElasticCompanyListSearchService {
                             },
                         ]
                     }
-                }
+                },
+                sort : [
+                    { 
+                        [elasticSearchKey.PERIODENDDATE] : {
+                            "order" : "desc"
+                        }
+                    },
+                  ]
             }
             const companyEbitdaData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
 
@@ -393,7 +407,14 @@ export class ciqElasticCompanyListSearchService {
                             },
                         ]
                     }
-                }
+                },
+                sort : [
+                    { 
+                        [elasticSearchKey.PERIODENDDATE] : {
+                            "order" : "desc"
+                        }
+                    },
+                  ]
             }
             const companySalesData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqlatestinstancefinperiodind, criteria);
 
