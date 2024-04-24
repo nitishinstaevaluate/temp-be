@@ -46,17 +46,17 @@ export class NetAssetValueService {
     // const column = columnsList[columnIndex];
 
     // Read NAV Inputs
-    let fixedAssetVal, longTermLoansAdvancesVal, nonCurrentInvestmentVal, deferredTaxAssetVal, inventoriesVal,
+    let fixedAssetVal, nonCurrentInvestmentVal, deferredTaxAssetVal, inventoriesVal,
       shortTermLoanAdvancesVal, tradeReceivablesVal, cashVal, otherCurrentAssetsVal, shortTermProvisionsVal, shortTermBorrowingsVal,
       tradePayablesVal, otherCurrentLiabilitiesVal, lessLongTermBorrowingsVal, lessLongTermProvisionsVal, shareApplicationMoneyVal, contingentLiabilityMarketVal,
       shortTermInvestmentValAtMarket, otherNonCurrentAssetsAtMarket;
     
-    let fixedAssetValAtBook, longTermLoansAdvancesValAtBook, nonCurrentInvestmentValAtBook, deferredTaxAssetValAtBook, inventoriesValAtBook,
+    let fixedAssetValAtBook, nonCurrentInvestmentValAtBook, deferredTaxAssetValAtBook, inventoriesValAtBook,
       shortTermLoanAdvancesValAtBook, tradeReceivablesValAtBook, cashValAtBook, otherCurrentAssetsValAtBook, shortTermProvisionsValAtBook, shortTermBorrowingsValAtBook,
       tradePayablesValAtBook, otherCurrentLiabilitiesValAtBook, lessLongTermBorrowingsValAtBook, lessLongTermProvisionsValAtBook, shareApplicationMoneyValAtBook,
       shortTermInvestmentValAtBook, otherNonCurrentAssetsAtBook;
     
-    let fixedAssetObj,longTermLoansAdvancesObj,nonCurrentInvestmentObj,deferredTaxAssetObj,inventoriesObj,
+    let fixedAssetObj,nonCurrentInvestmentObj,deferredTaxAssetObj,inventoriesObj,
     shortTermLoanAdvancesObj,tradeReceivablesObj,cashObj,otherCurrentAssetsObj,shortTermProvisionsObj,
     shortTermBorrowingsObj,tradePayablesObj,otherCurrentLiabilitiesObj,lessLongTermBorrowingsObj,
     lessLongTermProvisionsObj,shareApplicationMoneyObj,contingentLiabilityObj,shortTermInvestmentObj,
@@ -83,21 +83,22 @@ export class NetAssetValueService {
           }
 
           break;
-        case ('longTermLoansAdvances'):
-          longTermLoansAdvancesValAtBook = await getCellValue(
-            worksheet2,
-            `${columnsList[0] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
-          )
-          longTermLoansAdvancesVal = (resp.type === 'book_value') ? longTermLoansAdvancesValAtBook : resp.value
+        // As per discussion with Nitish, since we don't have long term loans and advances in excel template, remove it
+        // case ('longTermLoansAdvances'):
+        //   longTermLoansAdvancesValAtBook = await getCellValue(
+        //     worksheet2,
+        //     `${columnsList[0] + sheet2_BSObj.otherNonCurrentAssetsRow}`,
+        //   )
+        //   longTermLoansAdvancesVal = (resp.type === 'book_value') ? longTermLoansAdvancesValAtBook : resp.value
 
-          longTermLoansAdvancesObj = {
-            fieldName: "Long-term loans and advances",
-            bookValue: longTermLoansAdvancesValAtBook,
-            fairValue: longTermLoansAdvancesVal,
-            type: resp.type
-          }
+        //   longTermLoansAdvancesObj = {
+        //     fieldName: "Long-term loans and advances",
+        //     bookValue: longTermLoansAdvancesValAtBook,
+        //     fairValue: longTermLoansAdvancesVal,
+        //     type: resp.type
+        //   }
 
-          break;
+        //   break;
         case ('nonCurrentInvestment'):
           nonCurrentInvestmentValAtBook = await getCellValue(
             worksheet2,
@@ -377,8 +378,8 @@ export class NetAssetValueService {
     }
 
     // Modifying Other current liabilities payload 
-    const totalNonCurrentAssets = fixedAssetVal + longTermLoansAdvancesVal + nonCurrentInvestmentVal + deferredTaxAssetVal + otherNonCurrentAssetsAtMarket;
-    const totalNonCurrentAssetsAtBook = fixedAssetValAtBook + longTermLoansAdvancesValAtBook + nonCurrentInvestmentValAtBook + deferredTaxAssetValAtBook + otherNonCurrentAssetsAtBook;
+    const totalNonCurrentAssets = fixedAssetVal + /* longTermLoansAdvancesVal */ + nonCurrentInvestmentVal + deferredTaxAssetVal + otherNonCurrentAssetsAtMarket;
+    const totalNonCurrentAssetsAtBook = fixedAssetValAtBook + /* longTermLoansAdvancesValAtBook */ + nonCurrentInvestmentValAtBook + deferredTaxAssetValAtBook + otherNonCurrentAssetsAtBook;
 
     const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + shortTermInvestmentValAtMarket + otherCurrentAssetsVal -
       shortTermProvisionsVal - shortTermBorrowingsVal - tradePayablesVal - otherCurrentLiabilitiesVal;
@@ -408,7 +409,7 @@ export class NetAssetValueService {
         type: null
       },
       fixedAsset: fixedAssetObj,
-      longTermLoansAdvances: longTermLoansAdvancesObj,
+      // longTermLoansAdvances: longTermLoansAdvancesObj,
       nonCurrentInvestment: nonCurrentInvestmentObj,
       deferredTaxAsset: deferredTaxAssetObj,
       otherNonCurrentAsset: otherNonCurrentAssetsObj,
