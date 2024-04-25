@@ -528,8 +528,8 @@
 <body>
     <div style="page-break-before: always;padding-left: 5%;padding-right: 5%;padding-top: 6%;">
         <p style="padding-top: 3pt;text-indent: 0pt;text-align: justify;line-height: 190%;"><span class="h1">Valuation of
-            equity shares of </span><span class="s1" >{{companyName}}</span><span
-            class="h1"> for compliance with </span>
+            {{natureOfInstrument}} of </span><span class="s1" >{{companyName}}</span>
+            <span class="h1"> for compliance with </span>
                 <span class="h1"> {{reportSection}}
             as amended by Securities and Exchange Board of India (Issue of Capital and
             Disclosure Requirements) (Amendment) Regulations, 2022
@@ -567,12 +567,21 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 4pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">In this regard,
         </span><span class="s3">{{registeredValuerName}}</span><span class="p">, Registered
-            Valuer with IBBI Registration No. </span><span class="s3">{{registeredValuerIbbiId}}</span><span class="p"> (‘</span>
-            <span class="s3">{{registeredValuerName}}</span><span class="p">’ or ‘Independent Valuer’) has been
+            Valuer with IBBI Registration No. </span><span class="s3">{{registeredValuerIbbiId}}</span><span class="p"> (‘</span><span class="s3">{{registeredValuerName}}</span><span class="p">’ or ‘Independent Valuer’) has been
             appointed to determine fair value of equity shares of </span>
-            <span class="s3">{{companyName}}</span><span class="p"> for compliance with </span>
+            <span class="s3">{{companyName}}</span>
+            for compliance with for compliance with as per Section 
+            62(1)(c) of the Companies Act, 2013 (as amended) read with Rule 13 of the Companies 
+            (Share Capital and Debenture) Rules, 2014, and Regulation 160 of the Securities and 
+            Exchange Board of India (Issue of Capital and Disclosure Requirements) Regulations, 2018, 
+            for a Preferential Allotment as per in accordance with Regulations 
+            166(A) Securities and 
+            Exchange Board of India (Issue of Capital and Disclosure Requirements) (Amendment) 
+            Regulations, 2022 vide Notification No. SEBI/LAD-NRO/GN/2022/63 (‘Valuation 
+            Purpose’).
+            <!-- <span class="p"> for compliance with </span> -->
 
-            <span class="s3" >{{reportSection}}</span><span class="p"> of the {{purposeOfReport}} (as
+            <!-- <span class="s3" >{{reportSection}}</span><span class="p"> of the {{purposeOfReport}} (as
             amended) read with </span><span class="s3" style=" background-color: #FF0;">Rule 13</span><span class="p">
             of the Companies (Share Capital and Debenture) Rules, 2014, and </span><span class="s3"
             style=" background-color: #FF0;">Regulation 160</span><span class="p"> of the Securities and Exchange Board
@@ -580,7 +589,8 @@
             per in accordance with </span><span class="s3" style=" background-color: #FF0;">Regulations
             166(A)</span><span class="p"> of Securities and Exchange Board of India (Issue of Capital and Disclosure
             Requirements) (Amendment) Regulations, 2022 vide Notification No. SEBI/LAD-NRO/GN/2022/63 (‘Valuation
-            Purpose’).</span></p>
+            Purpose’).</span> -->
+        </p>
     <p style="padding-top: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">The relevant
             date, as informed to us by the Management of </span><span class="s3">{{companyName}}</span><span class="p">(‘the Management’), for the purpose of
             calculation of the price per share under the SEBI ICDR Regulations for issuance of equity shares is
@@ -1198,15 +1208,20 @@
         <ul id="l2">
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="s11">
-                    </span><span class="p">Market Return is estimated by using </span><span class="s3"
-                        style=" background-color: #FF0;">CAGR of BSE 500 Index</span><span class="p"> as on valuation date
-                        since its inception (</span><span class="s3" style=" background-color: #FF0;">Source: BSE 500
-                        Data</span><span class="p">).</span></p>
+                    </span><span class="p">Market Return is estimated by using </span><span class="s3">{{expectedMarketReturn}} Index</span><span class="p"> as on valuation date
+                        since its inception (Source: BSE 500 Data).</span>
+                    </p>
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">Beta
                         of the company is considered as the </span><span class="s3">stock
-                        beta/average beta of the comparable companies.</span>(Source: S&P - Capital IQ)</p>
+                        beta/average beta of the comparable companies.</span>
+                        {{#if (isBetaFromAd)}}
+                        (Source: Aswath Damodaran Database)
+                        {{else}}
+                        (Source: S&P - Capital IQ Database)
+                        {{/if}}    
+                    </p>
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">The
@@ -1217,10 +1232,11 @@
             </li>
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">
-                    <span class="p">I have adjusted PV of Free cash flow with certain items like </span><span class="s3"
-                        style=" background-color: #FF0;">investments and cash and</span><span class="p"> </span><span
-                        class="s3" style=" background-color: #FF0;">cash equivalents</span><span class="p"> to arrive at the
-                        equity value of the Company.</span></p>
+                    <span class="p">
+                        I have adjusted PV of Free cash flow with certain items like investments and cash and cash equivalents to arrive at the
+                        equity value of the Company.
+                    </span>
+                </p>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
             </li>
         </ul>
@@ -1341,22 +1357,16 @@
         {{else}}
         <p style="padding-top: 11pt;text-align: justify;line-height: 140%;"><span class="p">Since,
             </span><span class="s3" >{{companyName}}</span><span class="p"> is a listed company
-                and equity shares of </span><span class="s3" >{{companyName}}</span><span
-                class="p"> are traded on </span><span class="s3" style=" background-color: #FF0;">BSE</span><span
-                class="p"> and </span><span class="s3" style=" background-color: #FF0;">NSE</span><span class="p">
-                over a reasonable period, we have considered Market Price method to determine the value of equity
-                shares of </span><span class="s3" >{{companyName}}</span><span class="p">. We
-                have been informed by the Management that the relevant date as per the SEBI ICDR Regulations, for
-                the purpose of calculation of the price per share of </span><span class="s3"
-                >{{companyName}}</span><span class="p"> for the proposed preferential issue of
-                shares is </span><span class="s3" style=" background-color: #FF0;">XX.XX.XXXX</span><span
-                class="p">. We have considered this as the cut-off date to determine the price for the proposed
-                preferential allotment of equity shares of </span><span class="s3"
-                >{{companyName}}</span><span class="p"> under </span><span class="s3"
-                style=" background-color: #FF0;">Regulation 166A</span><span class="p"> of SEBI ICDR Regulations. We
-                have considered the stock prices of </span><span class="s3"
-                >{{companyName}}</span><span class="p"> from NSE for calculating the fair market
-            value of equity shares of the Company.</span></p>
+                and equity shares of </span><span class="s3" >{{companyName}}</span>
+                <span class="p"> are traded on BSE and NSE over a reasonable period, we have considered Market Price method to determine the value of equity
+                    shares of {{companyName}}. We
+                    have been informed by the Management that the relevant date as per the SEBI ICDR Regulations, for
+                    the purpose of calculation of the price per share of {{companyName}} for the proposed preferential issue of
+                    shares is {{strdate}}. We have considered this as the cut-off date to determine the price for the proposed
+                    preferential allotment of equity shares of {{companyName}} under Regulation 166A of SEBI ICDR Regulations. We
+                    have considered the stock prices of {{companyName}} from NSE for calculating the fair market
+                    value of equity shares of the Company.</span>
+            </p>
         {{/if}}
     </div>
     <!-- page 10 ends -->

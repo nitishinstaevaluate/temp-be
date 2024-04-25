@@ -82,7 +82,8 @@ export const PURPOSE_OF_REPORT_AND_SECTION = {
     "87C(1)(ii) - SEBI (Listing Obligations and Disclosure Requirements Regulations), 2015",
     "158(6)(b) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
     "163(3) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
-    "165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018"
+    "165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+    "166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018"
   ]
 }
 export const CAPITAL_STRUCTURE_TYPE = {
@@ -2039,3 +2040,11 @@ export const MULTIPLES_TYPE = [
 ]
 
 export const MULTIPLES_ORDER_CCM_REPORT = ['psSelection', 'evEbitdaSelection', 'pbSelection', 'peSelection']
+
+export const EXPECTED_MARKET_RETURN_TYPE = {
+  BSE500_Since_Inception:'BSE Since Inception',
+  BSE500_Since_5_years:'BSE Since 5 Years',
+  BSE500_Since_10_years:'BSE Since 10 Years',
+  BSE500_Since_15_years:'BSE Since 15 Years',
+  Analyst_Consensus_Estimates:'Analyst Consensus Estimates',
+}
