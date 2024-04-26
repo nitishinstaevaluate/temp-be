@@ -679,9 +679,9 @@ export class ReportService {
           registeredvaluerDOIorConflict: 'No',
           registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets',
           registeredValuerProfile: `<span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
-          from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
+          from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 8 years of Experience in the 
           field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
-          more than 500 Valuation assignments in a span of around 4 years. He has performed on transactions covering 
+          more than 1000 Valuation assignments in a span of around 5 years. He has performed on transactions covering 
           diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`
         }
       }

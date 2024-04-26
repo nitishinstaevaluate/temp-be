@@ -75,6 +75,7 @@ export class ProcessStatusManagerService {
                       $set: {
                         'thirdStageInput.$': obj,
                         step: parseInt(step) + 1,
+                        modifiedOn:new Date()
                       },
                     }
                   );
@@ -104,6 +105,7 @@ export class ProcessStatusManagerService {
                   },
                   $set: {
                     step: parseInt(step) + 1,
+                    modifiedOn:new Date()
                   },
                 },
                 { new: true },
@@ -137,6 +139,9 @@ export class ProcessStatusManagerService {
                         {
                           model: `${thirdStageDetails.model}`
                         }
+                      },
+                      $set: {
+                        modifiedOn: new Date()
                       }
                     },
                     { new: true }
@@ -170,6 +175,7 @@ export class ProcessStatusManagerService {
           });
           
           updateFirstStage['step'] = step + 1;
+          updateFirstStage['modifiedOn'] = new Date();
           
           existingRecord = await this.processModel.findOneAndUpdate(
               { _id: processId },
@@ -190,6 +196,7 @@ export class ProcessStatusManagerService {
               $set: {
                 ...rest,
                 step: parseInt(step) + 1,
+                modifiedOn: new Date()
               }
             },
             { new: true }
@@ -285,7 +292,10 @@ export class ProcessStatusManagerService {
     try{
       const processStage = await this.processModel.findByIdAndUpdate(
         { _id: processData.processId },
-        { step: parseInt(processData.step) },
+        { 
+          step: parseInt(processData.step),
+          modifiedOn: new Date()
+         },
         { new: true }
       );
       return {
@@ -370,7 +380,8 @@ export class ProcessStatusManagerService {
         { 
           $set: { 
           'firstStageInput.isExcelModified': true,
-          'firstStageInput.modifiedExcelSheetId':createEditedExcelId
+          'firstStageInput.modifiedExcelSheetId':createEditedExcelId,
+            modifiedOn:new Date()
           }
         },
         { new: true }
