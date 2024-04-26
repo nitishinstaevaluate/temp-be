@@ -58,12 +58,21 @@ export class ElevenUaService {
 
                 const bookValueOfAllAssets = (totalAssets - immovableProperty - jewellery - artisticWork - sharesAndSecurities - currentInvestmentAndSecurities - nonCurrentInvestmentAndSecurities).toFixed(2);
 
-                // calculate income tax refund claim b20+b21+b38
+                /* calculate income tax refund claim 
+                * Transfer of shares - b20+b21+b38
+                * Issuance of shares - b20+b21+b37+b38
+                */
+                let totalIncomeTaxPaid;
                 const advanceTax = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.advanceTaxRow}`));
                 const incomeTaxRefund = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.incomeTaxRefundRow}`));
                 const advanceTaxPaid = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.advanceTaxPaidRow}`));
-
-                const totalIncomeTaxPaid = (advanceTax + incomeTaxRefund + advanceTaxPaid).toFixed(2);
+                const tdsRecievable = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.tdsRecievablesRow}`));
+                if(payload?.issuanceOfShares){
+                    totalIncomeTaxPaid = (advanceTax + incomeTaxRefund + advanceTaxPaid + tdsRecievable).toFixed(2);
+                }
+                else{
+                    totalIncomeTaxPaid = (advanceTax + incomeTaxRefund + advanceTaxPaid).toFixed(2);
+                }
             
                 // calculate unamortised amount of deffered expenditure b39 + b40 + b41+ b22
                 const preliminaryExpense = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.preliminaryExpenseRow}`));
@@ -250,20 +259,35 @@ export class ElevenUaService {
                 )
                 );
 
-                // calculation of A + B + C + D - L
-                const totalCalculation = convertToNumberOrZero(convertToNumberOrZero(totalCalculationA)+ convertToNumberOrZero(totalCalculationB) + convertToNumberOrZero(totalCalculationC) + convertToNumberOrZero(totalCalculationD) - convertToNumberOrZero(totalCalculationL));
+                /* total calculation  
+                * transfer of shares : A + B + C + D - L
+                * issuance of shares : A - L
+                */
+                let totalCalculation = 0;
+                if(preParameters.inputData?.issuanceOfShares){
+                    totalCalculation = convertToNumberOrZero(convertToNumberOrZero(totalCalculationA) - convertToNumberOrZero(totalCalculationL));
+                }
+                else{
+                    totalCalculation = convertToNumberOrZero(convertToNumberOrZero(totalCalculationA)+ convertToNumberOrZero(totalCalculationB) + convertToNumberOrZero(totalCalculationC) + convertToNumberOrZero(totalCalculationD) - convertToNumberOrZero(totalCalculationL));
+                }
 
 
                 // calculating Value Per share
-                const phaseValue = !isNaN(parseFloat(preParameters?.inputData?.phaseValue)) ? parseFloat(preParameters?.inputData?.phaseValue) : 1;
+                const faceValue = !isNaN(parseFloat(preParameters?.inputData?.faceValue)) ? parseFloat(preParameters?.inputData?.faceValue) : 1;
                 const newPaidUpCapital = !isNaN(parseFloat(preParameters?.paidUpCapital)) ? parseFloat(preParameters?.paidUpCapital) : 1;
             
-                const totalSum = convertToNumberOrZero(totalCalculationA) + convertToNumberOrZero(totalCalculationB) + convertToNumberOrZero(totalCalculationC) + convertToNumberOrZero(totalCalculationD) - convertToNumberOrZero(totalCalculationL);
+                let totalSum = 0;
+                if(preParameters.inputData?.issuanceOfShares) {
+                    totalSum = convertToNumberOrZero(totalCalculationA) - convertToNumberOrZero(totalCalculationL);
+                }
+                else{
+                    totalSum = convertToNumberOrZero(totalCalculationA) + convertToNumberOrZero(totalCalculationB) + convertToNumberOrZero(totalCalculationC) + convertToNumberOrZero(totalCalculationD) - convertToNumberOrZero(totalCalculationL);
+                }
             
                 let result;
             
                 if (!isNaN(totalSum) && !isNaN(newPaidUpCapital) ) {
-                    result = (totalSum * phaseValue) / newPaidUpCapital;
+                    result = (totalSum * faceValue) / newPaidUpCapital;
                 } else {
                     result = 0;
                 }
