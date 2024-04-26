@@ -3132,6 +3132,12 @@ export class ReportService {
       return '-'
     })
 
+    hbs.registerHelper('isTransferOfShares',()=>{
+      if(elevenUaData)
+        return elevenUaData?.data?.inputData?.issuanceOfShares ? false : true;
+      return false;
+    })
+
     hbs.registerHelper('paymentDividends',()=>{
       if(elevenUaData)
         return elevenUaData?.data?.paymentDividends ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.paymentDividends) : '-';
