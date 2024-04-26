@@ -433,6 +433,9 @@ export class ProcessManager {
 
     @Prop({ default: () => new Date(), required: false })
     createdOn: Date;
+
+    @Prop({ default: () => new Date(), required: false })
+    modifiedOn: Date;
 }
 
 export type ProcessManagerDocument = ProcessManager & Document;

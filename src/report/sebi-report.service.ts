@@ -7,7 +7,7 @@ import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
 import { convertEpochToPlusOneDate, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { GET_MULTIPLIER_UNITS, MODEL, NATURE_OF_INSTRUMENT, REPORT_PURPOSE } from "src/constants/constants";
+import { BETA_FROM, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, MODEL, NATURE_OF_INSTRUMENT, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 require('dotenv').config()
 
@@ -224,6 +224,16 @@ export class sebiReportService {
             return (convertToNumberOrZero(vwap) * convertToNumberOrZero(volume)).toFixed(2);
           })
 
+          hbs.registerHelper('isBetaFromAd',()=>{
+            const betaFrom = valuationResult.inputData[0].formTwoData?.betaFrom || BETA_FROM.CAPITALIQ;
+            if(
+              betaFrom === BETA_FROM.ASWATHDAMODARAN
+            ){
+              return true;
+            }
+            return false;
+          })
+
           hbs.registerHelper('registeredValuerName',()=>{
             if(reportDetails.registeredValuerDetails[0]) 
                 return  reportDetails.registeredValuerDetails[0].registeredValuerName
@@ -291,6 +301,12 @@ export class sebiReportService {
           hbs.registerHelper('natureOfInstrument',()=>{
             if(reportDetails)
               return NATURE_OF_INSTRUMENT[`${reportDetails.natureOfInstrument}`];
+            return '';
+          })
+          
+          hbs.registerHelper('expectedMarketReturn',()=>{
+            if(valuationResult.inputData[0])
+              return EXPECTED_MARKET_RETURN_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`];
             return '';
           })
 
