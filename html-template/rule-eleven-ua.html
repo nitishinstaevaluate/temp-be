@@ -222,9 +222,16 @@
                 </td>
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="2">
-                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;line-height: 15pt;text-align: left;padding-top: 1%;font-size: 13px !important">Any amount
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;line-height: 15pt;text-align: left;padding-top: 1%;font-size: 13px !important">
+                        {{#if (isTransferOfShares)}}
+                        Any amount
                         of income-tax paid, if any, less the
-                        amount of income- tax refund claimed, if any;</p>
+                        amount of income- tax refund claimed, if any;
+                        {{else}}
+                        Tax paid as deduction or collection at source or as advance tax payment as reduced by the amount of tax claimed as refund under the
+                        Income-tax Act.
+                        {{/if}}
+                    </p>
                 </td>
                 <td
                     style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -269,6 +276,7 @@
                     <p style="padding-right: 4pt;text-indent: 0pt;text-align: right;margin-top: 5%;font-weight: bold;font-size: 13px !important;font-weight: bold;">{{totalA}}</p>
                 </td>
             </tr>
+            {{#if (isTransferOfShares)}}
             <tr style="height:13pt">
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="6">
@@ -446,6 +454,7 @@
                     <p style="text-indent: 0pt;text-align: right;font-weight: bold;padding-right: 4pt;font-size: 13px !important;font-weight: bold;">{{totalD}}</p>
                 </td>
             </tr>
+            {{/if}}
         </table>
     </div>
     <!-- page 1 ends -->
@@ -650,7 +659,12 @@
                 colspan="5">
                 <p class="s11"
                     style="padding-left: 23pt;padding-right: 23pt;text-indent: 0pt;line-height: 13pt;text-align: center;font-size: 13px !important;font-weight: bold;">
-                    A+B+C+D-L (Fair Market Value of Equity)</p>
+                    {{#if (isTransferOfShares)}}
+                    A+B+C+D-L (Fair Market Value of Equity)
+                    {{else}}
+                    A - L (Fair Market Value of Equity)
+                    {{/if}}
+            </p>
             </td>
             <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                 colspan="1">
@@ -696,7 +710,12 @@
                 colspan="5" bgcolor="#BEBEBE">
                 <p class="s11"
                     style="padding-left: 23pt;padding-right: 23pt;text-indent: 0pt;line-height: 13pt;text-align: center;font-size: 13px !important;font-weight: bold;">
-                    Fair Market Value of Unquoted Equity Shares = (A+B+C+D-L) *(PV/PE)</p>
+                    {{#if (isTransferOfShares)}}
+                    Fair Market Value of Unquoted Equity Shares = (A+B+C+D-L) *(PV/PE)
+                    {{else}}
+                    Fair Market Value of Unquoted Equity Shares = (A-L) *(PV/PE)
+                    {{/if}}
+                </p>
             </td>
             <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                 colspan="1" bgcolor="#BEBEBE">

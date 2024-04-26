@@ -437,6 +437,7 @@
 
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 28pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
+    {{#if (isTransferOfShares)}}
         <p style="padding-top: 2pt;margin-left: 34pt;text-indent: 0pt;text-align: left;padding-bottom: 2pt;border: 1px solid black;background-color: #6F2F9F;">
             <span style="color: #ffffff;font-weight: bold;padding-left: 1%;">VALUATION METHODOLOGY</span>
         </p>   
@@ -453,11 +454,12 @@
             valuation date, of such unquoted equity shares as determined in the following manner, namely: —</p>
         <p class="s10" style="padding-top: 1%;padding-left: 34pt;text-indent: 0pt;text-align: justify;line-height: 160%;">the fair market
             value of unquoted equity shares = (A+B+C+D - L) × (PV)/(PE), where,</p>
+    {{/if}}
     </div>
     <!-- page 3 ends -->
 
-    
-
+    {{#if (isTransferOfShares)}}    
+    <!-- [Transfer Of Shares Page] -->
     <!-- page 4 starts -->
     <div style="page-break-before: always;padding-top: 4%;padding-left: 1%;padding-right:5%;margin-right: 5%;margin-left: 5%;margin-top: 1%;">
         <p class="s10" style="padding-left: 34pt;text-indent: 0pt;line-height: 160%;text-align: left;">A= book value of all
@@ -531,15 +533,143 @@
         share capital as shown in the balance sheet;”</p>
     </div>
     <!-- page 4 ends -->
+    {{else}}
+    <!-- [ Issuance Of Shares Page ] -->
+    <!-- Page 4 starts -->
+    <div style="page-break-before: always;padding-top: 4%;padding-left: 1%;padding-right:5%;margin-right: 5%;margin-left: 5%;margin-top: 1%;">
+        <!-- Issuance Purpose starts -->
+        <p style="padding-top: 2pt;margin-left: 2%;text-indent: 0pt;text-align: left;padding-bottom: 2pt;border: 1px solid black;background-color: #6F2F9F;width: 100%;">
+            <span style="color: #ffffff;font-weight: bold;padding-left: 1%;">VALUATION METHODOLOGY</span>
+        </p> 
+    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <table style="border-collapse:collapse;margin:auto;width: 100%;margin-left: 2%;" cellspacing="0">
+            <tr >
+                <td style="width:auto;border: 1px solid rgb(101, 101, 101);"
+                    bgcolor="#E6E6E6">
+                    <p class="s4"
+                        style="padding-left: 1pt;text-align: center;padding: 2%;padding-top: 9%;">
+                        Particulars</p>
+                </td>
+                <td style="width:420pt;border: 1px solid rgb(101, 101, 101);"
+                    bgcolor="#E6E6E6">
+                    <p class="s4"
+                        style="padding-left: 6pt;text-align: left;padding: 2%;">
+                        Provisions</p>
+                </td>
+            </tr>
+            <tr >
+                <td
+                    style="width:76pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">Scope</p>
+                </td>
+                <td
+                    style="width:420pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">FMV of
+                        unquoted equity shares</p>
+                </td>
+            </tr>
+            <tr >
+                <td
+                    style="width:76pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">Formulae
+                    </p>
+                </td>
+                <td
+                    style="width:420pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">(A - L) *
+                        (PV)/(PE)</p>
+                </td>
+            </tr>
+            <tr style="height:101pt">
+                <td
+                    style="width:76pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">A</p>
+                </td>
+                <td
+                    style="width:420pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4"
+                        style="padding-top: 2pt;text-indent: 0pt;text-align: justify;line-height: 170%;">
+                        Book value of the assets in the balance-sheet as reduced by any amount of tax paid as deduction or
+                        collection at source or as advance tax payment as reduced by the amount
+                        of tax claimed as refund under the Income-tax Act and any amount shown in the balance-sheet as asset
+                        including the unamortised amount of deferred expenditure which does not represent the value of any
+                        asset;</p>
+                    <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s4" style="text-indent: 0pt;text-align: justify;line-height: 170%;">the amount
+                        of tax claimed as refund under the Income-tax Act and any amount shown in the balance-sheet as asset
+                        including the unamortised amount of deferred expenditure which does not represent the value of any
+                        asset;</p> -->
+                </td>
+            </tr>
+            <tr style="height:270pt">
+                <td
+                    style="width:76pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-top: 11pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">L</p>
+                </td>
+                <td
+                    style="width:420pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="text-indent: 0pt;line-height: 12pt;text-align: justify;line-height: 170%;">Book value
+                        of liabilities in the Balance Sheet, but not including the following</p>
+                    <p style="text-indent: 0pt;text-align: justify;"><br /></p>
+                    <p class="s4" style="text-indent: 0pt;text-align: justify;line-height: 170%;">The paid-up capital in
+                        respect of equity shares;</p>
+                    <p class="s4" style="text-indent: 0pt;text-align: justify;line-height: 170%;">The
+                        amount set apart for payment of dividends on preference shares and equity shares where such
+                        dividends have not been declared before the date of transfer of such shares at a general body
+                        meeting of the company;</p>
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s4" style="text-indent: 0pt;text-align: justify;line-height: 170%;">
+                        Reserves and surplus, by whatever name called, even if the resulting figure is negative, other than
+                        depreciation reserve;</p>
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s4" style="padding-right: 4pt;text-indent: 0pt;text-align: justify;line-height: 170%;">Any
+                        amount representing provision for taxation, other than amount of income-tax paid, less the amount
+                        claimed as refund to the extent of the excess over the tax payable with reference to the book
+                        profits in accordance with the law applicable thereto;</p>
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s4" style="text-indent: 0pt;text-align: justify;line-height: 170%;">Any
+                        amount representing provisions made for meeting unascertained liabilities;</p>
+                    <p class="s4" style="text-indent: 0pt;text-align: justify;line-height: 170%;">Any
+                        amount representing contingent liabilities other than arrears of dividends payable in respect of
+                        cumulative preference shares</p>
+                </td>
+            </tr>
+            <tr style="height:27pt">
+                <td
+                    style="width:76pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 1pt;text-indent: 0pt;line-height: 12pt;text-align: center;">PV</p>
+                </td>
+                <td
+                    style="width:420pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 6pt;text-indent: 0pt;line-height: 12pt;text-align: left;">The paid-up
+                        value of such equity shares</p>
+                </td>
+            </tr>
+            <tr style="height:41pt">
+                <td
+                    style="width:76pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 1pt;text-indent: 0pt;line-height: 12pt;text-align: center;">PE</p>
+                </td>
+                <td
+                    style="width:420pt;border: 1px solid rgb(101, 101, 101);padding: 2%;">
+                    <p class="s4" style="padding-left: 6pt;text-indent: 0pt;line-height: 12pt;text-align: left;line-height: 170%;">Total
+                        amount of paid-up equity share capital as shown in the balance-sheet</p>
+                </td>
+            </tr>
+        </table>
+        <!-- Issuance Purpose ends -->
+    </div>
+    <!-- Page 4 ends -->
+    {{/if}}
     
     <!-- page 5 starts -->
-    <div style="page-break-before: always;padding-top: 4%;padding-left: 1%;padding-right:5%;margin-right: 5%;margin-left: 5%;margin-top: 1%;">
+    <div style="page-break-before: always;padding-top: 3%;padding-left: 1%;padding-right:5%;margin-right: 5%;margin-left: 5%;margin-top: 0%;">
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 2pt;margin-left: 2%;text-indent: 0pt;text-align: left;padding-bottom: 2pt;border: 1px solid black;background-color: #6F2F9F;width: 100%;">
             <span style="color: #ffffff;font-weight: bold;padding-left: 1%;">SUMMARY OF VALUATION</span>
         </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <div style="text-align: center;padding-bottom:21% ;">
+    <div style="text-align: center;">
         <table style="border-collapse:collapse;width: 100%;margin-left: 2%;" cellspacing="0">
             <tr style="height:30pt">
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
@@ -616,7 +746,7 @@
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="3">
                     <p class="s13"
-                        style="padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 114%;text-align: justify;padding-top: 1%;line-height: 180%;font-size: 13px !important">
+                        style="padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 114%;text-align: justify;padding-top: 1%;line-height: 160%;font-size: 13px !important">
                         Book value of all the assets (other than jewellery, artistic work, shares,
                         securities and immovable property) in the balance-sheet as reduced by the
                         following:
@@ -640,9 +770,16 @@
                 </td>
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="2">
-                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;padding-top: 1%;font-size: 13px !important">Any amount
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;padding-top: 1%;font-size: 13px !important">
+                        {{#if (isTransferOfShares)}}
+                        Any amount
                         of income-tax paid, if any, less the
-                        amount of income- tax refund claimed, if any;</p>
+                        amount of income- tax refund claimed, if any;
+                        {{else}}
+                        Tax paid as deduction or collection at source or as advance tax payment as reduced by the amount of tax claimed as refund 
+                        under the Income-tax Act.
+                        {{/if}}
+                    </p>
                 </td>
                 <td
                     style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -653,7 +790,7 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
-            <tr style="height:50pt">
+            <tr style="height:38pt">
                 <td
                     style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -664,7 +801,8 @@
                     <p class="s14"
                         style="padding-left: 5pt;padding-right: 6pt;text-indent: 0pt;line-height: 114%;text-align: justify;padding-top: 1%;font-size: 13px !important">
                         Any amount shown as asset including the unamortised amount of deferred expenditure which does not
-                        represent the value of any asset</p>
+                        represent the value of any asset.
+                </p>
                 </td>
                 <td
                     style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -675,6 +813,7 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+            {{#if (isTransferOfShares)}}
             <tr style="height:15pt">
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="5">
@@ -685,6 +824,7 @@
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 </td>
             </tr>
+            {{/if}}
             <tr style="height:15pt">
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="5" bgcolor="#BEBEBE">
@@ -696,6 +836,9 @@
                     <p style="padding-right: 4pt;text-indent: 0pt;text-align: right;margin-top: 5%;font-weight: bold;font-size: 13px !important">{{totalA}}</p>
                 </td>
             </tr>
+            
+            <!-- Transfer of share content starts -->
+            {{#if (isTransferOfShares)}}
             <tr style="height:15pt">
                 <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="6">
@@ -873,15 +1016,235 @@
                     <p style="text-indent: 0pt;text-align: right;font-weight: bold;padding-right: 4pt;font-size: 13px !important">{{totalD}}</p>
                 </td>
             </tr>
+            <!-- Transfer of share content ends -->
+            {{else}}
+            <!-- Issuance content starts -->
+            <tr style="height:26pt">
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="2">
+                    <p class="s11" style="padding-top: 4pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">L</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="3">
+                    <p class="s13" style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;line-height: 160%;font-size: 13px !important;font-size: 13px !important">Book value
+                        of liabilities shown in the balance sheet, but not 
+                        including the following amounts:</p>
+                </td>
+                <td colspan="1" style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s11" style="padding-right: 3pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 1%;font-size: 13px !important">{{bookValueOfLiabilities}}</p>
+                </td>
+            </tr>
+            <tr style="height:22pt">
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    rowspan="6">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s11" style="padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">Less:</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">i</p>
+                </td>
+                <td colspan="2"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-size: 13px !important">The paid-up capital in
+                        respect of equity shares.</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-right: 13pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 1%;font-size: 13px !important">{{paidUpCapital}}</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:60pt">
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s14" style="padding-top: 8pt;padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">ii</p>
+                </td>
+                <td colspan="2"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;padding-right: 4pt;text-indent: 0pt;text-align: justify;padding-right: 5pt;font-size: 13px !important">The
+                        amount set apart for payment of dividends on preference shares and equity shares where such
+                        dividends have not been declared before the date of transfer at a general body meeting of the company.</p>
+                </td>
+                <td
+                    style="width:100pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s14" style="padding-right: 13pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 1%;font-size: 13px !important">{{paymentDividends}}</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:44pt">
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s14" style="padding-top: 10pt;padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">iii</p>
+                </td>
+                <td colspan="2"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;padding-right: 1pt;text-indent: 0pt;text-align: justify;padding-right: 5pt;font-size: 13px !important">
+                        The reserves and surplus, by whatever name called, even if the resulting figure is negative, other than
+                        those set apart towards depreciation.</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-right: 13pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 4%;font-size: 13px !important">{{reserveAndSurplus}}</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:62pt">
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">iv</p>
+                </td>
+                <td colspan="2"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;padding-right: 4pt;text-indent: 0pt;text-align: justify;padding-right: 5pt;font-size: 13px !important">Any
+                        amount representing provision for taxation, other than amount of income tax paid, if any, less the
+                        amount of income-tax claimed as refund, if any, to the extent of the excess over the tax payable
+                        with reference to the book profits in accordance with the law
+                        applicable thereto;</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-right: 13pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 4%;font-size: 13px !important">{{provisionForTaxation}}</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:39pt">
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">v</p>
+                </td>
+                <td colspan="2"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: left;padding-right: 5pt;font-size: 13px !important">any amount representing
+                        provisions made for meeting liabilities, other than  ascertained liabilities</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-right: 13pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 4%;font-size: 13px !important">{{otherThanAscertainLiability}}</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:45pt">
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: left;font-size: 13px !important">vi</p>
+                </td>
+                <td colspan="2"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-left: 5pt;text-indent: 0pt;text-align: justify;padding-right: 5pt;font-size: 13px !important">any amount representing
+                        contingent liabilities other than arrears of dividends payable in respect of cumulative preference shares</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14" style="padding-right: 13pt;text-indent: 0pt;line-height: 13pt;text-align: right;padding-top: 4%;font-size: 13px !important">{{contingentLiability}}</p>
+                </td>
+                <td
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                </td>
+            </tr>
+            <tr style="height:15pt">
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="5" bgcolor="#BEBEBE">
+                    <p class="s11" style="padding-left: 177pt;padding-right: 177pt;text-indent: 0pt;text-align: center;font-size: 13px !important">
+                        Total (L)</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    bgcolor="#BEBEBE">
+                    <p style="text-indent: 0pt;text-align: right;font-weight: bold;padding-right: 4pt;font-size: 13px !important">{{totalL}}</p>
+                </td>
+            </tr>
+            <tr style="height:17pt">
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="5">
+                    <p class="s11"
+                        style="padding-left: 23pt;padding-right: 23pt;text-indent: 0pt;line-height: 13pt;text-align: center;font-size: 13px !important">
+                        A-L (Fair Market Value of Equity)</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="1">
+                    <p class="s11" style="padding-right: 3pt;text-indent: 0pt;line-height: 13pt;text-align: right;font-size: 13px !important">{{calculateAll}}</p>
+                </td>
+            </tr>
+            <tr style="height:13pt">
+                <td colspan="1"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14"
+                        style="padding-left: 9pt;padding-right: 9pt;text-indent: 0pt;line-height: 12pt;text-align: center;font-size: 13px !important">
+                        PV</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="4">
+                    <p class="s14" style="padding-left: 7pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important">The Paid
+                        up value of such Equity Shares</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="2">
+                    <p class="s14" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important">{{phaseValue}}</p>
+                </td>
+            </tr>
+            <tr style="height:23pt">
+                <td colspan="1"
+                    style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <p class="s14"
+                        style="padding-left: 9pt;padding-right: 8pt;text-indent: 0pt;line-height: 13pt;text-align: center;font-size: 13px !important">
+                        PE</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="4">
+                    <p class="s14" style="padding-left: 7pt;text-indent: 0pt;line-height: 13pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 13px !important">Total
+                        Amount of Paid up Equity Share Capital as Shown in the Balance Sheet</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="2">
+                    <p class="s14" style="padding-right: 4pt;text-indent: 0pt;line-height: 13pt;text-align: right;font-size: 13px !important">{{paidUpCapital}}</p>
+                </td>
+            </tr>
+            <tr style="height:15pt">
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="5" bgcolor="#BEBEBE">
+                    <p class="s11"
+                        style="padding-left: 23pt;padding-right: 23pt;text-indent: 0pt;line-height: 13pt;text-align: center;font-size: 13px !important">
+                        Fair Market Value of Unquoted Equity Shares = (A-L) *(PV/PE)</p>
+                </td>
+                <td style="width:auto;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
+                    colspan="1" bgcolor="#BEBEBE">
+                    <p class="s11" style="padding-right: 3pt;text-indent: 0pt;line-height: 13pt;text-align: right;font-size: 13px !important">{{unquotedEquityShare}}</p>
+                </td>
+            </tr>
+            <!-- Issuance content ends -->
+            {{/if}}
         </table>
     </div>
     </div>
     <!-- page 5 ends -->
     
     
+    {{#if (isTransferOfShares)}}
+    <!-- [ Transfer of shares content ] starts -->
     <!-- page 6 starts  -->
     <div style="page-break-before: always;padding-top: 4%;padding-left: 1%;padding-right:5%;margin-right: 5%;margin-left: 5%;margin-top: 1%;">
-      
         <div>
     <p style="padding-left: 32pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
     <table style="border-collapse:collapse;margin-left:2%;width: 100%;" cellspacing="0">
@@ -1135,7 +1498,7 @@
         </tr>
     </table>
         </div>
-       <div style="padding-bottom: 10%;">
+       <div >
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         {{#if (hasEitherImmovableOrInvstShare)}}
         <p class="s16" style="padding-top: 4pt;padding-left: 27pt;text-indent: 0pt;text-align: justify;">Notes: </p>
@@ -1162,10 +1525,26 @@
        </div>
     </div>
     <!-- page 6 ends  -->
+    <!-- [ Transfer of shares content ] ends -->
+    {{/if}}
         
     
    <!-- page 7 starts -->
    <div style="page-break-before: always;padding-top: 4%;padding-left: 1%;padding-right:5%;margin-right: 5%;margin-left: 5%;margin-top: 1%;">
+    <div>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        {{#if (isTransferOfShares)}}
+        {{else}}
+        <p class="s16" style="padding-top: 4pt;padding-left: 32pt;text-indent: 0pt;text-align: justify;">Note: </p>
+        {{/if}}
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="padding-left: 32pt;text-indent: 0pt;text-align: justify;line-height: 180%;">
+            In accordance with Rule 11UA The Balance Sheet as on valuation date needs to be audited by the 
+            Statutory Auditors of the Company, however, we have been provided with management certified unaudited financials of the Company 
+            and our valuation is dependent on the same.
+        </p>
+    </div>
+    <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 2pt;margin-left: 34pt;text-indent: 0pt;text-align: left;padding-bottom: 2pt;border: 1px solid black;background-color: #6F2F9F;">
         <span style="color: #ffffff;font-weight: bold;padding-left: 1%;">CONCLUSION</span>
     </p>

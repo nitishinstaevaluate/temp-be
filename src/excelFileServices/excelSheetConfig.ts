@@ -111,6 +111,7 @@ export const sheet4_ruleElevenUaObj={
     incomeTaxRefundRow : "19",
     defferedTaxRow : "20",
     currentInvestmentSharesAndSecuritesRow : "26",
+    tdsRecievablesRow : "35",
     advanceTaxPaidRow : "36",
     preliminaryExpenseRow : "37",
     preOperativeTaxRow : "38",
