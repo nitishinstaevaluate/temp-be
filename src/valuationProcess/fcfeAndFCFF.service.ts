@@ -482,7 +482,7 @@ export class FCFEAndFCFFService {
       const { outstandingShares } = dataInputs;
       let multiplier = GET_MULTIPLIER_UNITS[`${dataInputs.reportingUnit}`];
 
-      const adjustedCostOfEquity = await this.industryService.CAPM_Method(dataInputs);
+      const  costOfEquity =  await this.computeCostOfEquity(dataInputs, worksheet2);
 
       const yearsActual = await getYearsList(worksheet1);
 
@@ -531,10 +531,10 @@ export class FCFEAndFCFFService {
     
     
     if (isStubRequired && totalDaysDifferenceStubAdjustment > 1) { //based on the above conditions, calculating stub
-      let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (adjustedCostOfEquity/100)-1;
+      let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (costOfEquity/100)-1;
       let equityValueToAdj = stubFactor * resultAggregate.resultArray[0].equityValue;
       
-      // let equityValueToAdj = +resultAggregate[0].equityValue  * (Math.pow(1 + ((adjustedCostOfEquity/100)/ 365), totalDaysDifferenceStubAdjustment ) - 1); // Confirmation pending 
+      // let equityValueToAdj = +resultAggregate[0].equityValue  * (Math.pow(1 + ((costOfEquity/100)/ 365), totalDaysDifferenceStubAdjustment ) - 1); // Confirmation pending 
       console.log('Stub Factor ',stubFactor);
       let keyValues = Object.entries(resultAggregate.resultArray[0]);
       keyValues.splice(-2,0, ["stubAdjValue",equityValueToAdj]);
@@ -568,6 +568,27 @@ export class FCFEAndFCFFService {
     }
     }
 
+    async computeCostOfEquity(inputs, worksheet2){
+      let costOfEquity = 0 
+      if(inputs?.model?.includes('FCFE')){
+        costOfEquity = await this.industryService.CAPM_Method(inputs);
+      }
+      else if(inputs?.model?.includes('FCFF')){
+        const adcoe = await this.industryService.CAPM_Method(inputs);
+        const shareholderFunds = await getShareholderFunds(0,worksheet2);
+        const capitalStruc = await CapitalStruc(0,worksheet2,shareholderFunds,inputs);
+        const calculateWaccPayload = {
+          adjustedCostOfEquity:adcoe,
+          capitalStruc,
+          costOfDebt: inputs.costOfDebt,
+          taxRate: inputs.taxRate,
+          copShareCapital: inputs.copShareCapital
+        }
+        const wacc = await this.calculateWacc(calculateWaccPayload);
+        costOfEquity = wacc ? wacc * 100 : 0;
+      }
+      return costOfEquity;
+    }
 
     async checkPartialFinancialYear(provisionalDate:any){
       const cleanProvisionalDate = new Date(provisionalDate);
@@ -1023,9 +1044,10 @@ export class FCFEAndFCFFService {
       firstElement.equityValue = inputs.model.includes('FCFE') ? (firstElement.sumOfCashFlows + firstElement.pvTerminalValue + firstElement.cashEquivalents + otherAdjustment + firstElement.surplusAssets) : (firstElement.sumOfCashFlows + firstElement.pvTerminalValue + firstElement.cashEquivalents - firstElement.debtOnDate + firstElement.surplusAssets + otherAdjustment);
       firstElement.valuePerShare = (firstElement.equityValue*multiplier)/inputs.outstandingShares;
 
-      const {isStubRequired, totalDaysDifferenceStubAdjustment, provisionalDate} = await this.fetchStubAdjustment(inputs);
+      const {isStubRequired, totalDaysDifferenceStubAdjustment, provisionalDate, worksheet2} = await this.fetchStubAdjustment(inputs);
       if (isStubRequired && totalDaysDifferenceStubAdjustment > 1) { //based on the above conditions, calculating stub
-        let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (inputs.adjustedCostOfEquity/100)-1;
+        const costOfEquity = await this.computeCostOfEquity(inputs, worksheet2);
+        let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (costOfEquity/100)-1;
         let equityValueToAdj = stubFactor * firstElement.equityValue;
         
         firstElement.stubAdjValue = equityValueToAdj
@@ -1127,7 +1149,7 @@ export class FCFEAndFCFFService {
     if(isStubRequired){
       totalDaysDifferenceStubAdjustment = await this.subtractProvisionalDateByValuationDate(provDtRef, decodeValuationDate);
     }
-    return { isStubRequired, totalDaysDifferenceStubAdjustment, provisionalDate: new Date(provDtRef) };
+    return { isStubRequired, totalDaysDifferenceStubAdjustment, provisionalDate: new Date(provDtRef), worksheet2 };
   }
   //Get DiscountingFactor based on Industry based Calculations.
   // async getDiscountingFactor(
