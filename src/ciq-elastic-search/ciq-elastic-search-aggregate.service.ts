@@ -201,14 +201,26 @@ export class ciqElasticSearchAggregateService{
 
     async fetchAllListedCompanies(){
         try{
-            const listedCompaniesId = await this.GICSBasedCompanyList();
-
+            /* This function used to fetch listed companies data stored in ciqCompanyIndustryInd collection
+            * We don't use ciqCompanyIndustryInd collection for now
+            * const listedCompaniesId = await this.GICSBasedCompanyList();
+            */
             const criteria = {
                 query: {
                     bool: {
-                        must: {
-                            terms: { 
-                                [elasticSearchKey.COMPANYID]: listedCompaniesId
+                        must: [
+                            { 
+                                match_all: {}
+                            },
+                            {
+                                terms: {
+                                    [elasticSearchKey.COMPANYTYPEID] : ["4"]        //Getting public companies only [ company type id = 4 ]
+                                }
+                            }     
+                        ],
+                        filter: {
+                            exists: {
+                                field: elasticSearchKey.SIMPLEINDUSTRYID
                             }
                         }
                     }
