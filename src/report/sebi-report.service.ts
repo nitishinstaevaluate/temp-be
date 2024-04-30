@@ -35,6 +35,7 @@ export class sebiReportService {
     async computeSEBIReport(htmlPath, pdfFilePath, request, valuationResult, reportDetails){
         try{
           const companyId = valuationResult.inputData[0].companyId;
+          const companyName = valuationResult.inputData[0].company;
           const valuationDate = valuationResult.inputData[0].valuationDate;
           let sharePriceDetails:any;
           if(companyId){
@@ -69,7 +70,7 @@ export class sebiReportService {
           const template = hbs.compile(htmlContent);
           const html = template(valuationResult);
     
-          return await this.generateSebiReport(html, pdfFilePath);
+          return await this.generateSebiReport(html, pdfFilePath, companyName);
         }
         catch(error){
           console.log(error)
@@ -85,6 +86,7 @@ export class sebiReportService {
         try{
           let pdf
           const companyId = valuationResult.inputData[0].companyId;
+          const companyName = valuationResult.inputData[0].company;
           const valuationDate = valuationResult.inputData[0].valuationDate;
           let sharePriceDetails:any;
           if(companyId){
@@ -132,7 +134,7 @@ export class sebiReportService {
               const html = template(valuationResult);
       
               
-              pdf = await this.generateSebiReport(html, pdfFilePath);
+              pdf = await this.generateSebiReport(html, pdfFilePath, companyName);
               await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath,docFilePath)
               
               const convertDocxToSfdt = await this.thirdPartyApiAggregateService.convertDocxToSyncfusionDocumentFormat(docFilePath)
@@ -183,7 +185,7 @@ export class sebiReportService {
             'Authorization':`${bearerToken.token}`,
             'Content-Type': 'application/json'
           }
-          
+
           const financialSegmentDetails = await axiosInstance.post(`${CIQ_ELASTIC_SEARCH_PRICE_EQUITY}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
           return financialSegmentDetails
         }
@@ -196,7 +198,7 @@ export class sebiReportService {
         }
       }
 
-      async generateSebiReport(htmlContent: any, pdfFilePath: string) {
+      async generateSebiReport(htmlContent: any, pdfFilePath: string, companyName) {
         const browser = await puppeteer.launch({
           headless:"new",
           executablePath: process.env.PUPPETEERPATH
@@ -221,7 +223,7 @@ export class sebiReportService {
           <td style="width:100%;">
             <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:3%;padding-right:3%">
               <tr>
-                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of ABC Limited</i></td>
+                <td style=" border-bottom: 1px solid #bbccbb !important;font-size: 13px; height: 5px;width:100% !important;text-align:right;font-size:12px;font-family:Georgia, 'Times New Roman', Times, serif;"><i>Valuation of equity shares of ${companyName}</i></td>
               </tr>
               <tr>
                 <td style="font-size: 11px">&nbsp;</td>
@@ -422,8 +424,7 @@ export class sebiReportService {
           hbs.registerHelper('floorPriceVwap',()=>{
             const vwap90Days = this.calculateVwap(sharePriceDetails,false);
             const vwap10Days = this.calculateVwap(sharePriceDetails,true);
-            console.log(vwap90Days,"vwap 90 days")
-            return vwap90Days > vwap10Days ? vwap90Days : vwap90Days;
+            return vwap90Days > vwap10Days ? vwap90Days : vwap10Days;
           })
 
           hbs.registerHelper('isBetaFromAd',()=>{
