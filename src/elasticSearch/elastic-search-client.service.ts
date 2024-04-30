@@ -60,12 +60,12 @@ export class ElasticSearchService {
     async search(index: string, query: any): Promise<any> {
         try {
           this.logger.log(`[${this.currentDateIST}] Elastic Search query { "query" : ${JSON.stringify({index,body: query})} }`);
-          const { hits } = await this.connection.search({
+          const { hits, aggregations } = await this.connection.search({
             index,
             body: query,
           });
           const data = hits.hits.map((hit) =>  hit._source);
-          return {data, total:hits.total.value}
+          return {data, total:hits.total.value, aggregations}
         } catch (error) {
           this.logger.error(`[${this.currentDateIST}] Elastic search error response  ${JSON.stringify({ error: error.message })}`)
         }
