@@ -4,5 +4,6 @@ export enum elasticSearchIndex {
     ciqcompanyind = 'ciqcompanyind',
     ciqlatestinstancefinperiodind = 'ciqlatestinstancefinperiodind',
     ciqcompanyindustryind = 'ciqcompanyindustryind',
-    ciqsegmentdescriptionind = 'ciqsegmentdescriptionind'
+    ciqsegmentdescriptionind = 'ciqsegmentdescriptionind',
+    ciqpriceequity = 'ciqpriceequity',
 }
