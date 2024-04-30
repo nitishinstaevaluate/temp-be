@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { plainToClass } from "class-transformer";
 import { ElasticSearchService } from "src/elasticSearch/elastic-search-client.service";
 import { CiqPriceEquityDto } from "./dto/ciq-elastic-search.dto";
+import { elasticSearchKey } from "src/library/enums/elastic-search-keys.enum";
+import { elasticSearchIndex } from "src/library/enums/elastic-search-index.enum";
 
 @Injectable()
 export class ciqElasticPriceEquityService {
@@ -9,46 +11,92 @@ export class ciqElasticPriceEquityService {
 
     async calculatePriceEquityAggregate(body:any){
         try{
-            const company = body.companyDetails;
-            const date = body.date;
+            const companyId = body.companyDetails.companyId;
+            const date = body.companyDetails.date;
             const criteria = {
-                
-                    "query": {
-                      "bool": {
-                        "must": [
+              query: {
+                bool: {
+                  must: [
                           {
-                            "range": {
-                              "PRICINGDATE": {
-                                "lt": "2023-09-30T00:00:00.000000"
+                            range: {
+                              [elasticSearchKey.PRICINGDATE]: {
+                                "lt": date
                               }
                             }
                           },
                           {
-                            "term": {
-                              "COMPANYID": "713928041"
+                            term: {
+                              [elasticSearchKey.COMPANYID]: companyId
                             }
                           },
                           {
-                            "term": {
-                              "TRD_PRIMARYFLAG": "1"
+                            term: {
+                              [elasticSearchKey.TRD_PRIMARYFLAG]: "1"
                             }
                           }
                         ]
                       }
                     },
-                    "sort": [
-                      {
-                        "PRICINGDATE": {
-                          "order": "desc"
+                    // sort: [
+                    //   {
+                    //     [elasticSearchKey.PRICINGDATE]: {
+                    //       "order": "desc"
+                    //     }
+                    //   }
+                    // ],
+                    // size: 90,
+
+                    /* 
+                    * Since ciqpriceequity index has duplicate records [contains same records with same pricingdate]
+                    * As an alternative, create aggregations
+                    */
+                    aggs: {   // First Aggregation
+                      /*
+                      * Creates buckets with unique Docs based on PRICINGDATE
+                      * Note:[Each Bucket can also contain multiple records if it has same PRICINGDATE]
+                      * To tackle this, use inner aggregation grouping clause
+                      */
+                      GROUP_BY_PRICINGDATE: {    
+                        terms: {
+                          field: elasticSearchKey.PRICINGDATE,
+                          size: 90,
+                          order: {
+                            _key: "desc"
+                          }
+                        },
+
+                        aggs: {   // Second Aggregation
+                          /*
+                          * Now from every bucket, only select the top document by using PRICINGDATE filter [**only recent one]
+                          * This group only stores the top value and excludes duplicate
+                          */
+                          ONLY_TOP_DOC_BY_PRICINGDATE: {
+                            top_hits: {
+                              size: 1,
+                              sort: [
+                                {
+                                  [elasticSearchKey.PRICINGDATE]: {
+                                    order: "desc"
+                                  }
+                                }
+                              ]
+                            }
+                          }
                         }
                       }
-                    ],
-                    "size": 90
+                    },
                   }
             
-                  const companyData = await this.elasticSearchClientService.search('ciqpriceequity', criteria);
+                  const companyData = await this.elasticSearchClientService.search(elasticSearchIndex.ciqpriceequity, criteria);
+                  const groupByPricingDate = companyData.aggregations?.GROUP_BY_PRICINGDATE;
 
-                  const priceEquityDetails:any = plainToClass(CiqPriceEquityDto, companyData.data, {excludeExtraneousValues:true});
+                  let pricingBucketES = [];
+                  for await(const pricingBuckets of groupByPricingDate.buckets){
+                    // Pushing the individual inner aggregated document from the nested inner group
+                    pricingBucketES.push(pricingBuckets.ONLY_TOP_DOC_BY_PRICINGDATE.hits.hits[0]._source);
+                  }
+
+                  const priceEquityDetails:any = plainToClass(CiqPriceEquityDto, pricingBucketES, {excludeExtraneousValues:true});
 
                   let modifiedPriceEquityDetails = priceEquityDetails.map((elements,index)=>{
                     return {
