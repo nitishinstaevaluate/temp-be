@@ -3207,7 +3207,7 @@ export class ReportService {
 
     hbs.registerHelper('phaseValue',()=>{
       if(elevenUaData){
-        return elevenUaData?.data?.inputData?.phaseValue ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.inputData?.phaseValue) : '-';
+        return elevenUaData?.data?.inputData?.faceValue ? this.formatPositiveAndNegativeValues(elevenUaData?.data?.inputData?.faceValue) : '-';
       }
       return '-';
     })
