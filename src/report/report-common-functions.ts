@@ -112,8 +112,11 @@ export function  formatDate(date: Date): string {
     }
   }
 
-  export function convertToRomanNumeral(num:any) {
-    const romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+  export function convertToRomanNumeral(num:any, upperCase?) {
+    let  romanNumerals = ['i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'];
+    if(upperCase){
+      romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
+    }
   
     if (num === undefined || num === null || num > romanNumerals.length) {
       return '';
