@@ -6,8 +6,8 @@ import * as fs from 'fs';
 import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
-import { convertEpochToPlusOneDate, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
+import { convertEpochToPlusOneDate, convertToRomanNumeral, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
+import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { ReportService } from "./report.service";
 import { terminalValueWorkingService } from "src/valuationProcess/terminal-value-working.service";
@@ -24,6 +24,9 @@ import * as converter from 'number-to-words';
 @Injectable()
 export class sebiReportService {
 
+    navAnnexureSerialNo = 'I';
+    dcfAnnexureSerialNo = 'I';
+    marketApproachAnnexureSerialNo = 'I';
     constructor(private authenticationService:AuthenticationService,
       private thirdPartyApiAggregateService:thirdpartyApiAggregateService,
     private terminalValueWorkingService: terminalValueWorkingService,
@@ -254,6 +257,12 @@ export class sebiReportService {
             if(reportDetails.registeredValuerDetails[0]) 
                 return  formatDate(new Date(reportDetails.reportDate));
             return '';
+          })
+
+          hbs.registerHelper('marketPriceMethodAnnexureSerialNo',()=>{
+            if(valuationResult.inputData[0].model) 
+                return convertToRomanNumeral(valuationResult.inputData[0].model.length, true);
+            return 'I';
           })
     
           hbs.registerHelper('companyName',()=>{
@@ -542,7 +551,7 @@ export class sebiReportService {
           })
 
           hbs.registerHelper('isSection165',()=>{
-            if(reportDetails.reportSection.includes(`165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018`) && reportDetails.reportSection.length === 1){
+            if(reportDetails.reportSection.includes(`165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018`)){
               return true;
             }
             return false;
@@ -563,6 +572,118 @@ export class sebiReportService {
               })
             }
           return this.generateString(modelArray, reportDetails);
+          })
+
+          hbs.registerHelper('displayWeightsAssigned',()=>{
+            let weights = [], weightageArray = [];
+            if(valuationResult.inputData[0]?.model?.length > 1){
+              reportDetails?.modelWeightageValue?.modelValue.map(
+                (data)=>{
+  
+                if(data.model === MODEL[0] || data.model === MODEL[1]){
+                  weights.push(`${formatPositiveAndNegativeValues(convertToNumberOrZero(data.weight) * 100)}%`);
+                  }
+                if(data.model === MODEL[5]){
+                  weights.push(`${formatPositiveAndNegativeValues(convertToNumberOrZero(data.weight) * 100)}%`);
+                }
+                if(data.model === MODEL[2] || data.model === MODEL[4]){
+                  weights.push(`${formatPositiveAndNegativeValues(convertToNumberOrZero(data.weight) * 100)}%`);
+                }
+              })
+            }
+            else{
+              // If only one model is there, keep default as 100% 
+              weights.push('100%');
+            }
+            if(weights.length > 1){
+              const lastElement = weights[weights.length - 1];
+              const otherElement = weights.slice(0, -1).join(', ');
+              weightageArray.push(`${otherElement} and ${lastElement}`);
+            }
+            else{
+              weightageArray.push(weights);
+            }
+
+          return weightageArray;
+          })
+
+          hbs.registerHelper('loadAnnexureLabelsOnly', ()=>{
+          const model = valuationResult.inputData[0].model;
+          const companyName = valuationResult.inputData[0].company;
+
+          const entireModelsStructure = [...NET_ASSET_VALUE_APPROACH, ...INCOME_APPROACH , ...MARKET_PRICE_APPROACH];
+          let formatisedModelOrderwise = [];
+          for (let singleModelStructure of entireModelsStructure){
+            for (let singleModelSelected of model){
+              if(singleModelStructure === singleModelSelected){
+                formatisedModelOrderwise.push(singleModelStructure);
+              }
+            }
+          }
+
+          // Using orderwise model as per sebi report [NAV --> DCF --> MARKET_APPROACH]
+          let counter = 0, labelArray = [];
+          for (const indModel of formatisedModelOrderwise){
+            if(indModel === MODEL[5]){
+              this.navAnnexureSerialNo = convertToRomanNumeral(counter,true);
+              labelArray.push(` 
+                <p style="padding-top: 4pt;text-indent: 0pt;line-height: 150%;text-align: left;">
+                  <span class="s18">
+                    Annexure ${this.navAnnexureSerialNo}: 
+                  </span>
+                  <span class="s17">
+                    Determination of value per equity shares of 
+                  </span>
+                  <span class="s19">
+                    ${companyName}
+                  </span>
+                  <span class="s17"> 
+                    using Book Value method;
+                  </span>
+                </p>
+              `)
+            }
+            if(indModel === MODEL[0] || indModel === MODEL[1]){
+              this.dcfAnnexureSerialNo = convertToRomanNumeral(counter,true);
+              labelArray.push(` 
+                <p style="padding-top: 4pt;text-indent: 0pt;line-height: 150%;text-align: left;">
+                  <span class="s18">
+                    Annexure ${this.dcfAnnexureSerialNo}: 
+                  </span>
+                  <span class="s17">
+                    Determination of value per equity shares of 
+                  </span>
+                  <span class="s19">
+                    ${companyName}
+                  </span>
+                  <span class="s17"> 
+                    using Discounted Cash Flow method;
+                  </span>
+                </p>
+              `)
+            }
+            if(indModel === MODEL[2] || indModel === MODEL[4]){
+              this.marketApproachAnnexureSerialNo = convertToRomanNumeral(counter,true);
+              labelArray.push(` 
+               <p style="text-indent: 0pt;line-height: 115%;text-align: left;line-height: 150%;">
+                  <span class="s18">
+                    Annexure ${this.marketApproachAnnexureSerialNo}:
+                  </span>
+                  <span class="s17">
+                    Determination of value per equity share of 
+                  </span>
+                  <span class="s19">
+                    ${companyName}
+                  </span>
+                  <span class="s17"> 
+                    using Comparable Companies method
+                  </span>
+                </p>
+              `)
+            }
+            counter ++;
+          }
+            return labelArray;
           })
 
           hbs.registerHelper('projectedYear',()=>{
@@ -1542,19 +1663,6 @@ export class sebiReportService {
                 }
             })
 
-          hbs.registerHelper('checkIfFcff',()=>{
-            let isFcff = false;
-            if(valuationResult.modelResults){
-              valuationResult.modelResults.map((result)=>{
-    
-                if(result.model === MODEL[1]){
-                  isFcff = true;
-                }
-              })
-            }
-            return isFcff;
-          })
-
           hbs.registerHelper('ifStub',(options)=>{
             let checkIfStub = false;
               valuationResult.modelResults.forEach((result)=>{
@@ -1602,51 +1710,6 @@ export class sebiReportService {
               return true;
           })
 
-          hbs.registerHelper('modelValuePerShare',(modelName)=>{
-            modelName = modelName.split(',');
-            if(modelName.length <= 2 ){
-              let formattedValues;
-                formattedValues = modelName.flatMap((models) => {
-                  return valuationResult.modelResults.flatMap((response) => {
-                    if (
-                      response.model === models &&
-                      (models === MODEL[2] || models === MODEL[4])
-                    ) {
-                      const innerFormatted = response?.valuationData.valuation
-                        .filter((innerValuationData) => innerValuationData.particular === 'result')
-                        .map((innerValuationData) => {
-                          const formattedNumber = Math.floor(innerValuationData.fairValuePerShareAvg).toLocaleString('en-IN');
-                          return `${formattedNumber.replace(/,/g, ',')}/-`;
-                        });
-                      return innerFormatted || [];
-                    }
-                    if (response.model === models && models !== 'NAV') {
-                      const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
-                      return `${formattedNumber.replace(/,/g, ',')}/-`;
-                    }
-                    if (response.model === models && models === 'NAV') {
-                      const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
-                      const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                      const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
-                      const formattedNumber = formatPositiveAndNegativeValues(valuePerShare);
-                      return `${formattedNumber}/-`;
-                    }
-                    return [];
-                  });
-                });
-                return formattedValues[0];
-              }
-              else{
-                if(reportDetails?.modelWeightageValue){
-                  const equityValue = reportDetails.modelWeightageValue.weightedVal;
-                  const outstandingShares = valuationResult.inputData[0].outstandingShares;
-                  const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
-                  return `${finalValue.replace(/,/g, ',')}/-`
-                }
-              }
-           
-            return '';
-          })
 
           hbs.registerHelper('calculateColspan',()=>{
             let colspan;
@@ -2007,6 +2070,125 @@ export class sebiReportService {
             return false;
           })
 
+          hbs.registerHelper('getParticularValuePerShare',(model)=>{
+            if(valuationResult.inputData[0].model.length){
+              let formattedValues;
+              formattedValues = valuationResult.inputData[0].model.flatMap((models) => {
+                return valuationResult.modelResults.flatMap((response) => {
+                  if (
+                    response.model === models &&
+                    (models === MODEL[2] || models === MODEL[4]) &&
+                    model === 'MARKET_PRICE_APPROACH'
+                  ) {
+                    const innerFormatted = response?.valuationData.valuation
+                      .filter((innerValuationData) => innerValuationData.particular === 'result')
+                      .map((innerValuationData) => {
+                        const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                        return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+                      });
+                    return innerFormatted || [];
+                  }
+                  if (
+                    response.model === models && 
+                    models !== 'NAV' &&
+                    model === 'INCOME_APPROACH'
+                  ) {
+                    const formattedNumber = response?.valuationData[0]?.valuePerShare;
+                    return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+                  }
+                  if (
+                    response.model === models && 
+                    models === 'NAV' && 
+                    model === 'NET_ASSET_VALUE_APPROACH'
+                  ) {
+                    const formattedNumber = response?.valuationData?.valuePerShare?.bookValue;
+                    return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+                  }
+                  return [];
+                });
+              });
+              return formattedValues[0]
+            }
+          })
+
+          hbs.registerHelper('weightedAverageWorking',()=>{
+            if(valuationResult.inputData[0].model.length){
+              let computedArray = [], dcfApproachWeight:any = 100, marketApproachWeight:any = 100, navApproachWeight:any = 100;
+              if(valuationResult.inputData[0].model.length > 1){
+                reportDetails?.modelWeightageValue?.modelValue.map(
+                  (data)=>{
+                    
+                  if(data.model === MODEL[0] || data.model === MODEL[1]){
+                    dcfApproachWeight = convertToNumberOrZero(data.weight) * 100;
+                    }
+                  if(data.model === MODEL[5]){
+                    navApproachWeight = convertToNumberOrZero(data.weight) * 100;
+                  }
+                  if(data.model === MODEL[2] || data.model === MODEL[4]){
+                    marketApproachWeight = convertToNumberOrZero(data.weight) * 100;
+                  }
+                })
+              }
+
+              valuationResult.inputData[0].model.flatMap((models) => {
+                valuationResult.modelResults.flatMap((response) => {
+                  if (
+                    response.model === models &&
+                    (models === MODEL[2] || models === MODEL[4])
+                  ) {
+                    let marketApproachValuePerShare = 0;
+                   
+                    response?.valuationData.valuation
+                      .filter((innerValuationData) => innerValuationData.particular === 'result')
+                      .map((innerValuationData) => {
+                        marketApproachValuePerShare = innerValuationData.fairValuePerShareAvg;
+                      });
+                      computedArray.push(
+                        {
+                          approach: 'Market Approach',
+                          method: `${ALL_MODELS[`${models}`]} Method`,
+                          valuePerShare: formatPositiveAndNegativeValues(marketApproachValuePerShare),
+                          weights: formatPositiveAndNegativeValues(marketApproachWeight),
+                          weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketApproachValuePerShare) * marketApproachWeight/100)
+                        }
+                      )
+                  }
+                  if (
+                    response.model === models && 
+                    (models === MODEL[0] || models === MODEL[1])
+                  ) {
+                    let incomeApproachValuePerShare = response?.valuationData[0]?.valuePerShare || 0;
+                    computedArray.push(
+                      {
+                        approach: 'Income Approach',
+                        method: `${ALL_MODELS[`${models}`]} Method`,
+                        valuePerShare: formatPositiveAndNegativeValues(incomeApproachValuePerShare),
+                        weights: formatPositiveAndNegativeValues(dcfApproachWeight),
+                        weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(incomeApproachValuePerShare) * dcfApproachWeight/100)
+                      }
+                    )
+                  }
+                  if (
+                    response.model === models && 
+                    models === MODEL[5]
+                  ) {
+                    let navApproachValuePerShare = response?.valuationData?.valuePerShare?.bookValue;
+                    computedArray.push(
+                      {
+                        approach: 'Cost Approach',
+                        method: `${ALL_MODELS[`${models}`]} Method`,
+                        valuePerShare: formatPositiveAndNegativeValues(navApproachValuePerShare),
+                        weights: formatPositiveAndNegativeValues(navApproachWeight),
+                        weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(navApproachValuePerShare) * navApproachWeight/100)
+                      }
+                    )
+                  }
+                });
+              });
+              return computedArray;
+            }
+          })
+
           hbs.registerHelper('combinedValuePerShare',()=>{
             if(valuationResult.inputData[0].model.length === 1){
               let formattedValues;
@@ -2019,18 +2201,18 @@ export class sebiReportService {
                     const innerFormatted = response?.valuationData.valuation
                       .filter((innerValuationData) => innerValuationData.particular === 'result')
                       .map((innerValuationData) => {
-                        const formattedNumber = Math.floor(innerValuationData.fairValuePerShareAvg).toLocaleString('en-IN');
-                        return `${formattedNumber.replace(/,/g, ',')}/-`;
+                        const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                        return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
                       });
                     return innerFormatted || [];
                   }
                   if (response.model === models && models !== 'NAV') {
-                    const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
-                    return `${formattedNumber.replace(/,/g, ',')}/-`;
+                    const formattedNumber = response?.valuationData[0]?.valuePerShare;
+                    return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
                   }
                   if (response.model === models && models === 'NAV') {
-                    const formattedNumber = Math.floor(response?.valuationData?.valuePerShare?.bookValue).toLocaleString('en-IN');
-                    return `${formattedNumber.replace(/,/g, ',')}/-`;
+                    const formattedNumber = response?.valuationData?.valuePerShare?.bookValue;
+                    return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
                   }
                   return [];
                 });
@@ -2053,6 +2235,22 @@ export class sebiReportService {
             }
             return false;
           })
+
+          hbs.registerHelper('calculatePostDiscountColspan',()=>{
+            let colspan;
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[2] || response.model === MODEL[4]){
+                const multiples = response.valuationData?.multiples;
+                if(multiples){
+                  colspan = Object.keys(multiples).filter(key => multiples[key])?.length;
+                }
+                else{
+                  colspan = 4
+                }
+              }
+            })
+            return colspan;
+          })
         }
         catch(error){
           console.log(error,"sebi helper error")
@@ -2073,7 +2271,7 @@ export class sebiReportService {
           MarketPrice: "Market Price Method",
         };
       
-        let selectedMethods = [];
+        let selectedMethods = [], finalArray = [];
       
         if (!reportDetails.reportSection.includes("165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018")) {
           selectedMethods = [
@@ -2094,10 +2292,11 @@ export class sebiReportService {
       
         const lastElementIndex = filteredMethods.length - 1;
         if (lastElementIndex >= 1) {
-          filteredMethods[lastElementIndex] = `and ${filteredMethods[lastElementIndex]}`;
+          const allElementsExcptLast = filteredMethods.slice(0, -1).join(', ');
+          finalArray.push(`${allElementsExcptLast} and ${filteredMethods[lastElementIndex]}`);
         }
       
-        const string = filteredMethods.join(', ');
+        const string = finalArray.length ? finalArray : filteredMethods.join(', ');
       
         return string;
       }

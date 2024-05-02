@@ -2048,3 +2048,14 @@ export const EXPECTED_MARKET_RETURN_TYPE = {
   BSE500_Since_15_years:'BSE Since 15 Years',
   Analyst_Consensus_Estimates:'Analyst Consensus Estimates',
 }
+
+export const ALL_MODELS = {
+  FCFE:'Free Cash Flow to Equity',
+  FCFF:'Free Cash Flow to Firm',
+  Relative_Valuation:'Comparable Companies',
+  CTM:'Comparable Transaction',
+  NAV:'Net Asset Value',
+  Market_Price:'Market Price',
+  Excess_Earnings:"Excess Earning",
+  ruleElevenUa:"Rule Eleven UA",
+}

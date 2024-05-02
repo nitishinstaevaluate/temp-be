@@ -886,13 +886,22 @@ export class ExcelSheetService {
         
         hbs.registerHelper('FCFF', () => {
           let arrayfcff = [];
+          const terminalValueType = terminalType ||  'tvCashFlowBased';
+          let boolTvCashFlowBased = terminalValueType === 'tvCashFlowBased';    //Checking for default condition
           valuationResult.modelResults.forEach((result)=>{
             if(result.model === 'FCFF'){
+              const terminalValueFcffBasedOnPat = result.terminalYearWorking.fcff;
+            const terminalValueFcffBasedOnLastYear = result.terminalYearWorking.terminalValueBasedOnLastYear;
               result.valuationData.map((response:any)=>{
                 const fcff = formatPositiveAndNegativeValues(response.fcff);
                 arrayfcff.push({fcff:fcff})
               })
               arrayfcff.unshift({fcff:"FCFF"});
+              if(!boolTvCashFlowBased){
+                arrayfcff.push({fcff:formatPositiveAndNegativeValues(terminalValueFcffBasedOnPat)});
+              }else{
+                arrayfcff.push({fcff:formatPositiveAndNegativeValues(terminalValueFcffBasedOnLastYear)});
+              }
             }
           })
           return arrayfcff;
