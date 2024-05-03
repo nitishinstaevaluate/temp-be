@@ -653,9 +653,10 @@
                 <p class="s4" style="padding-top: 4pt;text-indent: 0pt;text-align: left;">
                     <a name="bookmark0" style="font-size: 18px;">BACKGROUND</a>
                 </p>
-            <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;"><span class="h3">The Shareholding
-                    Pattern of {{companyName}} as of </span><span class="s4">{{strdate}}</span><span
-                    class="h3">is as under:</span></p>
+            <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;">
+                <span class="h3">The Shareholding
+                    Pattern of {{companyName}} as of {{strdate}} is as under:</span>
+                </p>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <table style="border-collapse:collapse;margin: auto;width: 100%;" cellspacing="0">
                 <tr style="height:15pt">
@@ -1335,7 +1336,7 @@
         <p style="padding-top: 8pt;text-align: justify;line-height: 140%;">“Provided that if the
             Articles of Association of the issuer provide for a method of determination which results in a floor
             price higher than that determined under these regulations, then the same shall be considered as the
-            floor price for equity shares to be allotted pursuant to the preferential issue.”;</p>
+            floor price for equity shares to be allotted pursuant to the preferential issue.”</p>
         <p style="padding-top: 8pt;text-align: justify;line-height: 140%;">(2) If the equity
             shares of the issuer have been listed on a recognized stock exchange for a period of less than 90
             trading days as on the relevant date, the price of the equity shares to be allotted pursuant to the
@@ -3831,12 +3832,10 @@
     
     <!-- page 19 starts -->
     <div style="page-break-before: always;padding-right: 8%;padding-left: 7%;">
-        <p style="padding-top: 4pt;text-indent: 0pt;line-height: 15pt;text-align: left;"><span
-            class="h3">Annexure {{marketPriceMethodAnnexureSerialNo}}B – Computation of share price of </span><span class="s6">{{companyName}}</span><span class="h3">shares under Regulation 164 (1)</span></p>
-    <p style="text-indent: 0pt;text-align: left;" ></p>
-    <p style="text-indent: 0pt;line-height: 15pt;text-align: left;">
-        <span class="h3">
-            of SEBI ICDR Regulations, as per historical trading prices on </span><span class="s6">NSE </span><span class="h3">website</span></p>
+        <p style="padding-top: 4pt;text-indent: 0pt;line-height: 15pt;text-align: left;">
+            <span class="h3">Annexure {{marketPriceMethodAnnexureSerialNo}}B – Computation of share price of </span>
+            <span class="s6">{{companyName}}</span><span class="h3">shares under Regulation 164 (1) of SEBI ICDR Regulations, as per historical trading prices on NSE website</span>
+        </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
 
     <!-- First 40 elements starts -->
@@ -3906,6 +3905,7 @@
     </table>
     <!-- First 40 elements ends -->
 
+    {{#if (sharePriceDataN40Length)}}
     <!-- Second 40 elements starts -->
     <div style="page-break-before: always;padding-top: 5%;">
         <table style="border-collapse:collapse;margin:auto;width:100%;" cellspacing="0">
@@ -3960,10 +3960,12 @@
         </table>
     </div>
     <!-- Second 40 elements ends -->
+    {{/if}}
 
     <!-- Remaining elements starts -->
     <div style="page-break-before: always;padding-top: 4%;">
         <table style="border-collapse:collapse;margin:auto;width:100%;" cellspacing="0">
+            {{#if (sharePriceDataRemainingLength)}}
             <tr style="height:15pt">
                 <td
                     style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -4012,6 +4014,7 @@
                     </td>
                 </tr>
             {{/each}}
+            {{/if}}
             <tr style="height:15pt;">
                 <td colspan="3" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s36" style="text-align: center;font-size: 14px;font-weight: bold;color: #494949;">VWAP of 90 trading days ({{currencyUnit}})

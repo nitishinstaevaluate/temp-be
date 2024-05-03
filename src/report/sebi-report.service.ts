@@ -288,10 +288,20 @@ export class sebiReportService {
             const next40Elements = newSharePrice.slice(40, 80);
             return next40Elements
           })
+          hbs.registerHelper('sharePriceDataN40Length', ()=>{
+            const newSharePrice = [...sharePriceDetails];
+            const next40Elements = newSharePrice.slice(40, 80);
+            return next40Elements?.length ? true : false;
+          })
           hbs.registerHelper('sharePriceDataRemaining', ()=>{
             const newSharePrice = [...sharePriceDetails];
             const remainingElements = newSharePrice.slice(80);
             return remainingElements
+          })
+          hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
+            const newSharePrice = [...sharePriceDetails];
+            const remainingElements = newSharePrice.slice(80);
+            return remainingElements?.length ? true : false;
           })
 
           hbs.registerHelper('strdate',()=>{
