@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { formatDateToMMDDYYYY } from 'src/ciq-sp/ciq-common-functions';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { CapitalStruc, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { RiskFreeRateDocument } from 'src/masters/schema/masters.schema';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
@@ -22,7 +23,8 @@ export class CalculationService {
     @InjectModel('riskFreeRate')
     private readonly riskFreeRateModel: Model<RiskFreeRateDocument>,
     private customLogger: CustomLogger,
-    private historicalReturnsService: HistoricalReturnsService
+    private historicalReturnsService: HistoricalReturnsService,
+    private thirdpartyApiService: thirdpartyApiAggregateService
   ) { }
 
   async adjCOE(riskFreeRate, expMarketReturn, beta, riskPremium, coeMethod): Promise<any> {
@@ -60,19 +62,23 @@ export class CalculationService {
         status: true
       }
     }
-    async getWaccExcptTargetCapStrc(adjCoe,excelSheetId,costOfDebt,copShareCapital,deRatio,type,taxRate,capitalStructure): Promise<any> {
+    async getWaccExcptTargetCapStrc(adjCoe,excelSheetId,costOfDebt,copShareCapital,deRatio,type,taxRate,capitalStructure, retryCount: number = 1): Promise<any> {
       let workbook = null;
       let modifiedCapitalStructure;
       try {
         workbook = XLSX.readFile(`./uploads/${excelSheetId}`);
       } catch (error) {
-        this.customLogger.log({
-          message: `excelSheetId: ${excelSheetId} not available for wacc calculations`,
-        });
-        return {
-          result: null,
-          msg: `excelSheetId: ${excelSheetId} not available`,
-        };
+        if (retryCount > 0) {
+          await this.thirdpartyApiService.fetchFinancialSheetFromS3(excelSheetId);
+          return this.getWaccExcptTargetCapStrc(adjCoe,excelSheetId,costOfDebt,copShareCapital,deRatio,type,taxRate,capitalStructure, retryCount - 1);
+        } 
+        else {
+          console.error('Max retry attempts reached. Unable to read Excel sheet.');
+          return {
+            result: null,
+            msg: `excelSheetId: ${excelSheetId} not available`,
+          };
+        }
       }
       const worksheet2 = workbook.Sheets['BS'];
       if(type === 'Target_Based'){
