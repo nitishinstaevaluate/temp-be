@@ -461,6 +461,13 @@ export class sebiReportService {
                 return  reportDetails.registeredValuerDetails[0].registeredValuerName
             return '';
           })
+
+          hbs.registerHelper('companyInfo',()=>{
+            if(reportDetails.companyInfo){
+              return reportDetails.companyInfo;
+            }
+            return '';
+          })
     
           hbs.registerHelper('registeredValuerAddress',()=>{
             if(reportDetails.registeredValuerDetails[0]) 
