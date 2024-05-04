@@ -165,6 +165,19 @@ export class financialHelperService{
           }
           return '-';
         })
+
+        hbs.registerHelper('lessDiscountRateExist',()=>{
+          console.log(valuationDetails.inputData[0].discountRateValue)
+
+          if (valuationDetails) {
+            return valuationDetails.inputData[0].discountRateValue && 
+            (
+              valuationDetails.inputData[0].discountRateValue !== '0' &&
+              valuationDetails.inputData[0].discountRateValue !== 0
+            ) ? true : false;
+          }
+          return false;
+        })
         hbs.registerHelper('postDiscount',(mean)=>{
           if (mean || valuationDetails.inputData[0].discountRateValue) {
             return (mean * (1 - (+valuationDetails.inputData[0].discountRateValue/100))).toFixed(2);
