@@ -3,6 +3,7 @@ import { RelativeValuationService } from './relativeValuation.service';
 import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 import { ExcessEarningsService } from './excessEarnings.service';
 import { NetAssetValueService } from './netAssetValue.service';
+import { MarketPriceService } from './market-price.service';
 
 //Valuation Methods Service
 @Injectable()
@@ -12,6 +13,7 @@ export class ValuationMethodsService {
     private readonly fcfeAndFCFFService: FCFEAndFCFFService,
     private readonly excessEarningsService: ExcessEarningsService,
     private readonly netAssetValueService: NetAssetValueService,
+    private readonly marketPriceService: MarketPriceService
   ) {}
 
   // async FCFEMethod(
@@ -108,6 +110,22 @@ export class ValuationMethodsService {
       inputs,
       worksheet1,
       worksheet2,
+    );
+  }
+
+  async Market_Price_method(
+    header, 
+    companyId, 
+    valuationDate, 
+    outstandingShares, 
+    reportingUnit
+  ): Promise<any> {
+    return await this.marketPriceService.fetchPriceEquityShare(
+      header, 
+      companyId, 
+      valuationDate, 
+      outstandingShares, 
+      reportingUnit
     );
   }
 }

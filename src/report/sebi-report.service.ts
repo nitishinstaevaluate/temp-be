@@ -40,10 +40,6 @@ export class sebiReportService {
           const companyId = valuationResult.inputData[0].companyId;
           const companyName = valuationResult.inputData[0].company;
           const valuationDate = valuationResult.inputData[0].valuationDate;
-          let sharePriceDetails:any;
-          if(companyId){
-            sharePriceDetails = await this.fetchPriceEquityShare(request, companyId, valuationDate);
-          }
 
           let terminalYearWorkings;
           if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -67,7 +63,7 @@ export class sebiReportService {
               );
           }
           
-           this.loadSebiHelpers(valuationResult, reportDetails, sharePriceDetails?.data?.data, allProcessStageDetails, terminalYearWorkings, getCapitalStructure);
+           this.loadSebiHelpers(valuationResult, reportDetails, allProcessStageDetails, terminalYearWorkings, getCapitalStructure);
     
           const htmlContent = fs.readFileSync(htmlPath, 'utf8');
           const template = hbs.compile(htmlContent);
@@ -91,10 +87,6 @@ export class sebiReportService {
           const companyId = valuationResult.inputData[0].companyId;
           const companyName = valuationResult.inputData[0].company;
           const valuationDate = valuationResult.inputData[0].valuationDate;
-          let sharePriceDetails:any;
-          if(companyId){
-            sharePriceDetails = await this.fetchPriceEquityShare(request, companyId, valuationDate);
-          }
 
           let terminalYearWorkings;
           if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -129,7 +121,7 @@ export class sebiReportService {
               );
           }
 
-          this.loadSebiHelpers(valuationResult, reportDetails, sharePriceDetails?.data?.data, allProcessStageDetails, terminalYearWorkings, getCapitalStructure);
+          this.loadSebiHelpers(valuationResult, reportDetails, allProcessStageDetails, terminalYearWorkings, getCapitalStructure);
       
           if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -161,42 +153,6 @@ export class sebiReportService {
             error:error,
             status:false,
             msg:"Sebi report preview failed"
-          }
-        }
-      }
-
-      async fetchPriceEquityShare(request, companyId, valuationDateTimestamp){
-        try{
-
-          const oneDayInMillis = 24 * 60 * 60 * 1000;
-          const valuationDate = new Date(valuationDateTimestamp);
-          const valuationDatePlusOneDay = new Date(valuationDate.getTime() + oneDayInMillis);
-          const valuationDatePlusOneDayTimestamp = valuationDatePlusOneDay.getTime();
-
-          const payload = {
-            companyDetails:{
-              date:convertUnixTimestampToQuarterAndYear(valuationDatePlusOneDayTimestamp).date,
-              companyId:companyId
-            }
-          }
-          const bearerToken = await this.authenticationService.extractBearer(request);
-      
-          if(!bearerToken.status)
-            return bearerToken;
-      
-          const headers = { 
-            'Authorization':`${bearerToken.token}`,
-            'Content-Type': 'application/json'
-          }
-
-          const financialSegmentDetails = await axiosInstance.post(`${CIQ_ELASTIC_SEARCH_PRICE_EQUITY}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
-          return financialSegmentDetails
-        }
-        catch(error){
-          return {
-            error:error,
-            status:false,
-            msg:"equity"
           }
         }
       }
@@ -251,7 +207,7 @@ export class sebiReportService {
 
       
 
-      async loadSebiHelpers(valuationResult, reportDetails, sharePriceDetails, allProcessStageDetails, terminalYearWorkings, getCapitalStructure){
+      async loadSebiHelpers(valuationResult, reportDetails, allProcessStageDetails, terminalYearWorkings, getCapitalStructure){
         try{
           hbs.registerHelper('reportDate',()=>{
             if(reportDetails.registeredValuerDetails[0]) 
@@ -272,35 +228,64 @@ export class sebiReportService {
           })
     
           hbs.registerHelper('sharePriceDataF40', ()=>{
-            const newSharePrice = [...sharePriceDetails];
-            const first40Elements = newSharePrice.slice(0, 40);
+            let sharePriceDetails = [];
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+               sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+              }
+            })
+            const first40Elements = sharePriceDetails.slice(0, 40);
             return first40Elements
           })
 
           hbs.registerHelper('sharePriceDataF10', ()=>{
-            const newSharePrice = [...sharePriceDetails];
-            const first40Elements = newSharePrice.slice(0, 10);
-            return first40Elements
+            let sharePriceDetails = [];
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+               sharePriceDetails = response.valuationData.sharePriceLastTenDays;
+              }
+            })
+            return sharePriceDetails;
           })
           
           hbs.registerHelper('sharePriceDataN40', ()=>{
-            const newSharePrice = [...sharePriceDetails];
-            const next40Elements = newSharePrice.slice(40, 80);
+            let sharePriceDetails = [];
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+               sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+              }
+            })
+            const next40Elements = sharePriceDetails.slice(40, 80);
             return next40Elements
           })
           hbs.registerHelper('sharePriceDataN40Length', ()=>{
-            const newSharePrice = [...sharePriceDetails];
-            const next40Elements = newSharePrice.slice(40, 80);
+            let sharePriceDetails = [];
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+               sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+              }
+            })
+            const next40Elements = sharePriceDetails.slice(40, 80);
             return next40Elements?.length ? true : false;
           })
           hbs.registerHelper('sharePriceDataRemaining', ()=>{
-            const newSharePrice = [...sharePriceDetails];
-            const remainingElements = newSharePrice.slice(80);
+            let sharePriceDetails = [];
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+               sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+              }
+            })
+            const remainingElements = sharePriceDetails.slice(80);
             return remainingElements
           })
           hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
-            const newSharePrice = [...sharePriceDetails];
-            const remainingElements = newSharePrice.slice(80);
+            let sharePriceDetails = [];
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+               sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+              }
+            })
+            const remainingElements = sharePriceDetails.slice(80);
             return remainingElements?.length ? true : false;
           })
 
@@ -433,17 +418,33 @@ export class sebiReportService {
           })
 
           hbs.registerHelper('vwap90Days',()=>{
-            return this.calculateVwap(sharePriceDetails, false);
+            let vwapLastNinetyDays = 0;
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+                vwapLastNinetyDays = response.valuationData.vwapLastNinetyDays;
+              }
+            })
+            return vwapLastNinetyDays;
           })
 
           hbs.registerHelper('vwap10Days',()=>{
-            return this.calculateVwap(sharePriceDetails, true)
+            let vwapLastTenDays = 0;
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+                vwapLastTenDays = response.valuationData.vwapLastTenDays;
+              }
+            })
+            return vwapLastTenDays;
           })
 
           hbs.registerHelper('floorPriceVwap',()=>{
-            const vwap90Days = this.calculateVwap(sharePriceDetails,false);
-            const vwap10Days = this.calculateVwap(sharePriceDetails,true);
-            return vwap90Days > vwap10Days ? vwap90Days : vwap10Days;
+            let valuePerShare = 0;
+            valuationResult.modelResults.map((response)=>{
+              if(response.model === MODEL[7]){
+                valuePerShare = response?.valuation;
+              }
+            })
+            return valuePerShare;
           })
 
           hbs.registerHelper('isBetaFromAd',()=>{
@@ -2448,20 +2449,20 @@ export class sebiReportService {
           0;
       }
 
-      calculateVwap(sharePriceDetails, tenDaysBool){
-        let volumeSummation= 0, totalRevenueSummation = 0; 
-        (
-          tenDaysBool ? 
-          sharePriceDetails.slice(0, 10) : 
-          sharePriceDetails
-        ).map((indSharePrice)=>{
-          if(indSharePrice.VOLUME){
-            volumeSummation += convertToNumberOrZero(indSharePrice.VOLUME);
-          }
-          if(indSharePrice.VWAP && indSharePrice.VOLUME){
-            totalRevenueSummation += (convertToNumberOrZero(indSharePrice.VOLUME) * convertToNumberOrZero(indSharePrice.VWAP));
-          }
-        })
-        return convertToNumberOrZero(totalRevenueSummation/volumeSummation).toFixed(2);
-      }
+      // calculateVwap(sharePriceDetails, tenDaysBool){
+      //   let volumeSummation= 0, totalRevenueSummation = 0; 
+      //   (
+      //     tenDaysBool ? 
+      //     sharePriceDetails.slice(0, 10) : 
+      //     sharePriceDetails
+      //   ).map((indSharePrice)=>{
+      //     if(indSharePrice.VOLUME){
+      //       volumeSummation += convertToNumberOrZero(indSharePrice.VOLUME);
+      //     }
+      //     if(indSharePrice.VWAP && indSharePrice.VOLUME){
+      //       totalRevenueSummation += (convertToNumberOrZero(indSharePrice.VOLUME) * convertToNumberOrZero(indSharePrice.VWAP));
+      //     }
+      //   })
+      //   return convertToNumberOrZero(totalRevenueSummation/volumeSummation).toFixed(2);
+      // }
 }
