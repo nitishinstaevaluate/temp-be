@@ -17,6 +17,7 @@ import { ValuationMethodsService } from './valuation.methods.service';
 import { MyMiddleware } from '../middleware/Valuation.middleware';
 import {
   calculateDaysFromDate,
+  getRequestAuth,
 } from '../excelFileServices/common.methods';
 import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 import { utilsService } from 'src/utils/utils.service';
@@ -204,10 +205,10 @@ let workbook=null;
 
   @UseGuards(KeyCloakAuthGuard)
   @Post('v1')
-  async processValuationModel(@Request() req, @Body() inputs): Promise<any> {
+  async processValuationModel(@Headers() headers: Headers, @Body() inputs): Promise<any> {
     const KCGuard:any = new KeyCloakAuthGuard();
 
-    const authoriseUser = await KCGuard.fetchAuthUser(req).toPromise();
+    const authoriseUser = await KCGuard.fetchAuthUser(getRequestAuth(headers)).toPromise();
     if(!authoriseUser.status)
       return authoriseUser;
     
@@ -365,13 +366,48 @@ let workbook=null;
             break; 
 
             case MODEL[6]:  
+            console.log(`${MODEL[6]} not initialised`)
+              break;
+              
+            case MODEL[7]:
+              const companyId = inputs?.companyId;
+              const valuationDate = inputs?.valuationDate;
+              const outstandingShares = inputs?.outstandingShares;
+              const reportingUnit = inputs?.reportingUnit;
+              const marketPriceResponse = await this.valuationMethodsService.Market_Price_method(headers, companyId, valuationDate, outstandingShares, reportingUnit);
+
+              valResult.push({
+                model: MODEL[7],
+                valuationData: { 
+                  sharePriceLastTenDays: marketPriceResponse.sharePriceLastTenDays, 
+                  sharePriceLastNinetyDays: marketPriceResponse.sharePriceLastNinetyDays,
+                  vwapLastTenDays: marketPriceResponse.vwapLastTenDays,
+                  vwapLastNinetyDays: marketPriceResponse.vwapLastNinetyDays,
+                },
+                equityValue: marketPriceResponse.equityValue,
+                valuation:marketPriceResponse.valuePerShare
+              });
+              tableResult.push({
+                model: MODEL[7],
+                valuationData: { 
+                  sharePriceLastTenDays: marketPriceResponse.sharePriceLastTenDays, 
+                  sharePriceLastNinetyDays: marketPriceResponse.sharePriceLastNinetyDays,
+                  vwapLastTenDays: marketPriceResponse.vwapLastTenDays,
+                  vwapLastNinetyDays: marketPriceResponse.vwapLastNinetyDays,
+                },
+                equityValue: marketPriceResponse.equityValue,
+                valuation:marketPriceResponse.valuePerShare
+              });
+              models.push(modelValue);
+            break;  
 
             default:
               console.log('Default case');
               break;
           }
         }
-        const data ={company:company,model:models,provisionalDate:valResult[0].provisionalDate,inputData:inputs,modelResults:valResult,userId:userId}
+        const provisionalDate = valResult.find((indVal) => indVal?.provisionalDate)?.provisionalDate;
+        const data ={company:company,model:models,provisionalDate:provisionalDate,inputData:inputs,modelResults:valResult,userId:userId}
         const reportId = await this.valuationsService.createValuation(data);
         return  {
           reportId:reportId,

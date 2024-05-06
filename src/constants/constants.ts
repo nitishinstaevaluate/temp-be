@@ -1,4 +1,4 @@
-export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa'];
+export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price'];
 
 export const INCOME_APPROACH = ['FCFE','FCFF'];
 export const NET_ASSET_VALUE_APPROACH = ['NAV'];
