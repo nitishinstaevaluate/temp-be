@@ -2448,21 +2448,4 @@ export class sebiReportService {
           ) : 
           0;
       }
-
-      // calculateVwap(sharePriceDetails, tenDaysBool){
-      //   let volumeSummation= 0, totalRevenueSummation = 0; 
-      //   (
-      //     tenDaysBool ? 
-      //     sharePriceDetails.slice(0, 10) : 
-      //     sharePriceDetails
-      //   ).map((indSharePrice)=>{
-      //     if(indSharePrice.VOLUME){
-      //       volumeSummation += convertToNumberOrZero(indSharePrice.VOLUME);
-      //     }
-      //     if(indSharePrice.VWAP && indSharePrice.VOLUME){
-      //       totalRevenueSummation += (convertToNumberOrZero(indSharePrice.VOLUME) * convertToNumberOrZero(indSharePrice.VWAP));
-      //     }
-      //   })
-      //   return convertToNumberOrZero(totalRevenueSummation/volumeSummation).toFixed(2);
-      // }
 }
