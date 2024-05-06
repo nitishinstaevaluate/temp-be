@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
 import { HistoricalReturnsSchema, HistoricalBSE500ReturnsSchema } from 'src/data-references/schema/data-references.schema';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 
 @Module({
   imports:[LoggerModule,
@@ -14,7 +15,7 @@ import { HistoricalReturnsService } from 'src/data-references/data-references.se
   { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema}])
 ],
   controllers: [CalculationController,WaccController],
-  providers: [CalculationService,HistoricalReturnsService],
+  providers: [CalculationService,HistoricalReturnsService, thirdpartyApiAggregateService],
   exports:[CalculationService]
 })
 export class CalculationModule {}
