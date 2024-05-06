@@ -402,3 +402,11 @@ export function convertUnixTimestampToQuarterAndYear(timestamp: any) {
     date
   };
 }
+
+export function getRequestAuth(headers){
+  return {
+    headers:{
+       authorization:headers.authorization
+     }
+   } 
+}

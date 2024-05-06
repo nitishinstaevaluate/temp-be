@@ -21,6 +21,7 @@ import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { terminalValueWorkingService } from './terminal-value-working.service';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { MarketPriceService } from './market-price.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
@@ -50,7 +51,8 @@ import { ProcessStatusManagerService } from 'src/processStatusManager/process-st
     utilsService,
     AuthenticationService,
     terminalValueWorkingService,
-    ProcessStatusManagerService
+    ProcessStatusManagerService,
+    MarketPriceService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService, terminalValueWorkingService],
 })
