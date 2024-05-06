@@ -288,10 +288,20 @@ export class sebiReportService {
             const next40Elements = newSharePrice.slice(40, 80);
             return next40Elements
           })
+          hbs.registerHelper('sharePriceDataN40Length', ()=>{
+            const newSharePrice = [...sharePriceDetails];
+            const next40Elements = newSharePrice.slice(40, 80);
+            return next40Elements?.length ? true : false;
+          })
           hbs.registerHelper('sharePriceDataRemaining', ()=>{
             const newSharePrice = [...sharePriceDetails];
             const remainingElements = newSharePrice.slice(80);
             return remainingElements
+          })
+          hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
+            const newSharePrice = [...sharePriceDetails];
+            const remainingElements = newSharePrice.slice(80);
+            return remainingElements?.length ? true : false;
           })
 
           hbs.registerHelper('strdate',()=>{
@@ -449,6 +459,13 @@ export class sebiReportService {
           hbs.registerHelper('registeredValuerName',()=>{
             if(reportDetails.registeredValuerDetails[0]) 
                 return  reportDetails.registeredValuerDetails[0].registeredValuerName
+            return '';
+          })
+
+          hbs.registerHelper('companyInfo',()=>{
+            if(reportDetails.companyInfo){
+              return reportDetails.companyInfo;
+            }
             return '';
           })
     
@@ -626,8 +643,8 @@ export class sebiReportService {
           for (const indModel of formatisedModelOrderwise){
             if(indModel === MODEL[5]){
               this.navAnnexureSerialNo = convertToRomanNumeral(counter,true);
-              labelArray.push(` 
-                <p style="padding-top: 4pt;text-indent: 0pt;line-height: 150%;text-align: left;">
+              labelArray.push(`
+                  <p style="padding-top: 4pt;text-indent: 0pt;line-height: 140%;text-align: left;padding-bottom:5pt;">
                   <span class="s18">
                     Annexure ${this.navAnnexureSerialNo}: 
                   </span>
@@ -646,7 +663,7 @@ export class sebiReportService {
             if(indModel === MODEL[0] || indModel === MODEL[1]){
               this.dcfAnnexureSerialNo = convertToRomanNumeral(counter,true);
               labelArray.push(` 
-                <p style="padding-top: 4pt;text-indent: 0pt;line-height: 150%;text-align: left;">
+                <p style="padding-top: 4pt;text-indent: 0pt;line-height: 140%;text-align: left;padding-bottom:5pt;">
                   <span class="s18">
                     Annexure ${this.dcfAnnexureSerialNo}: 
                   </span>
@@ -665,7 +682,7 @@ export class sebiReportService {
             if(indModel === MODEL[2] || indModel === MODEL[4]){
               this.marketApproachAnnexureSerialNo = convertToRomanNumeral(counter,true);
               labelArray.push(` 
-               <p style="text-indent: 0pt;line-height: 115%;text-align: left;line-height: 150%;">
+               <p style="text-indent: 0pt;line-height: 115%;text-align: left;line-height: 140%;padding-bottom:5pt;">
                   <span class="s18">
                     Annexure ${this.marketApproachAnnexureSerialNo}:
                   </span>
@@ -683,7 +700,7 @@ export class sebiReportService {
             }
             counter ++;
           }
-            return labelArray;
+            return labelArray.join('');
           })
 
           hbs.registerHelper('projectedYear',()=>{

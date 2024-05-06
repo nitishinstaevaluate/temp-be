@@ -454,7 +454,7 @@
         }
 
         #l3>li>*:first-child:before {
-            content: "o ";
+            content: "- ";
             color: black;
             font-family: "Courier New", monospace;
             font-style: normal;
@@ -653,9 +653,13 @@
                 <p class="s4" style="padding-top: 4pt;text-indent: 0pt;text-align: left;">
                     <a name="bookmark0" style="font-size: 18px;">BACKGROUND</a>
                 </p>
-            <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;"><span class="h3">The Shareholding
-                    Pattern of {{companyName}} as of </span><span class="s4">{{strdate}}</span><span
-                    class="h3">is as under:</span></p>
+                <p style="text-indent: 0pt;text-align: justify;padding-bottom: 3%;padding-top: 1%;line-height: 145%;">
+                    {{companyInfo}}
+                </p>
+            <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;">
+                <span class="h3">The Shareholding
+                    Pattern of {{companyName}} as of {{strdate}} is as under:</span>
+                </p>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <table style="border-collapse:collapse;margin: auto;width: 100%;" cellspacing="0">
                 <tr style="height:15pt">
@@ -738,6 +742,9 @@
             <div>
                 <p class="s4" style="padding-top: 4pt;text-indent: 0pt;text-align: left;">
                     <a name="bookmark0" style="font-size: 18px;">COMPANY BACKGROUND</a></p>
+                    <p style="text-indent: 0pt;text-align: justify;padding-bottom: 3%;padding-top: 1%;line-height: 145%;">
+                        {{companyInfo}}
+                    </p>
             <ul id="l2">
                 <li data-list-text="●">
                     <p style="padding-top: 11pt;padding-left: 20pt;text-indent: -18pt;text-align: left;line-height: 150%;"><span class="p">Equity
@@ -1049,37 +1056,37 @@
                     this exercise, we have adopted the following procedures to carry out the valuation analysis:</p>
                 <div style="position: relative;">
                     <ul id="l3">
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">Requested
                                 and received relevant data from the Management</p>
                             <p style="text-indent: 0pt;text-align: left;" />
                         </li>
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p
                                 style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">
                                 Discussions with the Management on understanding of the business of the Company</p>
                         </li>
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p
                                 style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">
                                 Obtained and analysed data available in public domain, as considered relevant by us</p>
                         </li>
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p
                                 style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">
                                 <span class="p">Obtained and analysed market prices and other data involving equity shares of
                                 </span><span class="s3">{{companyName}}</span><span class="p"> and of
                                     comparable companies, as applicable and relevant</span></p>
                         </li>
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">Selection of
                                 valuation approach and valuation methodology in accordance with (IVS), as considered appropriate and relevant by us</p>
                         </li>
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;"><span
                                     class="p">Determination of value per equity share of </span><span class="s3">{{companyName}}</span><span class="p">, as relevant</span></p>
                         </li>
-                        <li data-list-text="o">
+                        <li data-list-text="-">
                             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -20pt;padding-left: 45pt;">Preparation
                                 and issuance of this valuation report.</p>
                         </li>
@@ -1142,7 +1149,7 @@
         <li data-list-text="●">
             <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">
                 We have been informed by the Management that the report date as per the SEBI ICDR Regulations, for the 
-                purpose of calculation of the price per share of {{companyName}} for the proposed preferential issue of shares is ___________. 
+                purpose of calculation of the price per share of {{companyName}} for the proposed preferential issue of shares is {{reportDate}}. 
                 Since the latest financial data available is till ____________. Therefore, we have considered the same for our valuation purposes.
             </p>
         </li>
@@ -1310,7 +1317,7 @@
     <!-- page 9 ends -->
 
     <!-- page 10 starts -->
-    <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
+    <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;padding-top: 3%;">
         <p style="padding-top: 3pt;text-indent: 0pt;text-align: justify;">Regulations 164 for
             frequently traded shares states the following:</p>
         <p style="padding-top: 9pt;text-align: justify;line-height: 140%;">In terms of Regulation
@@ -1335,7 +1342,7 @@
         <p style="padding-top: 8pt;text-align: justify;line-height: 140%;">“Provided that if the
             Articles of Association of the issuer provide for a method of determination which results in a floor
             price higher than that determined under these regulations, then the same shall be considered as the
-            floor price for equity shares to be allotted pursuant to the preferential issue.”;</p>
+            floor price for equity shares to be allotted pursuant to the preferential issue.”</p>
         <p style="padding-top: 8pt;text-align: justify;line-height: 140%;">(2) If the equity
             shares of the issuer have been listed on a recognized stock exchange for a period of less than 90
             trading days as on the relevant date, the price of the equity shares to be allotted pursuant to the
@@ -1430,20 +1437,20 @@
 
     <!-- page 12 starts -->
     <div style="page-break-before: always;padding-left: 7%;padding-right: 6%;padding-top: 3%;">
-        <p class="s4" style="text-indent: 0pt;text-align: left;">
+        <p class="s4" style="text-indent: 0pt;text-align: left;padding-bottom: 1%;">
             <a name="bookmark4" style="font-size: 18px;">
                 SCOPE LIMITATIONS AND DISCLAIMERS
             </a>
         </p>
         <ul id="l2">
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">Valuation analysis
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">Valuation analysis
                     and results are specific to the purpose of valuation mentioned in this report as per agreed terms of our
                     engagement. It may not be valid for any other purpose or as at any other date.</p>
                 <p style="text-indent: 0pt;text-align: left;" />
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;"><span class="p">We
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">We
                         owe responsibility to only the management of the client that has retained us and nobody else. We do
                         not accept any liability to any third party in relation to the issue of this valuation report. Our
                         valuation report cannot be used for any other purpose. This report has been prepared only for the
@@ -1452,18 +1459,18 @@
                         the regulatory authorities / stock exchanges in connection with the Proposed Transaction.</span></p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">Our analysis is based
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">Our analysis is based
                     on the market conditions and the regulatory environment that currently exists. However, changes to the
                     same in the future could impact the company and the industry it operates in, which may impact our
                     valuation analysis.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">We are not
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">We are not
                     responsible for updating this report because of any events or transactions occurring subsequent to the
                     date of this report.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">We have considered
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">We have considered
                     and relied on the information provided to us by the Management including financial information,
                     significant transactions and events occurring subsequent to the balance sheet date. We understand that
                     the information provided to us and the representations made to us (whether verbal or written) are
@@ -1474,7 +1481,7 @@
                     recommendation.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">In the ultimate
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">In the ultimate
                     analysis, valuation will have to capture the exercise of judicious discretion by the Valuer and judgment
                     taking into account all the relevant factors. There will always be several factors which are not evident
                     from the face of the financial statements, but which will strongly influence the worth of a share.
@@ -1483,14 +1490,14 @@
                     and market sentiment, etc. This concept is also recognized in judicial decisions.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">This Report does not
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">This Report does not
                     look into the business / commercial reasons behind the transaction. We have no present or planned future
                     interest in the company and the fee for this engagement is not contingent upon the values reported
                     herein. Our valuation analysis should not be construed as an investment advice. We do not express any
                     opinion on the suitability or otherwise of entering into any transaction with the Company.</p>
             </li>
             <li data-list-text="●">
-                <p style="padding-top: 4pt;text-align: justify;line-height: 140%;text-indent: -13pt;padding-left: 13pt;">Any discrepancies in
+                <p style="padding-top: 4pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">Any discrepancies in
                     any annexure between the total and the sums of the amounts listed are due to rounding-off.</p>
                 </li>
         </ul>
@@ -1597,7 +1604,7 @@
            {{/each}}
            <tr>
             <td colspan="4" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  
+                <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  
                  Weighted Value per Share ({{currencyUnit}})
                 </p>
             </td>
@@ -1644,12 +1651,15 @@
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;">Yours faithfully,</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s5">{{registeredValuerName}}</span><span class="s4"> </span>
             </p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s17">Registered Valuer</span></p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="s17">{{registeredValuerIbbiId}}</span></p>
         <p style="text-indent: 0pt;text-align: left;">Date: {{reportDate}}</p>
-        <p style="text-indent: 0pt;text-align: left;">Place: _____________</p>
+        <p style="text-indent: 0pt;text-align: left;">Place: Mumbai</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p class="s18" style="text-indent: 0pt;text-align: left;">Enclosed:</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -2488,12 +2498,12 @@
                     {{#ifZero fcffEquityValue}}
                     {{#if (isLineItemCheck fcffEquityValue)}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffEquityValue}}
+                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcffEquityValue}}
                         </p>
                     </td>
                     {{else}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffEquityValue}}
+                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcffEquityValue}}
                         </p>
                     </td>
                     {{/if}}
@@ -2527,12 +2537,12 @@
                     {{#ifZero fcffequityValueNew}}
                     {{#if (isLineItemCheck fcffequityValueNew)}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffequityValueNew}}
+                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcffequityValueNew}}
                         </p>
                     </td>
                     {{else}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffequityValueNew}}
+                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcffequityValueNew}}
                         </p>
                     </td>
                     {{/if}}
@@ -2562,12 +2572,12 @@
                     {{#ifZero fcffValuePerShare}}
                     {{#if (isLineItemCheck fcffValuePerShare)}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffValuePerShare}}
+                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcffValuePerShare}}
                         </p>
                     </td>
                     {{else}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcffValuePerShare}}
+                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcffValuePerShare}}
                         </p>
                     </td>
                     {{/if}}
@@ -2687,12 +2697,12 @@
                     {{#ifZero fcfeEquityValue}}
                     {{#if (isLineItemCheck fcfeEquityValue)}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeEquityValue}}
+                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcfeEquityValue}}
                         </p>
                     </td>
                     {{else}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeEquityValue}}
+                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcfeEquityValue}}
                         </p>
                     </td>
                     {{/if}}
@@ -2726,12 +2736,12 @@
                     {{#ifZero fcfeequityValueNew}}
                     {{#if (isLineItemCheck fcfeequityValueNew)}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeequityValueNew}}
+                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcfeequityValueNew}}
                         </p>
                     </td>
                     {{else}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeequityValueNew}}
+                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcfeequityValueNew}}
                         </p>
                     </td>
                     {{/if}}
@@ -2761,12 +2771,12 @@
                     {{#ifZero fcfeValuePerShare}}
                     {{#if (isLineItemCheck fcfeValuePerShare)}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeValuePerShare}}
+                        <p class="s15" style="padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: right;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcfeValuePerShare}}
                         </p>
                     </td>
                     {{else}}
                     <td  style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;">  {{fcfeValuePerShare}}
+                        <p class="s15" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding-top: 1%;padding-bottom: 1%;font-size: 12px !important;font-weight: bold;">  {{fcfeValuePerShare}}
                         </p>
                     </td>
                     {{/if}}
@@ -3033,7 +3043,7 @@
 
     <!-- page 16 starts -->
     {{#modelIncludes 'MARKET_PRICE_APPROACH'}}
-    <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
+    <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;padding-top: 1%;">
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="h3">Annexure {{marketApproachAnnexureSerialNo}}-
             Determination of value of equity shares of </span><span class="s6">{{companyName}}
         </span><span class="h3">using Comparable</span><span class="s4"> </span><span class="h3">Companies method</span>
@@ -3715,7 +3725,7 @@
                 </tr>
                 {{/if}}
                     </table>
-                    {{#if (lessDiscountRate)}}
+                    {{#if (lessDiscountRateExist)}}
                     <p style="text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;padding-top: 3%;">
                         <span class="p">
                             *After evaluating the differences between the Company and the Guideline Public Companies, we made a <span style="font-weight: bold;">{{lessDiscountRate}}%</span>
@@ -3735,7 +3745,7 @@
     {{#if (isListedCompany)}}
     <!-- Only for listed companies content starts -->
     <!-- page 18 starts -->
-    <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;">
+    <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;padding-top: 3%;">
         <p style="text-indent: 0pt;text-align: left;"><span class="h3">Annexure {{marketPriceMethodAnnexureSerialNo}}A – Determination of
             value per equity share of </span><span class="s6">{{companyName}} </span><span
             class="h3">under</span><span class="s4"> </span><span class="h3">Regulation 164(1) of SEBI ICDR
@@ -3830,13 +3840,11 @@
     <!-- page 18 ends -->
     
     <!-- page 19 starts -->
-    <div style="page-break-before: always;padding-right: 8%;padding-left: 7%;">
-        <p style="padding-top: 4pt;text-indent: 0pt;line-height: 15pt;text-align: left;"><span
-            class="h3">Annexure {{marketPriceMethodAnnexureSerialNo}}B – Computation of share price of </span><span class="s6">{{companyName}}</span><span class="h3">shares under Regulation 164 (1)</span></p>
-    <p style="text-indent: 0pt;text-align: left;" ></p>
-    <p style="text-indent: 0pt;line-height: 15pt;text-align: left;">
-        <span class="h3">
-            of SEBI ICDR Regulations, as per historical trading prices on </span><span class="s6">NSE </span><span class="h3">website</span></p>
+    <div style="page-break-before: always;padding-right: 8%;padding-left: 7%;padding-top: 1%;">
+        <p style="padding-top: 4pt;text-indent: 0pt;line-height: 15pt;text-align: left;">
+            <span class="h3">Annexure {{marketPriceMethodAnnexureSerialNo}}B – Computation of share price of </span>
+            <span class="s6">{{companyName}}</span><span class="h3">shares under Regulation 164 (1) of SEBI ICDR Regulations, as per historical trading prices on NSE website</span>
+        </p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
 
     <!-- First 40 elements starts -->
@@ -3906,6 +3914,7 @@
     </table>
     <!-- First 40 elements ends -->
 
+    {{#if (sharePriceDataN40Length)}}
     <!-- Second 40 elements starts -->
     <div style="page-break-before: always;padding-top: 5%;">
         <table style="border-collapse:collapse;margin:auto;width:100%;" cellspacing="0">
@@ -3960,10 +3969,12 @@
         </table>
     </div>
     <!-- Second 40 elements ends -->
+    {{/if}}
 
     <!-- Remaining elements starts -->
     <div style="page-break-before: always;padding-top: 4%;">
         <table style="border-collapse:collapse;margin:auto;width:100%;" cellspacing="0">
+            {{#if (sharePriceDataRemainingLength)}}
             <tr style="height:15pt">
                 <td
                     style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
@@ -4012,6 +4023,7 @@
                     </td>
                 </tr>
             {{/each}}
+            {{/if}}
             <tr style="height:15pt;">
                 <td colspan="3" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s36" style="text-align: center;font-size: 14px;font-weight: bold;color: #494949;">VWAP of 90 trading days ({{currencyUnit}})
