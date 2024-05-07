@@ -1,10 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, LoggerService, Inject, HttpException, HttpStatus, ConflictException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, LoggerService, Inject, HttpException, HttpStatus, ConflictException, NotFoundException } from '@nestjs/common';
 import { Observable, from, of, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import axios, { HttpStatusCode } from 'axios';
 import * as qs from 'qs';  
 import moment = require('moment');
-import { KEY_CLOAK_CREATE_USER, KEY_CLOAK_INTROSPECT, KEY_CLOAK_RESET_PASSWORD, KEY_CLOAK_TOKEN, KEY_CLOAK_USER_SEARCH_TOKEN } from 'src/library/interfaces/api-endpoints.prod';
+import { KEY_CLOAK_INTROSPECT, KEY_CLOAK_USER, KEY_CLOAK_TOKEN } from 'src/library/interfaces/api-endpoints.prod';
 import { utilities as nestWinstonModuleUtilities, WinstonModule,  } from 'nest-winston';
 import { transports,format } from 'winston';
 import { KCloginAuthDto, authTokenDto } from 'src/authentication/dto/authentication.dto';
@@ -214,7 +214,7 @@ export class KeyCloakAuthGuard implements CanActivate {
         }))
   }
 
-  fetchAuthUser(request){
+  fetchAuthUser(request):any{
     const token = request.headers.authorization;
       
     if (!token) {
@@ -277,11 +277,11 @@ export class KeyCloakAuthGuard implements CanActivate {
       switchMap((userExistence)=>{
       if(userExistence.isEmailExisting || userExistence.isUserNameExisting)
         throw new ConflictException(userExistence).getResponse();
-      return from(this.getAccessToken()).pipe(
+      return from(this.generateClientToken()).pipe(
         switchMap((accessTokenResponse)=>{
           return from(
             axios.post(
-              KEY_CLOAK_CREATE_USER,
+              KEY_CLOAK_USER,
               payload,
               {
                 headers: {
@@ -309,11 +309,11 @@ export class KeyCloakAuthGuard implements CanActivate {
   }
 
   checkUserExistence(email, username) {
-    return from(this.getAccessToken()).pipe(
+    return from(this.generateClientToken()).pipe(
       switchMap((accessTokenResponse)=>{
         return from(
           axios.get(
-            `${KEY_CLOAK_USER_SEARCH_TOKEN}?username=${username}`,
+            `${KEY_CLOAK_USER}?username=${username}`,
             {
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -361,11 +361,11 @@ export class KeyCloakAuthGuard implements CanActivate {
   }
 
   checkEmailExistence(email) {
-    return from(this.getAccessToken()).pipe(
+    return from(this.generateClientToken()).pipe(
       switchMap((accessTokenResponse)=>{
         return from(
           axios.get(
-            `${KEY_CLOAK_USER_SEARCH_TOKEN}?email=${email}`,
+            `${KEY_CLOAK_USER}?email=${email}`,
             {
               headers: {
                 // 'Content-Type': 'application/x-www-form-urlencoded',
@@ -409,14 +409,14 @@ export class KeyCloakAuthGuard implements CanActivate {
   }
 
   resetPassword(body) {
-    return from(this.getAccessToken()).pipe(
+    return from(this.generateClientToken()).pipe(
       switchMap((accessTokenResponse)=>{
       return from(this.checkEmailExistence(body.email)).pipe(
         switchMap((userExistence)=>{
           const userId = userExistence.userDetails[0].id;
           return from(
             axios.put(
-              `${KEY_CLOAK_RESET_PASSWORD}${userId}/reset-password`,
+              `${KEY_CLOAK_USER}/${userId}/reset-password`,
               body.cred,
               {
                 headers: {
@@ -462,7 +462,7 @@ export class KeyCloakAuthGuard implements CanActivate {
     }))
   }
 
-  getAccessToken(){
+  generateClientToken(){
     return from(
       axios.post(
         KEY_CLOAK_TOKEN,
@@ -489,6 +489,58 @@ export class KeyCloakAuthGuard implements CanActivate {
       }),
       catchError((error:any) => {
         console.log(error)
+        throw new UnauthorizedException(
+          {
+            status: false,
+            msg: error.response.message,
+          }
+        );
+      })
+    );
+  }
+
+  fetchUserRoles(request){
+    return from(this.fetchAuthUser(request)).pipe(
+      switchMap((auth: any)=>{
+        const userId = auth.userId;
+        if(!userId)
+          throw new NotFoundException('UserId not found').getResponse();
+        return from(this.generateClientToken()).pipe(
+          switchMap((clientTokenInfo)=>{
+            return this.searchRolesByUserId(userId, clientTokenInfo.access_token);
+          }),
+          catchError((error)=>{
+            return throwError(error);
+          })
+        )
+      }),
+      catchError((error)=>{
+        return throwError(error);
+      })
+    )
+  }
+
+  searchRolesByUserId(userId, accessToken){
+    return from(
+      axios.get(
+        `${KEY_CLOAK_USER}/${userId}/role-mappings/realm/composite`,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Bearer ${accessToken}`
+          },
+        },
+      )
+    ).pipe(
+      switchMap((response:any) => {
+        return of(response.data)
+      }),
+      catchError((error:any) => {
+        logger.error(
+          `${moment(now)} | ${error.response?.status} | [${error.request?.method.toUpperCase()}] ${error.response?.config?.url} - ${delay}ms ${JSON.stringify(
+            {token:error.response.config.data},
+          )} ${JSON.stringify(error.response?.data)} | ${JSON.stringify({message:error.response?.statusText})}`,
+        );
         throw new UnauthorizedException(
           {
             status: false,

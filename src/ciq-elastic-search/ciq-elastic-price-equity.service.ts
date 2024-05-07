@@ -31,7 +31,7 @@ export class ciqElasticPriceEquityService {
                           },
                           {
                             term: {
-                              [elasticSearchKey.TRD_PRIMARYFLAG]: "1"
+                              [elasticSearchKey.EXCHANGEID]: 161 //Default for NSEI 
                             }
                           }
                         ]

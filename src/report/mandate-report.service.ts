@@ -5,15 +5,19 @@ import * as puppeteer from 'puppeteer';
 import { utilsService } from "src/utils/utils.service";
 import hbs = require('handlebars');
 import * as converter from 'number-to-words'
-import { NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
+import { NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
 import { formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
+import { getRequestAuth } from "src/excelFileServices/common.methods";
+import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
 
 @Injectable()
 export class mandateReportService {
     constructor(private utilService: utilsService){}
-    async generateMandateReport(id, res){
+    async generateMandateReport(id, res, headers){
         try{
             const mandateDetails:any = await this.utilService.fetchMandateByLinkId(id);
+
+            const { roles } = await this.fetchUserInfo(headers);
 
             let htmlFilePath = path.join(process.cwd(), 'html-template', `mandate.html`);
             let pdfFilePath = path.join(process.cwd(), 'pdf', `${mandateDetails.data.companyName}.pdf`);
@@ -25,7 +29,7 @@ export class mandateReportService {
             const template = hbs.compile(htmlContent);
             const html = template(mandateDetails);
         
-            let pdf =  await this.createpdf(html, pdfFilePath, mandateDetails.data);
+            let pdf =  await this.createpdf(html, pdfFilePath,  roles);
 
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename="='Mandate - ${mandateDetails.data.companyName}'.pdf"`);
@@ -130,12 +134,13 @@ export class mandateReportService {
         }
     }
 
-    async createpdf(htmlContent: any, pdfFilePath: string, mandateDetails) {
+    async createpdf(htmlContent: any, pdfFilePath: string, roles) {
         const browser = await puppeteer.launch({
           headless:"new",
           executablePath: process.env.PUPPETEERPATH
         });
         const page = await browser.newPage();
+        const ifMB01 = roles.some(indRole => indRole?.name === 'merchant-banker-test');
 
         try {
           const contenread = await page.setContent(htmlContent);
@@ -151,8 +156,39 @@ export class mandateReportService {
               left: "0px"
           },
 
-          headerTemplate: `
-            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-left:7%;padding-right:0%;">
+          headerTemplate: ifMB01 ? 
+          `<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+              <td  align="center"><img src="${NAVIGANT_LOGO}" width="40" height="40" /></td>
+          </tr>
+          <tr>
+          <td align="center">
+            <p style="font-size:13px;padding-bottom:0px;line-height:140%;margin-top:0px;margin-bottom:0px">
+              
+              <span style="font-size:14px;color:#4e4e4e;">
+                NAVIGANT CORPORATE ADVISORS LIMITED <br>
+              </span>
+              <span style="font-weight:bold;"> 
+                Regd. Office: 
+              </span>
+                804, Meadows, Sahar Plaza Complex, J B Nagar, Andheri-Kurla Road,<br>
+                Andheri (East) Mumbai-400 059; Tel: +91-22- 4120 4837 / +91 22 4973 5078 <br>
+              <span style="font-weight:bold;"> 
+                Email: 
+              </span>
+              <a href="navigant@navigantcorp.com;" target="_blank">navigant@navigantcorp.com;</a> 
+              <span style="font-weight:bold;"> 
+                Website: 
+              </span>
+              <a href="www.navigantcorp.com;" target="_blank">www.navigantcorp.com</a>
+              <span style="color:blue;">
+                (CIN: L67190MH2012PLC231304)
+              </span>
+            </p>
+          </td>  
+          </tr>
+        </table>`:
+        `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-left:7%;padding-right:0%;">
               <tr>
                 <td style="width:50%;">
                   <table border="0" cellspacing="0" cellpadding="0" style="height: auto; width:100% !important; padding-left:3%; padding-right:3%">
@@ -200,5 +236,11 @@ export class mandateReportService {
           await browser.close();
          
         }
+      }
+
+      async fetchUserInfo(headers){
+        const KCGuard = new KeyCloakAuthGuard();
+        const roles = await KCGuard.fetchUserRoles(getRequestAuth(headers)).toPromise();
+        return { roles };
       }
 }

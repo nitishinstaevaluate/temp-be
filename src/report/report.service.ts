@@ -899,7 +899,7 @@ export class ReportService {
         return '0';
       })
       hbs.registerHelper('valuePerShare',()=>{
-        if(transposedData[0].data.transposedResult[1])
+        if(transposedData[0]?.data?.transposedResult[1])
           return valuationResult.modelResults.map((response)=>{
             if(response.model===MODEL[0] || response.model === MODEL[1]){
               const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
@@ -3410,9 +3410,9 @@ export class ReportService {
   }
 
   
-  async mandateReport(id, res){
+  async mandateReport(id, res, headers){
     try{
-      return await this.mandateReportService.generateMandateReport(id, res);   
+      return await this.mandateReportService.generateMandateReport(id, res, headers);   
     }
     catch(error){
       return {
