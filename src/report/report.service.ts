@@ -899,7 +899,7 @@ export class ReportService {
         return '0';
       })
       hbs.registerHelper('valuePerShare',()=>{
-        if(transposedData[0].data.transposedResult[1])
+        if(transposedData[0]?.data?.transposedResult[1])
           return valuationResult.modelResults.map((response)=>{
             if(response.model===MODEL[0] || response.model === MODEL[1]){
               const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');

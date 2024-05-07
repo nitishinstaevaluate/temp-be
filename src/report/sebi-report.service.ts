@@ -607,6 +607,9 @@ export class sebiReportService {
                 if(data.model === MODEL[2] || data.model === MODEL[4]){
                   weights.push(`${formatPositiveAndNegativeValues(convertToNumberOrZero(data.weight) * 100)}%`);
                 }
+                if(data.model === MODEL[7] && (reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1)){
+                  weights.push(`${formatPositiveAndNegativeValues(convertToNumberOrZero(data.weight) * 100)}%`);
+                }
               })
             }
             else{
@@ -2131,7 +2134,7 @@ export class sebiReportService {
 
           hbs.registerHelper('weightedAverageWorking',()=>{
             if(valuationResult.inputData[0].model.length){
-              let computedArray = [], dcfApproachWeight:any = 100, marketApproachWeight:any = 100, navApproachWeight:any = 100;
+              let computedArray = [], dcfApproachWeight:any = 100, marketApproachWeight:any = 100, navApproachWeight:any = 100, marketPriceWeight: any = 100;
               if(valuationResult.inputData[0].model.length > 1){
                 reportDetails?.modelWeightageValue?.modelValue.map(
                   (data)=>{
@@ -2144,6 +2147,9 @@ export class sebiReportService {
                   }
                   if(data.model === MODEL[2] || data.model === MODEL[4]){
                     marketApproachWeight = convertToNumberOrZero(data.weight) * 100;
+                  }
+                  if(data.model === MODEL[7] && (reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1)){
+                    marketPriceWeight = convertToNumberOrZero(data.weight) * 100;
                   }
                 })
               }
@@ -2198,6 +2204,22 @@ export class sebiReportService {
                         valuePerShare: formatPositiveAndNegativeValues(navApproachValuePerShare),
                         weights: formatPositiveAndNegativeValues(navApproachWeight),
                         weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(navApproachValuePerShare) * navApproachWeight/100)
+                      }
+                    )
+                  }
+                  if (
+                    response.model === models && 
+                    models === MODEL[7] && 
+                    (reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1)
+                  ) {
+                    let marketPriceValuePerShare = response?.valuation;
+                    computedArray.push(
+                      {
+                        approach: 'Market Price Approach',
+                        method: `${ALL_MODELS[`${models}`]} Method`,
+                        valuePerShare: formatPositiveAndNegativeValues(marketPriceValuePerShare),
+                        weights: formatPositiveAndNegativeValues(marketApproachWeight),
+                        weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketPriceValuePerShare) * marketApproachWeight/100)
                       }
                     )
                   }
@@ -2291,13 +2313,13 @@ export class sebiReportService {
       
         let selectedMethods = [], finalArray = [];
       
-        if (!reportDetails.reportSection.includes("165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018")) {
+        if (reportDetails.reportSection.includes("165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018")) {
           selectedMethods = [
             modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1]) ? methods.DCF : null,
             modelArray.includes(MODEL[5]) ? methods.NAV : null,
             (modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4])) ? methods.CCM : null,
           ];
-        } else if (reportDetails.reportSection.includes("165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1) {
+        } else if (reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1) {
           selectedMethods = [
             modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1]) ? methods.DCF : null,
             modelArray.includes(MODEL[5]) ? methods.NAV : null,
