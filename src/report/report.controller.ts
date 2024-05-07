@@ -10,6 +10,7 @@ import {
     UploadedFile,
     UseGuards,
     UseInterceptors,
+    Headers
   } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { diskStorage } from 'multer';
@@ -138,8 +139,9 @@ export class ReportController {
   @Get('mandate-report/:reportId')
   async generateMandateReport(
   @Param('reportId') reportId : string,
-  @Res() res) {
-    return await this.reportService.mandateReport(reportId, res);
+  @Res() res,
+  @Headers() headers: Headers) {
+    return await this.reportService.mandateReport(reportId, res, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)

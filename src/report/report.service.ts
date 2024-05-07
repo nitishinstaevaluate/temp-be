@@ -3410,9 +3410,9 @@ export class ReportService {
   }
 
   
-  async mandateReport(id, res){
+  async mandateReport(id, res, headers){
     try{
-      return await this.mandateReportService.generateMandateReport(id, res);   
+      return await this.mandateReportService.generateMandateReport(id, res, headers);   
     }
     catch(error){
       return {
