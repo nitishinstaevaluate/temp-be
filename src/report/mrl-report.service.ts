@@ -503,11 +503,6 @@ export class mrlReportService {
           hbs.registerHelper('phaseValue',()=>{
             let phaseValue = '-';
             if(processStateInfo.firstStageInput){
-              // processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
-              //   if(stateThreeDetails.model === MODEL[6]){
-              //     phaseValue = formatPositiveAndNegativeValues(stateThreeDetails?.phaseValue)
-              //   }
-              // })
               phaseValue = processStateInfo.firstStageInput?.faceValue;
             }
             return `${phaseValue}`.includes('-') ? '-' : `${phaseValue}/-` ;
@@ -516,11 +511,6 @@ export class mrlReportService {
           hbs.registerHelper('multiplyPhaseValueAndShares',()=>{
             let phaseValue = 0;
             if(processStateInfo.firstStageInput){
-              // processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
-              //   if(stateThreeDetails.model === MODEL[6]){
-              //     phaseValue = stateThreeDetails?.phaseValue;
-              //   }
-              // })
               phaseValue = processStateInfo.firstStageInput?.faceValue;
             }
             const noOfShares = processStateInfo.firstStageInput.outstandingShares
