@@ -130,6 +130,11 @@
         </p>
         <p style="text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 1%;">To,</p>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            {{#if (ifMB01)}}
+            <p style="text-indent: 0pt;line-height: 12pt;text-align: left;">
+                <span class="s2" style="font-weight: bold;">Navigant Corporate Advisors Limited</span>
+            </p>
+            {{else}}
             <p style="text-indent: 0pt;line-height: 12pt;text-align: left;">
                 <span class="s2" style="font-weight: bold;">Nitish Chaturvedi</span>
             </p>
@@ -139,6 +144,7 @@
                 Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,<br>Sterling
                 Enterprises,Andheri (E), Mumbai - 400069</p>
             <p class="s3" style="text-indent: 0pt;text-align: left;padding-top: 2%;padding-bottom: 3%;">Date: &nbsp;{{dateOfAppointment}}</p>
+            {{/if}}
         
         <p class="s3" style="line-height: 13pt;text-align: left;">1. Overview of Company:
         </p>
@@ -151,48 +157,6 @@
         <p style="text-indent: 0pt;line-height: 180%;text-align: justify;padding-top: 1%;">The share capital and holding
             structure of the Company as on the valuation date, i.e. {{valuationDate}} is as under:</p>
         <p style="padding-top: 2pt;text-indent: 0pt;text-align: left;"><br /></p>
-        <!-- <table style="border-collapse:collapse;margin:auto;" cellspacing="0">
-            <tr style="height:17pt">
-                <td style="width:234pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#808080">
-                    <p style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;padding: 1%;"><span class="s4">Particulars</span></p>
-                </td>
-                <td style="width:105pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#808080">
-                    <p style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;padding: 1%;"><span class="s4">Details</span></p>
-                </td>
-            </tr>
-            <tr style="height:13pt">
-                <td
-                    style="width:234pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;padding: 1%;"><span class="s5">Equity Share Capital (No. of Shares)</span></p>
-                </td>
-                <td
-                    style="width:105pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-right: 5pt;text-indent: 0pt;text-align: center;padding: 1%;"><span class="s5">4,18,445</span></p>
-                </td>
-            </tr>
-            <tr style="height:14pt">
-                <td
-                    style="width:234pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;padding: 1%;"><span class="s5">Face value per share (Amount - Rs.)</span></p>
-                </td>
-                <td
-                    style="width:105pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-left: 5pt;text-indent: 0pt;text-align: center;padding: 1%;"><span class="s5">100/-</span></p>
-                </td>
-            </tr>
-            <tr style="height:13pt">
-                <td
-                    style="width:234pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;padding: 1%;"><span class="s5">Equity Share Capital (Amount-Rs. in INR)</span></p>
-                </td>
-                <td
-                    style="width:105pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-left: 5pt;text-indent: 0pt;text-align: center;padding: 1%;"><span class="s5">4,18,44,500/-</span></p>
-                </td>
-            </tr>
-        </table> -->
         <table>
             <thead>
               <tr>
@@ -224,6 +188,13 @@
             </span><span class="s2">{{valuationDate}}</span><span class="p"> in accordance with
                 the relevant provisions of the Income Tax Act. Accordingly, the management hereby appoint you to carry out
                 the equity value analysis of the company in accordance with Section {{sectionAndPurposeOfReport}}.</span></p>
+        {{#if (ifMB01)}}
+        <p style="line-height: 180%;text-align: left;padding-top: 2%;"><span class="h1">For <span style="text-transform: capitalize;">{{companyName}}</span></span></p>
+        <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;"><br /></p>
+        <p class="s3" style="text-align: left;padding-top: 3%;">Name: </p>
+        <p class="s3" style="text-align: left;padding-top: 1%;">Designation: </p>
+        <p style="line-height: 180%;text-align: left;padding-top: 2%;"><span class="h1">Enclosed: Audited financial statements of the Company as on {{valuationDate}}</span></p>
+        {{else}}
         <p class="s3" style="line-height: 13pt;text-align: left;padding-top: 2%;">4. Provisional Financial
             Statements:</p>
         <p style="line-height: 180%;text-align: left;padding-top: 1%;"><span class="s2">
@@ -234,6 +205,7 @@
         <p style="padding-top: 12pt;text-indent: 0pt;text-align: left;"><br /></p>
         <p class="s3" style="text-align: left;">Name: </p>
         <p class="s3" style="text-align: left;padding-top: 1%;">Designation: </p>
+        {{/if}}
     </div>
 </body>
 

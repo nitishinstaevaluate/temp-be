@@ -357,6 +357,9 @@ export class mrlReportService {
       async generateElevenUaMrl(id, res, format, headers){
         try{
           const applicationData:any = await this.processStateManagerService.fetchProcess(id);
+
+          const { roles } = await this.fetchUserInfo(headers);
+
           if(!applicationData.status) 
             throw new NotFoundException({
                 statusCode: HttpStatus.NOT_FOUND,
@@ -368,7 +371,7 @@ export class mrlReportService {
           let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
           let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
       
-          await this.loadElevenUaMrlHelpers(applicationData.stateInfo);
+          await this.loadElevenUaMrlHelpers(applicationData.stateInfo, roles);
       
           const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
           const template = hbs.compile(htmlContent);
@@ -410,7 +413,7 @@ export class mrlReportService {
         }
       }
 
-      async loadElevenUaMrlHelpers(processStateInfo){
+      async loadElevenUaMrlHelpers(processStateInfo, roles){
         try{
           hbs.registerHelper('companyInfo', ()=>{
             if(processStateInfo.sixthStageInput?.companyInfo)
@@ -437,6 +440,12 @@ export class mrlReportService {
             if(processStateInfo.firstStageInput.outstandingShares)
                 return formatPositiveAndNegativeValues(processStateInfo.firstStageInput.outstandingShares);
             return '';
+          })
+
+          hbs.registerHelper('ifMB01',()=>{
+            if(roles?.length)
+                return roles.some(indRole => indRole?.name === 'merchant-banker-test');
+            return false;
           })
 
           hbs.registerHelper('phaseValue',()=>{

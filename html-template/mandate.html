@@ -93,7 +93,11 @@
     <h1 style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Date: {{dateOfAppointment}}</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 9pt;text-indent: 0pt;text-align: left;">To</p>
+    {{#if (ifMB01)}}
+    <!-- Do nothing -->
+    {{else}}
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    {{/if}}
     <p class="add-text" style="border:1px solid white;width: 100%;line-height: 150%;">Board of Directors &nbsp;&nbsp;&nbsp;</p>
     <p class="add-text" style="border:1px solid white;display: inline;width: 100%;font-weight: bold;line-height: 150%;text-transform: uppercase;">{{companyName}} &nbsp;&nbsp;&nbsp;</p>
     {{#if (companyAddress)}}
@@ -102,48 +106,69 @@
     <p class="add-text" style="border:1px solid white;width: 100%;line-height: 150%;">Add.&nbsp;</p>
     {{/if}}
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    {{#if (ifMB01)}}
     <p style="padding-top: 2pt;text-indent: 0pt;text-align: left;">
-        <span class="h1">ENGAGEMENT LETTER
-            FOR 
-        </span>
-        <span class="s1" style=" text-transform: uppercase;">
-            {{natureOfInstrument}} 
-            VALUATION
-        </span>
+        Sub: Proposal for Issue of Valuation Report of <span style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span> 
         </p>
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;"><span
-            class="p">This Letter confirms that </span>
-            <span class="s2" style=" font-weight: bold;">
-                {{companyName}}
-            </span>
-            <span class="p"> 
-                (“{{companyName}}” or “Company”) has appointed Mr. Nitish Chaturvedi, to advise on and arrange the Valuation report of 
-            </span>
-            <span class="s2">
-                {{natureOfInstrument}}
-            </span>
-             of 
-             <span class="s2" style=" font-weight: bold;text-transform: capitalize;">
-                {{valuedEntity}}
-            </span>
-            <span class="s2" style=" font-weight: bold;text-transform: capitalize;">
-                (“{{valuedEntity}}” or “Subject Entity”)
-            </span>
-            <span class="p"> as set out in this engagement letter (“this Letter”). This Letter and the Standard Terms and
-            Conditions attached to this Letter comprise the entire engagement for the Services (“the Engagement”). The
-            Standard Terms and Conditions attached to this Letter should, therefore, be read in full.
-            </span>
-    </p>
+    {{else}}
+        <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;"><span
+                class="p">This Letter confirms that </span>
+                <span class="s2" style=" font-weight: bold;">
+                    {{companyName}}
+                </span>
+                <span class="p"> 
+                    (“{{companyName}}” or “Company”) has appointed Mr. Nitish Chaturvedi, to advise on and arrange the Valuation report of 
+                </span>
+                <span class="s2">
+                    {{natureOfInstrument}}
+                </span>
+                of 
+                <span class="s2" style=" font-weight: bold;text-transform: capitalize;">
+                    {{valuedEntity}}
+                </span>
+                <span class="s2" style=" font-weight: bold;text-transform: capitalize;">
+                    (“{{valuedEntity}}” or “Subject Entity”)
+                </span>
+                <span class="p"> as set out in this engagement letter (“this Letter”). This Letter and the Standard Terms and
+                Conditions attached to this Letter comprise the entire engagement for the Services (“the Engagement”). The
+                Standard Terms and Conditions attached to this Letter should, therefore, be read in full.
+                </span>
+        </p>
+    {{/if}}
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h1 style="text-indent: 0pt;text-align: left;">INTRODUCTION</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-    <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
-        I, Nitish Chaturvedi is a Registered Valuer - Securities or Financial Assets. I offers services including Valuation of 
-        financial securities for financial reporting purposes, tax and Companies Act compliance and independent assessment.
-    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    {{#if (ifMB01)}}
+        <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
+            We take this opportunity to introduce ourselves as Navigant Corporate Advisors Ltd., Category I Merchant Banker registered with Securities & Exchange Board of India (“Navigant”). 
+            Navigant is a progressive and forward-looking Group managed by a team of competent & experienced professionals under the supervision of able and dynamic Board of Directors. 
+        </p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
+            Presently, we are associated with Issue Management related activities, Capital Planning & Corporate Restructuring, Buy back, Listing, De-listing, Exit Offer, Capital Reduction, Mergers & Acquisitions, 
+            ESOP, Preferential allotment matters, Company law & Income Tax matters, Project Financing and Appraisal, Working capital arrangement etc.
+        </p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
+            The comprehensive range of services from conception to completion provided under one roof reinforces our commitment on quality assurances through total involvement.
+        </p>
+    {{else}}
+        <p style="padding-top: 2pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
+            I, Nitish Chaturvedi is a Registered Valuer - Securities or Financial Assets. I offers services including Valuation of 
+            financial securities for financial reporting purposes, tax and Companies Act compliance and independent assessment.
+        </p>
+    {{/if}}
+    <p style="text-indent: 0pt;text-align: left;"><br />
+    </p>
+
     <h1 style="text-indent: 0pt;text-align: justify;">PURPOSE OF SERVICES</h1>
-    <p style="padding-top: 9pt;text-indent: 0pt;line-height: 160%;text-align: justify;"><span
+    {{#if (ifMB01)}}
+    <p style="padding-top: 9pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
+        The Management requires valuation analysis of {{natureOfInstrument}} of the Company for the purpose of {{sectionAsPerIncomeTax}} of its {{natureOfInstrument}} as per Income Tax Act, 1961.
+    </p>
+    {{else}}
+    <p style="padding-top: 9pt;text-indent: 0pt;line-height: 160%;text-align: justify;">
+        <span
             class="p">The purpose of services required by {{companyName}} for the purpose of determining the fair value of
         </span>
         <span class="s2">
@@ -160,6 +185,7 @@
         </span>
         <span class="s2">provisions of section {{sectionAndPurposeOfReport}}.</span>
     </p>
+    {{/if}}
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h1 style="text-indent: 0pt;text-align: left;">SCOPE OF SERVICES</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -181,7 +207,12 @@
     <p style="padding-top: 7pt;text-indent: 0pt;line-height: 170%;text-align: justify;">Any
         information, advice, recommendations or other content of any reports, presentations or other communications
         (“Advice”) we provide under this Engagement Letter including the Valuation Report are for your use and you may
-        disclose the same (or any portion or summary thereof) to any person at your complete discretion. Further, I
+        disclose the same (or any portion or summary thereof) to any person at your complete discretion. Further, 
+        {{#if (ifMB01)}}
+        We
+        {{else}}
+        I
+        {{/if}}
         shall not disclose the Advice and Valuation Report to any person.</p>
     <p style="padding-top: 7pt;text-indent: 0pt;line-height: 170%;text-align: justify;">We commit to deploying our utmost efforts to fulfill our obligations outlined in this Engagement Letter and deliver the 
         Valuation Report within 3 to 4 business days, or within any other mutually agreed-upon timeframe by both Parties. 
@@ -204,9 +235,14 @@
     tax at source under the Income Tax Act, 1961, amended from time to time.</p> -->
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <h1 style="text-indent: 0pt;text-align: left;">PAYMENT TERMS</h1>
+{{#if (ifMB01)}}
+<p style="padding-top: 9pt;text-indent: 0pt;line-height: 170%;text-align: justify;">You are kindly requested to make a 100% payment upon the signing of this mandate. 
+    Your prompt attention to these payment terms is integral to fostering a professional and cooperative partnership between our entities.</p>
+{{else}}
 <p style="padding-top: 9pt;text-indent: 0pt;line-height: 170%;text-align: justify;">You are kindly requested to ensure settlement of the invoice within 15 days following its issuance by our firm. The first invoice, 
     reflecting 50% of the total amount, will be raised upon the execution of this engagement letter. Subsequently, the remaining 50% will be invoiced upon the submission of the final report. 
     Your prompt attention to these payment terms is integral to fostering a professional and cooperative partnership between our entities.</p>
+{{/if}}
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <h1 style="text-indent: 0pt;text-align: left;">CONFIDENTIALITY AND INDEPENDENCE</h1>
 <p style="padding-top: 8pt;text-indent: 0pt;line-height: 170%;text-align: justify;">We strictly adhere to the ethical rules of our profession and our organization. In all aspects of
@@ -229,24 +265,43 @@
     <p style="padding-top: 8pt;text-indent: 0pt;line-height: 170%;text-align: justify;">If the scope and terms of the Engagement are acceptable, kindly acknowledge your acceptance by signing the
         confirmation attached, returning the enclosed copy of this Letter to us at the above address.</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    {{#if (ifMB01)}}
+    <h1 style="text-indent: 0pt;text-align: left;">For Navigant Corporate Advisors Limited</h1>
+    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    <h1 style="text-indent: 0pt;text-align: left;padding-top: 5%;">Sarthak Vijlani</h1>
+    <h1 style="text-indent: 0pt;text-align: left;padding-top: 1%;padding-bottom: 2%;">Managing Director</h1>
+    {{else}}
     <p style="text-indent: 0pt;text-align: left;padding-top: 5%;">Yours Sincerely,</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h1 style="text-indent: 0pt;text-align: left;">Nitish Chaturvedi</h1>
     <h1 style="padding-top: 9pt;text-indent: 0pt;text-align: left;padding-bottom: 4%;">Registered Valuer- Securities or
         Financial Assets</h1>
+    {{/if}}
         <hr>
         <h1 style="padding-top: 3%;text-indent: 0pt;text-align: center;">
             Confirmation of Terms of Engagement</h1>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 2pt;text-indent: 0pt;line-height: 170%;text-align: left;">
-            <span class="p">Having read this letter from Mr. Nitish Chaturvedi dated </span>
+            <span class="p">Having read this letter from 
+                {{#if (ifMB01)}}
+                Navigant Corporate Advisors Limited
+                {{else}}
+                Mr. Nitish Chaturvedi 
+                {{/if}}
+                dated </span>
             <span class="s2">{{dateOfAppointment}}</span>
             <span class="p"> and </span>
             <span class="s2" style=" font-weight: bold;text-transform: capitalize;">
                     {{companyName}}
             </span>
             <span class="p"> 
-                acknowledges acceptance of and agrees to engage Mr. Nitish Chaturvedi upon the terms of the same.
+                acknowledges acceptance of and agrees to engage 
+                {{#if (ifMB01)}}
+                Navigant Corporate Advisors Limited
+                {{else}}
+                Mr. Nitish Chaturvedi 
+                {{/if}}
+                upon the terms of the same.
             </span>
         </p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -284,8 +339,13 @@
             <span class="s2" style="text-transform: capitalize;font-weight: bold;">
                 {{companyName}}
             </span>
-            (“{{companyName}}” or “Company” or “You”) and Mr.
-                Nitish Chaturvedi (also referred to as ‘I’, ‘me’ and ‘myself’). The terms defined in the Engagement Letter
+            (“{{companyName}}” or “Company” or “You”) and 
+            {{#if (ifMB01)}}
+            Navigant Corporate Advisors Limited.
+            {{else}}
+            Mr. Nitish Chaturvedi (also referred to as ‘I’, ‘me’ and ‘myself’).
+            {{/if}}
+             The terms defined in the Engagement Letter
                 has the same meaning in these Terms of Business.
             </p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -315,8 +375,13 @@
         </ol>   
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h1 style="text-indent: 0pt;text-align: left;">Limitation of liability</h1>
-        <p style="padding-top: 9pt;text-indent: 0pt;text-align: justify;line-height: 170%;">The aggregate liability of Mr.
-            Nitish Chaturvedi, employees or representative, whether in contract, tort or otherwise
+        <p style="padding-top: 9pt;text-indent: 0pt;text-align: justify;line-height: 170%;">The aggregate liability of 
+            {{#if (ifMB01)}}
+            Navigant Corporate Advisors Limited
+            {{else}}
+            Mr. Nitish Chaturvedi,
+            {{/if}}
+             employees or representative, whether in contract, tort or otherwise
             to the Client arising from or in connection with this engagement shall be limited to the fees received by us for
             the engagement. This limitation will apply notwithstanding any express or implied terms and conditions of the
             Engagement letter and this annexure, any collateral agreement or warrant or any representation.
@@ -324,9 +389,15 @@
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h1 style="text-indent: 0pt;text-align: left;">Communications</h1>
         <p style="padding-top: 9pt;text-indent: 0pt;line-height: 170%;text-align: justify;">
-            Any public announcement, report, document, statement, press release or other communication of a ny nature made by or on
+            Any public announcement, report, document, statement, press release or other communication of any nature made by or on
             behalf of you in connection with the Engagement (“Communication”) may be made only after entering into the
-            engagement. I shall not be responsible for ensuring the truth, accuracy, completeness or fairness of any Communication.
+            engagement. 
+            {{#if (ifMB01)}}
+            We
+            {{else}}
+            I 
+            {{/if}}
+            shall not be responsible for ensuring the truth, accuracy, completeness or fairness of any Communication.
         </p>
     <p style="padding-top: 8pt;text-indent: 0pt;line-height: 170%;text-align: justify;">
         Without prejudice to any of the clauses of this Engagement, you warrant that any information contained in any Relevant
@@ -359,7 +430,13 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 2pt;text-indent: 0pt;line-height: 170%;text-align: justify;">
         <span class="p">
-            This Engagement Letter constitutes the entire agreement between Mr. Nitish Chaturvedi and
+            This Engagement Letter constitutes the entire agreement between 
+            {{#if (ifMB01)}}
+            Navigant Corporate Advisors Limited 
+            {{else}}
+            Mr. Nitish Chaturvedi 
+            {{/if}}
+            and
         </span>
         <span class="s2" style="font-weight: bold;text-transform: capitalize;">
             {{companyName}}
@@ -375,7 +452,13 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 2pt;text-indent: 0pt;line-height: 170%;text-align: left;">
         <span class="p">
-            Neither Mr. Nitish Chaturvedi nor 
+            Neither 
+            {{#if (ifMB01)}}
+            Navigant Corporate Advisors Limited 
+            {{else}}
+            Mr. Nitish Chaturvedi 
+            {{/if}}
+            nor 
         </span>
         <span class="s2" style="text-transform: capitalize;font-weight: bold;">
             {{companyName}}
