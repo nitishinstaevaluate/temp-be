@@ -502,24 +502,26 @@ export class mrlReportService {
 
           hbs.registerHelper('phaseValue',()=>{
             let phaseValue = '-';
-            if(processStateInfo.thirdStageInput){
-              processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
-                if(stateThreeDetails.model === MODEL[6]){
-                  phaseValue = formatPositiveAndNegativeValues(stateThreeDetails?.phaseValue)
-                }
-              })
+            if(processStateInfo.firstStageInput){
+              // processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
+              //   if(stateThreeDetails.model === MODEL[6]){
+              //     phaseValue = formatPositiveAndNegativeValues(stateThreeDetails?.phaseValue)
+              //   }
+              // })
+              phaseValue = processStateInfo.firstStageInput?.faceValue;
             }
             return `${phaseValue}`.includes('-') ? '-' : `${phaseValue}/-` ;
           })
 
           hbs.registerHelper('multiplyPhaseValueAndShares',()=>{
             let phaseValue = 0;
-            if(processStateInfo.thirdStageInput){
-              processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
-                if(stateThreeDetails.model === MODEL[6]){
-                  phaseValue = stateThreeDetails?.phaseValue;
-                }
-              })
+            if(processStateInfo.firstStageInput){
+              // processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
+              //   if(stateThreeDetails.model === MODEL[6]){
+              //     phaseValue = stateThreeDetails?.phaseValue;
+              //   }
+              // })
+              phaseValue = processStateInfo.firstStageInput?.faceValue;
             }
             const noOfShares = processStateInfo.firstStageInput.outstandingShares
             const value =  formatPositiveAndNegativeValues(convertToNumberOrZero(phaseValue) * convertToNumberOrZero(noOfShares));
