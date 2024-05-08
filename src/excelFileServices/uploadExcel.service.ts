@@ -12,13 +12,13 @@ import { ValuationsService } from 'src/valuationProcess/valuationProcess.service
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero, formatDateHyphenToDDMMYYYY } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
 import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
 import { axiosInstance } from 'src/middleware/axiosConfig';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
-import { formatPositiveAndNegativeValues } from 'src/report/report-common-functions';
+import { convertEpochToPlusOneDate, formatPositiveAndNegativeValues } from 'src/report/report-common-functions';
 import { ReportService } from 'src/report/report.service';
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 import { terminalValueWorkingService } from 'src/valuationProcess/terminal-value-working.service';
@@ -291,7 +291,7 @@ export class ExcelSheetService {
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+                if(data.model !== MODEL[0] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -359,7 +359,7 @@ export class ExcelSheetService {
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -1860,6 +1860,112 @@ export class ExcelSheetService {
             }
           })
           return boolValuationLength;
+        })
+
+        hbs.registerHelper('totalRevenue',(vwap,volume)=>{
+          return formatPositiveAndNegativeValues((convertToNumberOrZero(vwap) * convertToNumberOrZero(volume)));
+        })
+
+        hbs.registerHelper('vwap90Days',()=>{
+          let vwapLastNinetyDays = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.vwapLastNinetyDays){
+              vwapLastNinetyDays = response.valuationData.vwapLastNinetyDays;
+            }
+          })
+          return vwapLastNinetyDays;
+        })
+
+        hbs.registerHelper('vwap10Days',()=>{
+          let vwapLastTenDays = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.vwapLastTenDays){
+              vwapLastTenDays = response.valuationData.vwapLastTenDays;
+            }
+          })
+          return vwapLastTenDays;
+        })
+
+        hbs.registerHelper('floorPriceVwap',()=>{
+          let valuePerShare = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7]){
+              valuePerShare = response?.valuation;
+            }
+          })
+          return valuePerShare;
+        })
+
+        hbs.registerHelper('relevantDate',()=>{
+          if(valuationResult.inputData[0].valuationDate)
+            return convertEpochToPlusOneDate(new Date(valuationResult.inputData[0].valuationDate));
+          return '';
+        })
+
+        hbs.registerHelper('sharePriceDataF30', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const first40Elements = sharePriceDetails.slice(0, 30);
+          return first40Elements
+        })
+
+        hbs.registerHelper('sharePriceDataF10', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastTenDays){
+             sharePriceDetails = response.valuationData.sharePriceLastTenDays;
+            }
+          })
+          return sharePriceDetails;
+        })
+        
+        hbs.registerHelper('sharePriceDataN40', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const next40Elements = sharePriceDetails.slice(30, 70);
+          return next40Elements
+        })
+        hbs.registerHelper('sharePriceDataN40Length', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const next40Elements = sharePriceDetails.slice(40, 80);
+          return next40Elements?.length ? true : false;
+        })
+        hbs.registerHelper('sharePriceDataRemaining', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const remainingElements = sharePriceDetails.slice(70);
+          return remainingElements
+        })
+        hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const remainingElements = sharePriceDetails.slice(80);
+          return remainingElements?.length ? true : false;
+        })
+
+        hbs.registerHelper('updateDateFormat',(val)=>{
+          return formatDateHyphenToDDMMYYYY(val);
         })
       }  
 
