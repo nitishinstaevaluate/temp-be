@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import * as converter from 'number-to-words'
 import { NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
 import { formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { getRequestAuth } from "src/excelFileServices/common.methods";
+import { convertToNumberOrZero, getRequestAuth } from "src/excelFileServices/common.methods";
 import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
 
 @Injectable()
@@ -70,8 +70,14 @@ export class mandateReportService {
             })
 
             hbs.registerHelper('totalFeesInWords',()=>{
-                if(mandateDetails.totalFees)
-                    return `Rupees ${converter.toWords(+mandateDetails.totalFees)} Only`;;
+                if(mandateDetails.totalFees){
+
+                  let formattedNumber = convertToNumberOrZero(mandateDetails.totalFees) || 0;
+                  if(`${formattedNumber}`.includes('.')){
+                      return `${this.convertToIndianCurrency(formattedNumber ? (+formattedNumber)?.toFixed(2) : 0)} Only`;
+                  }
+                  return `Rupees ${converter.toWords(formattedNumber)} Only`;
+                }
                 return '';
             })
 
@@ -258,4 +264,22 @@ export class mandateReportService {
         const roles = await KCGuard.fetchUserRoles(getRequestAuth(headers)).toPromise();
         return { roles };
       }
+
+      convertToIndianCurrency(number) {
+        const [rupees, paise] = number.split('.');
+        
+        let rupeesInWords = converter.toWords(rupees);
+        
+        let paiseInWords = '';
+        if (paise) {
+            paiseInWords = 'and ' + converter.toWords(paise) + ' paise';
+        }
+        
+        let result = 'Rupees ' + rupeesInWords;
+        if (paise) {
+            result += ' ' + paiseInWords;
+        }
+        
+        return result;
+    }
 }
