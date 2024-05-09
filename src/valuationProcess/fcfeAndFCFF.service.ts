@@ -25,7 +25,6 @@ import {
   fcffTerminalValue,
   interestAdjustedTaxesWithStubPeriod,
   changeInNcaFromAssessment,
-  versionTwoInterestAdjustedTaxesWithStubPeriod,
   netOperatingAssetsFromAssessment,
   // differenceAssetsLiabilities
 } from '../excelFileServices/fcfeAndFCFF.method';
@@ -754,23 +753,12 @@ export class FCFEAndFCFFService {
               pat  = await this.recalculatePat(counter, worksheet1);
               depAndAmortisation = await this.recalculateDepnAndAmortisation(counter, worksheet1);
               otherNonCashItems = await this.recalculateOtherNonCashItems(counter, worksheet1);
+              addInterestAdjTaxes = await interestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
             }
             else if(counter !== yearLength){
               pat = await GetPAT(counter+1, worksheet1);
               depAndAmortisation = await DepAndAmortisation(counter+1, worksheet1);
               otherNonCashItems = await OtherNonCashItemsMethodNext(counter+1, worksheet1);
-            }
-
-            // Please verify this stub value, stub is working,but not sure about the value 
-            if(aggregatePayload.isStubRequired){
-              if(counter === 0){
-                addInterestAdjTaxes = await interestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
-              }
-              else{
-                addInterestAdjTaxes = await versionTwoInterestAdjustedTaxesWithStubPeriod(counter, worksheet1, aggregatePayload?.inputs?.taxRate);
-              }
-            }
-            else{
               addInterestAdjTaxes = await interestAdjustedTaxes(counter, worksheet1, aggregatePayload?.inputs?.taxRate)
             }
 
