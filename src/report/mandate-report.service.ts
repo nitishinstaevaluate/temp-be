@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import * as converter from 'number-to-words'
 import { NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
 import { formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { getRequestAuth } from "src/excelFileServices/common.methods";
+import { convertToNumberOrZero, getRequestAuth } from "src/excelFileServices/common.methods";
 import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
 
 @Injectable()
@@ -23,7 +23,7 @@ export class mandateReportService {
             let pdfFilePath = path.join(process.cwd(), 'pdf', `${mandateDetails.data.companyName}.pdf`);
 
         
-            await this.loadMandateHelpers(mandateDetails.data);
+            await this.loadMandateHelpers(mandateDetails.data, roles);
         
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
             const template = hbs.compile(htmlContent);
@@ -49,7 +49,7 @@ export class mandateReportService {
         }
     }
 
-    async loadMandateHelpers(mandateDetails){
+    async loadMandateHelpers(mandateDetails, roles){
         try{
             hbs.registerHelper('companyAddress',()=>{
                 if(mandateDetails.companyAddress)
@@ -70,8 +70,14 @@ export class mandateReportService {
             })
 
             hbs.registerHelper('totalFeesInWords',()=>{
-                if(mandateDetails.totalFees)
-                    return `Rupees ${converter.toWords(+mandateDetails.totalFees)} Only`;;
+                if(mandateDetails.totalFees){
+
+                  let formattedNumber = convertToNumberOrZero(mandateDetails.totalFees) || 0;
+                  if(`${formattedNumber}`.includes('.')){
+                      return `${this.convertToIndianCurrency(formattedNumber ? (+formattedNumber)?.toFixed(2) : 0)} Only`;
+                  }
+                  return `Rupees ${converter.toWords(formattedNumber)} Only`;
+                }
                 return '';
             })
 
@@ -91,6 +97,25 @@ export class mandateReportService {
                 if(mandateDetails.valuedEntity)
                     return mandateDetails.valuedEntity;
                 return '';
+            })
+
+            hbs.registerHelper('ifMB01',()=>{
+                if(roles?.length)
+                    return roles.some(indRole => indRole?.name === 'merchant-banker-test');
+                return '';
+            })
+
+            hbs.registerHelper('sectionAsPerIncomeTax',()=>{
+                if(mandateDetails.purposeOfReport){
+                  const purposeOfReport = mandateDetails?.purposeOfReport || [];
+                  const section = mandateDetails?.section || [];
+                  if(purposeOfReport.includes('ita1961') && section.includes('56(2)(viib) - Issue of Shares by a Closely Held Company to residents')){
+                    return 'issuance'
+                  }
+                  else{
+                    return 'transfer';
+                  }
+                }
             })
 
             hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
@@ -163,8 +188,7 @@ export class mandateReportService {
           </tr>
           <tr>
           <td align="center">
-            <p style="font-size:13px;padding-bottom:0px;line-height:140%;margin-top:0px;margin-bottom:0px">
-              
+            <p style="font-size:13px;padding-bottom:0px;line-height:140%;margin-top:0px;margin-bottom:0px;">
               <span style="font-size:14px;color:#4e4e4e;">
                 NAVIGANT CORPORATE ADVISORS LIMITED <br>
               </span>
@@ -176,15 +200,12 @@ export class mandateReportService {
               <span style="font-weight:bold;"> 
                 Email: 
               </span>
-              <a href="navigant@navigantcorp.com;" target="_blank">navigant@navigantcorp.com;</a> 
-              <span style="font-weight:bold;"> 
-                Website: 
-              </span>
-              <a href="www.navigantcorp.com;" target="_blank">www.navigantcorp.com</a>
-              <span style="color:blue;">
-                (CIN: L67190MH2012PLC231304)
-              </span>
+              <a href="navigant@navigantcorp.com;" target="_blank" style="text-decoration: none;">navigant@navigantcorp.com;</a>
+              <span style="font-weight:bold;">Website: </span>
+              <a href="www.navigantcorp.com;" target="_blank" style="text-decoration: none;">www.navigantcorp.com</a>
+              <span style="color:blue;">(CIN: L67190MH2012PLC231304)</span>
             </p>
+            <hr style="width:90%;color:#c6c6c6;margin-top:0.5%">
           </td>  
           </tr>
         </table>`:
@@ -243,4 +264,22 @@ export class mandateReportService {
         const roles = await KCGuard.fetchUserRoles(getRequestAuth(headers)).toPromise();
         return { roles };
       }
+
+      convertToIndianCurrency(number) {
+        const [rupees, paise] = number.split('.');
+        
+        let rupeesInWords = converter.toWords(rupees);
+        
+        let paiseInWords = '';
+        if (paise) {
+            paiseInWords = 'and ' + converter.toWords(paise) + ' paise';
+        }
+        
+        let result = 'Rupees ' + rupeesInWords;
+        if (paise) {
+            result += ' ' + paiseInWords;
+        }
+        
+        return result;
+    }
 }

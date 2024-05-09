@@ -10,61 +10,15 @@ import { computedTotalYears, formatDate, formatPositiveAndNegativeValues, transf
 import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
 import * as xlsx from 'xlsx';
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
-import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
+import { convertToNumberOrZero, getRequestAuth } from "src/excelFileServices/common.methods";
+import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
 
 @Injectable()
 export class mrlReportService {
     constructor(private utilService: utilsService,
       private processStateManagerService: ProcessStatusManagerService,
       private thirdPartyApiAggregateService: thirdpartyApiAggregateService){}
-    async generateMrlReport(id, res){
-        try{
-            const applicationData:any = await this.processStateManagerService.fetchProcess(id);
-            if(!applicationData.status) 
-              throw new NotFoundException({
-                  statusCode: HttpStatus.NOT_FOUND,
-                  message: 'Application data not found, check processId',
-                  error: 'Not Found',
-                }).getResponse();
-
-            const stageOneData = applicationData.stateInfo.firstStageInput;
-            const computeExcelSheet = await this.excelSheetComputation(stageOneData);
-            const excelSheetId = this.getExcelSheetId(stageOneData);
-            const workbook = await this.readFile(excelSheetId); 
-            const computedTotalYear = await computedTotalYears(workbook);
-              
-
-            let htmlFilePath = path.join(process.cwd(), 'html-template', `management-representation-letter.html`);
-            let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
-
-        
-           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear);
-        
-            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-            const template = hbs.compile(htmlContent);
-            const html = template(applicationData.stateInfo);
-        
-            let pdf =  await this.createpdf(html, pdfFilePath);
-
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="='Mrl'.pdf"`);
-            res.send(pdf);
-    
-            return {
-                msg: "PDF download Success",
-                status: true,
-            };
-        }
-        catch(error){
-            return {
-                error:error,
-                status:false,
-                msg:"Mrl service report generation failed"
-            }
-        }
-    }
-
-    async generateMrlDocxReport(id, res){
+    async generateMrlReport(id, res, format, headers){
         try{
             const applicationData:any = await this.processStateManagerService.fetchProcess(id);
             if(!applicationData.status) 
@@ -84,7 +38,6 @@ export class mrlReportService {
             let htmlFilePath = path.join(process.cwd(), 'html-template', `management-representation-letter.html`);
             let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
             let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
-            
         
            await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear);
         
@@ -92,17 +45,30 @@ export class mrlReportService {
             const template = hbs.compile(htmlContent);
             const html = template(applicationData.stateInfo);
         
-            await this.createpdf(html, pdfFilePath);
-            await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+            let pdf =  await this.createpdf(html, pdfFilePath);
+
+            let formatExtentionHeader,formatTypeHeader, attachmentHeader;
+            if(format === 'DOCX'){
+              await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
             
-            let wordBuffer = fs.readFileSync(wordFilePath);
-            
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-            res.setHeader('Content-Disposition', 'attachment; filename="document.docx"');
-            res.send(wordBuffer);
+              let wordBuffer = fs.readFileSync(wordFilePath);
+              
+              formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+              formatExtentionHeader = `attachment; filename="='Mrl'.docx"`;
+              attachmentHeader = wordBuffer;
+            }
+            else{
+              formatTypeHeader = 'application/pdf';
+              formatExtentionHeader = `attachment; filename="='Mrl'.pdf"`;
+              attachmentHeader = pdf;
+            }
+
+            res.setHeader('Content-Type', formatTypeHeader);
+            res.setHeader('Content-Disposition', formatExtentionHeader);
+            res.send(attachmentHeader);
     
             return {
-                msg: "PDF download Success",
+                msg: "Mrl service report download Success",
                 status: true,
             };
         }
@@ -388,49 +354,12 @@ export class mrlReportService {
         }
       }
 
-      async generateElevenUaPdfMrl(id, res){
+      async generateElevenUaMrl(id, res, format, headers){
         try{
           const applicationData:any = await this.processStateManagerService.fetchProcess(id);
-          if(!applicationData.status) 
-            throw new NotFoundException({
-                statusCode: HttpStatus.NOT_FOUND,
-                message: 'Application data not found, check processId',
-                error: 'Not Found',
-              }).getResponse();
 
-          let htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua-mrl.html`);
-          let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
+          const { roles } = await this.fetchUserInfo(headers);
 
-      
-          await this.loadElevenUaMrlHelpers(applicationData.stateInfo);
-      
-          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-          const template = hbs.compile(htmlContent);
-          const html = template(applicationData.stateInfo);
-      
-          let pdf =  await this.createpdf(html, pdfFilePath);
-
-          res.setHeader('Content-Type', 'application/pdf');
-          res.setHeader('Content-Disposition', `attachment; filename="='Mrl'.pdf"`);
-          res.send(pdf);
-  
-          return {
-              msg: "PDF download Success",
-              status: true,
-          };
-        }
-        catch(error){
-          return {
-            error:error,
-            status:false,
-            msg:"Rule eleven UA mrl report generation failed"
-          }
-        }
-      }
-
-      async generateElevenUaDocxMrl(id, res){
-        try{
-          const applicationData:any = await this.processStateManagerService.fetchProcess(id);
           if(!applicationData.status) 
             throw new NotFoundException({
                 statusCode: HttpStatus.NOT_FOUND,
@@ -442,23 +371,36 @@ export class mrlReportService {
           let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
           let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
       
-          await this.loadElevenUaMrlHelpers(applicationData.stateInfo);
+          await this.loadElevenUaMrlHelpers(applicationData.stateInfo, roles);
       
           const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
           const template = hbs.compile(htmlContent);
           const html = template(applicationData.stateInfo);
       
-          await this.createpdf(html, pdfFilePath);
-          await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+          let pdf =  await this.createpdf(html, pdfFilePath);
+
+          let formatExtentionHeader,formatTypeHeader, attachmentHeader;
+          if(format === 'DOCX'){
+            await this.thirdPartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
           
-          let wordBuffer = fs.readFileSync(wordFilePath);
-          
-          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-          res.setHeader('Content-Disposition', 'attachment; filename="document.docx"');
-          res.send(wordBuffer);
+            let wordBuffer = fs.readFileSync(wordFilePath);
+            
+            formatTypeHeader = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+            formatExtentionHeader = `attachment; filename="='Mrl'.docx"`;
+            attachmentHeader = wordBuffer;
+          }
+          else{
+            formatTypeHeader = 'application/pdf';
+            formatExtentionHeader = `attachment; filename="='Mrl'.pdf"`;
+            attachmentHeader = pdf;
+          }
+
+          res.setHeader('Content-Type', formatTypeHeader);
+          res.setHeader('Content-Disposition', formatExtentionHeader);
+          res.send(attachmentHeader);
   
           return {
-              msg: "Docx download Success",
+              msg: `Rule eleven UA mrl download Success`,
               status: true,
           };
         }
@@ -471,7 +413,7 @@ export class mrlReportService {
         }
       }
 
-      async loadElevenUaMrlHelpers(processStateInfo){
+      async loadElevenUaMrlHelpers(processStateInfo, roles){
         try{
           hbs.registerHelper('companyInfo', ()=>{
             if(processStateInfo.sixthStageInput?.companyInfo)
@@ -500,26 +442,24 @@ export class mrlReportService {
             return '';
           })
 
+          hbs.registerHelper('ifMB01',()=>{
+            if(roles?.length)
+                return roles.some(indRole => indRole?.name === 'merchant-banker-test');
+            return false;
+          })
+
           hbs.registerHelper('phaseValue',()=>{
             let phaseValue = '-';
-            if(processStateInfo.thirdStageInput){
-              processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
-                if(stateThreeDetails.model === MODEL[6]){
-                  phaseValue = formatPositiveAndNegativeValues(stateThreeDetails?.phaseValue)
-                }
-              })
+            if(processStateInfo.firstStageInput){
+              phaseValue = processStateInfo.firstStageInput?.faceValue;
             }
             return `${phaseValue}`.includes('-') ? '-' : `${phaseValue}/-` ;
           })
 
           hbs.registerHelper('multiplyPhaseValueAndShares',()=>{
             let phaseValue = 0;
-            if(processStateInfo.thirdStageInput){
-              processStateInfo.thirdStageInput.map((stateThreeDetails)=>{
-                if(stateThreeDetails.model === MODEL[6]){
-                  phaseValue = stateThreeDetails?.phaseValue;
-                }
-              })
+            if(processStateInfo.firstStageInput){
+              phaseValue = processStateInfo.firstStageInput?.faceValue;
             }
             const noOfShares = processStateInfo.firstStageInput.outstandingShares
             const value =  formatPositiveAndNegativeValues(convertToNumberOrZero(phaseValue) * convertToNumberOrZero(noOfShares));
@@ -566,5 +506,11 @@ export class mrlReportService {
             msg:"Rule Eleven Ua helper failed"
           }
         }
+      }
+
+      async fetchUserInfo(headers){
+        const KCGuard = new KeyCloakAuthGuard();
+        const roles = await KCGuard.fetchUserRoles(getRequestAuth(headers)).toPromise();
+        return { roles };
       }
 }
