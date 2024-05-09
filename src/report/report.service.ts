@@ -123,7 +123,7 @@ export class ReportService {
           }
   
           for await (let data of valuationResult.modelResults) {
-              if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+              if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]) {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
@@ -225,7 +225,7 @@ export class ReportService {
     }
 
     for await (let data of valuationResult.modelResults) {
-        if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+        if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]) {
             transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
         }
     }
