@@ -123,7 +123,7 @@ export class ReportService {
           }
   
           for await (let data of valuationResult.modelResults) {
-              if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+              if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]) {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
@@ -225,7 +225,7 @@ export class ReportService {
     }
 
     for await (let data of valuationResult.modelResults) {
-        if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]) {
+        if (data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]) {
             transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
         }
     }
@@ -3423,9 +3423,9 @@ export class ReportService {
     }
   }
 
-  async mrlReport(stateId, res){
+  async mrlReport(stateId, res, format, headers){
     try{
-      return await this.mrlReportService.generateMrlReport(stateId, res);   
+      return await this.mrlReportService.generateMrlReport(stateId, res, format, headers);   
     }
     catch(error){
       return {
@@ -3435,9 +3435,10 @@ export class ReportService {
       }
     }
   }
-  async elevenUaMrlReport(stateId, res){
+  
+  async elevenUaMrlReport(stateId, res, format, headers){
     try{
-      return await this.mrlReportService.generateElevenUaPdfMrl(stateId, res);   
+      return await this.mrlReportService.generateElevenUaMrl(stateId, res, format, headers);   
     }
     catch(error){
       return {
@@ -3448,31 +3449,6 @@ export class ReportService {
     }
   }
 
-  async mrlDocxReport(stateId, res){
-    try{
-      return await this.mrlReportService.generateMrlDocxReport(stateId, res);   
-    }
-    catch(error){
-      return {
-        error:error,
-        msg:"report generation failed",
-        status:false
-      }
-    }
-  }
-
-  async elevenUaMrlDocxReport(stateId, res){
-    try{
-      return await this.mrlReportService.generateElevenUaDocxMrl(stateId, res);   
-    }
-    catch(error){
-      return {
-        error:error,
-        msg:"mrl generation failed",
-        status:false
-      }
-    }
-  }
 
   async fetchBetaWorking(request, id, betaType){
     try{

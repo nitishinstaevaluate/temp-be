@@ -416,17 +416,6 @@ export async function interestAdjustedTaxesWithStubPeriod(i: number, worksheet1:
   return addInterestAdjustedTaxes;
 
 }
-export async function versionTwoInterestAdjustedTaxesWithStubPeriod(i: number, worksheet1: any, taxRate: string) {
-  // =+'P&L'!C28*(1-Sheet2!$D$7)
-  let financeCost = await getCellValue(
-    worksheet1,
-    `${columnsList[i + 1] + sheet1_PLObj.financeCostsRow}`,
-  );
-
-  const addInterestAdjustedTaxes = financeCost * (1 - parseFloat(taxRate) / 100);
-  return addInterestAdjustedTaxes;
-
-}
 
 export async function changeInBorrowings(i: number, worksheet2: any) {
   // =+BS!C26+BS!C36+BS!C27-BS!B26-BS!B27-BS!B36

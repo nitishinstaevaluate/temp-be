@@ -230,7 +230,7 @@ export class sebiReportService {
           hbs.registerHelper('sharePriceDataF40', ()=>{
             let sharePriceDetails = [];
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
                sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
               }
             })
@@ -241,7 +241,7 @@ export class sebiReportService {
           hbs.registerHelper('sharePriceDataF10', ()=>{
             let sharePriceDetails = [];
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.sharePriceLastTenDays){
                sharePriceDetails = response.valuationData.sharePriceLastTenDays;
               }
             })
@@ -251,7 +251,7 @@ export class sebiReportService {
           hbs.registerHelper('sharePriceDataN40', ()=>{
             let sharePriceDetails = [];
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
                sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
               }
             })
@@ -261,7 +261,7 @@ export class sebiReportService {
           hbs.registerHelper('sharePriceDataN40Length', ()=>{
             let sharePriceDetails = [];
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
                sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
               }
             })
@@ -271,7 +271,7 @@ export class sebiReportService {
           hbs.registerHelper('sharePriceDataRemaining', ()=>{
             let sharePriceDetails = [];
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
                sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
               }
             })
@@ -281,7 +281,7 @@ export class sebiReportService {
           hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
             let sharePriceDetails = [];
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
                sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
               }
             })
@@ -420,7 +420,7 @@ export class sebiReportService {
           hbs.registerHelper('vwap90Days',()=>{
             let vwapLastNinetyDays = 0;
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.vwapLastNinetyDays){
                 vwapLastNinetyDays = response.valuationData.vwapLastNinetyDays;
               }
             })
@@ -430,7 +430,7 @@ export class sebiReportService {
           hbs.registerHelper('vwap10Days',()=>{
             let vwapLastTenDays = 0;
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response.valuationData?.vwapLastTenDays){
                 vwapLastTenDays = response.valuationData.vwapLastTenDays;
               }
             })
@@ -440,7 +440,7 @@ export class sebiReportService {
           hbs.registerHelper('floorPriceVwap',()=>{
             let valuePerShare = 0;
             valuationResult.modelResults.map((response)=>{
-              if(response.model === MODEL[7]){
+              if(response.model === MODEL[7] && response?.valuation){
                 valuePerShare = response?.valuation;
               }
             })
@@ -2111,7 +2111,7 @@ export class sebiReportService {
                   }
                   if (
                     response.model === models && 
-                    models !== 'NAV' &&
+                    (models === MODEL[0] || models === MODEL[1]) &&
                     model === 'INCOME_APPROACH'
                   ) {
                     const formattedNumber = response?.valuationData[0]?.valuePerShare;
@@ -2119,7 +2119,7 @@ export class sebiReportService {
                   }
                   if (
                     response.model === models && 
-                    models === 'NAV' && 
+                    models === MODEL[5] && 
                     model === 'NET_ASSET_VALUE_APPROACH'
                   ) {
                     const formattedNumber = response?.valuationData?.valuePerShare?.bookValue;

@@ -145,34 +145,22 @@ export class ReportController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('mrl-report/:processStateId')
+  @Get('mrl-report/:processStateId/:type')
   async generateMrlReport(
   @Param('processStateId') processStateId : string,
-  @Res() res) {
-    return await this.reportService.mrlReport(processStateId, res);
+  @Param('type') formatType: string,
+  @Res() res,
+  @Headers() headers: Headers) {
+    return await this.reportService.mrlReport(processStateId, res, formatType, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('mrl-docx-report/:processStateId')
-  async generateMrlDocxReport(
-  @Param('processStateId') processStateId : string,
-  @Res() res) {
-    return await this.reportService.mrlDocxReport(processStateId, res);
-  }
-
-  @UseGuards(KeyCloakAuthGuard)
-  @Get('rule-eleven-mrl-report/:processStateId')
+  @Get('rule-eleven-mrl-report/:processStateId/:type')
   async generateElevenUaMrlPdfReport(
   @Param('processStateId') processStateId : string,
-  @Res() res) {
-    return await this.reportService.elevenUaMrlReport(processStateId, res);
-  }
-
-  @UseGuards(KeyCloakAuthGuard)
-  @Get('rule-eleven-mrl-docx-report/:processStateId')
-  async generateElevenUaMrlDocxReport(
-  @Param('processStateId') processStateId : string,
-  @Res() res) {
-    return await this.reportService.elevenUaMrlDocxReport(processStateId, res);
+  @Param('type') formatType: string,
+  @Res() res,
+  @Headers() headers: Headers) {
+    return await this.reportService.elevenUaMrlReport(processStateId, res, formatType, headers );
   }
 }
