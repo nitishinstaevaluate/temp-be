@@ -545,7 +545,7 @@
     <div style="page-break-before: always;padding-left: 5%;padding-right: 5%;padding-top: 6%;">
         <p style="padding-top: 3pt;text-indent: 0pt;text-align: justify;line-height: 190%;"><span class="h1">Valuation of
             {{natureOfInstrument}} of </span><span class="s1" >{{companyName}}</span>
-            <span class="h1"> for compliance with </span>
+            <span class="h1"> for compliance with Regulation </span>
                 <span class="h1"> {{reportSection}}
             as amended by Securities and Exchange Board of India (Issue of Capital and
             Disclosure Requirements) (Amendment) Regulations, 2022
@@ -1229,16 +1229,19 @@
     <!-- page 8 starts -->
     <div style="page-break-before: always;padding-left: 8%;padding-right: 7%;padding-top: 6%;">
         <ul id="l2">
+            {{#if (expectedMarketReturn)}}
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="s11">
                     </span><span class="p">Market Return is estimated by using </span><span class="s3">{{expectedMarketReturn}} Index</span><span class="p"> as on valuation date
-                        since its inception (Source: BSE 500 Data).</span>
+                        <!-- since its inception  -->                       
+                        (Source: {{expectedMarketReturnSource}} Data).</span>
                     </p>
             </li>
+            {{/if}}
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;"><span class="p">Beta
                         of the company is considered as the </span><span class="s3">stock
-                        beta/average beta of the comparable companies.</span>
+                        beta of the comparable companies.</span>
                         {{#if (isBetaFromAd)}}
                         (Source: Aswath Damodaran Database)
                         {{else}}
@@ -1256,8 +1259,14 @@
             <li data-list-text="●">
                 <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">
                     <span class="p">
-                        I have adjusted PV of Free cash flow with certain items like investments and cash and cash equivalents to arrive at the
-                        equity value of the Company.
+                        <!-- I have adjusted PV of Free cash flow with certain items like investments and cash and cash equivalents to arrive at the
+                        equity value of the Company. -->
+                        We have adjusted PV of Free cash flow with certain items like investments and cash and cash equivalents to 
+                        arrive at the equity value of the Company as on {{provisionalDate}}. 
+                        {{#ifStub}}
+                        Further, 
+                        we have made stub period adjustments to arrive at the equity value of the Company as on {{strdate}}.
+                        {{/ifStub}}  
                     </span>
                 </p>
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1381,7 +1390,10 @@
         <p style="padding-top: 11pt;text-align: justify;line-height: 140%;"><span class="p">Since,
             </span><span class="s3" >{{companyName}}</span><span class="p"> is a listed company
                 and equity shares of </span><span class="s3" >{{companyName}}</span>
-                <span class="p"> are traded on BSE and NSE over a reasonable period, we have considered Market Price method to determine the value of equity
+                <span class="p"> 
+                    <!-- are traded on BSE and NSE over a reasonable period, we  -->
+                    are listed on BSE and are frequently traded, therefore we   
+                    have considered Market Price method to determine the value of equity
                     shares of {{companyName}}. We
                     have been informed by the Management that the relevant date as per the SEBI ICDR Regulations, for
                     the purpose of calculation of the price per share of {{companyName}} for the proposed preferential issue of
@@ -1414,7 +1426,7 @@
                 </li>
                 <li data-list-text="●">
                     <p style="padding-top: 11pt;text-align: justify;line-height: 150%;text-indent: -13pt;padding-left: 13pt;">Management has
-                        confirmed to us that there are four listed comparable companies appropriate to the business profile,
+                        confirmed to us that there are {{totalNumberOfCompaniesSelected}} listed comparable companies appropriate to the business profile,
                         size, etc. of the Company. We have therefore considered CCM method for the said Valuation.</p>
                     <p style="padding-top: 11pt;text-align: justify;line-height: 150%;padding-left: 13pt;"><span class="p">For
                             arriving at the value per equity share of <span style="text-transform: capitalize;">{{companyName}}</span> and considering valuation inputs available for
