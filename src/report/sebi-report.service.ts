@@ -7,7 +7,7 @@ import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
 import { convertEpochToPlusOneDate, convertToRomanNumeral, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
+import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { ReportService } from "./report.service";
 import { terminalValueWorkingService } from "src/valuationProcess/terminal-value-working.service";
@@ -294,7 +294,15 @@ export class sebiReportService {
               return formatDate(new Date(valuationResult.inputData[0].valuationDate));
             return '';
           })
-          
+
+          hbs.registerHelper('provisionalDate',()=>{
+            const provisionalDate = formatDate(new Date(valuationResult.provisionalDate));
+
+            if(provisionalDate)
+              return provisionalDate;
+            return '';
+          })
+
           hbs.registerHelper('relevantDate',()=>{
             if(valuationResult.inputData[0].valuationDate)
               return convertEpochToPlusOneDate(new Date(valuationResult.inputData[0].valuationDate));
@@ -535,9 +543,25 @@ export class sebiReportService {
           })
           
           hbs.registerHelper('expectedMarketReturn',()=>{
-            if(valuationResult.inputData[0])
-              return EXPECTED_MARKET_RETURN_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`];
-            return '';
+            if(valuationResult.inputData[0]?.expMarketReturnSubType){
+              return EXPECTED_MARKET_RETURN_TYPE[`${valuationResult.inputData[0].expMarketReturnSubType}`];
+            }
+            else{
+              return '';
+            }
+          })
+          hbs.registerHelper('expectedMarketReturnSource',()=>{
+            const inputData = valuationResult.inputData[0];
+            const expectedMarketReturnType = valuationResult.inputData[0]?.expMarketReturnType; 
+            if(inputData && expectedMarketReturnType !== 'Analyst_Consensus_Estimates'){
+              return EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0].expMarketReturnType}`]?.label;
+            }
+            else if(inputData && expectedMarketReturnType === 'Analyst_Consensus_Estimates'){
+              return 'Analyst Consensus Estimates';
+            }
+            else {
+              return '';
+            }
           })
 
           hbs.registerHelper('expMarketReturn',()=>{

@@ -25,6 +25,9 @@ import {
     IndianTreasuryYieldSchema,
     HistoricalBSE500ReturnsSchema,
     PurposeOfReportSchema,
+    HistoricalBankNiftyReturnsSchema,
+    HistoricalSensex30ReturnsSchema,
+    HistoricalNifty50ReturnsSchema,
 } from './schema/data-references.schema';
 
 @Module({
@@ -36,6 +39,9 @@ import {
           { name: 'historicalReturns', schema : HistoricalReturnsSchema},
           { name: 'indianTreasuryYield', schema : IndianTreasuryYieldSchema},
           { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
+          { name: 'historicalBankNiftyReturns', schema : HistoricalBankNiftyReturnsSchema},
+          { name: 'historicalSensex30Returns', schema : HistoricalSensex30ReturnsSchema},
+          { name: 'historicalNifty50Returns', schema : HistoricalNifty50ReturnsSchema},
           { name: 'purposeOfReport', schema : PurposeOfReportSchema}
         ]),
       ],

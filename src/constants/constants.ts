@@ -2049,6 +2049,18 @@ export const EXPECTED_MARKET_RETURN_TYPE = {
   BSE500_Since_10_years:'BSE Since 10 Years',
   BSE500_Since_15_years:'BSE Since 15 Years',
   Analyst_Consensus_Estimates:'Analyst Consensus Estimates',
+  BSESENSEX30_Since_Inception:'BSE Sensex 30 Since Inception',
+  BSESENSEX30_Since_5_years:'BSE Sensex 30 Since 5 Years',
+  BSESENSEX30_Since_10_years:'BSE Sensex 30 Since 10 Years',
+  BSESENSEX30_Since_15_years:'BSE Sensex 30 Since 15 Years',
+  NIFTY50_Since_Inception:'Nifty 50 Since Inception',
+  NIFTY50_Since_5_years:'Nifty 50 Since 5 Years',
+  NIFTY50_Since_10_years:'Nifty 50 Since 10 Years',
+  NIFTY50_Since_15_years:'Nifty 50 Since 15 Years',
+  BANK_NIFTY_Since_Inception:'Bank Nifty Since Inception',
+  BANK_NIFTY_Since_5_years:'Bank Nifty Since 5 Years',
+  BANK_NIFTY_Since_10_years:'Bank Nifty Since 10 Years',
+  BANK_NIFTY_Since_15_years:'Bank Nifty Since 15 Years'
 }
 
 export const ALL_MODELS = {
@@ -2060,4 +2072,31 @@ export const ALL_MODELS = {
   Market_Price:'Market Price',
   Excess_Earnings:"Excess Earning",
   ruleElevenUa:"Rule Eleven UA",
+}
+
+export const EXPECTED_MARKET_RETURN_HISTORICAL_TYPE = {
+  BSE_SENSEX30: {
+    value:'BSE_SENSEX30',
+    label:'BSE Sensex 30',
+    historicalDate:'1979-04-01',
+    historicalValue:100
+},
+  BSE500: {
+    value:'BSE500',
+    label:'BSE 500',
+    historicalDate:'1999-02-01',
+    historicalValue:1000
+  },
+  NIFTY50:{
+    value:'NIFTY50',
+    label:'Nifty 50',
+    historicalDate:'1995-11-03',
+    historicalValue:1000
+  },
+  BANK_NIFTY:{
+    value:'BANK_NIFTY',
+    label:'Bank Nifty',
+    historicalDate:'2000-01-01',
+    historicalValue:1000
+  }
 }

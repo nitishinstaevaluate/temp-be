@@ -4,7 +4,7 @@ import { CalculationService } from './calculation.service';
 import { LoggerModule } from 'src/loggerService/logger.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RiskFreeRateSchema } from 'src/masters/schema/masters.schema';
-import { HistoricalReturnsSchema, HistoricalBSE500ReturnsSchema } from 'src/data-references/schema/data-references.schema';
+import { HistoricalReturnsSchema, HistoricalBSE500ReturnsSchema, HistoricalBankNiftyReturnsSchema, HistoricalNifty50ReturnsSchema, HistoricalSensex30ReturnsSchema } from 'src/data-references/schema/data-references.schema';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 
@@ -12,7 +12,10 @@ import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdp
   imports:[LoggerModule,
   MongooseModule.forFeature([ { name: 'riskFreeRate', schema: RiskFreeRateSchema },
   { name: 'historicalReturns', schema : HistoricalReturnsSchema},
-  { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema}])
+  { name: 'historicalBSE500Returns', schema : HistoricalBSE500ReturnsSchema},
+  { name: 'historicalBankNiftyReturns', schema : HistoricalBankNiftyReturnsSchema},
+  { name: 'historicalSensex30Returns', schema : HistoricalSensex30ReturnsSchema},
+  { name: 'historicalNifty50Returns', schema : HistoricalNifty50ReturnsSchema}],)
 ],
   controllers: [CalculationController,WaccController],
   providers: [CalculationService,HistoricalReturnsService, thirdpartyApiAggregateService],

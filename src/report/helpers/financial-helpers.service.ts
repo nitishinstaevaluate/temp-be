@@ -3,6 +3,7 @@ import hbs = require('handlebars');
 import { MODEL } from "src/constants/constants";
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 import { formatPositiveAndNegativeValues } from "../report-common-functions";
+import * as converter from 'number-to-words';
 
 @Injectable()
 export class financialHelperService{
@@ -38,6 +39,13 @@ export class financialHelperService{
             }
           }
           return [];
+        })
+    
+        hbs.registerHelper('totalNumberOfCompaniesSelected',()=>{
+          if(financialData){
+            return converter.toWords(convertToNumberOrZero(financialData.length))
+          }
+          return 'zero';
         })
     
         hbs.registerHelper('fiancialMean',()=>{
