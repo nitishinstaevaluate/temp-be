@@ -1104,11 +1104,18 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('projectedYear',()=>{
-        const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 2][0];
-        console.log(projYear,"projected year")
-        if(transposedData)
+        if(transposedData){
+          const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 1][0];
           return `20${projYear.split('-')[1]}`;
-        return '2028';
+        }
+        return '_______';
+      })
+      hbs.registerHelper('projectionStartYear',()=>{
+          if(transposedData){
+            const projYear = transposedData[0].data.transposedResult[1][0];
+            return `20${projYear.split('-')[1]}`;
+          }
+        return '2024';
       })
       hbs.registerHelper('bse500Value',()=>{
         if(valuationResult.inputData[0])
@@ -2742,6 +2749,12 @@ export class ReportService {
 
     hbs.registerHelper('checkIfValuePerShare',(particular,stringToCheck)=>{
       if(stringToCheck === 'Value per Share' && particular.includes('Value per Share')){
+        return true;
+      }
+      return false;
+    })
+    hbs.registerHelper('dcfModel',()=>{
+      if(valuationResult.inputData[0] && (valuationResult.inputData[0]?.model.includes(MODEL[0]) || valuationResult.inputData[0]?.model.includes(MODEL[1]))){
         return true;
       }
       return false;

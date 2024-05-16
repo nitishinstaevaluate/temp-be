@@ -1217,10 +1217,10 @@
                                 class="p">Management Certified Provisional Financials for the period ended 
                             </span><span class="s2" style=" ">____________</span></p>
                     </li>
-                    {{#modelIncludes 'INCOME_APPROACH'}}
+                    {{#if (dcfModel)}}
                     <li data-list-text="iii.">
                         <p style="padding-left: 33pt;text-indent: -18pt;text-align: left;padding-top: 1%;"><span class="p">Projected
-                                Financial Statements for the years ending March 31, 2023 through March 31, {{projectedYear}}.
+                                Financial Statements for the years ending March 31, {{projectionStartYear}} through March 31, {{projectedYear}}.
                             </span></p>
                     </li>
                     <li data-list-text="iv.">
@@ -1258,7 +1258,7 @@
                             maintained in our files.</p>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     </li>
-                    {{/modelIncludes}}
+                    {{/if}}
                 </ol>
             </li>
            
@@ -1475,15 +1475,16 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p class="s7" style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Net Assets Value
                                 Method – Cost (Asset-Based) Approach</p>
-                            <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">The net asset
-                                value method is an asset-based approach to valuation where the value of the business is based on
-                                the difference between the fair market value of the assets and liabilities of the business. This
-                                method is a sound method for estimating the value of a non-operating business, such as real
-                                estate holding company, or a business that is continuing to generate losses, or which is
-                                expected to be liquidated.</p>
+                                <p style="padding-top: 4pt;padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">The net asset
+                                    value method is an asset-based approach to valuation where the value of the business is based on
+                                    the difference between the fair market value of the assets and liabilities of the business. This
+                                    method is a sound method for estimating the value of a non-operating business, such as real
+                                    estate holding company, or a business that is continuing to generate losses, or which is
+                                    expected to be liquidated.</p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 150%;">Based on the Company’s current
-                                status and nature of the business, we have considered it appropriate to apply the discounted
-                                cash flow method to determine the fair value of the Company. We have explained this valuation
+                                status and nature of the business, we have considered it appropriate to apply the 
+                                <span style="text-transform: capitalize;">{{{displayValuationHeader}}}</span> to determine the fair value of the Company. We have explained this valuation
                                 methodology in detail in the following sections.</p>
                         </li>
                         <li data-list-text="B." style="page-break-before: always;padding-top: 6%;">
@@ -1548,7 +1549,7 @@
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;padding-bottom: 2%;">Discounted Cash Flow Method</h1>
                                     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">Based on the assumptions
-                                        and business plan of the Company for all the divisions shared with us by the Management,
+                                        and business plan of the Company shared with us by the Management,
                                         the fair value of the Company has been determined as per DCF Method as follows:</p>
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     <h1 style="padding-left: 28pt;text-indent: 0pt;text-align: justify;">Free Cash Flows:</h1>
