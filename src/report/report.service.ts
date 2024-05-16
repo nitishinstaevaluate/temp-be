@@ -862,7 +862,7 @@ export class ReportService {
         const inputData = valuationResult.inputData[0];
         const expectedMarketReturnType = valuationResult.inputData[0]?.expMarketReturnType;
         if(inputData && expectedMarketReturnType !== 'Analyst_Consensus_Estimates'){
-          return EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`].label;
+          return EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`]?.label;
         } 
         else if(inputData && expectedMarketReturnType === 'Analyst_Consensus_Estimates'){
           return 'Analyst Consensus Estimates';
@@ -888,7 +888,7 @@ export class ReportService {
         const inputData = valuationResult.inputData[0];
         const expectedMarketReturnType = valuationResult.inputData[0]?.expMarketReturnType;
         if(inputData && expectedMarketReturnType !== 'Analyst_Consensus_Estimates') {
-          return this.formatPositiveAndNegativeValues(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`].historicalValue);
+          return this.formatPositiveAndNegativeValues(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`]?.historicalValue);
         }
         else if(inputData && expectedMarketReturnType === 'Analyst_Consensus_Estimates'){
           return '';
