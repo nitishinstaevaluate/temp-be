@@ -1,4 +1,4 @@
-import { Injectable, Param, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Param, HttpException, HttpStatus, BadRequestException, NotFoundException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
@@ -15,7 +15,12 @@ import {
   IndianTreasuryYieldDocument,
   PurposeOfReportDocument,
   IndianBetaIndustryDocument,
+  HistoricalSensex30ReturnsDocument,
+  HistoricalNifty50ReturnsDocument,
+  HistoricalBankNiftyReturnsDocument,
 } from './schema/data-references.schema';
+import { NOTFOUND } from 'dns';
+import { EXPECTED_MARKET_RETURN_HISTORICAL_TYPE } from 'src/constants/constants';
 
 const date = require('date-and-time');
 
@@ -69,6 +74,12 @@ export class HistoricalReturnsService {
     private readonly historicalReturnsModel: Model<HistoricalReturnsDocument>,
     @InjectModel('historicalBSE500Returns')
     private readonly historicalBSE500ReturnsModel: Model<HistoricalBSE500ReturnsDocument>,
+    @InjectModel('historicalSensex30Returns')
+    private readonly historicalSensex30ReturnsModel: Model<HistoricalSensex30ReturnsDocument>,
+    @InjectModel('historicalNifty50Returns')
+    private readonly historicalNifty50ReturnsModel: Model<HistoricalNifty50ReturnsDocument>,
+    @InjectModel('historicalBankNiftyReturns')
+    private readonly historicalBankNiftyReturnsModel: Model<HistoricalBankNiftyReturnsDocument>,
   ) { }
 
   async getHistoricalReturns(): Promise<HistoricalReturns[]> {
@@ -79,53 +90,123 @@ export class HistoricalReturnsService {
     return await this.historicalReturnsModel.findById(id);
   }
 
-  async getBSE(baseYrs: number, asOnDate: number): Promise<any> {
+  async computeHistoricalReturns(baseYrs: number, asOnDate: number, historicalType: any): Promise<any> {
     try {
 
       // Approach. This will be eiter inception, last 5 yrs, 10 yrs, 15 yrs. Latest date will always be valution date. Hence from that date
       // the previous date will be calculated backwards.
 
-      let previous_year;
-      let open;
-      let close;
       const newAsOnDate = (asOnDate/1000 + 24*60*60) * 1000;
       let valuationDate = new Date(newAsOnDate);
 
-      // It is possible Market was closed on a give date hence we choose the most recent available data from DB/Service. If value is null choose the next best
-      close = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+      let  cagr, openingValue, closingValue;
       if (baseYrs === 0) {
-        open = [
-          {
-            'Open': 0,
-            'Close': 1000,
-          }
-        ];
-        previous_year = new Date('1999-02-01');                 // Move to config file later.
+        ({ cagr, openingValue, closingValue } = await this.calculateCagr(valuationDate, baseYrs, historicalType, true));
       } else {
-        const negativeBase = -baseYrs;
-        previous_year = date.addYears(valuationDate, negativeBase);
-        open = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lte": new Date(previous_year)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+        ({ cagr, openingValue, closingValue } = await this.calculateCagr(valuationDate, baseYrs, historicalType, false));
       }
-      const multiplier = date.subtract(valuationDate, previous_year).toDays() / 365;
-      console.log(multiplier);
-      const factor = close[0].Close / open[0].Close
-      const cagr = ((factor ** (1 / multiplier)) - 1) * 100;
       return {
         result: cagr,
         valuationDate : valuationDate,
-        close: close[0],
-        open: open[0],
-        message: 'BSE 500 historical return CAGR in %',
+        close: closingValue[0],
+        open: openingValue[0],
+        message: `${historicalType} historical return CAGR in %`,
         status: true
       }
     }
     catch (err) {
       return {
         status: false,
-        msg: 'BSE 500 Request Failed',
+        msg: `${historicalType} Request Failed`,
         error: err.message
       }
     }
+  }
+
+  async calculateCagr(valuationDate, baseYrs, historicalType, isSinceInception){
+    try{
+      /**
+       * Closing Date data should always come from the date of valuation 
+      */
+      const closingData = await this.getHistoricalReturn(valuationDate, historicalType);
+
+      // Check if it is since inception (baseYrs = 0)
+      if(isSinceInception){
+        const { openingValue, previousYear } = await this.getInceptionReturn(historicalType);
+    
+        // CAGR operations
+        const multiplier = date.subtract(valuationDate, previousYear).toDays() / 365;
+        const factor = closingData.data[0].Close / openingValue[0].Close
+        const cagr = ((factor ** (1 / multiplier)) - 1) * 100;
+        return { cagr, openingValue, closingValue: closingData.data};
+      }
+      else{
+        // Calculating new  date by subtracting number of base years from valuation date
+        const negativeBase = -baseYrs;
+        const previousYear = date.addYears(valuationDate, negativeBase);
+
+        // Fetching data for the above subtracted date
+        const { data: openingValue} = await this.getHistoricalReturn(previousYear, historicalType);
+
+        // CAGR operations
+        const multiplier = date.subtract(valuationDate, previousYear).toDays() / 365;
+        const factor = closingData.data[0].Close / openingValue[0].Close
+        const cagr = ((factor ** (1 / multiplier)) - 1) * 100;
+        return { cagr, openingValue, closingValue: closingData.data};
+      }
+    }
+    catch(error){
+      return{
+        error,
+        msg:"cagr computation failed",
+        status:false
+      }
+    }
+  }
+
+  async getInceptionReturn(historicalType){
+    let previousYear;
+    let openingValue = [
+      {
+        'Open': 0,
+        'Close': 1000,
+      }
+    ];
+
+    if(historicalType === EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE500.value){
+     previousYear = new Date(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE500.historicalDate);    
+    }
+    else if(historicalType === EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE_SENSEX30.value){
+      openingValue[0]['Close'] = EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE_SENSEX30.historicalValue;
+      previousYear = new Date(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE_SENSEX30.historicalDate);  
+    }
+    else if(historicalType === EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.NIFTY50.value){
+      previousYear = new Date(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.NIFTY50.historicalDate);  
+    }
+    else{   //bank nifty default 
+      previousYear = new Date(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BANK_NIFTY.historicalDate);  
+    }
+    return { openingValue, previousYear };
+  }
+
+  async getHistoricalReturn(valuationDate, historicalType){
+    /**
+    * It is possible Market was closed on a give date hence we choose the most recent available data from DB/Service. If value is null choose the next best
+    */
+    let data;
+    if(historicalType === EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE500.value){
+      data = await this.historicalBSE500ReturnsModel.find({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+    }
+    else if(historicalType === EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.BSE_SENSEX30.value){
+      data = await this.historicalSensex30ReturnsModel.find({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+    }
+    else if(historicalType === EXPECTED_MARKET_RETURN_HISTORICAL_TYPE.NIFTY50.value){
+      data = await this.historicalNifty50ReturnsModel.find({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+    }
+    else{ //bank nifty default 
+      data = await this.historicalBankNiftyReturnsModel.find({ 'Date': { "$lte": new Date(valuationDate)},'Close': { $ne: null }}).sort({ "Date": -1 }).limit(1);
+    }
+    return { data:data || [] };
   }
 
   async getHistoricalBSE500Date(date){

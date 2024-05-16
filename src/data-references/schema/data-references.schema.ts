@@ -259,6 +259,69 @@ export class HistoricalBSE500Returns {
 export type HistoricalBSE500ReturnsDocument = HistoricalBSE500Returns & Document;
 export const HistoricalBSE500ReturnsSchema = SchemaFactory.createForClass(HistoricalBSE500Returns);
 
+@Schema()
+export class HistoricalNifty50Returns {
+  @Prop({ required: true })
+  Date: Date;
+  @Prop({ required: false })
+  High: number ;
+  @Prop({ required: true })
+  Close: number;
+  @Prop({ required: false })
+  Low: number;
+  @Prop({ required: false })
+  Open: number;
+  @Prop({ required: false })
+  'Adj Close': number;
+  @Prop({required: false})
+  Volume: number ;
+
+}
+export type HistoricalNifty50ReturnsDocument = HistoricalBSE500Returns & Document;
+export const HistoricalNifty50ReturnsSchema = SchemaFactory.createForClass(HistoricalNifty50Returns);
+
+@Schema()
+export class HistoricalSensex30Returns {
+  @Prop({ required: true })
+  Date: Date;
+  @Prop({ required: false })
+  High: number ;
+  @Prop({ required: true })
+  Close: number;
+  @Prop({ required: false })
+  Low: number;
+  @Prop({ required: false })
+  Open: number;
+  // @Prop({ required: false })
+  // 'Adj Close': number;
+  @Prop({required: false})
+  Volume: number ;
+
+}
+export type HistoricalSensex30ReturnsDocument = HistoricalBSE500Returns & Document;
+export const HistoricalSensex30ReturnsSchema = SchemaFactory.createForClass(HistoricalSensex30Returns);
+
+@Schema()
+export class HistoricalBankNiftyReturns {
+  @Prop({ required: true })
+  Date: Date;
+  @Prop({ required: false })
+  High: number ;
+  @Prop({ required: true })
+  Close: number;
+  @Prop({ required: false })
+  Low: number;
+  @Prop({ required: false })
+  Open: number;
+  @Prop({ required: false })
+  'Adj Close': number;
+  @Prop({required: false})
+  Volume: number ;
+
+}
+export type HistoricalBankNiftyReturnsDocument = HistoricalBSE500Returns & Document;
+export const HistoricalBankNiftyReturnsSchema = SchemaFactory.createForClass(HistoricalBankNiftyReturns);
+
 //Industry Beta Schema
 @Schema()
 export class IndianTreasuryYield {

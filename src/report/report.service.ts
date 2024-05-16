@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -858,6 +858,45 @@ export class ReportService {
             return valuationResult.inputData[0]?.expMarketReturn.toFixed(2);
         return '';
       })
+      hbs.registerHelper('expMarketReturnType',()=>{
+        const inputData = valuationResult.inputData[0];
+        const expectedMarketReturnType = valuationResult.inputData[0]?.expMarketReturnType;
+        if(inputData && expectedMarketReturnType !== 'Analyst_Consensus_Estimates'){
+          return EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`]?.label;
+        } 
+        else if(inputData && expectedMarketReturnType === 'Analyst_Consensus_Estimates'){
+          return 'Analyst Consensus Estimates';
+        }
+        else {
+          return '';
+        }
+      })
+      hbs.registerHelper('historicalDate',()=>{
+        const inputData = valuationResult.inputData[0];
+        const expectedMarketReturnType = valuationResult.inputData[0]?.expMarketReturnType;
+        if(inputData && expectedMarketReturnType !== 'Analyst_Consensus_Estimates') {
+          return EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`]?.historicalDate;
+        }
+        else if(inputData && expectedMarketReturnType === 'Analyst_Consensus_Estimates'){
+          return this.formatDate(new Date(inputData.valuationDate));
+        }
+        else{
+          return '';
+        }
+      })
+      hbs.registerHelper('historicalBaseValue',()=>{
+        const inputData = valuationResult.inputData[0];
+        const expectedMarketReturnType = valuationResult.inputData[0]?.expMarketReturnType;
+        if(inputData && expectedMarketReturnType !== 'Analyst_Consensus_Estimates') {
+          return this.formatPositiveAndNegativeValues(EXPECTED_MARKET_RETURN_HISTORICAL_TYPE[`${valuationResult.inputData[0]?.expMarketReturnType}`]?.historicalValue);
+        }
+        else if(inputData && expectedMarketReturnType === 'Analyst_Consensus_Estimates'){
+          return '';
+        }
+        else { 
+          return '';
+        }
+      })
       hbs.registerHelper('beta',()=>{
         if(valuationResult.inputData[0]) 
             return valuationResult.inputData[0]?.beta?.toFixed(2);
@@ -1065,15 +1104,22 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('projectedYear',()=>{
-        const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 2][0];
-        console.log(projYear,"projected year")
-        if(transposedData)
+        if(transposedData){
+          const projYear = transposedData[0].data.transposedResult[transposedData[0].data.transposedResult?.length - 1][0];
           return `20${projYear.split('-')[1]}`;
-        return '2028';
+        }
+        return '_______';
+      })
+      hbs.registerHelper('projectionStartYear',()=>{
+          if(transposedData){
+            const projYear = transposedData[0].data.transposedResult[1][0];
+            return `20${projYear.split('-')[1]}`;
+          }
+        return '2024';
       })
       hbs.registerHelper('bse500Value',()=>{
         if(valuationResult.inputData[0])
-          return this.formatPositiveAndNegativeValues(valuationResult.inputData[0]?.bse500Value);
+          return this.formatPositiveAndNegativeValues(valuationResult.inputData[0]?.bse500Value ? valuationResult.inputData[0]?.bse500Value : 0);
         return '-';
       })
       hbs.registerHelper('freeCashFlow',()=>{
@@ -2703,6 +2749,12 @@ export class ReportService {
 
     hbs.registerHelper('checkIfValuePerShare',(particular,stringToCheck)=>{
       if(stringToCheck === 'Value per Share' && particular.includes('Value per Share')){
+        return true;
+      }
+      return false;
+    })
+    hbs.registerHelper('dcfModel',()=>{
+      if(valuationResult.inputData[0] && (valuationResult.inputData[0]?.model.includes(MODEL[0]) || valuationResult.inputData[0]?.model.includes(MODEL[1]))){
         return true;
       }
       return false;

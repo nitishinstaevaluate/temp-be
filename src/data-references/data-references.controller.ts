@@ -100,12 +100,13 @@ export class HistoricalReturnsController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('bse500')
+  @Get('cagr')
   async find(
     @Query('baseYrs') baseYrs: string,
     @Query('asOnDate') asOnDate: string,
+    @Query('type') type: string,
   ): Promise<any> {
-      return this.historicalReturnsService.getBSE(parseInt(baseYrs),parseInt(asOnDate));
+      return this.historicalReturnsService.computeHistoricalReturns(parseInt(baseYrs),parseInt(asOnDate), type);
   }
 
   @UseGuards(KeyCloakAuthGuard)
