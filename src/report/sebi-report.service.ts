@@ -7,7 +7,7 @@ import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
 import { convertEpochToPlusOneDate, convertToRomanNumeral, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
+import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { ReportService } from "./report.service";
 import { terminalValueWorkingService } from "src/valuationProcess/terminal-value-working.service";
@@ -614,6 +614,50 @@ export class sebiReportService {
               })
             }
           return this.generateString(modelArray, reportDetails);
+          })
+
+          hbs.registerHelper('selectedMultipleLabel',()=>{
+            let  multiples, selectedMultiples = [], finalMultiplesArray = [];
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                multiples = data.valuationData?.multiples;
+              }
+            })
+            if(multiples){
+              // if multiples exist then take those multiples which are selected by user   
+              let multiplesArray = Object.keys(multiples).filter(key => multiples[key]);
+              multiplesArray.map((indMulitple)=>{
+                MULTIPLES_TYPE.map((multipleStruc)=>{
+                  if(multipleStruc.key === indMulitple){
+                    selectedMultiples.push(multipleStruc.label);
+                  }
+                })
+              })
+            }
+            else{
+              // If multiples does not exist, take all the default multiples from array
+              MULTIPLES_TYPE.map((multipleStru)=>{
+                 selectedMultiples.push(multipleStru.label)
+               }
+              );
+            }
+
+            // Replacing EV/S with P/S
+            const priceToSalesMultipleIndex = selectedMultiples.indexOf('EV/S');
+            if(priceToSalesMultipleIndex !== -1){
+              selectedMultiples.splice(priceToSalesMultipleIndex, 1, 'P/S')
+            }
+
+            const filteredMultiples = selectedMultiples.filter(method => method !== null);
+      
+            const lastElementIndex = filteredMultiples.length - 1;
+            if (lastElementIndex >= 1) {
+              const allElementsExcptLast = filteredMultiples.slice(0, -1).join(', ');
+              finalMultiplesArray.push(`${allElementsExcptLast} and ${filteredMultiples[lastElementIndex]}`);
+            }
+          
+            const string = finalMultiplesArray.length ? finalMultiplesArray : selectedMultiples.join(', ');
+            return string;
           })
 
           hbs.registerHelper('displayWeightsAssigned',()=>{
@@ -2177,78 +2221,92 @@ export class sebiReportService {
                   }
                 })
               }
+              const modelArray = valuationResult.inputData[0].model;
 
-              valuationResult.inputData[0].model.flatMap((models) => {
-                valuationResult.modelResults.flatMap((response) => {
-                  if (
-                    response.model === models &&
-                    (models === MODEL[2] || models === MODEL[4])
-                  ) {
-                    let marketApproachValuePerShare = 0;
-                   
-                    response?.valuationData.valuation
-                      .filter((innerValuationData) => innerValuationData.particular === 'result')
-                      .map((innerValuationData) => {
-                        marketApproachValuePerShare = innerValuationData.fairValuePerShareAvg;
-                      });
-                      computedArray.push(
-                        {
-                          approach: 'Market Approach',
-                          method: `${ALL_MODELS[`${models}`]} Method`,
-                          valuePerShare: formatPositiveAndNegativeValues(marketApproachValuePerShare),
-                          weights: formatPositiveAndNegativeValues(marketApproachWeight),
-                          weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketApproachValuePerShare) * marketApproachWeight/100)
-                        }
-                      )
-                  }
-                  if (
-                    response.model === models && 
-                    (models === MODEL[0] || models === MODEL[1])
-                  ) {
-                    let incomeApproachValuePerShare = response?.valuationData[0]?.valuePerShare || 0;
-                    computedArray.push(
-                      {
-                        approach: 'Income Approach',
-                        method: `${ALL_MODELS[`${models}`]} Method`,
-                        valuePerShare: formatPositiveAndNegativeValues(incomeApproachValuePerShare),
-                        weights: formatPositiveAndNegativeValues(dcfApproachWeight),
-                        weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(incomeApproachValuePerShare) * dcfApproachWeight/100)
-                      }
-                    )
-                  }
-                  if (
-                    response.model === models && 
-                    models === MODEL[5]
-                  ) {
-                    let navApproachValuePerShare = response?.valuationData?.valuePerShare?.bookValue;
-                    computedArray.push(
-                      {
-                        approach: 'Cost Approach',
-                        method: `${ALL_MODELS[`${models}`]} Method`,
-                        valuePerShare: formatPositiveAndNegativeValues(navApproachValuePerShare),
-                        weights: formatPositiveAndNegativeValues(navApproachWeight),
-                        weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(navApproachValuePerShare) * navApproachWeight/100)
-                      }
-                    )
-                  }
-                  if (
-                    response.model === models && 
-                    models === MODEL[7] && 
-                    (reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1)
-                  ) {
-                    let marketPriceValuePerShare = response?.valuation;
-                    computedArray.push(
-                      {
-                        approach: 'Market Price Approach',
-                        method: `${ALL_MODELS[`${models}`]} Method`,
-                        valuePerShare: formatPositiveAndNegativeValues(marketPriceValuePerShare),
-                        weights: formatPositiveAndNegativeValues(marketApproachWeight),
-                        weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketPriceValuePerShare) * marketApproachWeight/100)
-                      }
-                    )
-                  }
-                });
-              });
+              valuationResult.modelResults.map((response)=>{
+                // Calculate weightage for CCM
+                if(
+                  (
+                    response.model === MODEL[2] || 
+                    response.model === MODEL[4]
+                  ) && 
+                  this.checkModelExist(MODEL[2],modelArray)
+                ){
+                  let marketApproachValuePerShare = 0;
+                  response?.valuationData.valuation.map((marketApproachValuation)=>{
+                    if(marketApproachValuation.particular === 'result'){
+                      marketApproachValuePerShare = marketApproachValuation.fairValuePerShareAvg;
+                    }
+                  })
+
+                  computedArray.push(
+                    {
+                      approach: 'Market Approach',
+                      method: `${ALL_MODELS[`${response.model}`]} Method`,
+                      valuePerShare: formatPositiveAndNegativeValues(marketApproachValuePerShare),
+                      weights: formatPositiveAndNegativeValues(marketApproachWeight),
+                      weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketApproachValuePerShare) * marketApproachWeight/100)
+                    }
+                  )
+                }
+
+                // Calculate weightage for DCF
+                if(
+                  (
+                    response.model === MODEL[0] || 
+                    response.model === MODEL[1]
+                  ) && 
+                  (
+                    this.checkModelExist(MODEL[0], modelArray) || 
+                    this.checkModelExist(MODEL[1], modelArray)
+                  )
+                ){
+                  let incomeApproachValuePerShare = response?.valuationData[0]?.valuePerShare || 0;
+                  computedArray.push(
+                    {
+                      approach: 'Income Approach',
+                      method: `${ALL_MODELS[`${response.model}`]} Method`,
+                      valuePerShare: formatPositiveAndNegativeValues(incomeApproachValuePerShare),
+                      weights: formatPositiveAndNegativeValues(dcfApproachWeight),
+                      weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(incomeApproachValuePerShare) * dcfApproachWeight/100)
+                    }
+                  )
+                }
+
+                // Calculate weightage for NAV
+                if(response.model === MODEL[5] && this.checkModelExist(MODEL[5], modelArray)){
+                  let navApproachValuePerShare = response?.valuationData?.valuePerShare?.bookValue || 0;
+                  computedArray.push(
+                    {
+                      approach: 'Cost Approach',
+                      method: `${ALL_MODELS[`${response.model}`]} Method`,
+                      valuePerShare: formatPositiveAndNegativeValues(navApproachValuePerShare),
+                      weights: formatPositiveAndNegativeValues(navApproachWeight),
+                      weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(navApproachValuePerShare) * navApproachWeight/100)
+                    }
+                  )
+                }
+
+                // Calculate weightage for Market Price Approach Method
+                if(response.model == MODEL[7] && 
+                  this.checkModelExist(MODEL[7], modelArray) && 
+                  (
+                    reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && 
+                    reportDetails.reportSection.length === 1
+                  )
+                ){
+                  let marketPriceValuePerShare = response?.valuation || 0;
+                  computedArray.push(
+                    {
+                      approach: 'Market Price Approach',
+                      method: `${ALL_MODELS[`${response.model}`]} Method`,
+                      valuePerShare: formatPositiveAndNegativeValues(marketPriceValuePerShare),
+                      weights: formatPositiveAndNegativeValues(marketPriceWeight),
+                      weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketPriceValuePerShare) * marketPriceWeight/100)
+                    }
+                  )
+                }
+              })
               return computedArray;
             }
           })
@@ -2493,5 +2551,9 @@ export class sebiReportService {
             valuationResult.inputData[0]?.taxRate
           ) : 
           0;
+      }
+
+      checkModelExist(modelName,modelArray){
+        return modelArray?.length ?  modelArray?.includes(modelName) : false;
       }
 }

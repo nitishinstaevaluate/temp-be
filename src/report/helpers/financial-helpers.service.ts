@@ -42,8 +42,19 @@ export class financialHelperService{
         })
     
         hbs.registerHelper('totalNumberOfCompaniesSelected',()=>{
-          if(financialData){
-            return converter.toWords(convertToNumberOrZero(financialData.length))
+          if(valuationDetails?.modelResults){
+            let companySelectedArray = [];
+            valuationDetails.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                data.valuationData?.companies.map((allCompanies)=>{
+                  if(allCompanies?.isSelected){
+                    companySelectedArray.push(allCompanies);
+                  }
+                })
+              }
+            }
+          )
+            return converter.toWords(convertToNumberOrZero(companySelectedArray.length))
           }
           return 'zero';
         })
