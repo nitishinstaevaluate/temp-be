@@ -842,8 +842,9 @@ export class FCFEAndFCFFService {
                 terminalValueChangeInBorrowings = changeInBorrowing - (changeInBorrowing * (1 + (aggregatePayload.inputs.terminalGrowthRate/100)));
                 
                 // calculating add:Interest
-                terminalValueAddInterestAdjTaxes = addInterestAdjTaxes - (addInterestAdjTaxes * (1 + (aggregatePayload.inputs.terminalGrowthRate/100)));
-                console.log(changeInBorrowing,"change in borrowings", terminalValueChangeInBorrowings)
+                // As per Nitish, in case of Pat based terminal value, keep it zero
+                // terminalValueAddInterestAdjTaxes = addInterestAdjTaxes - (addInterestAdjTaxes * (1 + (aggregatePayload.inputs.terminalGrowthRate/100)));
+                terminalValueChangeInBorrowings = 0;
             } else {
               presentFCFF = discountingFactorWacc * fcff
               sumOfCashFlows = presentFCFF + sumOfCashFlows;
