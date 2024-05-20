@@ -156,6 +156,10 @@ import { Expose, Type,} from 'class-transformer';
     @IsArray({ message: 'Industry aggregate list must be an array' })
     @ValidateNested({ each: true })
     industryAggregateList: [];
+
+    @IsNotEmpty({ message: 'valuationDate cannot be empty' })
+    @IsNumber({}, { message: 'valuationDate should be a number eg.1703961000000' })
+    valuationDate: number;
   }
 
   export class BetaMeanMedianDto {

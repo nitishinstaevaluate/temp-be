@@ -6,13 +6,13 @@ import { extractValues, calculateMean, calculateMedian, ciqCompanyMeanMedianStru
 @Injectable()
 export class ciqSpCompanyMeanMedianService {
 
-    async createRatioWisePayloadStructure(data){
+    async createRatioWisePayloadStructure(data, valuationDate){
         try{
 
           const finalPayload = [];
 
             for await (const mnemonic of MNEMONICS_ARRAY_2) {
-                const payload = await ciqCompanyMeanMedianStructure(data, mnemonic);
+                const payload = await ciqCompanyMeanMedianStructure(data, valuationDate, mnemonic);
                 finalPayload.push(...payload.data);
             }
 
