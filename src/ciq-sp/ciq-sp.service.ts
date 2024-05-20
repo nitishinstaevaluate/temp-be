@@ -511,7 +511,10 @@ export class CiqSpService {
           password: process.env.CAPITALIQ_API_PASSWORD
         }
 
-        const createPayloadStructure = await this.ciqSpCompanyMeanMedianService.createRatioWisePayloadStructure(data.industryAggregateList);
+        const date:any = await this.historicalReturnsService.getHistoricalBSE500Date(data.valuationDate);
+        data.valuationDate = formatDateToMMDDYYYY(date.Date) || formatDateToMMDDYYYY(data.valuationDate);
+
+        const createPayloadStructure = await this.ciqSpCompanyMeanMedianService.createRatioWisePayloadStructure(data.industryAggregateList, data.valuationDate);
         const axiosResponse = await axiosInstance.post(CAPITALIQ_MARKET, createPayloadStructure, {headers, auth});
         const ratioResponse = await this.ciqSpCompanyMeanMedianService.calculateCompanyMeanMedianAggregate(axiosResponse,data.industryAggregateList, ratioType);
 
