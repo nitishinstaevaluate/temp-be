@@ -121,7 +121,7 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
         }
     }
 
-    export async function ciqCompanyMeanMedianStructure(data:any, mnemonic){
+    export async function ciqCompanyMeanMedianStructure(data:any, valuationDate, mnemonic){
         return {
         "data":data.map((elements)=>{
             return {
@@ -129,7 +129,16 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods"
             "mnemonic":`${mnemonic}`,
             "identifier":`IQ${elements.COMPANYID}`,
             "properties":{
-                "periodType":"IQ_CY"
+                /**
+                 * What was happening is that earlier we were only using period type as IQ_CY (without passing asofdate) which gives very recent data, ie. yesterdays data
+                */
+                // "periodType":"IQ_CY"
+
+                /**
+                 * Now we pass valuation date for fetching data for that date only with period type as IQ_LTM
+                 */
+                "periodType":"IQ_LTM",
+                "asOfDate" : `${valuationDate}`
             }
             }
         })

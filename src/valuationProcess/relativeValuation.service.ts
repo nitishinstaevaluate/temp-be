@@ -396,17 +396,18 @@ export class RelativeValuationService {
 
   async recalculateCcmValuation(payload, header){
     try{
-      // const companyList = payload?.companies;
-      let companiesList = payload.companies;
-      // Firstly recalculating companies average,median based on whether they are selected or not
-      const { calculatedAverage, calculatedMedian } = await this.recalculateCompanyMeanMedian(companiesList, header);
-
-      companiesList.push(calculatedAverage, calculatedMedian)
-
       // Fetch entire processStateInfo
       const processStateInfo = await this.processStateManagerService.fetchProcess(payload.processStateId);
       const fourthStageDetails:any = processStateInfo.stateInfo.fourthStageInput;
       const valuationId = fourthStageDetails?.appData?.reportId;
+      const valuationDate = processStateInfo.stateInfo.firstStageInput?.valuationDate;
+      if(!valuationDate) return {msg: "valuation Date not found", status:false}
+
+       let companiesList = payload.companies;
+       // Firstly recalculating companies average,median based on whether they are selected or not
+       const { calculatedAverage, calculatedMedian } = await this.recalculateCompanyMeanMedian(companiesList, valuationDate, header);
+ 
+       companiesList.push(calculatedAverage, calculatedMedian)
 
       const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.appData?.otherAdj);
 
@@ -437,7 +438,7 @@ export class RelativeValuationService {
     }
   }
 
-  async recalculateCompanyMeanMedian(companies, header){
+  async recalculateCompanyMeanMedian(companies, valuationDate, header){
     let industryAggregateList:any = [];
       for await (const individualCompanies of companies){
         if(individualCompanies.isSelected){
@@ -452,6 +453,7 @@ export class RelativeValuationService {
       let financialLog = new ciqGetCompanyMeanMedianDto();
       financialLog.industryAggregateList = industryAggregateList;
       financialLog.ratioType = RATIO_TYPE[0];
+      financialLog.valuationDate = valuationDate;
 
       const headers = { 
         'Authorization':`${header.authorization}`,
