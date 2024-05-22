@@ -12,6 +12,7 @@ import * as xlsx from 'xlsx';
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { convertToNumberOrZero, getRequestAuth } from "src/excelFileServices/common.methods";
 import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
+import { userRoles } from "src/library/enums/user-roles.enum";
 
 @Injectable()
 export class mrlReportService {
@@ -444,7 +445,7 @@ export class mrlReportService {
 
           hbs.registerHelper('ifMB01',()=>{
             if(roles?.length)
-                return roles.some(indRole => indRole?.name === 'merchant-banker-test');
+                return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
             return false;
           })
 
