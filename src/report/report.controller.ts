@@ -59,8 +59,9 @@ export class ReportController {
   @UseGuards(KeyCloakAuthGuard)
   @Post('generateReport')
   async generateReport(
-  @Body() data) {
-    const result = await this.reportService.createReport(data);
+  @Body() data,
+  @Headers() headers: Headers) {
+    const result = await this.reportService.createReport(data, headers);
     return result;
   }
 
@@ -78,16 +79,18 @@ export class ReportController {
   async generateNavReport(
   @Param('reportId') reportId : string,
   @Param('type') formatType : string,
-  @Res() res) {
-    return await this.reportService.navReport(reportId, res, formatType);
+  @Res() res,
+  @Req() req) {
+    return await this.reportService.navReport(reportId, res, formatType, req);
   }
 
   @UseGuards(KeyCloakAuthGuard)
   @Get('preview-nav-report/:reportId')
   async previewNavReport(
   @Param('reportId') reportId : string,
-  @Res() res) {
-    return await this.reportService.previewNavReport(reportId, res);
+  @Res() res,
+  @Req() req) {
+    return await this.reportService.previewNavReport(reportId, res, req);
   }
 
   @UseGuards(KeyCloakAuthGuard)

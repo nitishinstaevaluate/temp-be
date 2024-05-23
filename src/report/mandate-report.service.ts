@@ -9,6 +9,7 @@ import { NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, PURPOSE_OF_REPORT_AND_SECTION, REP
 import { formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
 import { convertToNumberOrZero, getRequestAuth } from "src/excelFileServices/common.methods";
 import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
+import { userRoles } from "src/library/enums/user-roles.enum";
 
 @Injectable()
 export class mandateReportService {
@@ -101,7 +102,7 @@ export class mandateReportService {
 
             hbs.registerHelper('ifMB01',()=>{
                 if(roles?.length)
-                    return roles.some(indRole => indRole?.name === 'merchant-banker-test');
+                    return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
                 return '';
             })
 
@@ -165,7 +166,7 @@ export class mandateReportService {
           executablePath: process.env.PUPPETEERPATH
         });
         const page = await browser.newPage();
-        const ifMB01 = roles.some(indRole => indRole?.name === 'merchant-banker-test');
+        const ifMB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
 
         try {
           const contenread = await page.setContent(htmlContent);

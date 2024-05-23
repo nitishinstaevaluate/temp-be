@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -18,7 +18,7 @@ require('dotenv').config();
 import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 import { CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT, CIQ_FINANCIAL_SEGMENT, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
-import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
+import { convertToNumberOrZero, getRequestAuth } from 'src/excelFileServices/common.methods';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
@@ -32,6 +32,8 @@ import { navReportService } from './nav-report.service';
 import { terminalValueWorkingService } from 'src/valuationProcess/terminal-value-working.service';
 import { convertToRomanNumeral } from './report-common-functions';
 import { financialHelperService } from './helpers/financial-helpers.service';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { userRoles } from 'src/library/enums/user-roles.enum';
 
 @Injectable()
 export class ReportService {
@@ -62,18 +64,27 @@ export class ReportService {
     async getReport(id,res, req,approach, formatType){
       try {
           const transposedData = [];
-          let  getCapitalStructure, terminalYearWorkings;
+          let  getCapitalStructure, terminalYearWorkings, betaWorking;
           let htmlFilePath, pdfFilePath,docFilePath,pdf;
           const reportDetails = await this.reportModel.findById(id);
           const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
           if(valuationResult.inputData[0].model.includes(MODEL[0]) || valuationResult.inputData[0].model.includes(MODEL[1])){
             terminalYearWorkings = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
+            betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
           }
           const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
 
-          const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
-
-          if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+          // Fetching Associated Roles
+          const headers = {
+            authorization: req.headers.authorization
+          }
+          const { roles } = await this.fetchUserInfo(headers);
+          const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+         
+          if(MB01){
+            htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);
+          }
+          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
           }
 
@@ -127,16 +138,16 @@ export class ReportService {
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }
           }
-          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalYearWorkings);
+          this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalYearWorkings, roles);
   
           if (valuationResult.modelResults.length > 0) {
               const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
               const template = hbs.compile(htmlContent);
               const html = template(valuationResult);
             
-              if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
-                pdf = await this.generatePdf(html, pdfFilePath);
-              }
+              // if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+                pdf = await this.generatePdf(html, pdfFilePath, roles);
+              // }
               let formatExtentionHeader,formatTypeHeader, attachmentHeader; 
               if(formatType === 'DOCX'){
                 await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, docFilePath);
@@ -188,9 +199,19 @@ export class ReportService {
       terminalValueWorking = await this.terminalValueWorkingService.computeTerminalValue(reportDetails.processStateId);
     }
     const allProcessStageDetails = await this.processStateManagerService.fetchProcess(reportDetails.processStateId);
+
+    // Fetching Associated Roles
+    const headers = {
+      authorization: req.headers.authorization
+    }
+    const { roles } = await this.fetchUserInfo(headers);
+    const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
     const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
-    if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+    if(MB01){
+      htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);
+    }
+    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
 
@@ -229,16 +250,16 @@ export class ReportService {
             transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
         }
     }
-    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalValueWorking);
+    this.loadHelpers(transposedData, valuationResult, reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalValueWorking, roles);
 
     if (valuationResult.modelResults.length > 0) {
         const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
         const template = hbs.compile(htmlContent);
         const html = template(valuationResult);
 
-        if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
-          pdf = await this.generatePdf(html, pdfFilePath);
-        }
+        // if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+          pdf = await this.generatePdf(html, pdfFilePath, roles);
+        // }
 
         await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath,docFilePath)
         
@@ -557,7 +578,8 @@ export class ReportService {
 
 
 
-    async generatePdf(htmlContent: any, pdfFilePath: string) {
+    async generatePdf(htmlContent: any, pdfFilePath: string, roles) {
+      const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
         const browser = await puppeteer.launch({
           headless:"new",
           executablePath: process.env.PUPPETEERPATH
@@ -571,10 +593,18 @@ export class ReportService {
             format: 'A4' as puppeteer.PaperFormat,
             displayHeaderFooter: true,
             printBackground: true,
-            footerTemplate:`<div style="width:100%;margin-top:5%">
+            footerTemplate:MB01 ? `<div style="width:100%;margin-top:5%">
             <hr style="border:1px solid #bbccbb">
-            <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
-            </div>` ,
+            <h1 style="padding-left: 5%;  font-size:11px; color:#5F978E; display: flex; justify-content: space-between; align-items: center;">
+                <span>Navigant Corporate Advisors Limited</span>
+                <span style="font-weight:400 !important; font-size:11px;">Page <span class="pageNumber"></span></span>
+                <span style="padding-right: 3%; font-size:12px;">Private &amp; confidential</span>
+            </h1>
+          </div>` : 
+          `<div style="width:100%;margin-top:5%">
+          <hr style="border:1px solid #bbccbb">
+          <h1 style="padding-left: 5%;text-indent: 0pt;text-align: center;font-size:11px;color:#5F978E;"><span style="font-weight:400 !important;">Page <span class="pageNumber"></span></span></span> <span style="float: right;padding-right: 3%;font-size:12px"> Private &amp; confidential </span></h1>
+          </div>`,
             margin: {
               right: "20px",
           },          
@@ -670,23 +700,41 @@ export class ReportService {
         }
       }
 
-    async createReport(data){
+    async createReport(data, headers){
       let registerValuerPayload;
+      const { roles } = await this.fetchUserInfo(headers);
+      const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+
       if(!data.useExistingValuer){
-       registerValuerPayload={
-          registeredValuerName: 'Nitish Chaturvedi',
-          registeredValuerEmailId: 'chaturvedinitish@gmail.com',
-          registeredValuerIbbiId: 'IBBI/RV/03/2020/12916',
-          registeredValuerMobileNumber: '9997354674',
-          registeredValuerGeneralAddress: '94, Bheesm Kunj, Gaja Paisa, Mathura 281001',
-          registeredValuerCorporateAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
-          registeredvaluerDOIorConflict: 'No',
-          registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets',
-          registeredValuerProfile: `<span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
-          from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 8 years of Experience in the 
-          field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
-          more than 1000 Valuation assignments in a span of around 5 years. He has performed on transactions covering 
-          diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`
+        if(MB01){
+          registerValuerPayload={
+            registeredValuerName: 'Sarthak Vijlani',
+            registeredValuerCompanyName: 'Navigant Corporate Advisors Limited',
+            registeredValuerEmailId: 'navigant@navigantcorp.com',
+            registeredValuerIbbiId: 'INM000012243',
+            registeredValuerMobileNumber: '9997354674',
+            registeredValuerCorporateAddress: '804, Meadows, Sahar Plaza Complex, J.B. Nagar, Andheri Kurla Road, Andheri East, Mumbai-400 059',
+            registeredvaluerDOIorConflict: 'No',
+            registeredValuerQualifications: 'SEBI Registered Category I Merchant Banker',
+            registeredValuerPosition:'Managing Director'
+          }
+        }
+        else{
+          registerValuerPayload={
+            registeredValuerName: 'Nitish Chaturvedi',
+            registeredValuerEmailId: 'chaturvedinitish@gmail.com',
+            registeredValuerIbbiId: 'IBBI/RV/03/2020/12916',
+            registeredValuerMobileNumber: '9997354674',
+            registeredValuerGeneralAddress: '94, Bheesm Kunj, Gaja Paisa, Mathura 281001',
+            registeredValuerCorporateAddress: 'Unit No. 8, 2nd Floor,Senior Estate, 7/C,Parsi Panchayat Road,Sterling Enterprises,Andheri (E), Mumbai - 400069',
+            registeredvaluerDOIorConflict: 'No',
+            registeredValuerQualifications: 'MBA & Registered Valuer - Securities or Financial Assets',
+            registeredValuerProfile: `<span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
+            from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 8 years of Experience in the 
+            field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
+            more than 1000 Valuation assignments in a span of around 5 years. He has performed on transactions covering 
+            diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`
+          }
         }
       }
       else{
@@ -697,7 +745,9 @@ export class ReportService {
           registeredValuerMobileNumber: data?.registeredValuerMobileNumber,
           registeredValuerGeneralAddress: data?.registeredValuerGeneralAddress,
           registeredvaluerDOIorConflict: data?.registeredvaluerDOIorConflict,
-          registeredValuerQualifications: data?.registeredValuerQualifications
+          registeredValuerQualifications: data?.registeredValuerQualifications,
+          registeredValuerCompanyName: MB01 ? 'Navigant Corporate Advisors Limited' : '',
+          registeredValuerPosition:MB01 ? 'Managing Director' : ''
         }
       }
       let appointeeDetailsPayload:{};
@@ -749,7 +799,7 @@ export class ReportService {
         throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
       }
     }
-   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalYearWorkings){
+   loadHelpers(transposedData,valuationResult,reportDetails,getCapitalStructure, betaWorking, allProcessStageDetails, terminalYearWorkings, roles){
      try{
       hbs.registerHelper('companyName',()=>{
         if(valuationResult.inputData[0].company)
@@ -790,6 +840,23 @@ export class ReportService {
         if(reportDetails.registeredValuerDetails[0]) 
             return  reportDetails.registeredValuerDetails[0].registeredValuerEmailId; 
         return '';
+      })
+      hbs.registerHelper('registeredValuerCompanyName',()=>{
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerCompanyName; 
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerPosition',()=>{
+        if(reportDetails.registeredValuerDetails[0]) 
+            return  reportDetails.registeredValuerDetails[0].registeredValuerPosition; 
+        return '';
+      })
+      hbs.registerHelper('logo',(logo)=>{
+        switch(logo){
+          case 'NAVIGANT_LOGO':
+            return NAVIGANT_LOGO;
+        }
       })
 
       hbs.registerHelper('registeredValuerMobileNumber',()=>{
@@ -957,47 +1024,58 @@ export class ReportService {
       })
 
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
-        modelName = modelName.split(',');
-        if(modelName.length <= 2 ){
-          let formattedValues;
-            formattedValues = modelName.flatMap((models) => {
-              return valuationResult.modelResults.flatMap((response) => {
-                if (
-                  response.model === models &&
-                  (models === MODEL[2] || models === MODEL[4])
-                ) {
-                  const innerFormatted = response?.valuationData.valuation
-                    .filter((innerValuationData) => innerValuationData.particular === 'result')
-                    .map((innerValuationData) => {
-                      const formattedNumber = Math.floor(innerValuationData.fairValuePerShareAvg).toLocaleString('en-IN');
-                      return `${formattedNumber.replace(/,/g, ',')}/-`;
-                    });
-                  return innerFormatted || [];
-                }
-                if (response.model === models && models !== 'NAV') {
-                  const formattedNumber = Math.floor(response?.valuationData[0]?.valuePerShare).toLocaleString('en-IN');
-                  return `${formattedNumber.replace(/,/g, ',')}/-`;
-                }
-                if (response.model === models && models === 'NAV') {
-                  const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
-                  const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                  const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
-                  const formattedNumber = this.formatPositiveAndNegativeValues(valuePerShare);
-                  return `${formattedNumber}/-`;
-                }
-                return [];
-              });
-            });
-            return formattedValues[0];
+        const modelArray = valuationResult.inputData[0]?.model || [];
+        if(modelArray?.length > 1){
+          if(reportDetails?.modelWeightageValue){
+            const equityValue = reportDetails.modelWeightageValue.weightedVal;
+            const outstandingShares = valuationResult.inputData[0].outstandingShares;
+            const finalValue = this.formatPositiveAndNegativeValues(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares);
+            return `${finalValue}/-`
           }
-          else{
-            if(reportDetails?.modelWeightageValue){
-              const equityValue = reportDetails.modelWeightageValue.weightedVal;
-              const outstandingShares = valuationResult.inputData[0].outstandingShares;
-              const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
-              return `${finalValue.replace(/,/g, ',')}/-`
+        }
+        else{
+          let valuePerShare = '';
+          valuationResult.modelResults.map((response)=>{
+            // Calculate weightage for CCM
+            if(
+              (
+                response.model === MODEL[2] || 
+                response.model === MODEL[4]
+              ) && 
+              this.checkModelExist(MODEL[2],modelArray)
+            ){
+              let marketApproachValuePerShare = 0;
+              response?.valuationData.valuation.map((marketApproachValuation)=>{
+                if(marketApproachValuation.particular === 'result'){
+                  marketApproachValuePerShare = marketApproachValuation.fairValuePerShareAvg;
+                }
+              })
+              valuePerShare =  this.formatPositiveAndNegativeValues(marketApproachValuePerShare);
             }
-          }
+
+            // Calculate weightage for DCF
+            if(
+              (
+                response.model === MODEL[0] || 
+                response.model === MODEL[1]
+              ) && 
+              (
+                this.checkModelExist(MODEL[0], modelArray) || 
+                this.checkModelExist(MODEL[1], modelArray)
+              )
+            ){
+              let incomeApproachValuePerShare = response?.valuationData[0]?.valuePerShare || 0;
+              valuePerShare =  this.formatPositiveAndNegativeValues(incomeApproachValuePerShare);
+            }
+            // Calculate weightage for NAV
+            if(response.model === MODEL[5] && this.checkModelExist(MODEL[5], modelArray)){
+              let navApproachValuePerShare = response?.valuationData?.valuePerShare?.bookValue || 0;
+              valuePerShare =  this.formatPositiveAndNegativeValues(navApproachValuePerShare);
+            }
+
+          })
+          return valuePerShare;
+        }
        
         return '';
       })
@@ -1087,7 +1165,7 @@ export class ReportService {
           const number = this.formatPositiveAndNegativeValues(reportDetails.modelWeightageValue.weightedVal);
           return number;
         }
-        if(transposedData[0]?.data.transposedResult[1])
+        if(transposedData[0]?.data.transposedResult[1]){
           valuationResult.modelResults.map((response)=>{
             if(Array.isArray(response.valuationData) && response.valuationData?.some(obj => obj.hasOwnProperty('stubAdjValue'))){
               checkiIfStub=true;
@@ -1096,6 +1174,31 @@ export class ReportService {
             equityPerShare.push(this.formatPositiveAndNegativeValues(checkiIfStub ? response.valuationData[0]?.equityValueNew : response?.valuationData[0]?.equityValue));
           }
         });
+        }
+        if(valuationResult.inputData[0].model.includes(MODEL[2]) && valuationResult.inputData[0].model?.length === 1){
+          let marketApproachValuePerShare = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[2]){
+              response?.valuationData.valuation.map((marketApproachValuation)=>{
+                if(marketApproachValuation.particular === 'result'){
+                  marketApproachValuePerShare = marketApproachValuation.fairValuePerShareAvg;
+                }
+              })
+            }
+          })
+          const multiplier = GET_MULTIPLIER_UNITS[`${valuationResult.inputData[0].reportingUnit}`];
+          const outstandingShares = valuationResult.inputData[0]?.outstandingShares || 0;
+          equityPerShare.push(this.formatPositiveAndNegativeValues(convertToNumberOrZero(marketApproachValuePerShare) *  convertToNumberOrZero(outstandingShares)/ multiplier))
+        }
+        if(valuationResult.inputData[0].model.includes(MODEL[5]) && valuationResult.inputData[0].model?.length === 1){
+          let navApproachEquityValue = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[5]){
+              navApproachEquityValue = response?.valuationData?.equityValue?.bookValue || 0;
+            }
+          })
+          equityPerShare.push(this.formatPositiveAndNegativeValues(navApproachEquityValue))
+        }
         return equityPerShare;
       })
       hbs.registerHelper('auditedYear',()=>{
@@ -1985,26 +2088,11 @@ export class ReportService {
       })
       hbs.registerHelper('displayValuationHeader',()=>{
         let modelArray = [];
-        let string;
-      if(valuationResult.modelResults){
-          valuationResult.modelResults.map((result)=>{
-            modelArray.push(result.model);
-          })
+      if(valuationResult.inputData[0]){
+          modelArray = valuationResult.inputData[0]?.model || [];
         }
-        if((modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1])) && modelArray.includes(MODEL[5]) && (modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4]))){  
-          string = `Discounted Cash Flow Method (‘DCF’),
-          the Comparable Company Multiple Method (‘CCM’) and Net Asset Value Method (‘NAV’)`;
-        }
-        else if((modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1])) && modelArray.includes(MODEL[5])){
-          string = `Discounted Cash Flow Method (‘DCF’) and Net Asset Value Method (‘NAV’)`;
-        }
-        else if((modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1])) && (modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4]))){
-          string = `Discounted Cash Flow Method (‘DCF’) and Comparable Company Multiple Method (‘CCM’)`;
-        }
-        else{
-          string = `Net Asset Value Method (‘NAV’) and Comparable Company Multiple Method (‘CCM’)`;
-        }
-        return string;
+        if(!modelArray.length) return 'Model not found'
+        return this.generateString(modelArray);
       })
 
       hbs.registerHelper('stubValue',()=>{
@@ -2274,6 +2362,12 @@ export class ReportService {
             })
           }
           return totalWeightage;
+        })
+
+        hbs.registerHelper('checkModelLength', ()=>{
+          const modelArray = valuationResult.inputData[0]?.model || [];
+          if(modelArray?.length > 1) return true;
+          return false;
         })
 
         hbs.registerHelper('peRatioCalculation',()=>{
@@ -2558,6 +2652,50 @@ export class ReportService {
           return str;
         })
         
+        hbs.registerHelper('selectedMultipleLabel',()=>{
+          let  multiples, selectedMultiples = [], finalMultiplesArray = [];
+          valuationResult.modelResults.map((data)=>{
+            if(data.model === MODEL[2] || data.model === MODEL[4]){
+              multiples = data.valuationData?.multiples;
+            }
+          })
+          if(multiples){
+            // if multiples exist then take those multiples which are selected by user   
+            let multiplesArray = Object.keys(multiples).filter(key => multiples[key]);
+            multiplesArray.map((indMulitple)=>{
+              MULTIPLES_TYPE.map((multipleStruc)=>{
+                if(multipleStruc.key === indMulitple){
+                  selectedMultiples.push(multipleStruc.label);
+                }
+              })
+            })
+          }
+          else{
+            // If multiples does not exist, take all the default multiples from array
+            MULTIPLES_TYPE.map((multipleStru)=>{
+               selectedMultiples.push(multipleStru.label)
+             }
+            );
+          }
+
+          // Replacing EV/S with P/S
+          const priceToSalesMultipleIndex = selectedMultiples.indexOf('EV/S');
+          if(priceToSalesMultipleIndex !== -1){
+            selectedMultiples.splice(priceToSalesMultipleIndex, 1, 'P/S')
+          }
+
+          const filteredMultiples = selectedMultiples.filter(method => method !== null);
+    
+          const lastElementIndex = filteredMultiples.length - 1;
+          if (lastElementIndex >= 1) {
+            const allElementsExcptLast = filteredMultiples.slice(0, -1).join(', ');
+            finalMultiplesArray.push(`${allElementsExcptLast} and ${filteredMultiples[lastElementIndex]}`);
+          }
+        
+          const string = finalMultiplesArray.length ? finalMultiplesArray : selectedMultiples.join(', ');
+          return string;
+        })
+
         hbs.registerHelper('addSerialNo', (value) => {
           const [reportMultiple, reportDefaultIndex] = value.split(',');
           const { multiples, selectedMultiples } = this.getSelectedMultiples(valuationResult);
@@ -2747,6 +2885,51 @@ export class ReportService {
         }
     });
 
+    hbs.registerHelper('ifMB01',()=>{
+      if(roles?.length)
+          return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+      return false;
+    })
+
+    hbs.registerHelper('sectionAsPerIncomeTaxAndFema',()=>{
+      if(reportDetails.reportPurpose){
+        const section = reportDetails.reportSection || [];
+        if(section.includes('56(2)(viib) - Issue of Shares by a Closely Held Company to residents')){
+          return 'proposed issuance'
+        }
+        else{
+          return 'transfer';
+        }
+      }
+    })
+
+    hbs.registerHelper('MBSectionsAndPurpose', ()=>{
+      let  overallSectionsWithPurposes = [];
+          if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
+            return ['Please provide data']
+          }
+
+          const reportPurpose = reportDetails.reportPurpose;
+          const reportSection = reportDetails.reportSection;
+          // Use that object structure created above for looping and adding sections followed by purposes
+          if(
+              reportPurpose.includes(Object.keys(PURPOSE_OF_REPORT_AND_SECTION)[1])  &&
+              reportPurpose.length === 1
+          ){
+            overallSectionsWithPurposes.push('section 56 (2) (viib) of Income Tax Act, 1961 read with Rule 11UA of Income Tax Rule, 1962')
+          }
+          else if(
+            reportPurpose.includes(Object.keys(PURPOSE_OF_REPORT_AND_SECTION)[2]) && 
+            reportPurpose.length === 1
+          ){
+            overallSectionsWithPurposes.push('Foreign Exchange Management (Non – Debt Instruments) Rules, 2019')
+          }
+          else if(reportSection.length === 2){
+            overallSectionsWithPurposes.push('section 56 (2) (viib) of Income Tax Act, 1961 read with Rule 11UA of Income Tax Rule, 1962 and Foreign Exchange Management (Non – Debt Instruments) Rules, 2019')
+          }
+          return overallSectionsWithPurposes;
+  });
+
     hbs.registerHelper('checkIfValuePerShare',(particular,stringToCheck)=>{
       if(stringToCheck === 'Value per Share' && particular.includes('Value per Share')){
         return true;
@@ -2755,6 +2938,12 @@ export class ReportService {
     })
     hbs.registerHelper('dcfModel',()=>{
       if(valuationResult.inputData[0] && (valuationResult.inputData[0]?.model.includes(MODEL[0]) || valuationResult.inputData[0]?.model.includes(MODEL[1]))){
+        return true;
+      }
+      return false;
+    })
+    hbs.registerHelper('modelArrayLessThanTwo',()=>{
+      if(valuationResult.inputData[0] && valuationResult.inputData[0].model?.length <= 2){
         return true;
       }
       return false;
@@ -3532,8 +3721,18 @@ export class ReportService {
     }
   }
 
-  async navReport(id, res, type){
+  async navReport(id, res, type, req){
     try{
+      // Fetching Associated Roles
+      const headers = {
+        authorization: req.headers.authorization
+      }
+      const {roles} = await this.fetchUserInfo(headers);
+      const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+
+      if(MB01){
+        return this.getReport(id, res, req, METHODS_AND_APPROACHES[2], type);
+      }
      return await this.navReportService.generateNavReport(id,res,type);
     }
     catch(error){
@@ -3548,8 +3747,18 @@ export class ReportService {
     }
   }
 
-  async previewNavReport(id, res){
+  async previewNavReport(id, res, req){
     try{
+      // Fetching Associated Roles
+      const headers = {
+        authorization: req.headers.authorization
+      }
+      const {roles} = await this.fetchUserInfo(headers);
+      const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+
+      if(MB01){
+        return await this.previewReport(id,res, req, METHODS_AND_APPROACHES[2])
+      }
      return await this.navReportService.navReportPreview(id,res);
     }
     catch(error){
@@ -3590,5 +3799,44 @@ export class ReportService {
       }
   });
   return { multiples, selectedMultiples };
+}
+
+async fetchUserInfo(headers){
+  const KCGuard = new KeyCloakAuthGuard();
+  const roles = await KCGuard.fetchUserRoles(getRequestAuth(headers)).toPromise();
+  return { roles };
+}
+
+checkModelExist(modelName,modelArray){
+  return modelArray?.length ?  modelArray?.includes(modelName) : false;
+}
+
+generateString(modelArray) {
+  const methods = {
+    DCF: "Discounted Cash Flow Method (‘DCF’)",
+    CCM: "Comparable Company Multiple Method (‘CCM’)",
+    NAV: "Net Asset Value Method (‘NAV’)",
+    MarketPrice: "Market Price Method",
+  };
+
+  let selectedMethods = [], finalArray = [];
+
+  selectedMethods = [
+    modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1]) ? methods.DCF : null,
+    modelArray.includes(MODEL[5]) ? methods.NAV : null,
+    (modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4])) ? methods.CCM : null,
+  ];
+
+  const filteredMethods = selectedMethods.filter(method => method !== null);
+
+  const lastElementIndex = filteredMethods.length - 1;
+  if (lastElementIndex >= 1) {
+    const allElementsExcptLast = filteredMethods.slice(0, -1).join(', ');
+    finalArray.push(`${allElementsExcptLast} and ${filteredMethods[lastElementIndex]}`);
+  }
+
+  const string = finalArray.length ? finalArray : filteredMethods.join(', ');
+
+  return string;
 }
 }
