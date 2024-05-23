@@ -78,7 +78,8 @@ export const PURPOSE_OF_REPORT_AND_SECTION = {
     "50B - Slump Sale"
   ],
   fema:[
-
+    "Foreign Exchange Management (Non-Debt Instruments) Regulations, 2019 - Issue/Transfer of Security from Resident to Non-Resident",
+    "Foreign Exchange Management (Overseas Investment) Rules - 2022- Transfer/Issue of Security from Non-Resident to Resident"
   ],
   sebiRegulations:[
     "87C(1)(ii) - SEBI (Listing Obligations and Disclosure Requirements Regulations), 2015",

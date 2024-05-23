@@ -620,7 +620,13 @@
     <div style="page-break-before: always;padding-left: 5%;padding-top: 13%;padding-right: 5%;">
 
 <p style="padding-bottom: 1pt;padding-left: 10pt;text-indent: 0pt;text-align: left;"><span
-    class="h1" style="font-size: 15px;">VALUATION REPORT ON FAIR VALUATION OF <span style="text-transform:uppercase;">{{natureOfInstrument}}</span> OF </span><span class="s1"
+    class="h1" style="font-size: 15px;">
+    {{#if (ifMB01)}}
+    <!-- Do nothing -->
+    {{else}}
+    VALUATION
+    {{/if}} 
+    REPORT ON FAIR VALUATION OF <span style="text-transform:uppercase;">{{natureOfInstrument}}</span> OF </span><span class="s1"
     style="text-transform: uppercase;font-size: 15px;">{{companyName}}</span><span class="h1" style="font-size: 15px;"> AS OF </span><span class="h1"
     style="font-size: 15px;text-transform: uppercase;">{{strdate}}</span></p>
        <div style="padding-top: 30%;">
@@ -631,12 +637,27 @@
             style=" ">{{reportDate}}</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <h1 style="padding-top: 8%;padding-left: 10pt;text-indent: 0pt;text-align: left;">Prepared by</h1>
+    {{#if (ifMB01)}}
+    <div style="padding-left: 10pt;padding-top: 2%;">
+        <img src="{{logo 'NAVIGANT_LOGO'}}" style="width: 10%;height: 10%;" >
+    </div>
+    {{/if}}
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    {{#if (ifMB01)}}
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">{{registeredValuerCompanyName}}</span></p>
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+        <span style="font-weight: 600;color:#4f504f">
+            {{registeredValuerQualifications}}
+        </span>
+    </p>
+    {{else}}
     <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">{{registeredValuerName}}</span></p>
-    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;"><span style="font-weight: 600;">
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+        <span style="font-weight: 600;">
             Registered Valuer - Securities or Financial Assets
-    </span>
-        </p>
+        </span>
+    </p>
+    {{/if}}
     {{#if (registeredValuerCorporateAddress)}}
     <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 40%;line-height: 150%;">
         <span style="font-weight: 400;">
@@ -647,20 +668,65 @@
     {{#if (registeredValuerEmailId)}}
     <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
         <span style="font-weight: 400;">
-            <span style="font-weight: bold;">Email-Id :</span>{{registeredValuerEmailId}}
+            <span style="font-weight: bold;color:#4f504f">Email-Id: </span><span><a href="{{registeredValuerEmailId}}" style="border-bottom: 1px solid #bbccbb;">{{registeredValuerEmailId}}</a></span>
         </span>
     </p>
     {{/if}}
+    {{#if (ifMB01)}}
+    {{#if (registeredValuerIbbiId)}}
+    <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
+        <span style="font-weight: 400;">
+            <span style="font-weight: bold;color:#4f504f">SEBI Registration No: </span>{{registeredValuerIbbiId}}
+        </span>
+    </p>
+    {{/if}}
+    {{else}}
     {{#if (registeredValuerMobileNumber)}}
     <p style="padding-left: 10pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;width: 100%;">
         <span style="font-weight: 400;">
-            <span style="font-weight: bold;">Mob No. :</span>{{registeredValuerMobileNumber}}
+            <span style="font-weight: bold;">Mob No.: </span>{{registeredValuerMobileNumber}}
         </span>
     </p>
+    {{/if}}
     {{/if}}
        </div>
     </div>
   <!-- page 2 html -->
+  {{#if (ifMB01)}}
+  <div style="page-break-before: always;padding-left: 6%;padding-top: 9%;padding-right: 4%;">
+    <h1
+    style="padding-top: 13pt;padding-bottom: 1pt;padding-left: 40pt;text-indent: -39pt;text-align: left;border-bottom: 1px solid #2e2e2e;">
+    <a name="bookmark1" style="font-weight: bold;">Notice to the Reader</a><a name="bookmark1">&zwnj;</a></h1>
+    <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
+    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 155%;"><span class="p">We have
+            prepared a valuation report to express our opinion on the fair value of the </span><span class="s4"
+            >{{natureOfInstrument}}</span><span class="p"> of </span>
+            <span class="s4"
+            style=" text-transform: capitalize;font-weight: 600;">{{companyName}}</span><span class="p">. (hereinafter, “</span><span class="s4"
+            style=" text-transform: capitalize;">{{companyName}}</span><span class="p">” or the “Company”) as of </span>
+            <span class="s4">{{strdate}}</span><span class="p">(the “Valuation Date”).</span></p>
+    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 155%;">
+            <span class="p">
+                Navigant has been engaged to compute the fair value of {{natureOfInstrument}} of {{companyName}} (“{{companyName}}” or the “Company”). 
+                Based on our discussions with the management, we understand that the management of <span style="text-transform: uppercase;">{{companyName}}</span> requires the valuation report from {{registeredValuerQualifications}} on {{natureOfInstrument}} of <span style="text-transform: capitalize;">{{companyName}}</span> for the purpose of independent assessment. Valuation date is {{strdate}}.
+            </span>
+        </p>
+    <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 155%">
+        The report has been prepared exclusively for specified purpose as mentioned above and hence 
+        should not be used for any other purpose, without obtaining the prior written consent from Navigant. 
+        This opinion should not be considered, in whole or in part, as investment advice by anyone.</p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 155%;text-align: justify;text-justify: distribute;text-align-last: left;">
+            We have based this opinion on the information provided and represented by the management and have not independently verified it and in that regard, 
+            the validity of the valuation depends on the completeness and accuracy of the same. We have applied valuation techniques and methods 
+            that conform to the internationally accepted valuation practices. 
+            Further, this valuation is based on <span >conditions and limitations more clearly described in the report.</span></p>
+            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    </div>
+  {{else}}
   <div style="page-break-before: always;padding-left: 3%;padding-right: 6%;padding-top: 15%;">
     <p style="padding-top: 6pt;padding-left: 16pt;text-indent: 0pt;text-align: left;">
         <span class="s2"
@@ -701,6 +767,7 @@
     and assumptions that differ from those used. Accordingly, we take no responsibility for the underlying data
     presented in this report.</p>
 </div>
+{{/if}}
 
   <!-- page 3 thml -->
   <div style="page-break-before: always;padding-left: 2%;padding-right: 5%;padding-top: 13%;line-height: 150%;">
@@ -726,13 +793,24 @@
 <p style="text-indent: 0pt;text-align: left;"><br /></p>
 <div class="container-top" style="padding-top: 25%;padding-left: 5%;">
     <div class="column">
+        {{#if (ifMB01)}}
+        <p style="font-weight: bold;">Date: {{reportDate}}</p>
+        <p style="padding-top: 5px;font-weight: bold;">Place: Mumbai</p>
+        {{else}}
         <p>Date: {{reportDate}}</p>
         <p style="padding-top: 5px;">Place: Mumbai</p>
+        {{/if}}
     </div>
     <div class="column">
+        {{#if (ifMB01)}}
+        <p style="font-weight: 600;padding-bottom: 1%;text-align: right;">For Navigant Corporate Advisors Limited</span>
+        <p style="text-align: right;padding-bottom: 3px;"><strong>{{registeredValuerName}}</strong> </p>
+        <p style="text-align: right;font-weight: bold;padding-bottom: 3px;">{{registeredValuerPosition}}</p>
+        {{else}}
         <p><strong>{{registeredValuerName}}</strong> </p>
         <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
         <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+        {{/if}}
     </div>
 </div>
 </div>
@@ -815,10 +893,10 @@
                             </p>
                     </li>
                     <li data-list-text="B.">
-                        <p style="padding-left: 76pt;text-indent: -24pt;text-align: left;"><a href="#bookmark21" class="a" style="width: 20%;">Valuation
+                        <p style="padding-left: 65pt;text-indent: -14pt;text-align: left;">
+                            <a href="#bookmark21" class="a" style="">Valuation
                                 of the Company via {{displayValuationHeader}} </a>
                                 <span href="#bookmark21" style="padding-right: 0.4%;width: 5%;float: right;">15</span>
-                            
                             </p>
                     </li>
                     <!-- <li data-list-text="C.">
@@ -863,10 +941,15 @@
                                 class="p"> for determining the fair value of </span><span class="s2"
                                 style="">{{natureOfInstrument}}</span><span class="p"> of the Company.
                                 We understand that the fair value of {{natureOfInstrument}} of the Company is required 
+                                {{#if (ifMB01)}}
+                                for the {{sectionAsPerIncomeTaxAndFema}} of {{natureOfInstrument}} in accordance with {{MBSectionsAndPurpose}}.
+                                {{else}}
                                 to comply with the relevant provisions 
                                 of the </span><span class="s2"
                                 style="">Companies Act, 2013</span><span class="p"> in relation to
-                                proposed issuance of </span><span class="s2" style="">{{natureOfInstrument}}</span><span class="p">. The valuation date for this exercise is </span><span
+                                proposed issuance of </span><span class="s2" style="">{{natureOfInstrument}}</span><span class="p">. 
+                                {{/if}}
+                                    The valuation date for this exercise is </span><span
                                 class="s2" style=" ">{{strdate}}</span><span class="p">.</span></p>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 15pt;text-indent: 0pt;text-align: justify;">This Report must be considered
@@ -877,6 +960,47 @@
                             investment with the Company.</p>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                     </li>
+                    
+                    {{#if (ifMB01)}}
+                    <li data-list-text="B.">
+                        <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
+                                name="bookmark2" style="font-weight: bold;">Limitation of Verification</a><a name="bookmark8">&zwnj;</a></h1>
+                        <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
+                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                        <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                            The relevant information for the purpose of valuation has been provided by the Management. 
+                            Our agreed scope of work does not include verification of data submitted by the Management and we have 
+                            fully relied upon the data provided to us without any confirmation, review or independent appraisal of the same. 
+                            We do not make any representations or warranty, express or implied, regarding the achievability of forecasts and accuracy or 
+                            completeness of such other information as provided by the Management. We also do not vouch for the accuracy or efficacy of the forecast and its 
+                            achievability as provided to us by the Management. Our valuation opinion may vary in case any other critical information, 
+                            about the business of the Company, is brought to our notice.
+                        </p>
+                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                        <p style="padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                            In furnishing this report, Navigant reserves the right to amend or replace the Report at any time. 
+                            The information contained herein is based on the analysis of information available at the time when the Report was prepared. 
+                            We do not purport to give any representation, warranty or other assurance in relation to this document.
+                       </p>
+                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                        <p style="padding-left: 15pt;text-indent: 3pt;text-align: justify;">
+                            This report highlights the basis of arriving at the fair valuation of <span style="text-transform: capitalize;">{{companyName}}</span>, 
+                            identifies various factors affecting the valuation, summarizes the best valuation methodology keeping in view the 
+                            circumstances prevailing at the time of valuation and arrives at the opinion on the fair value of the Company, considering the facts of the case. 
+                            However, it may be noted that valuation is a highly subjective exercise and may differ from valuer to valuer depending upon the perception of attendant 
+                            circumstances. At best it is an expression of opinion or a recommendation based on certain assumptions at a given point of time.</p>
+                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                        <p style="padding-top: 3pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;page-break-before: always;padding-top: 13%;">
+                            No enquiry into the Company’s claim to title of assets or property has been made for the purpose of this valuation. 
+                            With regard to the Company’s claim to title of assets or property, we have relied solely on representations, whether verbal or 
+                            otherwise made by the Management to us for the purpose of this report. We have not verified such representations against any title documents or 
+                            any agreements evidencing right or interest in or over such assets or property, and have assumed the Company’s claim to such rights, 
+                            title or interest as valid for the purpose of this report. No information has been given to us about liens or encumbrances against the assets, 
+                            if any, beyond the loans disclosed in the accounts. Accordingly, no due diligence into any right, title or interest in property or assets was 
+                            undertaken and no responsibility is assumed in this respect or in relation to legal validity of any such claims.</p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                        </li>
+                    {{else}}
                     <li data-list-text="B.">
                         <h1 style="padding-bottom: 1pt;padding-left: 25pt;text-indent: -22pt;text-align: left;border-bottom: 1px solid #cacaca;"><a
                                 name="bookmark2" style="font-weight: bold;">Limitation of Verification</a><a name="bookmark8">&zwnj;</a></h1>
@@ -934,6 +1058,7 @@
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
     
                         </li>
+                        {{/if}}
                         <!-- <li style="page-break-before: always;padding-top: 10%;">
                            
                         </li> -->
@@ -957,16 +1082,44 @@
                                     name="bookmark4" style="font-weight: bold;">Scope of Work</a><a name="bookmark10">&zwnj;</a></h1>
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;"><span
-                                    class="p">The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of
-                                </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as of {{strdate}}</span><span
-                                    class="p">
-                                    <!-- to comply with the relevant provisions in relation to provisions -->
-                                     as per section {{sectionAndPurposeOfReport}}.</span></p>
-                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                            <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: left;"><span
-                                    class="p">The valuation date for this valuation exercise is taken to be </span><span
-                                    class="s2" style="">{{strdate}}.</span><span class="p"></span></p>
+                            {{#if (ifMB01)}}
+                                <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                                The purpose of valuation is to determine the fair value of {{natureOfInstrument}} for {{sectionAsPerIncomeTaxAndFema}} of {{natureOfInstrument}} of 
+                                <span style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span>
+                                in accordance with {{MBSectionsAndPurpose}}.
+                                </p>
+                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                                    The valuation date for this valuation exercise is taken to be {{strdate}}(“Valuation Date”).
+                                </p>
+                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                                    The valuation exercise is based on the information provided by the Management. 
+                                    Our scope of work does not include verification of data submitted by the Management. 
+                                    The conclusion reached by us on the fair value of the company is based on our perceptions of the various factors such as 
+                                    nature of business, profitability of the Company, Management capabilities, current and future scenario of the industry etc.
+                                </p>
+                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                                    We have not conducted a site review of the subject business premises, nor have we audited or otherwise reviewed the business financial statements, 
+                                    which have been provided by the Management. It was assumed that this financial information provided to us are true and accurate.
+                                </p>
+                            {{else}}
+                                <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                                    <span class="p">The purpose of valuation is to determine the fair value of {{natureOfInstrument}} 
+                                        of
+                                    </span>
+                                    <span class="s2">
+                                        <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span>
+                                        as of {{strdate}} as per section {{sectionAndPurposeOfReport}}.
+                                    </span>
+                                </p>
+                                <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
+                                    <span class="p">The valuation date for this valuation exercise is taken to be </span>
+                                    <span class="s2">{{strdate}}.</span><span class="p"></span>
+                                </p>
+                            {{/if}}
                             </li>
                         </ol>
                     </li>
@@ -976,6 +1129,9 @@
 
     <!-- page 7 html -->
     <div style="page-break-before: always;padding-left: 3%;padding-right: 5%;padding-top: 10%;line-height: 150%;">
+        {{#if (ifMB01)}}
+        <!-- Do nothing -->
+        {{else}}
         <ol id="l7">
             <li data-list-text="1.0">
                 <h1 style="padding-top: 3pt;padding-left: 64pt;text-indent: -36pt;text-align: left;">
@@ -1191,6 +1347,7 @@
                     </table>
             </li>
         </ol>
+        {{/if}}
        <div style="padding-top: 5%;padding-left: 2%;">
         <ol>
             <li>
@@ -1486,6 +1643,31 @@
                                 status and nature of the business, we have considered it appropriate to apply the 
                                 <span style="text-transform: capitalize;">{{{displayValuationHeader}}}</span> to determine the fair value of the Company. We have explained this valuation
                                 methodology in detail in the following sections.</p>
+
+                            {{#if (ifMB01)}}
+                            <h1 style="padding-top: 13pt;padding-bottom: 1pt;text-align: left;border-bottom: 1px solid #2e2e2e;width: 24%;margin-left: 5.2%;">
+                            <a name="bookmark1" style="font-weight: bold;">Methodology adopted: </a><a name="bookmark90">&zwnj;</a></h1>
+                            <!-- <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" /> -->
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;"><span class="p">
+                                The specific valuation techniques used in a valuation engagement depend on the facts and circumstances specific to each case, 
+                                including the nature and characteristics of the business enterprise being valued, and the purpose of the business appraisal. 
+                                The valuer's choice of methods is determined by the characteristics of the business to be appraised, the availability of reliable information 
+                                requisite to the various methods, the function and use of the appraisal, applicable statutory law, case law, and administrative rulings.
+                            </p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;"><span class="p">
+                                In addition to these fundamental considerations, 
+                                “a sound valuation will be based upon all the relevant facts, but the elements of common sense, 
+                                informed judgment and reasonableness must enter into the process of weighing those facts and determining their 
+                                aggregate significance”.
+                            </p>
+                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                            <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;"><span class="p">
+                                Based on the inferences drawn from the factors to be considered when applying a reasonable valuation method and our judgement, 
+                                the {{displayValuationHeader}} have/has been considered for the valuation of <span style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span>.
+                            </p>
+                            {{/if}}
                         </li>
                         <li data-list-text="B." style="page-break-before: always;padding-top: 6%;">
                             <h1
@@ -1537,17 +1719,42 @@
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                     {{/modelIncludes}}
                                 </li>
-                                <li data-list-text="2." style="page-break-before: always;padding-top: 9%;">
-                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Valuation Methodology</h1>
+                                    {{#if (modelArrayLessThanTwo)}}
+                                    <li data-list-text="2.">
+                                        <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Valuation Methodology</h1>
+                                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">For the purpose of fair
+                                            valuation of the Company we have considered it appropriate to apply the 
+                                            <!-- Discounted Free
+                                            Cash Flow (DCF) Method,Comparable Companies Method (CCM) and Net Asset Value (NAV) Method  -->
+                                            {{{displayValuationHeader}}}
+                                            which is an internationally accepted valuation method.</p>
+                                    {{else}}
+                                    <!-- do nothing -->
+                                    {{/if}}
+                                    
+                                    {{#if (modelArrayLessThanTwo)}}
+                                    <!-- do nothing -->
+                                    {{else}}
+                                    <li data-list-text="2." style="page-break-before: always;padding-top: 9%;">
+                                        <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Valuation Methodology</h1>
+                                        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">For the purpose of fair
+                                            valuation of the Company we have considered it appropriate to apply the 
+                                            <!-- Discounted Free
+                                            Cash Flow (DCF) Method,Comparable Companies Method (CCM) and Net Asset Value (NAV) Method  -->
+                                            {{{displayValuationHeader}}}
+                                            which is an internationally accepted valuation method.</p>
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                    {{/if}}
+                                   
+                                    {{#modelIncludes 'INCOME_APPROACH'}}
+                                    {{#if (modelArrayLessThanTwo)}}
+                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;page-break-before: always;padding-top: 9%;">Discounted Cash Flow Method</h1>
+                                    {{else}}
+                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;">Discounted Cash Flow Method</h1>
+                                    {{/if}}
                                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">For the purpose of fair
-                                        valuation of the Company we have considered it appropriate to apply the 
-                                        <!-- Discounted Free
-                                        Cash Flow (DCF) Method,Comparable Companies Method (CCM) and Net Asset Value (NAV) Method  -->
-                                        {{{displayValuationHeader}}}
-                                        which is an internationally accepted valuation method.</p>
-                                    <p style="text-indent: 0pt;text-align: left;"><br /></p>
-                                    <h1 style="padding-left: 46pt;text-indent: -18pt;text-align: left;padding-bottom: 2%;">Discounted Cash Flow Method</h1>
                                     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;line-height: 155%;">Based on the assumptions
                                         and business plan of the Company shared with us by the Management,
                                         the fair value of the Company has been determined as per DCF Method as follows:</p>
@@ -1586,7 +1793,6 @@
                                                 Company based on the stage of the Company at the end of explicit period.
                                                 Computation of projected free cash flows has been presented below.</p>
                                           
-                                            {{#modelIncludes 'INCOME_APPROACH'}}
                                             <p style="padding-top: 3pt;padding-left: 28pt;text-indent: 0pt;text-align: left;page-break-before: always;padding-top: 6%;">
                                                 {{#if (checkIfFcff)}}
                                                  <span class="s1" style="">Weighted Average Cost of
@@ -3502,7 +3708,7 @@
                                 <p style="text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;padding-top: 3%;">
                                     <span class="p">
                                         *After evaluating the differences between the Company and the Guideline Public Companies, we made a <span style="font-weight: bold;">{{lessDiscountRate}}%</span>
-                                        downward adjustment to the mean EV/ Revenue multiples. The adjustment of <span style="font-weight: bold;">{{lessDiscountRate}}%</span> is primarily due to current inflationary measure and 
+                                        downward adjustment to the mean {{selectedMultipleLabel}} multiples. The adjustment of <span style="font-weight: bold;">{{lessDiscountRate}}%</span> is primarily due to current inflationary measure and 
                                         volatility in stock market.
                                     </span>
                                 </p>
@@ -4123,11 +4329,12 @@
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: justify;padding-top: 2%;line-height: 150%;"><span class="h1">Based on our study and
             analytical review procedures, and subject to the limitations expressed within this report, our opinion of
             fair value of </span><span class="s1" style="">{{natureOfInstrument}} of
-            {{companyName}}</span><span class="h1">, to comply with the relevant provisions of the Companies Act, 2013 in relation
-            to proposed issuance of {{natureOfInstrument}}, as of </span><span class="s1"
+            {{companyName}}</span><span class="h1">, to comply with the relevant provisions of the {{sectionAndPurposeOfReport}} in relation
+            to {{sectionAsPerIncomeTaxAndFema}} of {{natureOfInstrument}}, as of </span><span class="s1"
             style="">{{strdate}}</span><span class="h1">:</span></p>
 
 
+            {{#if (checkModelLength)}}
             <table style="border-collapse:collapse;margin-left:auto;margin-right: auto;margin-top: 4%;width: 70%;" cellspacing="0">
                 <tr>
                     <td style="width:20% !important;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt;border-top: 1px solid #3d3d3d;border-left: 1px solid #3d3d3d;border-right: 1px solid #3d3d3d;"
@@ -4172,6 +4379,7 @@
                 </tr>
                 {{/each}}
             </table>
+            {{/if}}
 
             <!-- Start Need to put in new table with weightage -->
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -4222,13 +4430,24 @@
 
     <div class="container-top" style="padding-top: 25%;padding-left: 5%;">
         <div class="column">
+        {{#if (ifMB01)}}
+            <p style="font-weight: bold;">Date: {{reportDate}}</p>
+            <p style="padding-top: 5px;font-weight: bold;">Place: Mumbai</p>
+        {{else}}
             <p>Date: {{reportDate}}</p>
             <p style="padding-top: 5px;">Place: Mumbai</p>
+        {{/if}}
         </div>
         <div class="column">
-            <p><strong>{{registeredValuerName}}</strong> </p>
-            <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
-            <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+        {{#if (ifMB01)}}
+        <p style="font-weight: 600;padding-bottom: 1%;text-align: right;">For Navigant Corporate Advisors Limited</span>
+        <p style="text-align: right;padding-bottom: 3px;"><strong>{{registeredValuerName}}</strong> </p>
+        <p style="text-align: right;font-weight: bold;padding-bottom: 3px;">{{registeredValuerPosition}}</p>
+        {{else}}
+        <p><strong>{{registeredValuerName}}</strong> </p>
+        <p style="padding-top: 3px;"> Registered Valuer- Securities or Financial Assets</p>
+        <p style="padding-top: 3px;">IBBI Registration Id: {{registeredValuerIbbiId}}</p>
+        {{/if}}
         </div>
     </div>
     
@@ -4237,7 +4456,11 @@
    <div style="padding-top: 6%;padding-left: 3%;padding-right:3%;page-break-before: always;">
     <h1 style="text-align: center">ANNEXURE A</h1>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
+    {{#if (ifMB01)}}
+    <h1 style="text-align: center;">PROFILE OF MERCHANT BANKER</h1>
+    {{else}}
     <h1 style="text-align: center;">PROFILE OF REGISTERED VALUER</h1>
+    {{/if}}
     <p style="text-align: justify;padding-top: 3%;padding-left: 3%;padding-right: 1%;line-height: 170%;">
         <!-- <span style="font-weight: bold;">Mr. Nitish Chaturvedi</span> is a Registered Valuer of Securities or Financial Assets with IBBI and he has done his MBA 
         from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 7 years of Experience in the 
