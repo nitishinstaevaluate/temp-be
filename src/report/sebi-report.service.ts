@@ -2244,7 +2244,7 @@ export class sebiReportService {
                       approach: 'Market Approach',
                       method: `${ALL_MODELS[`${response.model}`]} Method`,
                       valuePerShare: formatPositiveAndNegativeValues(marketApproachValuePerShare),
-                      weights: formatPositiveAndNegativeValues(marketApproachWeight),
+                      weights: marketApproachWeight.toFixed(2),
                       weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketApproachValuePerShare) * marketApproachWeight/100)
                     }
                   )
@@ -2267,7 +2267,7 @@ export class sebiReportService {
                       approach: 'Income Approach',
                       method: `${ALL_MODELS[`${response.model}`]} Method`,
                       valuePerShare: formatPositiveAndNegativeValues(incomeApproachValuePerShare),
-                      weights: formatPositiveAndNegativeValues(dcfApproachWeight),
+                      weights: dcfApproachWeight.toFixed(2),
                       weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(incomeApproachValuePerShare) * dcfApproachWeight/100)
                     }
                   )
@@ -2281,7 +2281,7 @@ export class sebiReportService {
                       approach: 'Cost Approach',
                       method: `${ALL_MODELS[`${response.model}`]} Method`,
                       valuePerShare: formatPositiveAndNegativeValues(navApproachValuePerShare),
-                      weights: formatPositiveAndNegativeValues(navApproachWeight),
+                      weights: navApproachWeight.toFixed(2),
                       weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(navApproachValuePerShare) * navApproachWeight/100)
                     }
                   )
@@ -2301,7 +2301,7 @@ export class sebiReportService {
                       approach: 'Market Price Approach',
                       method: `${ALL_MODELS[`${response.model}`]} Method`,
                       valuePerShare: formatPositiveAndNegativeValues(marketPriceValuePerShare),
-                      weights: formatPositiveAndNegativeValues(marketPriceWeight),
+                      weights: marketPriceWeight.toFixed(2),
                       weightedValue: formatPositiveAndNegativeValues(convertToNumberOrZero(marketPriceValuePerShare) * marketPriceWeight/100)
                     }
                   )

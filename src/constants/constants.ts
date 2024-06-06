@@ -49,6 +49,12 @@ export const REPORT_PURPOSE={
   fema:'Foreign Exchange Management Act',
   sebiRegulations:'SEBI Regulations'
 }
+export const MB01_REPORT_PURPOSE={
+  companiesAct:'Companies Act, 2013',
+  ita1961:'read with Rule 11UA of Income Tax Rule, 1962',
+  fema:'',
+  sebiRegulations:'SEBI Regulations'
+}
 
 export const NATURE_OF_INSTRUMENT = {
     equityShares:"Equity Shares",
@@ -89,6 +95,44 @@ export const PURPOSE_OF_REPORT_AND_SECTION = {
     "166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018"
   ]
 }
+
+export const MB01_PURPOSE_OF_REPORT_AND_SECTION = [
+  {
+    purposeOfReport:'ita1961',
+    options:[
+      {
+        section: "56(2)(x) - Tax on sum/property received without consideration",
+        alias:"56 (2) (x) of Income Tax Act, 1961"
+      },
+      {
+        section: "56(2)(viib) - Issue of Shares by a Closely Held Company to residents",
+        alias:"56 (2) (viib) of Income Tax Act, 1961"
+      },
+      {
+        section:"50CA - Special Consideration for Full Value of consideration for transfer of shares other than quoted shares",
+        alias:"50 CA of Income Tax Act, 1961"
+      },
+      {
+        section:"50B - Slump Sale",
+        alias:"56 B of Income Tax Act, 1961"
+      }
+    ]
+  },
+  {
+    purposeOfReport:"fema",
+    options:[
+      {
+        section:"Foreign Exchange Management (Non-Debt Instruments) Regulations, 2019 - Issue/Transfer of Security from Resident to Non-Resident",
+        alias:"Foreign Exchange Management (Non – DebtInstruments) Rules, 2019"
+      },
+      {
+        section:"Foreign Exchange Management (Overseas Investment) Rules - 2022- Transfer/Issue of Security from Non-Resident to Resident",
+        alias:"Foreign Exchange Management (Overseas Investment) Rules, 2019"
+      }
+    ]
+  }
+]
+
 export const CAPITAL_STRUCTURE_TYPE = {
     Industry_Based:"Industry Based",
     Company_Based:"Company Based",
