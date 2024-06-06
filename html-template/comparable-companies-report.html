@@ -542,7 +542,7 @@
             Registered Valuer - Securities or Financial Assets
         </span>
         </p>
-    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerAddress}}</span>
+    <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;"><span style="font-weight: 400;">{{registeredValuerCorporateAddress}}</span>
         </p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 1%;font-weight: bold;">
         <span style="font-weight: 400;">
@@ -600,7 +600,7 @@
             <p style="padding-top: 4pt;padding-left: 20pt;text-indent: 0pt;text-align: left;"><span class="h1">Based on our
                 study and analytical review procedures, and subject to the limitations expressed within this report, our
                 opinion of fair value of </span><span class="s1" style=" font-weight: bold;">{{natureOfInstrument}}</span><span class="h1"> of </span><span class="s1" ><span style=" font-weight: bold;">{{companyName}}</span>, as of
-                {{reportDate}}</span><span class="h1">:-</span></p>
+                {{strdate}}</span><span class="h1">:-</span></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">Fair Value per Share</span><span class="h1"> </span><span class="s1" style=""></span></p>
         <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{modelValuePerShare 'CTM,Relative_Valuation'}}</p>
@@ -828,7 +828,7 @@
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;">
-                                The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of <span style="text-transform: capitalize;">{{companyName}}</span> as of {{reportDate}} to comply with the relevant provisions of section {{sectionAndPurposeOfReport}}. 
+                                The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of <span style="text-transform: capitalize;">{{companyName}}</span> as of {{strdate}} to comply with the relevant provisions of section {{sectionAndPurposeOfReport}}. 
                                 The valuation date for this valuation exercise is taken to be {{strdate}}.
                             </p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1156,8 +1156,11 @@
                                 <p style="padding-left: 5pt;text-indent: 0pt;text-align: justify;line-height: 150%;">
                                     In order to value <span style="text-transform: capitalize;">{{companyName}}</span>, we identified <span>{{numberOfSubindustry}}</span> comparable publicly traded (listed) companies, 
                                     which are engaged in the <span style="text-transform: capitalize;font-weight: bold;">{{industryName}}</span> (“Guideline Public Companies”). Based on the nature of 
-                                    the business of <span style="text-transform: capitalize;">{{companyName}}</span> we selected Enterprise Value/Revenue (EV/S), Price/Book Value (P/BV), 
-                                    Enterprise Value/EBITDA (EV/EBITDA), Price/Earnings per Share (P/E)  multiples as an appropriate valuation benchmark. 
+                                    the business of <span style="text-transform: capitalize;">{{companyName}}</span> we selected 
+                                    <!-- Enterprise Value/Revenue (EV/S), Price/Book Value (P/BV), 
+                                    Enterprise Value/EBITDA (EV/EBITDA), Price/Earnings per Share (P/E)   -->
+                                    {{selectedMultipleLabel}}
+                                    multiples as an appropriate valuation benchmark. 
                                     Accordingly, we retrieved the following financial data for each comparable company:
                                 </p>
                                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -1974,8 +1977,8 @@
         <p style="padding-top: 8pt;padding-left: 20pt;text-indent: 0pt;text-align: left;line-height: 150%;"><span class="h1">Based on our
             study and analytical review procedures, and subject to the limitations expressed within this report, our
             opinion of fair value of </span><span class="s1" style=" font-weight: bold;">{{natureOfInstrument}}</span><span class="h1"> of </span><span class="s1" ><span style=" font-weight: bold;">{{companyName}}</span>, 
-            , to comply with the relevant provisions of the {{reportPurpose}}, as of
-            {{reportDate}}</span><span class="h1">:-</span></p>
+            to comply with the relevant provisions of the {{reportPurpose}}, as of
+            {{strdate}}</span><span class="h1">:-</span></p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="text-indent: 0pt;text-align: center;padding-top: 2%;"><span class="s3">Fair Value per Share</span><span class="h1"> </span><span class="s1" style=""></span></p>
     <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{modelValuePerShare 'CTM,Relative_Valuation'}}</p>

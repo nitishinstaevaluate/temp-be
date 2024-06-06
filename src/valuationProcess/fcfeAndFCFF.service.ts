@@ -1002,7 +1002,7 @@ export class FCFEAndFCFFService {
       const fourthStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'fourthStageInput');
       const terminalYearBase:any = await this.terminalYearWorkingService.computeTerminalValue(processId);
       const valuationId = fourthStageDetails.data?.fourthStageInput?.appData?.reportId;
-      const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.appData?.otherAdj);
+      const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.otherAdj);
 
       const valuation:any = await this.valuationService.getValuationById(valuationId);
 

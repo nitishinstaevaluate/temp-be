@@ -2783,9 +2783,11 @@ async createStructure(data,sheetName){
     // })
     let index = 0
     for await(let item of data){
-      const { Particulars, ...rest } = item;
-      profitAndLossSheetStructure.push({lineEntry:PROFIT_LOSS[index]?.lineEntry,...rest});
-      index++;
+      if(PROFIT_LOSS[index]?.lineEntry){
+        const { Particulars, ...rest } = item;
+        profitAndLossSheetStructure.push({lineEntry:PROFIT_LOSS[index]?.lineEntry,...rest});
+        index++;
+      }
     }
     return profitAndLossSheetStructure;
   }
