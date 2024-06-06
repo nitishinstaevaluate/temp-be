@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MB01_PURPOSE_OF_REPORT_AND_SECTION, MB01_REPORT_PURPOSE, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -2904,30 +2904,40 @@ export class ReportService {
     })
 
     hbs.registerHelper('MBSectionsAndPurpose', ()=>{
-      let  overallSectionsWithPurposes = [];
+      let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
           if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
             return ['Please provide data']
           }
 
-          const reportPurpose = reportDetails.reportPurpose;
-          const reportSection = reportDetails.reportSection;
+           //Firstly create object structure with purpose of report and sections in key-value format;
+           reportDetails.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+                 
+                 MB01_PURPOSE_OF_REPORT_AND_SECTION.forEach((sectionStructure)=>{
+                   if(sectionStructure?.purposeOfReport === indpurpose){
+                    sectionStructure.options.forEach((indSectionStructure)=>{
+                      reportDetails.reportSection.forEach((indSection, sectionIndex) => {
+                        if(indSection === indSectionStructure.section){
+                          storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                          storePurposeWiseSections[indpurpose].push(indSectionStructure.alias);
+                        }
+                    })
+                    })
+                }
+            });
+          })
+
           // Use that object structure created above for looping and adding sections followed by purposes
-          if(
-              reportPurpose.includes(Object.keys(PURPOSE_OF_REPORT_AND_SECTION)[1])  &&
-              reportPurpose.length === 1
-          ){
-            overallSectionsWithPurposes.push('section 56 (2) (viib) of Income Tax Act, 1961 read with Rule 11UA of Income Tax Rule, 1962')
-          }
-          else if(
-            reportPurpose.includes(Object.keys(PURPOSE_OF_REPORT_AND_SECTION)[2]) && 
-            reportPurpose.length === 1
-          ){
-            overallSectionsWithPurposes.push('Foreign Exchange Management (Non – Debt Instruments) Rules, 2019')
-          }
-          else if(reportSection.length === 2){
-            overallSectionsWithPurposes.push('section 56 (2) (viib) of Income Tax Act, 1961 read with Rule 11UA of Income Tax Rule, 1962 and Foreign Exchange Management (Non – Debt Instruments) Rules, 2019')
-          }
-          return overallSectionsWithPurposes;
+          reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
+           let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+            if (stockedPurposes.length <= 1) {
+              overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
+            } else {
+              const lastSection = stockedPurposes[stockedPurposes.length - 1];
+              const otherSections = stockedPurposes.slice(0, -1).join(', ');
+              overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
+              }
+          })
+          return overallSectionsWithPurposes.join(' and ');
   });
 
     hbs.registerHelper('checkIfValuePerShare',(particular,stringToCheck)=>{
