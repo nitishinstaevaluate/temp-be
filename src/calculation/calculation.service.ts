@@ -4,6 +4,7 @@ import { date } from 'joi';
 import { Model } from 'mongoose';
 import { formatDateToMMDDYYYY } from 'src/ciq-sp/ciq-common-functions';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
+import { convertToNumberOrZero } from 'src/excelFileServices/common.methods';
 import { CapitalStruc, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -117,7 +118,7 @@ export class CalculationService {
       
       valuationInput.results.map((resp) => {
         if (resp.model){
-          weightedVal = weightedVal + (parseFloat(resp.value) * parseFloat(resp.weightage)/100);
+          weightedVal = weightedVal + (convertToNumberOrZero(resp.value) * parseFloat(resp.weightage)/100);
           weightedModel.push(
             {
               model : resp.model,
