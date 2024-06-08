@@ -901,16 +901,14 @@ export class FCFEAndFCFFService {
                 convertToNumberOrZero(terminalValueDepAndAmortisation) + 
                 convertToNumberOrZero(otherNonCashItems) + 
                 convertToNumberOrZero(terminalValueNca) + 
-                convertToNumberOrZero(terminalValueChangeInBorrowings) - 
-                convertToNumberOrZero(terminalValueDepAndAmortisation);
+                convertToNumberOrZero(terminalValueChangeInBorrowings);
               }else{
                 totalNetCashFlow = convertToNumberOrZero(terminalValuePat) + 
                 convertToNumberOrZero(terminalValueAddInterestAdjTaxes) + 
                 convertToNumberOrZero(terminalValueDepAndAmortisation) + 
                 convertToNumberOrZero(otherNonCashItems) + 
                 convertToNumberOrZero(terminalValueNca) + 
-                convertToNumberOrZero(terminalValueChangeInBorrowings) - 
-                convertToNumberOrZero(terminalValueDepAndAmortisation);
+                convertToNumberOrZero(terminalValueChangeInBorrowings);
               }
               terminalValueWorking = {
                 particulars: 'Terminal Value',
