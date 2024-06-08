@@ -123,7 +123,7 @@ export const MB01_PURPOSE_OF_REPORT_AND_SECTION = [
     options:[
       {
         section:"Foreign Exchange Management (Non-Debt Instruments) Regulations, 2019 - Issue/Transfer of Security from Resident to Non-Resident",
-        alias:"Foreign Exchange Management (Non – DebtInstruments) Rules, 2019"
+        alias:"Foreign Exchange Management (Non – Debt Instruments) Rules, 2019"
       },
       {
         section:"Foreign Exchange Management (Overseas Investment) Rules - 2022- Transfer/Issue of Security from Non-Resident to Resident",
