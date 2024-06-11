@@ -1,4 +1,4 @@
-import { getYearsList } from 'src/excelFileServices/common.methods';
+import { convertToNumberOrZero, getYearsList } from 'src/excelFileServices/common.methods';
 
 export function  formatDate(date: Date): string {
     const months = [
@@ -123,4 +123,19 @@ export function  formatDate(date: Date): string {
     }
   
     return romanNumerals[num];
+  }
+
+  export function customRound(number) {
+    // Get the integer part and the decimal part of the number
+    const validNumber = convertToNumberOrZero(number);
+    const integerPart = Math.floor(validNumber);
+    const decimalPart = number - integerPart;
+  
+    if(validNumber < 1 && validNumber >= 0) return validNumber;
+    // Apply the custom rounding logic
+    if (decimalPart >= 0.5) {
+      return Math.ceil(number);
+    } else {
+      return Math.floor(number);
+    }
   }

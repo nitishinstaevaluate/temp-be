@@ -887,7 +887,7 @@
 <p><br></p>
 <p style="text-indent: 0pt;text-align: center;padding-top: 2%;line-height: 150%;"><span class="s3">Fair Value per Equity Share
         (Rounded) </span><span class="h1"> </span><span class="s1" style=""></span></p>
-<p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{modelValuePerShare 'FCFE,FCFF'}}</p>
+<p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{combinedValuePerShare 'true'}}</p>
 <p><br></p>
 <p style="padding-top: 4pt;text-indent: 0pt;text-align: justify;padding-top: 8%;line-height: 150%;"><span class="p">We have no
         present or contemplated financial interest in </span><span class="s2" style=""><span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span>
@@ -2968,7 +2968,7 @@
                                     class="p">Based on DCF method, fair value per share of <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span> as on </span><span
                                     class="s2" style=" ">{{strdate}}</span><span class="p"> is calculated
                                     as </span><span class="h1">{{currencyUnit}} </span><span class="s1"
-                                    style="">{{modelValuePerShare 'FCFE,FCFF'}}</span><span class="h1"> </span><span class="p">as presented below.</span></p>
+                                    style="">{{dcfValuePerShare}}</span><span class="h1"> </span><span class="p">as presented below.</span></p>
                             <!-- <p style="text-indent: 0pt;text-align: left;"><br /></p> -->
 
                             {{#if (checkIfFcff)}}
@@ -3423,7 +3423,7 @@
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top:3%;text-align: center;padding-bottom: 1%;"><span class="s3">Fair Value per Equity Share
             (Rounded)</span><span class="h1"> </span><span class="s1" style=" "></span></p>
-    <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{modelValuePerShare 'FCFE,FCFF'}}</p>
+    <p style="text-indent: 0pt;text-align: center;">{{currencyUnit}} {{combinedValuePerShare 'true'}}</p>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-left: 28pt;text-indent: 0pt;text-align: left;padding-top: 7%;">Please note, this Report is to be read in its
         entirety.</p>
