@@ -43,10 +43,13 @@ export class financialHelperService{
     
         hbs.registerHelper('totalNumberOfCompaniesSelected',()=>{
           if(valuationDetails?.modelResults){
-            let companySelectedArray = [];
+            let companySelectedArray = [], defaultCompaniesArray = [];
             valuationDetails.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
                 data.valuationData?.companies.map((allCompanies)=>{
+                  if(allCompanies?.companyId){
+                    defaultCompaniesArray.push(allCompanies);
+                  }
                   if(allCompanies?.isSelected){
                     companySelectedArray.push(allCompanies);
                   }
@@ -54,7 +57,14 @@ export class financialHelperService{
               }
             }
           )
-            return converter.toWords(convertToNumberOrZero(companySelectedArray.length))
+          let totalLength = 0;
+          if(!companySelectedArray.length){
+            totalLength = defaultCompaniesArray.length;
+          }
+          else{
+            totalLength = companySelectedArray.length;
+          }
+            return converter.toWords(convertToNumberOrZero(totalLength))
           }
           return 'zero';
         })
