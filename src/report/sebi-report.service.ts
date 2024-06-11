@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
-import { convertEpochToPlusOneDate, convertToRomanNumeral, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
+import { convertEpochToPlusOneDate, convertToRomanNumeral, customRound, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
 import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { ReportService } from "./report.service";
@@ -2200,6 +2200,13 @@ export class sebiReportService {
             }
           })
 
+          hbs.registerHelper('dcfModel',()=>{
+            if(valuationResult.inputData[0] && (valuationResult.inputData[0]?.model.includes(MODEL[0]) || valuationResult.inputData[0]?.model.includes(MODEL[1]))){
+              return true;
+            }
+            return false;
+          })
+
           hbs.registerHelper('weightedAverageWorking',()=>{
             if(valuationResult.inputData[0].model.length){
               let computedArray = [], dcfApproachWeight:any = 100, marketApproachWeight:any = 100, navApproachWeight:any = 100, marketPriceWeight: any = 100;
@@ -2311,7 +2318,7 @@ export class sebiReportService {
             }
           })
 
-          hbs.registerHelper('combinedValuePerShare',()=>{
+          hbs.registerHelper('combinedValuePerShare',(bool)=>{
             if(valuationResult.inputData[0].model.length === 1){
               let formattedValues;
               formattedValues = valuationResult.inputData[0].model.flatMap((models) => {
@@ -2324,17 +2331,17 @@ export class sebiReportService {
                       .filter((innerValuationData) => innerValuationData.particular === 'result')
                       .map((innerValuationData) => {
                         const formattedNumber = innerValuationData.fairValuePerShareAvg;
-                        return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+                        return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
                       });
                     return innerFormatted || [];
                   }
                   if (response.model === models && models !== 'NAV') {
                     const formattedNumber = response?.valuationData[0]?.valuePerShare;
-                    return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+                    return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
                   }
                   if (response.model === models && models === 'NAV') {
                     const formattedNumber = response?.valuationData?.valuePerShare?.bookValue;
-                    return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+                    return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
                   }
                   return [];
                 });
@@ -2345,8 +2352,9 @@ export class sebiReportService {
               if(reportDetails?.modelWeightageValue){
                 const equityValue = reportDetails.modelWeightageValue.weightedVal;
                 const outstandingShares = valuationResult.inputData[0].outstandingShares;
-                const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
-                return `${finalValue.replace(/,/g, ',')}/-`
+                // const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
+                const finalValue = formatPositiveAndNegativeValues(bool === 'true' ? customRound(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares) : equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares);
+                return `${finalValue}/-`
               }
             }
           })

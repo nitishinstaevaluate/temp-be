@@ -30,7 +30,7 @@ import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdp
 import { ciqGetFinancialDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 import { navReportService } from './nav-report.service';
 import { terminalValueWorkingService } from 'src/valuationProcess/terminal-value-working.service';
-import { convertToRomanNumeral } from './report-common-functions';
+import { convertToRomanNumeral, customRound, formatPositiveAndNegativeValues } from './report-common-functions';
 import { financialHelperService } from './helpers/financial-helpers.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { userRoles } from 'src/library/enums/user-roles.enum';
@@ -1029,7 +1029,8 @@ export class ReportService {
           if(reportDetails?.modelWeightageValue){
             const equityValue = reportDetails.modelWeightageValue.weightedVal;
             const outstandingShares = valuationResult.inputData[0].outstandingShares;
-            const finalValue = this.formatPositiveAndNegativeValues(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares);
+            const finalValue = this.formatPositiveAndNegativeValues(customRound(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares));
+            // console.log(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares,"fina value found")
             return `${finalValue}/-`
           }
         }
@@ -1078,6 +1079,75 @@ export class ReportService {
         }
        
         return '';
+      })
+
+      hbs.registerHelper('combinedValuePerShare',(bool)=>{
+        if(valuationResult.inputData[0].model.length === 1){
+          let formattedValues;
+          formattedValues = valuationResult.inputData[0].model.flatMap((models) => {
+            return valuationResult.modelResults.flatMap((response) => {
+              if (
+                response.model === models &&
+                (models === MODEL[2] || models === MODEL[4])
+              ) {
+                const innerFormatted = response?.valuationData.valuation
+                  .filter((innerValuationData) => innerValuationData.particular === 'result')
+                  .map((innerValuationData) => {
+                    const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                    return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
+                  });
+                return innerFormatted || [];
+              }
+              if (response.model === models && models !== 'NAV') {
+                const formattedNumber = response?.valuationData[0]?.valuePerShare;
+                return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
+              }
+              if (response.model === models && models === 'NAV') {
+                const formattedNumber = response?.valuationData?.valuePerShare?.bookValue;
+                return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
+              }
+              return [];
+            });
+          });
+          return formattedValues[0]
+        }
+        else {
+          if(reportDetails?.modelWeightageValue){
+            const equityValue = reportDetails.modelWeightageValue.weightedVal;
+            const outstandingShares = valuationResult.inputData[0].outstandingShares;
+            // const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
+            const finalValue = formatPositiveAndNegativeValues(bool === 'true' ? customRound(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares) : equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares);
+            return `${finalValue}/-`
+          }
+        }
+      })
+
+      hbs.registerHelper('dcfValuePerShare',()=>{
+        let dcfValuePerShare = '';
+         valuationResult.modelResults.map((response) => {
+         
+          if (response.model === MODEL[0] || response.model === MODEL[1]) {
+            const formattedNumber = response?.valuationData[0]?.valuePerShare;
+            dcfValuePerShare = `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
+          }
+          });
+        return dcfValuePerShare;
+      })
+
+      hbs.registerHelper('ccmValuePerShare',()=>{
+        let ccmValuePerShare = '';
+         valuationResult.modelResults.map((response) => {
+         
+          if (response.model === MODEL[2] || response.model === MODEL[4]) {
+            ccmValuePerShare = response?.valuationData.valuation
+                  .filter((innerValuationData) => innerValuationData.particular === 'result')
+                  .map((innerValuationData) => {
+                    const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                    return `${formatPositiveAndNegativeValues(customRound(formattedNumber))}/-`;
+                  });
+          }
+          });
+        return ccmValuePerShare;
       })
 
       hbs.registerHelper('isValuePerShareNegative',(modelName)=>{
