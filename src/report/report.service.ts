@@ -2999,10 +2999,10 @@ export class ReportService {
           // Use that object structure created above for looping and adding sections followed by purposes
           reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
            let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
-            if (stockedPurposes.length <= 1) {
+            if (stockedPurposes?.length <= 1) {
               overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
             } else {
-              const lastSection = stockedPurposes[stockedPurposes.length - 1];
+              const lastSection = stockedPurposes[stockedPurposes?.length - 1];
               const otherSections = stockedPurposes.slice(0, -1).join(', ');
               overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
               }
