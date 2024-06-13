@@ -39,21 +39,7 @@ export class ReportController {
     @Res() res,
     @Req() req
   ) {
-    try {
-      const result = await this.reportService.getReport(reportId, res, req, approach, formatType);
-      if (result.status) {
-         return result;
-      } else {
-          res.status(500).json(result); 
-      }
-  } catch (error) {
-      console.error("Controller Error:", error);
-      res.status(500).json({
-          msg: "Internal Server Error",
-          status: false,
-          error: error.message
-      });
-  }
+   return await this.reportService.getReport(reportId, res, req, approach, formatType);
   }
 
   @UseGuards(KeyCloakAuthGuard)

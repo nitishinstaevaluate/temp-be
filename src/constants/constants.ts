@@ -50,10 +50,10 @@ export const REPORT_PURPOSE={
   sebiRegulations:'SEBI Regulations'
 }
 export const MB01_REPORT_PURPOSE={
-  companiesAct:'Companies Act, 2013',
+  companiesAct:'read with Companies Act, 2013',
   ita1961:'read with Rule 11UA of Income Tax Rule, 1962',
   fema:'',
-  sebiRegulations:'SEBI Regulations'
+  sebiRegulations:'read with SEBI Regulations'
 }
 
 export const NATURE_OF_INSTRUMENT = {
@@ -128,6 +128,60 @@ export const MB01_PURPOSE_OF_REPORT_AND_SECTION = [
       {
         section:"Foreign Exchange Management (Overseas Investment) Rules - 2022- Transfer/Issue of Security from Non-Resident to Resident",
         alias:"Foreign Exchange Management (Overseas Investment) Rules, 2019"
+      }
+    ]
+  },
+  {
+    purposeOfReport:"companiesAct",
+    options:[
+      {
+        section:"62 - Preferential Issue of Further Shares",
+        alias:"62 - Preferential Issue of Further Shares",
+      },
+      {
+        section:"42 - Private Placement",
+        alias:"42 - Private Placement",
+      },
+      {
+        section:"54 - Issue of Sweat Equity Shares",
+        alias:"54 - Issue of Sweat Equity Shares",
+      },
+      {
+        section:"230 - Compromise or Arrangements",
+        alias:"230 - Compromise or Arrangements",
+      },
+      {
+        section:"232 - Mergers & Amalgamation",
+        alias:"232 - Mergers & Amalgamation",
+      },
+      {
+        section:"236 - Purchase of Minority Interest",
+        alias:"236 - Purchase of Minority Interest",
+      }
+    ]
+  },
+  {
+    purposeOfReport:"sebiRegulations",
+    options:[
+      {
+        section:"87C(1)(ii) - SEBI (Listing Obligations and Disclosure Requirements Regulations), 2015",
+        alias:"87C(1)(ii) - SEBI (Listing Obligations and Disclosure Requirements Regulations), 2015",
+      },
+      {
+        section:"158(6)(b) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+        alias:"158(6)(b) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+      },
+      {
+        section:"163(3) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+        alias:"163(3) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+      },
+      {
+        section:"165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+        alias:"165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+      },
+      {
+        section:"166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+        alias:"166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
       }
     ]
   }
