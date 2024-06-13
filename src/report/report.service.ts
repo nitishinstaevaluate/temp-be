@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as puppeteer from 'puppeteer';
@@ -34,6 +34,7 @@ import { convertToRomanNumeral, customRound, formatPositiveAndNegativeValues } f
 import { financialHelperService } from './helpers/financial-helpers.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { userRoles } from 'src/library/enums/user-roles.enum';
+import { reportClaims } from 'src/library/enums/report-claim-mapping-enum';
 
 @Injectable()
 export class ReportService {
@@ -79,6 +80,8 @@ export class ReportService {
             authorization: req.headers.authorization
           }
           const { roles } = await this.fetchUserInfo(headers);
+          const reportClaimValidator = await this.validateReportClaims(roles, reportDetails.reportPurpose);
+          if(!reportClaimValidator) throw new UnauthorizedException({msg:'User Unauthorised', status:false, description:"You are not authorised to generate selected report"});
           const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
          
           if(MB01){
@@ -178,12 +181,7 @@ export class ReportService {
               };
           }
       } catch (error) {
-        console.error("Error generating PDF:", error);
-        return {
-            msg: `Error generating ${formatType === 'DOCX' ? 'DOCX' : 'PDF'}`,
-            status: false,
-            error: error.message
-        };
+        throw error;
       }
   }
 
@@ -205,6 +203,9 @@ export class ReportService {
       authorization: req.headers.authorization
     }
     const { roles } = await this.fetchUserInfo(headers);
+    const reportClaimValidator = await this.validateReportClaims(roles, reportDetails.reportPurpose);
+          
+    if(!reportClaimValidator) throw new UnauthorizedException({msg:'User Unauthorised', status:false, description:"You are not authorised to generate selected report"});
     const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
     const betaWorking = await this.fetchBetaWorking(req, reportDetails.processStateId, valuationResult.inputData[0].betaType);
 
@@ -279,12 +280,7 @@ export class ReportService {
         };
     }
 } catch (error) {
-  console.error("Error previewing Report:", error);
-  return {
-      msg: "Error Previewing Report",
-      status: false,
-      error: error.message
-  };
+  throw error;
 }
  }
 
@@ -416,8 +412,17 @@ export class ReportService {
  async sebiReport(id,res, req, formatType){
   try{
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
-
+    
     const reportDetails = await this.reportModel.findById(id);
+
+    const headers = {
+      authorization: req.headers.authorization
+    }
+    const { roles } = await this.fetchUserInfo(headers);
+    const reportClaimValidator = await this.validateReportClaims(roles, reportDetails.reportPurpose);
+    
+    if(!reportClaimValidator) throw new UnauthorizedException({msg:'User Unauthorised', status:false, description:"You are not authorised to generate selected report"});
+
     const valuationResultDetails:any = await this.valuationService.getValuationById(reportDetails.reportId);
     const companyName = valuationResultDetails.inputData[0].company;
     htmlFilePath = path.join(process.cwd(), 'html-template', `sebi-report.html`);
@@ -478,17 +483,21 @@ export class ReportService {
       };
   }
   catch(error){
-    return {
-      error:error,
-      msg:"sebi report generation failed",
-      status:false
-    }
+    throw error;
   }
  }
 
  async previewSebiReport(id, res, req){
   try{
     const reportDetails = await this.reportModel.findById(id);
+
+    const headers = {
+      authorization: req.headers.authorization
+    }
+    const { roles } = await this.fetchUserInfo(headers);
+    const reportClaimValidator = await this.validateReportClaims(roles, reportDetails.reportPurpose);
+    
+    if(!reportClaimValidator) throw new UnauthorizedException({msg:'User Unauthorised', status:false, description:"You are not authorised to generate selected report"});
 
     let htmlFilePath, pdfFilePath,docFilePath,pdf;
     const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
@@ -502,11 +511,7 @@ export class ReportService {
     return await this.sebiReportService.computeSEBIpreviewReport(reportDetails, valuationResult,res, req, docFilePath, htmlFilePath,pdfFilePath)
   }
   catch(error){
-    return{
-      error:error,
-      status:false,
-      msg:"sebi report preview failed"
-    }
+    throw error;
   }
  }
 
@@ -2999,10 +3004,10 @@ export class ReportService {
           // Use that object structure created above for looping and adding sections followed by purposes
           reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
            let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
-            if (stockedPurposes.length <= 1) {
+            if (stockedPurposes?.length <= 1) {
               overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
             } else {
-              const lastSection = stockedPurposes[stockedPurposes.length - 1];
+              const lastSection = stockedPurposes[stockedPurposes?.length - 1];
               const otherSections = stockedPurposes.slice(0, -1).join(', ');
               overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
               }
@@ -3918,5 +3923,27 @@ generateString(modelArray) {
   const string = finalArray.length ? finalArray : filteredMethods.join(', ');
 
   return string;
+}
+async validateReportClaims(roles, purposeOfReport){
+  if(!purposeOfReport?.length) return false;
+
+  let purposeRoleArray = [];
+  for await(const indPurpose of purposeOfReport){
+    if(reportClaims[indPurpose]){
+      purposeRoleArray.push(
+        {
+          purpose:indPurpose,
+          claim:reportClaims[indPurpose]
+        }
+      )
+    }
+  }
+  let roleExist = false;
+  for await(const indRole of roles){
+    roleExist = purposeRoleArray.some(reportRole => indRole?.name === reportRole?.claim)
+    if(roleExist)
+      break;
+  }
+  return roleExist
 }
 }
