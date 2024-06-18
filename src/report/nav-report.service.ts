@@ -24,7 +24,7 @@ export class navReportService {
             const reportDetails = await this.reportModel.findById(id);
             const valuationResult:any = await this.valuationService.getValuationById(reportDetails.reportId);
       
-            if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+            if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
               htmlFilePath = path.join(process.cwd(), 'html-template', 'nav-report.html');
             }
 
@@ -63,7 +63,7 @@ export class navReportService {
                 const template = hbs.compile(htmlContent);
                 const html = template(valuationResult);
               
-                if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+                if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
                   pdf = await this.generateNavPdf(html, pdfFilePath);
                 }
       
@@ -361,6 +361,9 @@ export class navReportService {
 
         hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
             let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+                if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+                    return PURPOSE_OF_REPORT_AND_SECTION.internalAssessment;
+                }
                 if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
                 return ['Please provide data']
                 }
@@ -390,6 +393,12 @@ export class navReportService {
                 return overallSectionsWithPurposes.join(' and ');
         });
     
+        hbs.registerHelper('isInternalAssessment',()=>{
+            if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+              return true;
+            }
+            return false;
+          })
     
         hbs.registerHelper('navCurrencyAndReportingUnit',()=>{
             if(valuationResult?.inputData[0]?.reportingUnit === 'absolute'){
