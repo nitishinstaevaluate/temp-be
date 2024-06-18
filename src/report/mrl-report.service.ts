@@ -29,6 +29,8 @@ export class mrlReportService {
                   error: 'Not Found',
                 }).getResponse();
 
+            const { roles } = await this.fetchUserInfo(headers);
+
             const stageOneData = applicationData.stateInfo.firstStageInput;
             const computeExcelSheet = await this.excelSheetComputation(stageOneData);
             const excelSheetId = this.getExcelSheetId(stageOneData);
@@ -40,7 +42,7 @@ export class mrlReportService {
             let pdfFilePath = path.join(process.cwd(), 'pdf', `mrl.pdf`);
             let wordFilePath = path.join(process.cwd(), 'pdf', `mrl.docx`);
         
-           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear);
+           await this.loadMrlHelpers(applicationData.stateInfo, computeExcelSheet, computedTotalYear, roles);
         
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
             const template = hbs.compile(htmlContent);
@@ -86,11 +88,17 @@ export class mrlReportService {
       return formOneData.isExcelModified ? formOneData.modifiedExcelSheetId : formOneData.excelSheetId;
     }
 
-    async loadMrlHelpers(processStateInfo, excelSheetData, computedTotalYear){
+    async loadMrlHelpers(processStateInfo, excelSheetData, computedTotalYear, roles){
         try{
             hbs.registerHelper('companyName',()=>{
                 if(processStateInfo.firstStageInput.company)
                     return processStateInfo.firstStageInput?.company;
+                return '';
+            })
+            hbs.registerHelper('terminalGrowthRate',()=>{
+                if(processStateInfo.firstStageInput.terminalGrowthRate){
+                    return processStateInfo.firstStageInput?.terminalGrowthRate;
+                }
                 return '';
             })
 
@@ -119,6 +127,11 @@ export class mrlReportService {
               if(processStateInfo.sixthStageInput?.companyInfo)
                 return processStateInfo.sixthStageInput?.companyInfo;
               return '';
+            })
+            hbs.registerHelper('ifMB01',()=>{
+              if(roles?.length)
+                  return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+              return false;
             })
             hbs.registerHelper('dateOfIncorporation',()=>{
                 if(processStateInfo.sixthStageInput.dateOfIncorporation)
@@ -215,6 +228,11 @@ export class mrlReportService {
         hbs.registerHelper('yearStartAndYearEnd',()=>{
           if(computedTotalYear)
             return `FY ${computedTotalYear.startYear} to FY ${computedTotalYear.endYear}`;
+          return '';
+        })
+        hbs.registerHelper('yearEnd',()=>{
+          if(computedTotalYear)
+            return `${computedTotalYear.endYear}`;
           return '';
         })
         }

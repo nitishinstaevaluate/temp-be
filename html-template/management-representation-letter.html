@@ -71,6 +71,34 @@
         .highlighted-row {
     background-color: yellow;
 }
+.capital-struc{
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        .capital-struc thead tr th,.capital-struc tbody tr td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            font-size: 13px;
+            font-family: "Trebuchet MS", sans-serif;
+        }
+        .capital-struc tbody tr td{
+            height: 10px;
+        }
+
+        .capital-struc thead tr th {
+            background-color: #f2f2f2;
+        }
+
+        .capital-struc tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .capital-struc tbody tr:hover {
+            background-color: #ddd;
+        }
     </style>
 </head>
 
@@ -83,17 +111,31 @@
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="text-indent: 0pt;line-height: 14pt;text-align: left;">To,</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        {{#if (ifMB01)}}
+        <p style="text-indent: 0pt;line-height: 12pt;text-align: left;">
+            <span class="s2">Navigant Corporate Advisors Limited</span>
+        </p>
+        <p style="text-indent: 0pt;line-height: 13pt;text-align: left;padding-top: 1%;">804, Meadows, Sahar Plaza Complex,</p>
+            <p style="text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 1%;">J B Nagar, Andheri Kurla Road,</p>
+            <p style="text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 1%;">Andheri (East), Mumbai-400 059</p>
+        {{else}}
         <p style="text-indent: 0pt;line-height: 12pt;text-align: left;">
             <span class="s2">Nitish Chaturvedi</span>
         </p>
         <p style="text-indent: 0pt;line-height: 13pt;text-align: left;padding-top: 1%;">Registered Valuer</p>
         <p style="text-indent: 0pt;line-height: 14pt;text-align: left;padding-top: 1%;">Securities or Financial Assets</p>
+        {{/if}}
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p class="s3" style="text-indent: 0pt;text-align: left;">Date: {{dateOfAppointment}}</p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        {{#if (ifMB01)}}
+        <p class="s3" style="line-height: 13pt;text-align: left;background-color: rgb(15, 11, 97);color: white;font-weight: bold;padding-top: 4px;padding-bottom: 4px;padding-left: 2px;">1. Overview of Company:
+        </p>
+        {{else}}
         <p class="s3" style="padding-left: 1pt;text-indent: 0pt;line-height: 13pt;text-align: left;">1. Overview of Company
         </p>
+        {{/if}}
         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;" />
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;line-height: 180%;">
@@ -110,8 +152,66 @@
                 registered office of the company is located at {{companyAddress}}.</span></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <p class="s3" style="padding-left: 1pt;text-indent: 0pt;line-height: 13pt;text-align: left;">2. Purpose of
-            Valuation:</p>
+        {{#if (ifMB01)}}
+        <p class="s3" style="line-height: 13pt;text-align: left;background-color: rgb(15, 11, 97);color: white;font-weight: bold;padding-top: 4px;padding-bottom: 4px;padding-left: 2px;">2. Capital Structure:
+        </p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <table class="capital-struc">
+            <thead>
+              <tr>
+                <th >Particulars</th>
+                <th >Amount</th>
+                <th >Nature of Security</th>
+                <th >Actual</th>
+                <th >Diluted</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold;">Total Shares</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        {{/if}}
+
+        {{#if (ifMB01)}}
+        <p class="s3" style="line-height: 13pt;text-align: left;background-color: rgb(15, 11, 97);color: white;font-weight: bold;padding-top: 4px;padding-bottom: 4px;padding-left: 2px;page-break-before: always;margin-top: 4%;">3. Purpose of Valuation:
+        </p>
+        {{else}}
+        <p class="s3" style="padding-left: 1pt;text-indent: 0pt;line-height: 13pt;text-align: left;">2. Purpose of Valuation:</p>
+        {{/if}}
         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;" />
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 5pt;text-indent: 0pt;line-height: 190%;text-align: justify;"><span
@@ -126,8 +226,31 @@
                 class="p">.</span></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <p class="s3" style="padding-left: 1pt;text-indent: 0pt;line-height: 12pt;text-align: left;">3. Provisional and
-            Projected Financial Statements:</p>
+
+        {{#if (ifMB01)}}
+        {{#if (terminalGrowthRate)}}
+        <p class="s3" style="line-height: 13pt;text-align: left;background-color: rgb(15, 11, 97);color: white;font-weight: bold;padding-top: 4px;padding-bottom: 4px;padding-left: 2px;">4. Terminal Growth Rate:
+        </p>
+        <p style="padding-top: 5pt;text-indent: 0pt;line-height: 190%;text-align: justify;">
+            <span class="p">
+                We assume that a perpetual growth rate would be <span style="font-weight: bold;">{{terminalGrowthRate}}%</span> in our business after completion of financial year {{yearEnd}}.
+            </span>
+        </p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        {{/if}}
+        {{/if}}
+        {{#if (ifMB01)}}
+        {{#if (terminalGrowthRate)}}
+        <p class="s3" style="line-height: 13pt;text-align: left;background-color: rgb(15, 11, 97);color: white;font-weight: bold;padding-top: 4px;padding-bottom: 4px;padding-left: 2px;">5. Provisional and Projected Financial Statements:
+        </p>
+        {{else}}
+        <p class="s3" style="line-height: 13pt;text-align: left;background-color: rgb(15, 11, 97);color: white;font-weight: bold;padding-top: 4px;padding-bottom: 4px;padding-left: 2px;">4. Provisional and Projected Financial Statements:
+        </p>
+        {{/if}}
+        {{else}}
+        <p class="s3" style="padding-left: 1pt;text-indent: 0pt;line-height: 12pt;text-align: left;">3. Provisional and Projected Financial Statements:</p>
+        {{/if}}
         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;" />
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 5pt;text-indent: 0pt;line-height: 190%;text-align: justify;"><span
