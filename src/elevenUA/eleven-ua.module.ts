@@ -23,9 +23,11 @@ import { authenticationTokenSchema } from 'src/authentication/schema/authenticat
 import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.module';
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { ReportModule } from 'src/report/report.module';
+import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
+import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService],
+  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, ExcelArchiveService],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },
@@ -33,7 +35,8 @@ import { ReportModule } from 'src/report/report.module';
     { name: 'processManager', schema: ProcessManagerSchema },
     { name: 'dataChecklist', schema: DataCheckListSchema },
     { name: 'mandate', schema: MandateSchema },
-    { name: 'token', schema: authenticationTokenSchema }
+    { name: 'token', schema: authenticationTokenSchema },
+    { name: 'excelArchive', schema: ExcelArchiveSchema }
   ]),
   UsersModule,
   ValuationProcessModule,

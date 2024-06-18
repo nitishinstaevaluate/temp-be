@@ -31,9 +31,14 @@ import { mrlReportService } from './mrl-report.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 import { navReportService } from './nav-report.service';
 import { financialHelperService } from './helpers/financial-helpers.service';
+import { ExcelArchiveModule } from 'src/excel-archive/excel-archive.module';
+import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
+import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 
 @Module({
-  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, ProcessStatusManagerService, utilsService,HistoricalReturnsService, mandateReportService, mrlReportService, thirdpartyApiAggregateService, navReportService, financialHelperService],
+  providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, 
+    ProcessStatusManagerService, utilsService,HistoricalReturnsService, mandateReportService, mrlReportService, thirdpartyApiAggregateService,
+     navReportService, financialHelperService, ExcelArchiveService],
   controllers: [ReportController],
   imports:[ValuationProcessModule,LoggerModule,
     MongooseModule.forFeature(
@@ -50,6 +55,7 @@ import { financialHelperService } from './helpers/financial-helpers.service';
           { name: 'riskFreeRate', schema : RiskFreeRateSchema},
           { name: 'dataChecklist', schema: DataCheckListSchema },
           { name: 'mandate', schema: MandateSchema },
+          { name: 'excelArchive', schema: ExcelArchiveSchema },
       ]
     ),
     UsersModule,

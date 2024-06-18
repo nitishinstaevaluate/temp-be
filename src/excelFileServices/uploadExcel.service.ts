@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -22,6 +22,9 @@ import { convertEpochToPlusOneDate, formatPositiveAndNegativeValues } from 'src/
 import { ReportService } from 'src/report/report.service';
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 import { terminalValueWorkingService } from 'src/valuationProcess/terminal-value-working.service';
+import { ExcelArchiveDto } from 'src/excel-archive/dto/excel-archive.dto';
+import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 require('dotenv').config();
 
 @Injectable()
@@ -37,13 +40,17 @@ export class ExcelSheetService {
     private thirdpartyApiAggregateService: thirdpartyApiAggregateService,
     private readonly reportService: ReportService,
     private readonly elevenUaService: ElevenUaService,
-    private readonly terminalValueWorkingService: terminalValueWorkingService){}
-    getSheetData(fileName: string, sheetName: string): Observable<any> {
+    private readonly terminalValueWorkingService: terminalValueWorkingService,
+    private readonly excelArchiveService: ExcelArchiveService){}
+    getSheetData(fileName: string, sheetName: string, request): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
         
     return from(this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(fileName)).pipe(
       switchMap((filePath:any)=>{
+        const fileType = path.extname(filePath);
+        const stats = fs.statSync(filePath);
+        const fileSize = stats.size;
         return from(this.readFile(filePath)).pipe(
           switchMap((workbook) => {
             return from(this.copyWorksheets(workbook,fileName)).pipe(
@@ -208,40 +215,71 @@ export class ExcelSheetService {
                        )
 
                     break;   
+
+                    case 'Slump Sale':
+                      if (!workbook.SheetNames.includes(sheetName)) {
+                        return throwError( {
+                          message: `${sheetName} Sheet not found`,
+                          status: false
+                        });
+                      }
+                      const slumpSaleSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                       return from(this.transformData(slumpSaleSheetData)).pipe(
+                        switchMap((excelData)=>{
+                          return from(this.createStructure(excelData,sheetName)).pipe(
+                            switchMap((structureResponse:any)=>{
+                              return from(this.fetchUserInfo(request)).pipe(
+                                switchMap((authUser)=>{
+                                   let excelArchive = new ExcelArchiveDto();
+                                   excelArchive.fileName = fileName;
+                                   excelArchive.sheetName = sheetName;
+                                   excelArchive.rowCount = structureResponse.rows;
+                                   excelArchive.fileSize = `${fileSize}B`;
+                                   excelArchive.fileType = fileType;
+                                   excelArchive.importedBy = authUser?.userInfo?.userId;
+                                   excelArchive.status = 'complete';
+                                   excelArchive.data = structureResponse.slumpSaleStructure
+                                  
+                                   return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+                                    switchMap((excelArchiveResponse)=>{
+                                      return of({
+                                        data:structureResponse.slumpSaleStructure,
+                                        msg:`Excel Sheet Fetched`,
+                                        status:true
+                                      });
+                                    }),
+                                    catchError((error)=>{
+                                      return throwError(error)
+                                    })
+                                   )
+                                })
+                              )
+                            })
+                          )
+                        }),
+                        catchError((error)=>{
+                          return throwError(error)
+                        })
+                       )
+
+                    break;   
                   }
               }),
             catchError((error) => {
-              console.log(error,"error")
-                return of({
-                  msg:'Something went wrong',
-                  error:error.message,
-                  status:false
-                });
+                return throwError(error)
             })
         );
           }),
           catchError((error) => {
-            console.log(error,"error")
-              return of({
-                msg:'Something went wrong',
-                error:error.message,
-                status:false
-              });
+            return throwError(error)
           })
         )
         },
        ),
        catchError((error) => {
-        console.log(error,"error")
-          return of({
-            msg:'Fetching of financial sheet failed',
-            error:error.message,
-            status:false
-          });
+        return throwError(error)
       })
       )
-        
-       
       }
 
       
@@ -2758,6 +2796,7 @@ async createStructure(data,sheetName){
   let balanceSheetStructure = [];
   let profitAndLossSheetStructure = [];
   let ruleElevenUaStructure = [];
+  let slumpSaleStructure = [];
   if(sheetName === 'BS'){
       data.map((element)=>{
         const {Particulars,...rest} = element; 
@@ -2802,6 +2841,19 @@ async createStructure(data,sheetName){
     })
     return ruleElevenUaStructure;
   }
+  else if(sheetName === 'Slump Sale'){
+    let rows = 0
+    data.map((element)=>{
+      const {Particulars,...rest} = element; 
+      for (const lineItems of SLUMP_SALE){
+        if(element.Particulars === lineItems.lineEntry.particulars){
+          slumpSaleStructure.push({lineEntry:lineItems.lineEntry,...rest})
+          rows ++;
+        }
+      }
+    })
+    return {slumpSaleStructure,rows};
+  }
 }
 
 async updateFinancialSheet(filepath){
@@ -2838,5 +2890,13 @@ async pushInitialFinancialSheet(formData){
       status : false
     }
   }
+}
+
+async fetchUserInfo(request){
+
+  const KCGuard = new KeyCloakAuthGuard();
+  const userInfo =await KCGuard.fetchAuthUser(request).toPromise();
+  // console.log(userInfo,"user Info")
+  return { userInfo }
 }
 }

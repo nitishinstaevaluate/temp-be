@@ -9,6 +9,7 @@ import {
   Body,
   Res,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -69,10 +70,12 @@ export class UploadController {
   getSheetData(
     @Param('fileName') fileName: string,
     @Param('sheetName') sheetName: string,
-  ): Observable<any> {
-    return from(this.excelSheetService.getSheetData(fileName, sheetName)).pipe(
+    @Req() request
+  ) :Observable<any> {
+     return from(this.excelSheetService.getSheetData(fileName, sheetName, request))
+    .pipe(
       catchError((error) => {
-        return throwError(error);
+        return throwError (error);
       })
     );
   }

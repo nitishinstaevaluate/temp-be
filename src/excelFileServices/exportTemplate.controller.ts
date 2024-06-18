@@ -34,6 +34,19 @@ export class ExportTemplateController {
       res.send(buffer);
     return;
     }
+    if(modelName === MODEL[8]){
+      const filePath = `template/slumpSaleTemplate.xlsx`;
+      const buffer = fs.readFileSync(filePath);
+
+      res.setHeader('Content-Type', 'application/vnd.ms-excel');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename= Template-${new Date().getTime()}.xlsx`,
+      );
+    
+      res.send(buffer);
+    return;
+    }
     const filePath = `template/test-template.xlsx`;
 
     if (!fs.existsSync(filePath)) {
