@@ -3025,6 +3025,9 @@ export class ReportService {
 
     hbs.registerHelper('MBSectionsAndPurpose', ()=>{
       let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+      if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+        return PURPOSE_OF_REPORT_AND_SECTION.internalAssessment;
+        }
           if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
             return ['Please provide data']
           }
@@ -3057,6 +3060,7 @@ export class ReportService {
               overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
               }
           })
+          overallSectionsWithPurposes[0] = `in accordance with ${overallSectionsWithPurposes[0]}`
           return overallSectionsWithPurposes.join(' and ');
   });
 

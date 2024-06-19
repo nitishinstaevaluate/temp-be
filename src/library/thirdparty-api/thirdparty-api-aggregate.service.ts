@@ -216,4 +216,20 @@ export class thirdpartyApiAggregateService {
                 }
             }
         }
+
+        async convertPdfToExcel(pdfFileName,excelFilePath){
+            try{
+              const convertapi = new ConvertAPI(process.env.CONVERTAPISECRET);
+              const conversion = await  convertapi.convert('xlsx', { File: `${pdfFileName}`},'pdf');
+              await conversion.file.save(excelFilePath);
+              return (await fs.readFileSync(excelFilePath));
+            }
+            catch(error){
+                return{
+                    msg:'conversion from pdf to excel failed',
+                    status:false,
+                    error:error.message
+                }
+            }
+        }
 }
