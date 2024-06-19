@@ -87,7 +87,7 @@ export class ReportService {
           if(MB01){
             htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);
           }
-          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
           }
 
@@ -212,7 +212,7 @@ export class ReportService {
     if(MB01){
       htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);
     }
-    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0])){
+    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
 
@@ -2375,6 +2375,9 @@ export class ReportService {
 
         hbs.registerHelper('sectionAndPurposeOfReport', ()=>{
           let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+              if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+              return PURPOSE_OF_REPORT_AND_SECTION.internalAssessment;
+              }
               if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
                 return ['Please provide data']
               }
@@ -2391,7 +2394,6 @@ export class ReportService {
                 });
               })
 
-              console.log(storePurposeWiseSections,"all purposes")
               // Use that object structure created above for looping and adding sections followed by purposes
               reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
                let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
@@ -2401,8 +2403,51 @@ export class ReportService {
                   const lastSection = stockedPurposes[stockedPurposes.length - 1];
                   const otherSections = stockedPurposes.slice(0, -1).join(', ');
                   overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
-                  }
+                }
               })
+              overallSectionsWithPurposes[0] = `in accordance with provisions of section ${overallSectionsWithPurposes[0]}`
+              return overallSectionsWithPurposes.join(' and ');
+      });
+
+      hbs.registerHelper('isInternalAssessment',()=>{
+        if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+          return true;
+        }
+        return false;
+      })
+
+        hbs.registerHelper('scopeOfWorksectionAndPurposeOfReport', ()=>{
+          let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+              if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+              return PURPOSE_OF_REPORT_AND_SECTION.internalAssessment;
+              }
+              if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
+                return ['Please provide data']
+              }
+
+               //Firstly create object structure with purpose of report and sections in key-value format;
+               reportDetails.reportPurpose.forEach((indpurpose, purposeIndex)=>{
+                reportDetails.reportSection.forEach((indSection, sectionIndex) => {
+                  if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].length){
+                    if(PURPOSE_OF_REPORT_AND_SECTION[indpurpose].includes(indSection)){
+                      storePurposeWiseSections[indpurpose] = storePurposeWiseSections[indpurpose] || [];
+                      storePurposeWiseSections[indpurpose].push(indSection);
+                    }
+                  }
+                });
+              })
+              // Use that object structure created above for looping and adding sections followed by purposes
+              reportDetails.reportPurpose.forEach((indPurposeOfReport,index)=>{
+               let stockedPurposes = storePurposeWiseSections[indPurposeOfReport];
+                if (stockedPurposes.length <= 1) {
+                  overallSectionsWithPurposes.push(stockedPurposes.join(', ') + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                } else {
+                  const lastSection = stockedPurposes[stockedPurposes.length - 1];
+                  const otherSections = stockedPurposes.slice(0, -1).join(', ');
+                  overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' of ' + REPORT_PURPOSE[indPurposeOfReport]);
+                }
+              })
+              overallSectionsWithPurposes[0] = `as per section ${overallSectionsWithPurposes[0]}`
               return overallSectionsWithPurposes.join(' and ');
       });
 
@@ -2980,6 +3025,9 @@ export class ReportService {
 
     hbs.registerHelper('MBSectionsAndPurpose', ()=>{
       let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];
+      if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+        return PURPOSE_OF_REPORT_AND_SECTION.internalAssessment;
+        }
           if(!reportDetails.reportPurpose?.length || !reportDetails.reportSection?.length){
             return ['Please provide data']
           }
@@ -3012,6 +3060,7 @@ export class ReportService {
               overallSectionsWithPurposes.push(`${otherSections} and ${lastSection}` + ' ' + MB01_REPORT_PURPOSE[indPurposeOfReport]);
               }
           })
+          overallSectionsWithPurposes[0] = `in accordance with ${overallSectionsWithPurposes[0]}`
           return overallSectionsWithPurposes.join(' and ');
   });
 

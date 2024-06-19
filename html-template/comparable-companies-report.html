@@ -579,7 +579,7 @@
                 </span>
                 <span style="font-weight: bold;text-transform: capitalize;">{{companyName}}</span>
                 <span class="s4" >(hereinafter the “Management”) on
-                    the fair value of {{natureOfInstrument}} of the Company in accordance with provisions of section {{sectionAndPurposeOfReport}}.
+                    the fair value of {{natureOfInstrument}} of the Company {{sectionAndPurposeOfReport}}.
                 </span>
             </p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -749,7 +749,12 @@
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
                         <p style="padding-left: 3pt;text-indent: 0pt;text-align: justify;line-height: 150%;"><span class="p">
                             This valuation report (hereinafter referred to “the Report”) is being furnished at the request of the Management of <span>{{companyName}}</span> for determining the fair value of {{natureOfInstrument}} of the Company.
-                             We understand that the fair value of the {{natureOfInstrument}} of the Company is required to comply with the relevant provisions of section <span>{{sectionAndPurposeOfReport}}</span>.
+                             We understand that the fair value of the {{natureOfInstrument}} of the Company is required 
+                             {{#if (isInternalAssessment)}}
+                             {{sectionAndPurposeOfReport}}.
+                             {{else}}
+                             to comply with the relevant provisions of section <span>{{sectionAndPurposeOfReport}}</span>.
+                             {{/if}}
                               The valuation date for this exercise is {{strdate}}. 
                         </p>
                         <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -828,7 +833,12 @@
                             <p style="padding-left: 26pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>
                             <p style="padding-top: 4pt;padding-left: 3pt;text-indent: 0pt;text-align: left;line-height: 150%;text-align: justify;">
-                                The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of <span style="text-transform: capitalize;">{{companyName}}</span> as of {{strdate}} to comply with the relevant provisions of section {{sectionAndPurposeOfReport}}. 
+                                The purpose of valuation is to determine the fair value of {{natureOfInstrument}} of <span style="text-transform: capitalize;">{{companyName}}</span> as of {{strdate}} 
+                                {{#if (isInternalAssessment)}}
+                                {{sectionAndPurposeOfReport}}.
+                                {{else}}
+                                to comply with the relevant provisions of section {{sectionAndPurposeOfReport}}. 
+                                {{/if}}
                                 The valuation date for this valuation exercise is taken to be {{strdate}}.
                             </p>
                             <p style="text-indent: 0pt;text-align: left;"><br /></p>

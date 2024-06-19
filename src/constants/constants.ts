@@ -47,7 +47,8 @@ export const REPORT_PURPOSE={
   companiesAct:'Companies Act, 2013',
   ita1961:'Income Tax Act, 1961',
   fema:'Foreign Exchange Management Act',
-  sebiRegulations:'SEBI Regulations'
+  sebiRegulations:'SEBI Regulations',
+  internalAssessment:'Internal Assessment'
 }
 export const MB01_REPORT_PURPOSE={
   companiesAct:'read with Companies Act, 2013',
@@ -93,6 +94,9 @@ export const PURPOSE_OF_REPORT_AND_SECTION = {
     "163(3) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
     "165 - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
     "166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018"
+  ],
+  internalAssessment:[
+    'for Internal Assessment purpose'
   ]
 }
 

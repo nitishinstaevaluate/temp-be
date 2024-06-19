@@ -78,48 +78,29 @@ export class UploadController {
   }
 
   // @UseGuards(KeyCloakAuthGuard)
-  @Get('generate-pdf/:reportId/:model/:specificity/:processId/:terminalType')
+  @Get('export-valuation/:reportId/:model/:specificity/:processId/:terminalType/:type')
   async generatePdf(
     @Param('reportId') reportId : string,
     @Param('model') model : string = null,
     @Param('specificity') specificity : boolean = false, 
     @Param('processId') processId : string, 
     @Param('terminalType') terminalType : string, 
+    @Param('type') formatType : string,
     @Res() res
   ) {
-    return await this.excelSheetService.generatePdfFromHtml(reportId,model,specificity,res, processId, terminalType);
+    return await this.excelSheetService.generateValuation(reportId,model,specificity,res, processId, terminalType, formatType);
   }
 
   // @UseGuards(KeyCloakAuthGuard)
-  @Get('generate-docx/:reportId/:model/:specificity/:processId/:terminalType')
-  async generateDocx(
-    @Param('reportId') reportId : string,
-    @Param('model') model : string = null,
-    @Param('specificity') specificity : boolean = false, 
-    @Param('processId') processId : string, 
-    @Param('terminalType') terminalType : string, 
-    @Res() res
-  ) {
-    return await this.excelSheetService.generateDocxFromHtml(reportId,model,specificity,res, processId, terminalType);
-  }
-
-  // @UseGuards(KeyCloakAuthGuard)
-  @Get('export-eleven-ua/:elevenUaId')
+  @Get('export-eleven-ua/:elevenUaId/:type')
   async generateElevenUApdf(
     @Param('elevenUaId') id : string,
-    @Res() res
+    @Res() res,
+    @Param('type') formatType : string,
   ) {
-    return await this.excelSheetService.exportElevenUaPdf(id,res);
+    return await this.excelSheetService.exportElevenUa(id,res, formatType);
   }
 
-  // @UseGuards(KeyCloakAuthGuard)
-  @Get('export-eleven-ua-docx/:elevenUaId')
-  async generateElevenUAdocx(
-    @Param('elevenUaId') id : string,
-    @Res() res
-  ) {
-    return await this.excelSheetService.exportElevenUaDocx(id,res);
-  }
 
   @UseGuards(KeyCloakAuthGuard)
   @Post('modifyExcel')
