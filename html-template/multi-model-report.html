@@ -943,7 +943,11 @@
                                 <span class="p"> of the Company.
                                 We understand that the fair value of {{natureOfInstrument}} of the Company is required 
                                 {{#if (ifMB01)}}
-                                for the {{sectionAsPerIncomeTaxAndFema}} of {{natureOfInstrument}} in accordance with {{MBSectionsAndPurpose}}.
+                                {{#if (isInternalAssessment)}}
+                                 {{MBSectionsAndPurpose}}.
+                                {{else}}
+                                for the {{sectionAsPerIncomeTaxAndFema}} of {{natureOfInstrument}} {{MBSectionsAndPurpose}}.
+                                {{/if}}
                                 {{else}}
                                     {{#if (isInternalAssessment)}}
                                     for Internal Assessment. 
@@ -1101,7 +1105,7 @@
                                 <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
                                 The purpose of valuation is to determine the fair value of {{natureOfInstrument}} for {{sectionAsPerIncomeTaxAndFema}} of {{natureOfInstrument}} of 
                                 <span style="text-transform: capitalize;font-weight: bold;">{{companyName}}</span>
-                                in accordance with {{MBSectionsAndPurpose}}.
+                                 {{MBSectionsAndPurpose}}.
                                 </p>
                                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                                 <p style="padding-top: 4pt;padding-left: 15pt;text-indent: 0pt;text-align: justify;">
