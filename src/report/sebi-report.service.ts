@@ -510,6 +510,12 @@ export class sebiReportService {
                 return  reportDetails.registeredValuerDetails[0].registeredValuerQualifications; 
             return '';
           })
+          hbs.registerHelper('registeredValuerCopNo',()=>{
+            if(reportDetails.registeredValuerDetails[0]) {
+              return  reportDetails.registeredValuerDetails[0]?.copNo
+            }
+            return '';
+          })
           hbs.registerHelper('appointingAuthorityName',()=>{
             if(reportDetails.appointeeDetails[0]) 
                 return  reportDetails.appointeeDetails[0].appointingAuthorityName; 
