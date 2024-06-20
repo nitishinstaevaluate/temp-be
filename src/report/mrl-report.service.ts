@@ -235,6 +235,25 @@ export class mrlReportService {
             return `${computedTotalYear.endYear}`;
           return '';
         })
+
+        hbs.registerHelper('isDcf',()=>{
+          if(processStateInfo.firstStageInput)
+            return processStateInfo.firstStageInput?.model?.length && 
+              (
+                processStateInfo.firstStageInput?.model.includes(MODEL[0]) || processStateInfo.firstStageInput?.model.includes(MODEL[1]) || processStateInfo.firstStageInput?.model.includes(MODEL[3])
+              );
+          return false;
+        })
+        hbs.registerHelper('reportPurpose',()=>{
+          if(processStateInfo.sixthStageInput.reportPurpose){
+            let purposes = [];
+            for(const indReportPurpose of processStateInfo.sixthStageInput.reportPurpose){
+              purposes.push(`${REPORT_PURPOSE[`${indReportPurpose}`]}`)
+            }
+            return purposes;
+          }
+          return '';
+        })
         }
         catch(error){
           console.log(error,"error")
