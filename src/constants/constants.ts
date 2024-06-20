@@ -2022,7 +2022,8 @@ export const REPORT_BETA_TYPES = {
   levered: 'Relevered Beta',
   unlevered: 'Unlevered Beta',
   market_beta: 'Market Beta',
-  stock_beta:'Stock Beta'
+  stock_beta:'Stock Beta',
+  custom_beta:'Custom Beta',
 }
 
 export const MNEMONIC_ENUMS = {
