@@ -738,7 +738,8 @@ export class ReportService {
             from IMT Dubai and currently pursuing CFA Level 3 USA. He has more than 8 years of Experience in the 
             field of Corporate Finance, Equity Research, Investment Banking and Valuation activities and has managed 
             more than 1000 Valuation assignments in a span of around 5 years. He has performed on transactions covering 
-            diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`
+            diverse industries like Oil & Gas, Automobiles, Software Services, Financial Services, etc.`,
+            copNo:'ICSI RVO/COP/SFA0420/136'
           }
         }
       }
@@ -849,6 +850,13 @@ export class ReportService {
       hbs.registerHelper('registeredValuerCompanyName',()=>{
         if(reportDetails.registeredValuerDetails[0]) 
             return  reportDetails.registeredValuerDetails[0].registeredValuerCompanyName; 
+        return '';
+      })
+
+      hbs.registerHelper('registeredValuerCopNo',()=>{
+        if(reportDetails.registeredValuerDetails[0]) {
+          return  reportDetails.registeredValuerDetails[0]?.copNo
+        }
         return '';
       })
 
