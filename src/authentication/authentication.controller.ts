@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { config } from 'process';
 import { Response } from 'express';
 import {AuthorizationGuard} from './authorization/authorization.guard';
-import { KCloginAuthDto, authTokenDto } from './dto/authentication.dto';
+import { KCloginAuthDto, authTokenDto, roleDto } from './dto/authentication.dto';
 import { authenticationTokenService } from './authentication-token.service';
 // import { authconfig } from '../middleware/auth0';
 // const { auth } = require('express-openid-connect');
@@ -87,5 +87,14 @@ export class AuthenticationController {
   @Get('/refresh-token')
   async refreshToken(@Req() request) {
     return await this.authenticationTokenService.refreshToken(request);
+  }
+
+  @Post('/role-mapping')
+  @UsePipes(new ValidationPipe({ transform: true, whitelist: true}))
+  async verifyRole(
+    @Body() payload: roleDto,
+    @Req() request
+  ){
+    return await this.authenticationTokenService.entityAccess(payload, request);
   }
 }
