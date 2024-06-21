@@ -54,9 +54,11 @@ export class ElevenUaService {
                 const artisticWork = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.artisticWorkRow}`));
                 const sharesAndSecurities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.sharesAndSecuritiesRow}`));
                 const currentInvestmentAndSecurities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.currentInvestmentSharesAndSecuritesRow}`));
+                const currentOtherInvestments = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.currentOtherInvestments}`));
                 const nonCurrentInvestmentAndSecurities = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.nonCurrentInvestmenInSharesAndSecuritesRow}`));
+                const nonCurrentOtherInvestments = convertToNumberOrZero(await getCellValue(ruleElevenUaSheet, `${columnsList[0]}${sheet4_ruleElevenUaObj.nonCurrentOtherInvestments}`));
 
-                const bookValueOfAllAssets = (totalAssets - immovableProperty - jewellery - artisticWork - sharesAndSecurities - currentInvestmentAndSecurities - nonCurrentInvestmentAndSecurities).toFixed(2);
+                const bookValueOfAllAssets = (totalAssets - immovableProperty - jewellery - artisticWork - sharesAndSecurities - currentInvestmentAndSecurities - currentOtherInvestments - nonCurrentInvestmentAndSecurities - nonCurrentOtherInvestments).toFixed(2);
 
                 /* calculate income tax refund claim 
                 * Transfer of shares - b20+b21+b38
