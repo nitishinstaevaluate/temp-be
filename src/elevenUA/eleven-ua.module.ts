@@ -23,9 +23,10 @@ import { authenticationTokenSchema } from 'src/authentication/schema/authenticat
 import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.module';
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { ReportModule } from 'src/report/report.module';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService],
+  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },

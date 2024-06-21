@@ -9,6 +9,7 @@ import {
   Body,
   Res,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -86,9 +87,10 @@ export class UploadController {
     @Param('processId') processId : string, 
     @Param('terminalType') terminalType : string, 
     @Param('type') formatType : string,
-    @Res() res
+    @Res() res,
+    @Req() request,
   ) {
-    return await this.excelSheetService.generateValuation(reportId,model,specificity,res, processId, terminalType, formatType);
+    return await this.excelSheetService.generateValuation(reportId,model,specificity,res, processId, terminalType, formatType, request);
   }
 
   // @UseGuards(KeyCloakAuthGuard)
@@ -97,8 +99,9 @@ export class UploadController {
     @Param('elevenUaId') id : string,
     @Res() res,
     @Param('type') formatType : string,
+    @Req() request
   ) {
-    return await this.excelSheetService.exportElevenUa(id,res, formatType);
+    return await this.excelSheetService.exportElevenUa(id,res, formatType, request);
   }
 
 
