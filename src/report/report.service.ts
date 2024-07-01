@@ -1456,8 +1456,8 @@ export class ReportService {
           return `${debtProp}:${equityProp}`;
         }
         else{   //This is for company based capital structure --- (needs verification)
-          const debtProp = getCapitalStructure.result.capitalStructure.debtProp;
-          const equityProp = getCapitalStructure.result.capitalStructure.equityProp;
+          const debtProp = convertToNumberOrZero(getCapitalStructure.result.capitalStructure.debtProp)?.toFixed(2);
+          const equityProp = convertToNumberOrZero(getCapitalStructure.result.capitalStructure.equityProp)?.toFixed(2);
           return `${debtProp}:${equityProp}`;
         }
       })
