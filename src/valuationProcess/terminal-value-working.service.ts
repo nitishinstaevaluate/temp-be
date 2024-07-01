@@ -9,13 +9,13 @@ import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 export class terminalValueWorkingService{
     constructor(private processManagerService: ProcessStatusManagerService,
         private valuationService: ValuationsService){}
-    async computeTerminalValue(id){
+    async computeTerminalValue(id, valuationId?){
         try{
             let dcfValuation;
             const process = await this.processManagerService.fetchProcess(id);
             const fourthStageDetails:any = process.stateInfo.fourthStageInput;
 
-            const valuationModelResult:any = await this.valuationService.getValuationById(fourthStageDetails.appData.reportId);
+            const valuationModelResult:any = await this.valuationService.getValuationById(valuationId || fourthStageDetails.appData.reportId);
 
             const valuationResult = valuationModelResult.modelResults;
             const boolContainsDcf = valuationResult.some((indValuation)=>indValuation.model === MODEL[0] || indValuation.model === MODEL[1]);

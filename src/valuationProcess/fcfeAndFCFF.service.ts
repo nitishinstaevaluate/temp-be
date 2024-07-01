@@ -28,7 +28,7 @@ import {
   netOperatingAssetsFromAssessment,
   // differenceAssetsLiabilities
 } from '../excelFileServices/fcfeAndFCFF.method';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference, convertToNumberOrZero } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference, convertToNumberOrZero, getRequestAuth } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS, MODEL } from 'src/constants/constants';
@@ -41,6 +41,8 @@ import { ValuationsService } from './valuationProcess.service';
 import * as XLSX from 'xlsx';
 import e from 'express';
 import { PostDcfValuationDto, PostMainValuationDto } from './dto/valuations.dto';
+import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 const date = require('date-and-time');
 
 @Injectable()
@@ -50,7 +52,9 @@ export class FCFEAndFCFFService {
     private readonly customLogger: CustomLogger,
     private readonly processManagerService: ProcessStatusManagerService,
     private readonly valuationService: ValuationsService,
-    private readonly terminalYearWorkingService: terminalValueWorkingService
+    private readonly terminalYearWorkingService: terminalValueWorkingService,
+    private readonly sensitivityAnalysisService: SensitivityAnalysisService,
+    private readonly authenticationTokenService: authenticationTokenService
   ) {}
 
   //Common Method for FCFE and FCFF Methods
@@ -995,14 +999,41 @@ export class FCFEAndFCFFService {
    }
   }
 
-  async recalculateValuePerShare(processId, type, headers){
+  async recalculateValuePerShare(payload, headers){
     try{
+      const processId = payload?.processId; 
+      const type = payload?.type;
+      const useReportIdFromSA = payload?.useReportIdFromSA || false;
+      const updateByValuationId = payload?.updateByValuationId || null;
+      const updateTerminalSelectionAndPrimarySAvaluation = payload?.updateTerminalSelectionAndPrimarySAvaluation || false;
+
       const fourthStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'fourthStageInput');
-      const terminalYearBase:any = await this.terminalYearWorkingService.computeTerminalValue(processId);
-      const valuationId = fourthStageDetails.data?.fourthStageInput?.appData?.reportId;
+      const sensitivityAnalysisId = fourthStageDetails.data?.fourthStageInput?.sensitivityAnalysisId;
+      let reportId:any;
+      reportId = fourthStageDetails.data?.fourthStageInput?.appData?.reportId;
+
+      const role = {
+        role: ['sensitivityAnalysis']
+      }
+       const  request  = {
+          headers : {
+            authorization: headers.authorization
+          }
+        }
+      const hasAccess = await  this.authenticationTokenService.entityAccess(role, request);
+      if(useReportIdFromSA && hasAccess){
+       const SAreportDetails =  await this.fetchValuationIdFromSA(sensitivityAnalysisId);
+       reportId = SAreportDetails?.reportId;
+      }
+
+      if(hasAccess && updateByValuationId && updateByValuationId !== '' && updateByValuationId !== 'null'){
+        reportId = updateByValuationId;
+      }
+
+      const terminalYearBase:any = await this.terminalYearWorkingService.computeTerminalValue(processId, reportId);
       const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.otherAdj);
 
-      const valuation:any = await this.valuationService.getValuationById(valuationId);
+      const valuation:any = await this.valuationService.getValuationById(reportId);
 
       const inputs:any = valuation.inputData[0];
       let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
@@ -1074,12 +1105,22 @@ export class FCFEAndFCFFService {
       fourthStageInput:{
         appData: mainValuationDto,
         otherAdj: otherAdjustment,
-        formFillingStatus: true
+        formFillingStatus: true,
+        sensitivityAnalysisId
       },
       step: 4
     }
     
     await this.processManagerService.upsertProcess(this.getRequestAuth(headers), processStateModel, processId);
+    await this.processManagerService.updateTerminalSelectionType(processId, type);
+
+    if(updateByValuationId){
+      await this.processManagerService.updateTerminalGrowthRate(processId, inputs?.terminalGrowthRate)
+    }
+
+    if(updateTerminalSelectionAndPrimarySAvaluation && hasAccess){
+      await this.updateTerminalSectionAndPrimaryValuation(sensitivityAnalysisId, mainValuationDto.reportId, type);
+    }
     return  {
       ...mainValuationDto,
       message:'Request Successful',
@@ -1087,12 +1128,210 @@ export class FCFEAndFCFFService {
     }
     }
     catch(error){
-      return {
-        msg:'revaluation failed',
-        status:false,
-        error:error
+      throw error
+    }
+  }
+
+  async recalculateValuePerShareForSA(payload, headers){
+    try{
+      const processId = payload?.processId; 
+      const type = payload?.type;
+      const updateByValuationId = payload?.updateByValuationId || null;
+
+      const fourthStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'fourthStageInput');
+
+      const terminalYearBase:any = await this.terminalYearWorkingService.computeTerminalValue(processId, updateByValuationId);
+      const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.otherAdj);
+      const mainValuationDto = await this.computeRevaluation(updateByValuationId, type, terminalYearBase, otherAdjustment);
+    
+    return  {
+      ...mainValuationDto,
+      message:'Request Successful',
+      success:true
+    }
+    }
+    catch(error){
+      throw error
+    }
+  }
+
+
+  async updateTerminalSectionAndPrimaryValuation(SAid, valuationId, terminalSelectionType){
+    try{
+      await this.sensitivityAnalysisService.updateSATerminalSelection(SAid, terminalSelectionType);
+      await this.sensitivityAnalysisService.upsertPrimaryValuationByReportId(valuationId);
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  // Use this incase wants to run Revaluation of any model
+  // async revaluationProcess(processId, header){
+  //   try{
+  //     const firstStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'firstStageInput');
+  //     const thirdStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'thirdStageInput');
+  //     const fourthStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'fourthStageInput');
+
+  //     let input:any = {};
+  //     input = {
+  //       // inputs:{
+  //         ...firstStageDetails.data.firstStageInput, 
+  //         otherAdj: fourthStageDetails?.data?.fourthStageInput.otherAdj
+  //       // }
+  //     }
+  //     for await (const indResponse of thirdStageDetails.data.thirdStageInput){
+  //       const {model , ...rest} = indResponse;
+  //       input = {
+  //         ...input, 
+  //         ...rest
+  //       };
+  //     }
+
+  //     const headers = { 
+  //       'Authorization':`${header.authorization}`,
+  //       'Content-Type': 'application/json'
+  //     }
+  //     console.log(input,"input")
+  //     const valuationRepostData =  await axiosInstance.post(VALUATION_PROCESS_V1,input, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+  //     return valuationRepostData?.data;
+  //   }
+  //   catch(error){
+  //     throw error;
+  //   }
+  // }
+
+  async fetchValuationIdFromSA(processId){
+    try{
+      const SAdata = await this.sensitivityAnalysisService.fetchActiveSAvaluationId(processId);
+      return {reportId: SAdata.valuationId};
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  async insertValuation(payload, headers){
+    try{
+      const reportId = payload?.reportId;
+      const processId = payload?.processId;
+      const terminalSelectionType = payload?.terminalSelectionType;
+      const initialValuationId = payload?.reportId;
+      if(reportId){
+        const payload = {
+          processId, 
+          type: terminalSelectionType,
+          valuationId:initialValuationId
+        }
+        const updatedValuationId = await this.recalculateInsertedNewValuation(payload);
+
+        await this.sensitivityAnalysisService.upsertSecondaryValuationByReportId(updatedValuationId.reportId);
+        return true;
+
       }
     }
+    catch(error){
+      throw error;
+    }
+  }
+
+  async recalculateInsertedNewValuation(payload){
+    try{
+      const processId = payload?.processId; 
+      const type = payload?.type;
+      const valuationId  = payload?.valuationId;
+      const fourthStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'fourthStageInput');
+
+      const terminalYearBase:any = await this.terminalYearWorkingService.computeTerminalValue(processId, valuationId);
+      const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.otherAdj);
+
+      const mainValuationDto = await this.computeRevaluation(valuationId, type, terminalYearBase, otherAdjustment);
+
+    return  {
+      ...mainValuationDto,
+      message:'Request Successful',
+      success:true
+    }
+    }
+    catch(error){
+      throw error
+    }
+  }
+
+  async computeRevaluation(valuationId, type, terminalYearBase, otherAdjustment){
+   try{
+    const valuation:any = await this.valuationService.getValuationById(valuationId);
+
+    const inputs:any = valuation.inputData[0];
+    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
+
+    let dcfValuationArray, dcfIndex;
+    valuation.modelResults.map((indValuations, index)=>{
+      if(indValuations.model === MODEL[0] || indValuations.model === MODEL[1]){
+        dcfValuationArray = indValuations;
+        dcfIndex = index;
+      }
+    });
+    const terminalYearWorking = dcfValuationArray.terminalYearWorking;
+    let entireValuationArray = dcfValuationArray.valuationData;
+    const firstElement = dcfValuationArray.valuationData[0];
+
+    // Based on terminal value type
+    // Recalculating only present value of terminal value
+    // Keeping all the other line items as it is
+    if(type === 'tvPatBased'){
+      firstElement.pvTerminalValue = terminalYearBase.terminalValueWorking.pvTerminalValue;
+    }
+    else{
+      firstElement.pvTerminalValue = terminalYearWorking.presentFCFF;
+    }
+    
+    firstElement.equityValue = inputs.model.includes('FCFE') ? (firstElement.sumOfCashFlows + firstElement.pvTerminalValue + firstElement.cashEquivalents + otherAdjustment + firstElement.surplusAssets) : (firstElement.sumOfCashFlows + firstElement.pvTerminalValue + firstElement.cashEquivalents - firstElement.debtOnDate + firstElement.surplusAssets + otherAdjustment);
+    firstElement.valuePerShare = (firstElement.equityValue*multiplier)/inputs.outstandingShares;
+
+    const {isStubRequired, totalDaysDifferenceStubAdjustment, provisionalDate, worksheet2} = await this.fetchStubAdjustment(inputs);
+    if (isStubRequired && totalDaysDifferenceStubAdjustment > 1) { //based on the above conditions, calculating stub
+      const costOfEquity = await this.computeCostOfEquity(inputs, worksheet2);
+      let stubFactor = (1 + totalDaysDifferenceStubAdjustment/365) ** (costOfEquity/100)-1;
+      let equityValueToAdj = stubFactor * firstElement.equityValue;
+      
+      firstElement.stubAdjValue = equityValueToAdj
+      firstElement.equityValueNew = firstElement.equityValue + equityValueToAdj;
+      firstElement.valuePerShare = ((firstElement.equityValue + equityValueToAdj) * multiplier)/inputs.outstandingShares;       // Applying mulitplier for figures
+    }
+
+    entireValuationArray.shift();
+    entireValuationArray.unshift(firstElement);
+
+
+    const valuationWithoutInternalProps = valuation.toObject({ getters: true, virtuals: true });
+
+    const { id,_id, ...rest } = valuationWithoutInternalProps;
+
+    // Updating the DCF valuation
+    const newReportId = await this.valuationService.createValuation(rest);
+  
+    //  Prepare return block
+    const transformValuation:any = await this.transformData(entireValuationArray);
+
+   let dcfValuationDto = new PostDcfValuationDto();
+   dcfValuationDto.model = inputs.model.includes('FCFE') ? MODEL[0] : MODEL[1];
+   dcfValuationDto.valuationData = transformValuation.transposedResult;
+   dcfValuationDto.valuation = isStubRequired? firstElement.equityValueNew : firstElement.equityValue;
+   dcfValuationDto.terminalYearWorking = terminalYearWorking;
+   dcfValuationDto.columnHeader = transformValuation.columnHeader;
+   dcfValuationDto.provisionalDate = provisionalDate;
+
+   valuation.modelResults.splice(dcfIndex, 1, dcfValuationDto);
+
+   let mainValuationDto = new PostMainValuationDto();
+   mainValuationDto.reportId = newReportId;
+   mainValuationDto.valuationResult=valuation.modelResults;
+   return mainValuationDto
+   }
+   catch(error){
+    throw error;
+   }
   }
 
   getRequestAuth(headers){

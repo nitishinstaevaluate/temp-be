@@ -29,6 +29,8 @@ import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { terminalValueWorkingService } from './terminal-value-working.service';
 import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 import { RelativeValuationService } from './relativeValuation.service';
+import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -38,7 +40,9 @@ export class ValuationProcessController {
     private valuationsService: ValuationsService,
     private valuationMethodsService: ValuationMethodsService,
     private customLogger: CustomLogger,
-    private authService:AuthenticationService
+    private authService:AuthenticationService,
+    private sensitivityAnalysisService: SensitivityAnalysisService,
+    private authenticationTokenService: authenticationTokenService
   ) {}
 
   @Post()
@@ -407,21 +411,33 @@ let workbook=null;
           }
         }
         const provisionalDate = valResult.find((indVal) => indVal?.provisionalDate)?.provisionalDate;
-        const data ={company:company,model:models,provisionalDate:provisionalDate,inputData:inputs,modelResults:valResult,userId:userId}
+        const {secondaryValuationId, ...rest} = inputs;
+        const data ={company:company,model:models,provisionalDate:provisionalDate,inputData:rest,modelResults:valResult,userId:userId, processStateId:inputs.processStateId}
         const reportId = await this.valuationsService.createValuation(data);
+
+        const role = {
+          role: ['sensitivityAnalysis']
+        }
+         const  request  = {
+            headers : {
+              authorization: headers['authorization']
+            }
+          }
+        const hasAccess = await this.authenticationTokenService.entityAccess(role, request);
+        let SAResponse:any;
+        if(hasAccess){
+            SAResponse = await this.sensitivityAnalysisService.upsertPrimaryValuationByReportId(reportId, secondaryValuationId);
+        }
         return  {
           reportId:reportId,
           valuationResult:tableResult,
+          sensitivityAnalysisId: SAResponse?.id,
           message:'Request Successful',
           success:true
         }
       }catch(error)
       {
-        return { 
-          message: 'Error occurred',
-          success: false,
-          error:error.message
-         };
+        throw error;
       }
     }
   }
@@ -444,11 +460,19 @@ export class ValuationsController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('dcf-re-valuation/:id/:type')
-  async recalculateValuePerShare(@Param('id') processId:any,
-  @Param('type') type:any,
+  @Post('dcf-re-valuation')
+  async recalculateValuePerShare(
+  @Body() payload: any,
   @Headers() headers: Headers){
-    return await this.fcfeService.recalculateValuePerShare(processId, type, headers);
+    return await this.fcfeService.recalculateValuePerShare(payload, headers);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Post('sa-re-valuation')
+  async recalculateValuePerShareForSA(
+  @Body() payload: any,
+  @Headers() headers: Headers){
+    return await this.fcfeService.recalculateValuePerShareForSA(payload, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)
@@ -456,6 +480,13 @@ export class ValuationsController {
   async recalculateCcmValuation(@Body() inputPayload:any,
   @Headers() headers: Headers){
     return await this.relativeValuationService.recalculateCcmValuation(inputPayload, headers);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Post('insert-valuation')
+  async insertValuation(@Body() payload:any,
+  @Headers() headers: Headers){
+    return await this.fcfeService.insertValuation(payload, headers);
   }
 
   @UseGuards(KeyCloakAuthGuard)
