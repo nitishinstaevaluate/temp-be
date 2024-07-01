@@ -24,9 +24,11 @@ import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.mo
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { ReportModule } from 'src/report/report.module';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
+import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
+import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService],
+  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService, SensitivityAnalysisService],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },
@@ -34,7 +36,8 @@ import { authenticationTokenService } from 'src/authentication/authentication-to
     { name: 'processManager', schema: ProcessManagerSchema },
     { name: 'dataChecklist', schema: DataCheckListSchema },
     { name: 'mandate', schema: MandateSchema },
-    { name: 'token', schema: authenticationTokenSchema }
+    { name: 'token', schema: authenticationTokenSchema },
+    { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema }
   ]),
   UsersModule,
   ValuationProcessModule,

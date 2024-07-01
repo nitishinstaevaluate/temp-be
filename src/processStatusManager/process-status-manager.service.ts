@@ -407,6 +407,76 @@ export class ProcessStatusManagerService {
     }
   }
 
+  async updateTerminalSelectionType(processStateId, terminalType){
+    try{
+      const stateFive = await this.processModel.findById({ _id : processStateId}).select(`processIdentifierId fifthStageInput`).exec();
+
+      if(!stateFive)  throw new NotFoundException({status: false, msg:"Incorrect process id", description: "Please check the process id"})
+      const processStage = await this.processModel.findByIdAndUpdate(
+        processStateId,
+        { 
+          $set: { 
+          'fifthStageInput.terminalValueSelectedType':terminalType,
+            modifiedOn:new Date()
+          }
+        },
+        { new: true }
+    );
+    
+      return {
+        terminalSelectionType:terminalType,
+        processIdentifierId:processStage.processIdentifierId,
+        status:true,
+        msg:'terminal selection type updated successfully'
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'terminal selection type not updated',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async updateTerminalGrowthRate(processStateId, terminalGrowthRate){
+    try{
+      const stateOne = await this.processModel.findById({ _id : processStateId}).select(`processIdentifierId firstStageInput`).exec();
+
+      if(!stateOne)  throw new NotFoundException({status: false, msg:"Incorrect process id", description: "Please check the process id"})
+      const processStage = await this.processModel.findByIdAndUpdate(
+        processStateId,
+        { 
+          $set: { 
+          'firstStageInput.terminalGrowthRate':terminalGrowthRate,
+            modifiedOn:new Date()
+          }
+        },
+        { new: true }
+    );
+    
+      return {
+        terminalGrowthRate:terminalGrowthRate,
+        processIdentifierId:processStage.processIdentifierId,
+        status:true,
+        msg:'terminal selection type updated successfully'
+      }
+    }
+    catch(error){
+      throw new HttpException(
+        {
+          error: error,
+          status: false,
+          msg: 'terminal selection type not updated',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async getProcessIdentifierId(idDetails){
     try{
       return this.processModel.findOne({_id: idDetails.obId}).select('processIdentifierId').exec();

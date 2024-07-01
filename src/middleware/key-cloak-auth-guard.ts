@@ -255,7 +255,7 @@ export class KeyCloakAuthGuard implements CanActivate {
       }),
       catchError((error:any) => {
         logger.error(
-          `${moment(now)} | ${error.status} | [${error.response.error.config.method.toUpperCase()}] ${error.response.error.config.url} - ${delay}ms ${JSON.stringify(
+          `${moment(now)} | ${error.status} | [${error.response?.error?.config.method.toUpperCase()}] ${error.response.error.config.url} - ${delay}ms ${JSON.stringify(
             {token:error.response.error.config.data},
           )} ${JSON.stringify(error.response.error.data)} | ${JSON.stringify({message:error.response.message})}`,
         );

@@ -22,13 +22,17 @@ import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { terminalValueWorkingService } from './terminal-value-working.service';
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { MarketPriceService } from './market-price.service';
+import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
+import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
+import { SensitivityAnalysisModule } from 'src/sensitivity-analysis/sensitivity-analysis.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
     MongooseModule.forFeature([
       { name: 'processManager', schema: ProcessManagerSchema }, 
       { name: 'dataChecklist', schema: DataCheckListSchema },
-      { name: 'mandate', schema: MandateSchema }
+      { name: 'mandate', schema: MandateSchema },
+      { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema }
     ]),
     IndustryModule,
     MastersModule,
@@ -52,7 +56,8 @@ import { MarketPriceService } from './market-price.service';
     AuthenticationService,
     terminalValueWorkingService,
     ProcessStatusManagerService,
-    MarketPriceService
+    MarketPriceService,
+    SensitivityAnalysisService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService, terminalValueWorkingService],
 })
