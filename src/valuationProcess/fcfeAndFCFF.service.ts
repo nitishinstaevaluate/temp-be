@@ -31,7 +31,7 @@ import {
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference, convertToNumberOrZero, getRequestAuth } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS, MODEL } from 'src/constants/constants';
+import { GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS, MODEL, PROJECTION_TYPE } from 'src/constants/constants';
 import { any } from 'joi';
 import { async } from 'rxjs';
 import { transformData } from 'src/report/report-common-functions';
@@ -554,7 +554,7 @@ export class FCFEAndFCFFService {
         result: resultAggregate.resultArray, tableData:data.transposedResult, 
         valuation:checkIfStub? resultAggregate.resultArray[0].equityValueNew :resultAggregate.resultArray[0].equityValue,
         columnHeader:data.columnHeader,provisionalDate,
-        terminalValueWorking:resultAggregate.terminalValueWorking,
+        terminalValueWorking:resultAggregate?.terminalValueWorking,
         msg: 'Executed Successfully' 
       };
     }
@@ -743,7 +743,7 @@ export class FCFEAndFCFFService {
         console.log(aggregatePayload.totalDaysDifferenceDiscountingFactor,"total date difference ---->689", discountingPeriodObj.result)
         let discountingPeriodValue = fractionOfYearLeft * discountingPeriodObj.result;
 
-        let terminalValueWorking, pvTerminalValue,pat, depAndAmortisation, otherNonCashItems, changeInBorrowing, fcff, addInterestAdjTaxes, netCashFlow;
+        let terminalValueWorking, pvTerminalValue=0,pat, depAndAmortisation, otherNonCashItems, changeInBorrowing, fcff, addInterestAdjTaxes, netCashFlow;
         for await (const individualYear of years){    //Use for await, map is not to be used, map handles large loads of data incorrectly 
             let  changeInNca, deferredTaxAssets, 
             changeInFixedAssets, debtAsOnDate, cashEquivalents, surplusAssets,  
@@ -797,14 +797,16 @@ export class FCFEAndFCFFService {
               fcff = changeInFixedAssets + netCashFlow ;
             }
     
-            if  (counter === yearLength && aggregatePayload.inputs.model.includes('FCFE')) {
-              console.log(secondLastFcfe,"")
-              fcfeValueAtTerminalRate = await fcfeTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate,adjustedCostOfEquity)
-              // discountingPeriodValue = discountingPeriodValue - 1;
-            } 
-            else if (counter === yearLength && aggregatePayload.inputs.model.includes('FCFF')) {
-              fcfeValueAtTerminalRate = await fcffTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate, calculatedWacc)
-              // discountingPeriodValue = discountingPeriodValue - 1;
+            if(aggregatePayload.inputs?.projectionYearSelect === PROJECTION_TYPE.GOING_CONCERN.value){
+              if  (counter === yearLength && aggregatePayload.inputs.model.includes('FCFE')) {
+                console.log(secondLastFcfe,"")
+                fcfeValueAtTerminalRate = await fcfeTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate,adjustedCostOfEquity)
+                // discountingPeriodValue = discountingPeriodValue - 1;
+              } 
+              else if (counter === yearLength && aggregatePayload.inputs.model.includes('FCFF')) {
+                fcfeValueAtTerminalRate = await fcffTerminalValue(secondLastFcfe, aggregatePayload.inputs.terminalGrowthRate, calculatedWacc)
+                // discountingPeriodValue = discountingPeriodValue - 1;
+              }
             }
 
 
@@ -827,7 +829,7 @@ export class FCFEAndFCFFService {
             
             } 
 
-            if(counter === yearLength){
+            if(counter === yearLength && aggregatePayload.inputs?.projectionYearSelect === PROJECTION_TYPE.GOING_CONCERN.value){
                 presentFCFF = discountingFactorWacc * fcfeValueAtTerminalRate;
                 pvTerminalValue = presentFCFF;
                 console.log(pat,"pat found")
@@ -898,7 +900,7 @@ export class FCFEAndFCFFService {
               delete result.addInterestAdjTaxes; // If not needed for FCFE
             }
             }
-            else{
+            else if(counter === yearLength && aggregatePayload.inputs?.projectionYearSelect === PROJECTION_TYPE.GOING_CONCERN.value){
               let totalNetCashFlow
               if(isFCFE){
                 totalNetCashFlow = convertToNumberOrZero(terminalValuePat) + 
@@ -1009,7 +1011,7 @@ export class FCFEAndFCFFService {
 
       const fourthStageDetails:any = await this.processManagerService.fetchStageWiseDetails(processId, 'fourthStageInput');
       const sensitivityAnalysisId = fourthStageDetails.data?.fourthStageInput?.sensitivityAnalysisId;
-      let reportId:any;
+      let reportId:any, terminalYearBase: any;
       reportId = fourthStageDetails.data?.fourthStageInput?.appData?.reportId;
 
       const role = {
@@ -1030,13 +1032,18 @@ export class FCFEAndFCFFService {
         reportId = updateByValuationId;
       }
 
-      const terminalYearBase:any = await this.terminalYearWorkingService.computeTerminalValue(processId, reportId);
       const otherAdjustment = convertToNumberOrZero(fourthStageDetails.data?.fourthStageInput?.otherAdj);
-
+      
       const valuation:any = await this.valuationService.getValuationById(reportId);
-
       const inputs:any = valuation.inputData[0];
+      let isGoingConcern = inputs.projectionYearSelect === PROJECTION_TYPE.GOING_CONCERN.value;
       let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
+      
+      if(isGoingConcern){
+        terminalYearBase = await this.terminalYearWorkingService.computeTerminalValue(processId, reportId);
+      }
+
+      
 
       let dcfValuationArray, dcfIndex;
       valuation.modelResults.map((indValuations, index)=>{
@@ -1052,11 +1059,16 @@ export class FCFEAndFCFFService {
       // Based on terminal value type
       // Recalculating only present value of terminal value
       // Keeping all the other line items as it is
-      if(type === 'tvPatBased'){
-        firstElement.pvTerminalValue = terminalYearBase.terminalValueWorking.pvTerminalValue;
+      if(isGoingConcern){
+        if(type === 'tvPatBased'){
+          firstElement.pvTerminalValue = terminalYearBase.terminalValueWorking.pvTerminalValue;
+        }
+        else{
+          firstElement.pvTerminalValue = terminalYearWorking.presentFCFF;
+        }
       }
       else{
-        firstElement.pvTerminalValue = terminalYearWorking.presentFCFF;
+        firstElement.pvTerminalValue = 0;
       }
       
       firstElement.equityValue = inputs.model.includes('FCFE') ? (firstElement.sumOfCashFlows + firstElement.pvTerminalValue + firstElement.cashEquivalents + otherAdjustment + firstElement.surplusAssets) : (firstElement.sumOfCashFlows + firstElement.pvTerminalValue + firstElement.cashEquivalents - firstElement.debtOnDate + firstElement.surplusAssets + otherAdjustment);

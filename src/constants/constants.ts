@@ -2204,3 +2204,14 @@ export const EXPECTED_MARKET_RETURN_HISTORICAL_TYPE = {
     historicalValue:1000
   }
 }
+
+export const PROJECTION_TYPE = {
+  GOING_CONCERN: {
+    name :"Going Concern",
+    value :"Going_Concern"
+  },
+  FINITE_PROJECTION:{
+    name :"Finite Projection",
+    value :"Finite_Projection"
+  }
+}
