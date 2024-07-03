@@ -313,11 +313,10 @@ export class SensitivityAnalysisService {
               'Content-Type': 'application/json'
             }
             const {secondaryValuationId } = payload;
-            const updatedInputPayload =  {...input,...payload, financialBasis, primaryValuationFlag:false}
-            console.log(updatedInputPayload,"input payload found for SA secondary revaluation ")
+            const updatedInputPayload =  {...input,...payload, financialBasis, primaryValuationFlag:false};
+            
             const valuationRepostData =  await axiosInstance.post(VALUATION_PROCESS_V1, updatedInputPayload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
             const newValuationId = valuationRepostData?.data?.reportId;
-            console.log(newValuationId,"Initial valurepost id")
             
            const updatedResponse:any =  await this.findByReportIdAndReplaceSecondaryValuation(sensitivityAnalysisId, secondaryValuationId, newValuationId, processId, headers);
             return {
@@ -405,7 +404,7 @@ export class SensitivityAnalysisService {
                        terminalSelectionType: terminalSelType
                     }
                   );
-                  console.log(terminalSelType,"terminal value type found and updated for id", SAid)
+                  
                   return {
                     sensitivityAnalysisId: SAid,
                     terminalSelectionType: terminalSelType,
@@ -430,6 +429,20 @@ export class SensitivityAnalysisService {
                     await this.removeSecondaryValuationByReportId(SAid, valuationId);
                     return true;
                 }
+            }
+            catch(error){
+                throw error;
+            }
+        }
+
+        async fetchPrimaryValuationId(id){
+            try{
+                const SAdata = await this.sensitiveAnalysisModal.findById({_id: id});
+    
+                if(!SAdata) 
+                    throw new NotFoundException({msg:'Record not found', status:false, description:"Id found to be incorrect"});
+              
+                return {valuationId: SAdata.primaryReportId};
             }
             catch(error){
                 throw error;

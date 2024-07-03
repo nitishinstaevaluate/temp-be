@@ -1080,6 +1080,11 @@ export class FCFEAndFCFFService {
 
       const { _id, ...rest } = valuationWithoutInternalProps;
 
+      if(updateByValuationId){
+        const SAreportDetails = await this.sensitivityAnalysisService.fetchPrimaryValuationId(sensitivityAnalysisId);
+        await this.sensitivityAnalysisService.upsertSecondaryValuationByReportId(SAreportDetails?.valuationId);
+        await this.sensitivityAnalysisService.removeSecondaryValuationByReportId(sensitivityAnalysisId, updateByValuationId);
+      }
       // Updating the DCF valuation
       await this.valuationService.createValuation(rest, _id);
     
@@ -1201,9 +1206,9 @@ export class FCFEAndFCFFService {
   //   }
   // }
 
-  async fetchValuationIdFromSA(processId){
+  async fetchValuationIdFromSA(SAid){
     try{
-      const SAdata = await this.sensitivityAnalysisService.fetchActiveSAvaluationId(processId);
+      const SAdata = await this.sensitivityAnalysisService.fetchActiveSAvaluationId(SAid);
       return {reportId: SAdata.valuationId};
     }
     catch(error){
