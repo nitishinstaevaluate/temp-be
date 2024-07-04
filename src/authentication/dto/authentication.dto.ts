@@ -41,3 +41,8 @@ export class authUserDto {
     @IsNotEmpty()
     email: string;
   }
+
+export class roleDto {
+  @IsArray({ message: 'role must be an array' })
+  role: [];
+}

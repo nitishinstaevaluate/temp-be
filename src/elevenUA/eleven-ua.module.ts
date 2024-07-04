@@ -23,11 +23,14 @@ import { authenticationTokenSchema } from 'src/authentication/schema/authenticat
 import { ValuationProcessModule } from 'src/valuationProcess/valuationProcess.module';
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { ReportModule } from 'src/report/report.module';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
+import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
+import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, ExcelArchiveService],
+  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService, SensitivityAnalysisService, ExcelArchiveService],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },
@@ -36,7 +39,8 @@ import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schem
     { name: 'dataChecklist', schema: DataCheckListSchema },
     { name: 'mandate', schema: MandateSchema },
     { name: 'token', schema: authenticationTokenSchema },
-    { name: 'excelArchive', schema: ExcelArchiveSchema }
+    { name: 'excelArchive', schema: ExcelArchiveSchema },
+    { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema }
   ]),
   UsersModule,
   ValuationProcessModule,

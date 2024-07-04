@@ -5,6 +5,8 @@ import { authenticationTokenDocument } from "./schema/authentication-token.schem
 import { authTokenDto, authUserDto } from "./dto/authentication.dto";
 import { plainToClass } from "class-transformer";
 import { KeyCloakAuthGuard } from "src/middleware/key-cloak-auth-guard";
+import { getRequestAuth } from "src/excelFileServices/common.methods";
+import { userRoles } from "src/library/enums/user-roles.enum";
 const jwt = require('jsonwebtoken');
 
 @Injectable()
@@ -96,4 +98,47 @@ export class authenticationTokenService {
           );
         }
       }
-}
+
+      async entityAccess(parameter, request){
+        try{
+          const headers = {
+            authorization: request.headers.authorization
+          }
+          const { roles } = await this.fetchUserInfo(headers);
+
+        return await this.validateClaims(roles, parameter)        }
+        catch(error){
+          throw error;
+        }
+      }
+
+      async fetchUserInfo(headers){
+        const KCGuard = new KeyCloakAuthGuard();
+        const roles = await KCGuard.fetchUserRoles(getRequestAuth(headers)).toPromise();
+
+        return { roles };
+      }
+
+      async validateClaims(roles, parameter){
+        if(!parameter?.role?.length) return false;
+      
+        const entityToBeChecked = parameter.role;
+        let entityRoleArray = [];
+        for await(const indRole of entityToBeChecked){
+          if(userRoles[indRole]){
+            entityRoleArray.push(
+              {
+                claim:userRoles[indRole]
+              }
+            )
+          }
+        }
+        let roleExist = false;
+        for await(const indRole of roles){
+          roleExist = entityRoleArray.some(paramRole => indRole?.name === paramRole.claim)
+          if(roleExist)
+            break;
+        }
+        return roleExist
+      }
+    }

@@ -41,8 +41,17 @@ export class Valuation {
   @Prop({ required: true })
   userId: string;
 
+  @Prop({ required: true })
+  processStateId: string;
+
   @Prop({ default: () => new Date() })
   createdAt: Date;
+
+  @Prop({ default: false })
+  isDeleted: boolean;
+
+  @Prop({ required: false })
+  deletedAt: Date;
 }
 
 export type ValuationDocument = Valuation & Document;

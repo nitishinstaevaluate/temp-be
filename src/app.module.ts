@@ -30,6 +30,7 @@ import { EmailModule } from './email/email.module';
 import { thirdpartyApiAggregateService } from './library/thirdparty-api/thirdparty-api-aggregate.service';
 import { KeyCloakAuthGuard } from './middleware/key-cloak-auth-guard';
 import { ExcelArchiveModule } from './excel-archive/excel-archive.module';
+import { SensitivityAnalysisModule } from './sensitivity-analysis/sensitivity-analysis.module';
 require('dotenv').config();
 
 @Module({
@@ -39,7 +40,7 @@ require('dotenv').config();
     ConfigModule.forRoot(),
     DataReferencesModule,
     CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule, EmailModule,
-    ExcelArchiveModule],
+    ExcelArchiveModule,SensitivityAnalysisModule],
   controllers: [AppController,UploadController,ExportTemplateController], //ImportController
   providers: [AppService,ExcelSheetService, thirdpartyApiAggregateService, KeyCloakAuthGuard],//ImportService
 })

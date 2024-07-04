@@ -25,6 +25,8 @@ import { terminalValueWorkingService } from 'src/valuationProcess/terminal-value
 import { ExcelArchiveDto } from 'src/excel-archive/dto/excel-archive.dto';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
+import { authenticationTokenService } from 'src/authentication/authentication-token.service';
+import { userRoles } from 'src/library/enums/user-roles.enum';
 require('dotenv').config();
 
 @Injectable()
@@ -41,7 +43,8 @@ export class ExcelSheetService {
     private readonly reportService: ReportService,
     private readonly elevenUaService: ElevenUaService,
     private readonly terminalValueWorkingService: terminalValueWorkingService,
-    private readonly excelArchiveService: ExcelArchiveService){}
+    private readonly excelArchiveService: ExcelArchiveService,
+    private readonly authTokenService:authenticationTokenService){}
     getSheetData(fileName: string, sheetName: string, request): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
@@ -316,88 +319,29 @@ export class ExcelSheetService {
         });
       }
 
-      async generatePdfFromHtml(id,model,specificity,res, processId, terminalValueType) {
+      async generateValuation(id,model,specificity,res, processId, terminalValueType, formatType, request) {
         try {
           const valuationResult = await this.valuationService.getValuationById(id);
           const transposedData = [];
           const modifiedDataSet = [];
           let htmlFilePath,pdfFilePath;
-          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
-          if (specificity === 'true' && model) {
-             htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
-             pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.pdf`);
-            for await (let data of valuationResult.modelResults) {
-              if (data.model === model) {
-                modifiedDataSet.push(data);
-                if(data.model !== MODEL[0] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]){
-                  transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
-                }
-              }
-            }
-            valuationResult.modelResults = modifiedDataSet;
-          } 
-          else {
-             htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
-             pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
-            for await (let data of valuationResult.modelResults) {
-              if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
-                transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
-              }  
-            }
-          }
+          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}`;
 
-          this.loadHelpers(transposedData, valuationResult, terminalValueType);
-        
-          if (valuationResult.modelResults.length > 0) {
-            const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-            const template = hbs.compile(htmlContent);
-            const html = template(valuationResult);
-      
-            const pdf = await this.generatePdf(html, pdfFilePath);
-
-
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.pdf"`);
-            res.send(pdf);
-      
-            return {
-              msg: "PDF download Success",
-              status: true,
-            };
-          } 
-          else {
-            console.log("Data not found");
-            return {
-              msg: "No data found for PDF generation",
-              status: false
-            };
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        
-          return {
-            msg: "Download Failed. An error occurred during processing.",
-            status: false,
-            error:error.message
-          };
-        }
-      }
-
-      async generateDocxFromHtml(id,model,specificity,res, processId, terminalValueType) {
-        try {
-          const valuationResult = await this.valuationService.getValuationById(id);
-          const transposedData = [];
-          const modifiedDataSet = [];
-          let htmlFilePath,pdfFilePath;
-          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
           let wordFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.docx`);
+          let excelFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.xlsx`);
+
+           const headers = {
+            authorization: request.headers.authorization
+          }
+          const { roles } = await this.authTokenService.fetchUserInfo(headers);
+
           if (specificity === 'true' && model) {
              htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
              pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5] && data.model !== MODEL[7]){
+                if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -408,29 +352,49 @@ export class ExcelSheetService {
              htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
              pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
-              if(data.model !== MODEL[2] && data.model !== MODEL[4] && data.model !== MODEL[5]){
+              if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }  
             }
           }
 
-          this.loadHelpers(transposedData, valuationResult, terminalValueType);
+          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles);
         
           if (valuationResult.modelResults.length > 0) {
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
             const template = hbs.compile(htmlContent);
             const html = template(valuationResult);
       
-            await this.generatePdf(html, pdfFilePath);
-
-            await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+            switch(formatType){
+              case 'PDF':
+                const pdf = await this.generatePdf(html, pdfFilePath, roles);
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.pdf"`);
+                res.send(pdf);
+                break;
+              case 'DOCX':
+                await this.generatePdf(html, pdfFilePath, roles);
+                await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
           
-            let wordBuffer = fs.readFileSync(wordFilePath);
-            
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-            res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.docx"`);
+                let wordBuffer = fs.readFileSync(wordFilePath);
+                
+                res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.docx"`);
 
-            res.send(wordBuffer);
+                res.send(wordBuffer);
+                break;
+              case 'XLSX':
+                await this.generatePdf(html, pdfFilePath, roles);
+                await this.thirdpartyApiAggregateService.convertPdfToExcel(pdfFilePath, excelFilePath);
+          
+                let excelBuffer = fs.readFileSync(excelFilePath);
+                
+                res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.xlsx"`);
+
+                res.send(excelBuffer);
+                break;
+            }
       
             return {
               msg: "PDF download Success",
@@ -455,27 +419,58 @@ export class ExcelSheetService {
         }
       }
 
-      async exportElevenUaPdf(id,res) {
+      async exportElevenUa(id,res, formatType, request) {
         try {
           const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(id);
           let htmlFilePath,pdfFilePath;
           let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
           htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua.html`);
           pdfFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.pdf`);
+          let wordFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.docx`);
+          let excelFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.xlsx`);
+
+          const headers = {
+            authorization: request.headers.authorization
+          }
+          const { roles } = await this.authTokenService.fetchUserInfo(headers);
 
           this.reportService.loadElevenUaHelpers(elevenUaData, null);   //Providing null since we don't generate/store report details on stepper 5
         
           const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
           const template = hbs.compile(htmlContent);
           const html = template(elevenUaData);
-    
-          const pdf = await this.generatePdf(html, pdfFilePath);
+          
+          switch(formatType){
+            case 'PDF':
+              const pdf = await this.generatePdf(html, pdfFilePath, roles);
+              res.setHeader('Content-Type', 'application/pdf');
+              res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.pdf"`);
+              res.send(pdf);
+              break;
+            case 'DOCX':
+              await this.generatePdf(html, pdfFilePath, roles);
+              await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
+        
+              let wordBuffer = fs.readFileSync(wordFilePath);
+              
+              res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+              res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.docx"`);
 
+              res.send(wordBuffer);
+              break;
+            case 'XLSX':
+              await this.generatePdf(html, pdfFilePath, roles);
+              await this.thirdpartyApiAggregateService.convertPdfToExcel(pdfFilePath, excelFilePath);
+        
+              let excelBuffer = fs.readFileSync(excelFilePath);
+              
+              res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+              res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.xlsx"`);
 
-          res.setHeader('Content-Type', 'application/pdf');
-          res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.pdf"`);
-          res.send(pdf);
-    
+              res.send(excelBuffer);
+              break;
+          }
+
           return {
             msg: "PDF download Success",
             status: true,
@@ -491,61 +486,37 @@ export class ExcelSheetService {
           };
         }
       }
-
-      async exportElevenUaDocx(id,res) {
-        try {
-          const elevenUaData:any = await this.elevenUaService.fetchRuleElevenUa(id);
-          let htmlFilePath,pdfFilePath;
-          let dateStamp = `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}${new Date().getMinutes()}` 
-          htmlFilePath = path.join(process.cwd(), 'html-template', `rule-eleven-ua.html`);
-          pdfFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.pdf`);
-          let wordFilePath = path.join(process.cwd(), 'pdf', `Rule-Eleven-UA-${dateStamp}.pdf`);
-          this.reportService.loadElevenUaHelpers(elevenUaData, null);   //Providing null since we don't generate/store report details on stepper 5
-        
-          const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
-          const template = hbs.compile(htmlContent);
-          const html = template(elevenUaData);
     
-          await this.generatePdf(html, pdfFilePath);
-          await this.thirdpartyApiAggregateService.convertPdfToDocx(pdfFilePath, wordFilePath);
-          
-          let wordBuffer = fs.readFileSync(wordFilePath);
-          
-          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-          res.setHeader('Content-Disposition', `attachment; filename="Rule-Eleven-UA-${dateStamp}.docx"`);
-
-          res.send(wordBuffer);
-    
-          return {
-            msg: "PDF download Success",
-            status: true,
-          };
-       
-        } catch (error) {
-          console.error("Error:", error);
-        
-          return {
-            msg: "Download Failed. An error occurred during processing.",
-            status: false,
-            error:error.message
-          };
-        }
-      }
-    
-      async generatePdf(htmlContent: any, pdfFilePath: string) {
+      async generatePdf(htmlContent: any, pdfFilePath: string, roles) {
         const browser = await puppeteer.launch({
           headless:"new",
           executablePath: process.env.PUPPETEERPATH
         });
         const page = await browser.newPage();
-
+        const MB01 = roles.some(indRole => indRole?.name === userRoles.merchantBanker);
         try {
           const contenread = await page.setContent(htmlContent);
           const pdf = await page.pdf({
             path: pdfFilePath,
             format: 'A4' as puppeteer.PaperFormat, // Cast 'A4' to PaperFormat
             displayHeaderFooter: true,
-            footerTemplate: `<table style="margin: 20px; width: 100%;">
+            footerTemplate: MB01 ? 
+            `<table style="margin: 20px; width: 100%;">
+            <tr>
+              <td colspan="4" style="text-align: right; font-size: 12px; padding: 10px;">
+                <table style="width: 100%; border-top: 1px solid #000; border-bottom: 1px solid #000;">
+                  <tr>
+                    <td style="width: 15%;">&nbsp;</td>
+                    <td style="width: 70%; text-align: center;">
+                      <span style="font-size: 10px;">Navigant Corporate Advisors Limited | Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+                    </td>
+                    <td style="width: 15%; font-size: 10px;">V1/ March / 2024</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>` :
+            `<table style="margin: 20px; width: 100%;">
             <tr>
               <td colspan="4" style="text-align: right; font-size: 12px; padding: 10px;">
                 <table style="width: 100%; border-top: 1px solid #000; border-bottom: 1px solid #000;">
@@ -560,8 +531,23 @@ export class ExcelSheetService {
               </td>
             </tr>
           </table>`,
-          headerTemplate: `
+          headerTemplate: MB01 ? `
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+          <td style="width:86.2%;">
+          
+            <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:2%;">
+              <tr>
+                <td style="border-bottom: solid 2px #03002f !important; font-size: 13px; height: 5px;width:100% !important;">Navigant Corporate Advisors Limited</td>
+              </tr>
+
+              <tr>
+                <td style="font-size: 11px">&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr></table>` : 
+          `<table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
           <td style="width:86.2%;">
           
@@ -627,7 +613,55 @@ export class ExcelSheetService {
       
       }
 
-      async loadHelpers(transposedData,valuationResult, terminalType){
+      async loadHelpers(transposedData,valuationResult, terminalType, roles){
+        hbs.registerHelper('ifMB01',()=>{
+          if(roles?.length)
+              return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
+          return false;
+        })
+
+        hbs.registerHelper('riskFreeRateYears',()=>{
+          if(valuationResult.inputData[0].riskFreeRateYears){
+            return valuationResult.inputData[0].riskFreeRateYears;
+          }
+          return '';
+        })
+
+        hbs.registerHelper('riskFreeRate',()=>{
+          if(valuationResult.inputData[0]) 
+              return valuationResult.inputData[0].riskFreeRate;
+          return '';
+        })
+        hbs.registerHelper('expMarketReturn',()=>{
+          if(valuationResult.inputData[0]) 
+              return valuationResult.inputData[0]?.expMarketReturn.toFixed(2);
+          return '';
+        })
+        hbs.registerHelper('beta',()=>{
+          if(valuationResult.inputData[0]) 
+              return valuationResult.inputData[0]?.beta?.toFixed(2);
+          return '';
+        })
+        hbs.registerHelper('companyRiskPremium',()=>{
+          if(valuationResult.inputData[0]) 
+              return valuationResult.inputData[0]?.riskPremium;
+          return '';
+        })
+        hbs.registerHelper('costOfEquity',()=>{
+          if(valuationResult.inputData[0]) 
+              return valuationResult.inputData[0].costOfEquity?.toFixed(2);
+          return '';
+        })
+        hbs.registerHelper('adjustedCostOfEquity',()=>{
+          if(valuationResult.inputData[0]) 
+              return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(2);
+          return '';
+        })
+        hbs.registerHelper('wacc',()=>{
+          if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
+              return valuationResult.inputData[0]?.wacc?.toFixed(2);
+          return '0';
+        })
         hbs.registerHelper('modelCheck',(txt,options)=>{
           if (!valuationResult || !valuationResult.modelResults || valuationResult.modelResults.length === 0) {
             return ''; // Return an empty string if there are no results to check
@@ -664,6 +698,7 @@ export class ExcelSheetService {
               }); 
             }
           });
+          console.log(transposedData,"fcfe header")
           return fcfeHeader;
         });
 

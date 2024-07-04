@@ -1534,15 +1534,25 @@
     <div>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         {{#if (isTransferOfShares)}}
+        <!-- Do nothing -->
         {{else}}
-        <p class="s16" style="padding-top: 4pt;padding-left: 32pt;text-indent: 0pt;text-align: justify;">Note: </p>
+            {{#if (financialBasis)}}
+            <!-- Do nothing -->
+            {{else}}
+            <p class="s16" style="padding-top: 4pt;padding-left: 32pt;text-indent: 0pt;text-align: justify;">Note: </p>
+            {{/if}}
         {{/if}}
+
+        {{#if (financialBasis)}}
+        <!-- Do nothing -->
+        {{else}}
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-left: 32pt;text-indent: 0pt;text-align: justify;line-height: 180%;">
             In accordance with Rule 11UA The Balance Sheet as on valuation date needs to be audited by the 
             Statutory Auditors of the Company, however, we have been provided with management certified unaudited financials of the Company 
             and our valuation is dependent on the same.
         </p>
+        {{/if}}
     </div>
     <p style="text-indent: 0pt;text-align: left;"><br /></p>
     <p style="padding-top: 2pt;margin-left: 34pt;text-indent: 0pt;text-align: left;padding-bottom: 2pt;border: 1px solid black;background-color: #6F2F9F;">
@@ -1562,6 +1572,7 @@
     <p style="padding-top: 4pt;padding-left: 34pt;text-indent: 0pt;text-align: left;padding-top: 10%;"><span class="s7">{{registeredValuerName}}</span></p>
     <p style="padding-left: 34pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s6">{{registeredValuerQualifications}}</span></p>
     <p style="padding-left: 34pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s6">IBBI Registration No : {{registeredValuerIbbiId}}</span></p>
+    <p style="padding-left: 34pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s6">COP No. : {{registeredValuerCopNo}}</span></p>
        
     <p style="padding-left: 34pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s6">Date: {{reportDate}}</span></p>
     <p style="padding-left: 34pt;text-indent: 0pt;text-align: left;padding-top: 2%;"><span class="s6" >Place: Mumbai</span></p>
