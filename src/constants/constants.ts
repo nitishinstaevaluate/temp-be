@@ -1,3 +1,5 @@
+import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
+
 export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale'];
 
 export const INCOME_APPROACH = ['FCFE','FCFF'];
@@ -2729,5 +2731,2060 @@ export const EXPECTED_MARKET_RETURN_HISTORICAL_TYPE = {
     label:'Bank Nifty',
     historicalDate:'2000-01-01',
     historicalValue:1000
+  }
+}
+
+export const V2_PROFIT_LOSS = [
+  {
+    "lineEntry": {
+        particulars : "Income",
+        sysCode:6001,
+        header:true,
+        rowNumber:2
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Revenue From Operations/Sales",
+        sysCode:6002,
+        editable:true,
+        rowNumber:3,
+        romanIndex:'I'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Operating Income:",
+        sysCode:6003,
+        editable:true,
+        rowNumber:4,
+        romanIndex:'II'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Non-Operating Income",
+        sysCode:6004,
+        header:true,
+        rowNumber:6,
+        romanIndex:'III',
+        dependent:[6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012],
+        formula:"currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14",
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Commission earned",
+        sysCode:6005,
+        editable:true,
+        rowNumber:7
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Investment Income",
+        sysCode:6006,
+        editable:true,
+        rowNumber:8
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Interest Income",
+        sysCode:6007,
+        editable:true,
+        rowNumber:9
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit on sale of property, plant & equipment",
+        sysCode:6008,
+        editable:true,
+        rowNumber:10
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit on sale of Intangible asset",
+        sysCode:6009,
+        editable:true,
+        rowNumber:11
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Frachise fees",
+        sysCode:6010,
+        editable:true,
+        rowNumber:12
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit on sale of equipment",
+        sysCode:6011,
+        editable:true,
+        rowNumber:13
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Income",
+        sysCode:6012,
+        editable:true,
+        rowNumber:14
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total Income",
+        sysCode:6013,
+        header:true,
+        rowNumber:15,
+        romanIndex:'III',
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Expenses",
+        sysCode:6014,
+        header:true,
+        rowNumber:17,
+        romanIndex:'IV'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Cost of materials consumed",
+        sysCode:6015,
+        editable:true,
+        rowNumber:18
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Purchases of Stock-in-Trade",
+        sysCode:6016,
+        editable:true,
+        rowNumber:19
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Changes in Inventory",
+        sysCode:6017,
+        editable:true,
+        rowNumber:20
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Employee benefits expense",
+        sysCode:6018,
+        editable:true,
+        rowNumber:21
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Operating Expenses",
+        sysCode:6019,
+        editable:true,
+        rowNumber:22
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Non-Operating expenses:",
+        sysCode:6020,
+        header:true,
+        rowNumber:24,
+        dependent:[6021, 6022, 6023],
+        formula:"currentOne25+currentOne26+currentOne27"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Loss on sale of property, plant & equipment",
+        sysCode:6021,
+        editable:true,
+        rowNumber:25
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Loss on sale of Intangible asset",
+        sysCode:6022,
+        editable:true,
+        rowNumber:26
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Non Operating Expenses",
+        sysCode:6023,
+        editable:true,
+        rowNumber:27
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total Expense",
+        sysCode:6024,
+        header:true,
+        rowNumber:29,
+        dependent:[6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023],
+        formula:"currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne25+currentOne26+currentOne27"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Earnings Before Interest Taxation, Depreciation and Amortisation (EBITDA)",
+        sysCode:6025,
+        header:true,
+        rowNumber:31,
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Less: Depreciation and amortization expense",
+        sysCode:6026,
+        editable:true,
+        rowNumber:32
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Earnings Before Interest Taxation (EBIT)",
+        sysCode:6027,
+        header:true,
+        rowNumber:34,
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Finance costs",
+        sysCode:6028,
+        editable:true,
+        rowNumber:35
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit/(loss) before exceptional items and tax (I - IV)",
+        sysCode:6029,
+        header:true,
+        rowNumber:37,
+        romanIndex:'V',
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Exceptional Items",
+        sysCode:6030,
+        editable:true,
+        rowNumber:38,
+        romanIndex:'V1'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit/(loss) before tax (V-VI)",
+        sysCode:6031,
+        header:true,
+        rowNumber:40,
+        romanIndex:'VII',
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028, 6030],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Tax expense:",
+        sysCode:6032,
+        rowNumber:42,
+        romanIndex:'VIII'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(1) Current tax",
+        sysCode:6033,
+        editable:true,
+        rowNumber:43
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(2) Deferred tax",
+        sysCode:6034,
+        editable:true,
+        rowNumber:44
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total Tax Expense",
+        sysCode:6035,
+        header:true,
+        rowNumber:45,
+        dependent:[6033, 6034],
+        formula:"currentOne43+currentOne44"
+      
+      },
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit (Loss) for the period from continuing operations (VII-VIII)",
+        sysCode:6036,
+        header:true,
+        rowNumber:47,
+        romanIndex:'IX',
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028, 6030, 6033, 6034],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit/(loss) from discontinued operations",
+        sysCode:6037,
+        editable:true,
+        rowNumber:49,
+        romanIndex:'X'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Tax expense of discontinued operations",
+        sysCode:6038,
+        editable:true,
+        rowNumber:50,
+        romanIndex:'XI'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit/(loss) from Discontinued operations (after tax) (X-XI)",
+        sysCode:6039,
+        header:true,
+        rowNumber:51,
+        romanIndex:'XII',
+        dependent:[6037, 6038],
+        formula:"currentOne49+currentOne50"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit/(loss) for the period (IX+XII)",
+        sysCode:6040,
+        header:true,
+        rowNumber:53,
+        romanIndex:'XIII',
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028, 6030, 6033, 6034, 6037, 6038],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44+currentOne49+currentOne50"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Comprehensive Income",
+        sysCode:6041,
+        // editable:true,
+        rowNumber:55,
+        romanIndex:'XIV'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Foreign currency translation gains",
+        sysCode:6042,
+        // editable:true,
+        rowNumber:56
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "A",
+        sysCode:6043,
+        // editable:true,
+        rowNumber:58
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(i) Items that will not be reclassified to profit or loss",
+        sysCode:6044,
+        editable:true,
+        rowNumber:59
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(ii) Income tax relating to items that will not be reclassified to profit or loss",
+        sysCode:6045,
+        editable:true,
+        rowNumber:60
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "B",
+        sysCode:6046,
+        // editable:true,
+        rowNumber:61
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(i) Items that will be reclassified to profit or loss",
+        sysCode:6047,
+        editable:true,
+        rowNumber:62
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(ii) Income tax relating to items that will be reclassified to profit or loss",
+        sysCode:6048,
+        editable:true,
+        rowNumber:63
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total Comprehensive Income for the period (XIII+XIV) (Comprising Profit (Loss) and Other Comprehensive Income for the period)",
+        sysCode:6049,
+        header:true,
+        rowNumber:65,
+        romanIndex:'XV',
+        dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028, 6030, 6033, 6034, 6037, 6038, 6044, 6045, 6047, 6048],
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44+currentOne49+currentOne50+currentOne59+currentOne60+currentOne62+currentOne63"
+      }
+  },
+]
+
+export const CASH_FLOW = [
+  {
+    "lineEntry": {
+        particulars : "Operating Cash Flow:",
+        sysCode:7001,
+        header:true,
+        rowNumber:2,
+        romanIndex:'I'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit before Interest tax and exceptional items",
+        sysCode:7002,
+        // editable:true,
+        rowNumber:3,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Adjustments for:",
+        sysCode:7003,
+        header:true,
+        rowNumber:4,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Depreciation & Amortization",
+        sysCode:7004,
+        // editable:true,
+        rowNumber:5,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Investment income",
+        sysCode:7005,
+        // editable:true,
+        rowNumber:6,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Finance cost",
+        sysCode:7006,
+        // editable:true,
+        rowNumber:7,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit / (Loss) on the sale of property, plant & equipment",
+        sysCode:7007,
+        // editable:true,
+        rowNumber:8,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Profit / (Loss) on the sale of intangible assets",
+        sysCode:7008,
+        // editable:true,
+        rowNumber:9,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Working capital changes:",
+        sysCode:7009,
+        header:true,
+        rowNumber:10,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(Increase) / Decrease in trade and other receivables",
+        sysCode:7010,
+        // editable:true,
+        rowNumber:11,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(Increase) / Decrease in inventories",
+        sysCode:7011,
+        // editable:true,
+        rowNumber:12,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(Increase) / Decrease in Other Current Assets",
+        sysCode:7012,
+        // editable:true,
+        rowNumber:13,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(Increase) / Decrease in Loans & Advances",
+        sysCode:7013,
+        // editable:true,
+        rowNumber:14,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(Increase) / Decrease in Tax Assets",
+        sysCode:7014,
+        // editable:true,
+        rowNumber:15,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Increase / (Decrease) in trade payables",
+        sysCode:7015,
+        // editable:true,
+        rowNumber:16,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Increase / (Decrease) in  other payables",
+        sysCode:7016,
+        // editable:true,
+        rowNumber:17,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Increase / (Decrease) in provisions and other current Liabilities",
+        sysCode:7017,
+        // editable:true,
+        rowNumber:18,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Increase / (Decrease) in Non-Current Liabilities",
+        sysCode:7018,
+        // editable:true,
+        rowNumber:19,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Increase / (Decrease) in Tax Liabilities",
+        sysCode:7019,
+        // editable:true,
+        rowNumber:20,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Effect of foreign exchange",
+        sysCode:7020,
+        // editable:true,
+        rowNumber:21,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Income taxes paid",
+        sysCode:7021,
+        // editable:true,
+        rowNumber:22,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Net cash from operating activities",
+        sysCode:7022,
+        header:true,
+        rowNumber:23,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Cash flows from investing activities",
+        sysCode:7023,
+        header:true,
+        rowNumber:25,
+        romanIndex:'II'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Purchase/Sale  of property, plant and equipment",
+        sysCode:7024,
+        // editable:true,
+        rowNumber:26,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Proceeds from sale of equipment",
+        sysCode:7025,
+        // editable:true,
+        rowNumber:27,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Proceeds from sale of intangibles",
+        sysCode:7026,
+        // editable:true,
+        rowNumber:28,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Acquisition of investments",
+        sysCode:7027,
+        // editable:true,
+        rowNumber:29,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Net cash used in investing activities",
+        sysCode:7028,
+        header:true,
+        rowNumber:30,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Cash flows from financing activities",
+        sysCode:7029,
+        header:true,
+        rowNumber:32,
+        romanIndex:'III'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Proceed from issue of share capital",
+        sysCode:7030,
+        // editable:true,
+        rowNumber:33,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Proceeds/Repayment from long-term borrowings",
+        sysCode:7031,
+        // editable:true,
+        rowNumber:34,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Proceeds/Repayment Short-term borrowings",
+        sysCode:7032,
+        // editable:true,
+        rowNumber:35,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Proceeds / (repayment) of lease liability, net",
+        sysCode:7033,
+        // editable:true,
+        rowNumber:36,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Finance cost ",
+        sysCode:7034,
+        // editable:true,
+        rowNumber:37,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Net cash used in financing activities",
+        sysCode:7035,
+        header:true,
+        rowNumber:38,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Net increase in cash and cash equivalents (I+II+III)",
+        sysCode:7036,
+        header:true,
+        rowNumber:40,
+        romanIndex:'IV'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Cash and cash equivalents at beginning of period",
+        sysCode:7037,
+        header:true,
+        rowNumber:42,
+        romanIndex:'V'
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Cash and cash equivalents at end of period (IV+V)",
+        sysCode:7038,
+        header:true,
+        rowNumber:44,
+        romanIndex:'VI'
+      }
+  }, 
+]
+
+export const V2_BALANCE_SHEET = [
+  {
+    "lineEntry": {
+        particulars : "Assets",
+        sysCode:8001,
+        header:true,
+        rowNumber:2,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Non-current assets",
+        sysCode:8002,
+        header:true,
+        rowNumber:4,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(a) property, plant and equipment",
+        sysCode:8003,
+        // editable:true,
+        rowNumber:5,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(i) moveable",
+        sysCode:8004,
+        editable:true,
+        subHeader:true,
+        rowNumber:6,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(ii) immoveable",
+        sysCode:8005,
+        editable:true,
+        subHeader:true,
+        rowNumber:7,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(b) capital work in progress",
+        sysCode:8006,
+        editable:true,
+        rowNumber:8,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(c) investment property",
+        sysCode:8007,
+        editable:true,
+        rowNumber:9,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(d) goodwill",
+        sysCode:8008,
+        editable:true,
+        rowNumber:10,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(e) other intangible assets",
+        sysCode:8009,
+        editable:true,
+        rowNumber:11,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(f) intangible assets under development",
+        sysCode:8010,
+        editable:true,
+        rowNumber:12,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(g) biological assets other than bearer plants",
+        sysCode:8011,
+        editable:true,
+        rowNumber:13,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(h) right of use of assets",
+        sysCode:8012,
+        editable:true,
+        rowNumber:14,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(i) financial assets",
+        sysCode:8013,
+        // editable:true,
+        rowNumber:15,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(i)Investments in Subsidiary/JV/Associate",
+        sysCode:8014,
+        editable:true,
+        subHeader:true,
+        rowNumber:16,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(ii)Other Non-Current Investments",
+        sysCode:8015,
+        editable:true,
+        subHeader:true,
+        rowNumber:17,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(iii)long term loans and advances",
+        sysCode:8016,
+        editable:true,
+        subHeader:true,
+        rowNumber:18,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(iv) deferred tax assets(net)",
+        sysCode:8017,
+        editable:true,
+        subHeader:true,
+        rowNumber:19,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(j) other non-current assets",
+        sysCode:8018,
+        editable:true,
+        rowNumber:20,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Other Non-Operating Assets",
+        sysCode:8019,
+        header:true,
+        rowNumber:21,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Deposits",
+        sysCode:8020,
+        editable:true,
+        rowNumber:22,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total non current assets",
+        sysCode:8021,
+        header:true,
+        rowNumber:24,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Current assets",
+        sysCode:8022,
+        header:true,
+        rowNumber:26
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(a) inventories",
+        sysCode:8023,
+        editable:true,
+        rowNumber:27
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(b) financial assets",
+        sysCode:8024,
+        // editable:true,
+        rowNumber:28
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(i)Current investment",
+        sysCode:8025,
+        editable:true,
+        subHeader:true,
+        rowNumber:29
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(ii) trade receivables",
+        sysCode:8026,
+        editable:true,
+        subHeader:true,
+        rowNumber:30
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(iii) cash and cash equivalents",
+        sysCode:8027,
+        subHeader:true,
+        // editable:true,
+        rowNumber:31
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(iv) bank balance other than (iii)above",
+        sysCode:8028,
+        editable:true,
+        subHeader:true,
+        rowNumber:32
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(v) short term loans & advances",
+        sysCode:8029,
+        editable:true,
+        subHeader:true,
+        rowNumber:33
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(vii) current tax assets (net)",
+        sysCode:8030,
+        editable:true,
+        subHeader:true,
+        rowNumber:34
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(c) other current assets",
+        sysCode:8031,
+        editable:true,
+        rowNumber:35
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total current assets",
+        sysCode:8032,
+        header:true,
+        rowNumber:36,
+        dependent:[8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031],
+        formula:"currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total Assets",
+        sysCode:8033,
+        header:true,
+        rowNumber:38,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "EQUITY AND LIABILITIES",
+        sysCode:8034,
+        header:true,
+        rowNumber:40
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Equity",
+        sysCode:8035,
+        header:true,
+        rowNumber:42
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(a) Equity share capital",
+        sysCode:8036,
+        editable:true,
+        rowNumber:43,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Equity Infusion",
+        sysCode:8037,
+        editable:true,
+        rowNumber:44
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(b) other equity",
+        sysCode:8038,
+        editable:true,
+        rowNumber:45
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(i) Securities Premium",
+        sysCode:8039,
+        editable:true,
+        subHeader:true,
+        rowNumber:46
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(ii) revaluation Reserve",
+        sysCode:8040,
+        editable:true,
+        subHeader:true,
+        rowNumber:47
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(iii) General Reserves",
+        sysCode:8041,
+        editable:true,
+        subHeader:true,
+        rowNumber:48
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(iv) Retained Earnings",
+        sysCode:8042,
+        // editable:true,
+        subHeader:true,
+        rowNumber:49
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Equity",
+        sysCode:8043,
+        header:true,
+        rowNumber:50,
+        dependent:[8036, 8037, 8038, 8039, 8040, 8041, 8042],
+        formula:"currentOne43+currentOne44+currentOne45+currentOne46+currentOne47+currentOne48+currentOne49"
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Liabilities",
+        sysCode:8044,
+        header:true,
+        rowNumber:52
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Non-current liabilities",
+        sysCode:8045,
+        header:true,
+        rowNumber:53
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(a)financial liabilities",
+        sysCode:8046,
+        // editable:true,
+        rowNumber:54
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(i)borrowings",
+        sysCode:8047,
+        editable:true,
+        subHeader:true,
+        rowNumber:55
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(ii) other financial liabilities",
+        sysCode:8048,
+        editable:true,
+        subHeader:true,
+        rowNumber:56
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(iii) lease liabilities",
+        sysCode:8049,
+        editable:true,
+        subHeader:true,
+        rowNumber:57
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(b) provision",
+        sysCode:8050,
+        editable:true,
+        rowNumber:58
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(c)  deferred tax liabilities(net)",
+        sysCode:8051,
+        editable:true,
+        rowNumber:59
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(d) other non current liabilities",
+        sysCode:8052,
+        editable:true,
+        rowNumber:60
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(e) other non operating liabilities",
+        sysCode:8053,
+        editable:true,
+        rowNumber:61
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Non - current Liabilities",
+        sysCode:8054,
+        header:true,
+        rowNumber:62,
+        dependent:[8047, 8048, 8049, 8050, 8051, 8052, 8053],
+        formula:"currentOne55+currentOne56+currentOne57+currentOne58+currentOne59+currentOne60+currentOne61"
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Current liabilities",
+        sysCode:8055,
+        header:true,
+        rowNumber:64
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(a) financial liabilities",
+        sysCode:8056,
+        // editable:true,
+        rowNumber:65
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(i) borrowings",
+        sysCode:8057,
+        editable:true,
+        subHeader:true,
+        rowNumber:66
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(ii) trade payables",
+        sysCode:8058,
+        editable:true,
+        subHeader:true,
+        rowNumber:67
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(iii) other financial liabilities(other than these specified in item (c))",
+        sysCode:8059,
+        editable:true,
+        subHeader:true,
+        rowNumber:68
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(b) other current liabilities",
+        sysCode:8060,
+        editable:true,
+        rowNumber:69
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(c) provisions",
+        sysCode:8061,
+        editable:true,
+        rowNumber:70
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(d) current tax liabilities(net)",
+        sysCode:8062,
+        editable:true,
+        rowNumber:71
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Current Liabilities",
+        sysCode:8063,
+        header:true,
+        rowNumber:72,
+        dependent:[8057, 8058, 8059, 8060, 8061, 8062],
+        formula:"currentOne66+currentOne67+currentOne68+currentOne69+currentOne70+currentOne71"
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Equity and Liabilities",
+        sysCode:8064,
+        header:true,
+        rowNumber:74,
+        dependent:[8036, 8037, 8038, 8039, 8040, 8041, 8042, 8047, 8048, 8049, 8050, 8051, 8052, 8053, 8057, 8058, 8059, 8060, 8061, 8062],
+        formula:"currentOne43+currentOne44+currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne55+currentOne56+currentOne57+currentOne58+currentOne59+currentOne60+currentOne61+currentOne66+currentOne67+currentOne68+currentOne69+currentOne70+currentOne71"
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Check",
+        sysCode:8065,
+        header:true,
+        rowNumber:76,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031, 8036, 8037, 8038, 8039, 8040, 8041, 8042, 8047, 8048, 8049, 8050, 8051, 8052, 8053, 8057, 8058, 8059, 8060, 8061, 8062],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35-currentOne43-currentOne44-currentOne45-currentOne46-currentOne47-currentOne48-currentOne49-currentOne55-currentOne56-currentOne57-currentOne58-currentOne59-currentOne60-currentOne61-currentOne66-currentOne67-currentOne68-currentOne69-currentOne70-currentOne71"
+      }
+  }, 
+]
+
+export const V2_ASSESSMENT_OF_WORKING_CAPITAL = [
+  {
+    "lineEntry": {
+        particulars : "Operating Assets",
+        sysCode:9001,
+        header:true,
+        rowNumber:2
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Inventories",
+        sysCode:9002,
+        rowNumber:3
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Trade receivables",
+        sysCode:9003,
+        rowNumber:4
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Short Term loans & Advances",
+        sysCode:9004,
+        rowNumber:5
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "current tax assets (net)",
+        sysCode:9005,
+        rowNumber:6
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "other current assets",
+        sysCode:9006,
+        rowNumber:7
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Long Term loans & Advances",
+        sysCode:9007,
+        rowNumber:8
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "deferred tax assets(net)",
+        sysCode:9008,
+        rowNumber:9
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "other non-current assets",
+        sysCode:9009,
+        rowNumber:10
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Total Assets (A)",
+        sysCode:9010,
+        header:true,
+        rowNumber:11
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Operating Liabilities",
+        sysCode:9011,
+        header:true,
+        rowNumber:12
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Trade payables",
+        sysCode:9012,
+        rowNumber:13
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Other financial liabilities",
+        sysCode:9013,
+        rowNumber:14
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Other current liabilities",
+        sysCode:9014,
+        rowNumber:15
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Provisions",
+        sysCode:9015,
+        rowNumber:16
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Current tax liabilities(net)",
+        sysCode:9016,
+        rowNumber:17
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Other Non-Current financial liabilities",
+        sysCode:9017,
+        rowNumber:18
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Lease liabilities",
+        sysCode:9018,
+        rowNumber:19
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Provision",
+        sysCode:9019,
+        rowNumber:20
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Deferred tax liabilities(net)",
+        sysCode:9020,
+        rowNumber:21
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Other non current liabilities",
+        sysCode:9021,
+        rowNumber:22
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Total Liabilities (B)",
+        sysCode:9022,
+        header:true,
+        rowNumber:23
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Non-Cash Working Capital (A-B)",
+        sysCode:9023,
+        header:true,
+        rowNumber:24
+      }
+  },  
+  {
+    "lineEntry": {
+        particulars : "Change in NCA",
+        sysCode:9024,
+        header:true,
+        rowNumber:25
+      }
+  },  
+]
+
+export async function cashFlowFormulas(profitLossData, balanceSheetData, key, subKey, cashFlowPayload, keysToProcess?){
+  let prevKey,nextKey=0;
+  if(keysToProcess?.length){
+    prevKey = keysToProcess[keysToProcess.indexOf(subKey) - 1];
+    nextKey = keysToProcess[keysToProcess.indexOf(subKey) + 1];
+  }
+  switch(key){
+    case 'Profit before Interest tax and exceptional items':
+      return profitLossData['Profit/(loss) before tax (V-VI)'][subKey];
+
+    case 'Depreciation & Amortization':
+      return profitLossData['Less: Depreciation and amortization expense'][subKey];
+
+    case 'Investment income':
+      return profitLossData['Investment Income'][subKey];
+
+    case 'Finance cost':
+      return profitLossData['Finance costs'][subKey];
+
+    case 'Profit / (Loss) on the sale of property, plant & equipment':
+      /**
+       * FORMULA = 'P&L'!C10-'P&L'!C25
+       */
+      return convertToNumberOrZero(profitLossData['Profit on sale of property, plant & equipment'][subKey]) - 
+      convertToNumberOrZero(profitLossData['Loss on sale of property, plant & equipment'][subKey]);
+
+    case 'Profit / (Loss) on the sale of intangible assets':
+      /**
+       * FORMULA = 'P&L'!C11-'P&L'!C26
+       */
+      return convertToNumberOrZero(profitLossData['Profit on sale of Intangible asset'][subKey]) - 
+      convertToNumberOrZero(profitLossData['Loss on sale of Intangible asset'][subKey]);
+
+    case '(Increase) / Decrease in trade and other receivables':
+      /**
+       * FORMULA = -((BS!C30)-(BS!B30))
+       */
+      return -(convertToNumberOrZero(balanceSheetData['(ii) trade receivables'][subKey]) - 
+      convertToNumberOrZero(balanceSheetData['(ii) trade receivables'][prevKey]))
+      
+    case '(Increase) / Decrease in inventories':
+      /**
+       * FORMULA = -(BS!C27-BS!B27)
+       */
+      return -(convertToNumberOrZero(balanceSheetData['(a) inventories'][subKey]) - 
+      convertToNumberOrZero(balanceSheetData['(a) inventories'][prevKey]))
+      
+    case '(Increase) / Decrease in Other Current Assets':
+      /**
+       * FORMULA = -((+BS!C35+BS!C20+BS!C19)-(+BS!B35+BS!B20+BS!B19))
+       */
+      const crntOtherCurrentAssets = balanceSheetData['(c) other current assets'][subKey];
+      const crntOtherNonCurrentAssets = balanceSheetData['(j) other non-current assets'][subKey];
+      const crntDefferedTaxAssets = balanceSheetData['(iv) deferred tax assets(net)'][subKey];
+
+      const crntTotal = convertToNumberOrZero(crntOtherCurrentAssets) + convertToNumberOrZero(crntOtherNonCurrentAssets) + convertToNumberOrZero(crntDefferedTaxAssets);
+
+      const prevTotal = convertToNumberOrZero(balanceSheetData['(c) other current assets'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(j) other non-current assets'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(iv) deferred tax assets(net)'][prevKey]);
+
+      return -(convertToNumberOrZero(crntTotal - prevTotal));
+      
+    case '(Increase) / Decrease in Loans & Advances':
+      /**
+       * FORMULA = -((BS!C18+BS!C33)-(BS!B18+BS!B33))
+       */
+
+      const crntLongTermAdvances = balanceSheetData['(iii)long term loans and advances'][subKey];
+      const crntShortTermAdvances = balanceSheetData['(v) short term loans & advances'][subKey];
+
+      const crntTAtotal = convertToNumberOrZero(crntLongTermAdvances) + convertToNumberOrZero(crntShortTermAdvances); 
+
+      const prevTAtotal = convertToNumberOrZero(balanceSheetData['(iii)long term loans and advances'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(v) short term loans & advances'][prevKey]);
+
+      return -(convertToNumberOrZero(crntTAtotal - prevTAtotal));
+
+    case '(Increase) / Decrease in Tax Assets':
+      /**
+       * FORMULA = -(BS!C34-BS!B34)
+       */
+      
+      const crntTaxAsstNet = balanceSheetData['(vii) current tax assets (net)'][subKey];
+
+      const prevTaxAsstNet = balanceSheetData['(vii) current tax assets (net)'][prevKey];
+
+      return convertToNumberOrZero(crntTaxAsstNet) - convertToNumberOrZero(prevTaxAsstNet);
+
+    case 'Increase / (Decrease) in trade payables':
+      /**
+       * FORMULA = (BS!C67)-(BS!B67)
+       */
+
+      const crntCAtradePayable = balanceSheetData['(ii) trade payables'][subKey];
+
+      return convertToNumberOrZero(crntCAtradePayable) - convertToNumberOrZero(balanceSheetData['(ii) trade payables'][prevKey]);
+
+    case 'Increase / (Decrease) in  other payables':
+      /**
+       * FORMULA = (BS!C68+BS!C56)-(BS!B68+BS!B56)
+       */
+
+      const crntOthrFncialLiabilitOTC = balanceSheetData['(iii) other financial liabilities(other than these specified in item (c))'][subKey];
+      const crntOthrFncialLiabilit = balanceSheetData['(ii) other financial liabilities'][subKey];
+
+      const crntOFLtotal = convertToNumberOrZero(crntOthrFncialLiabilitOTC) + convertToNumberOrZero(crntOthrFncialLiabilit);
+
+      const prevOFLtotal = convertToNumberOrZero(balanceSheetData['(iii) other financial liabilities(other than these specified in item (c))'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(ii) other financial liabilities'][prevKey]);
+
+      return convertToNumberOrZero(crntOFLtotal - prevOFLtotal); 
+
+    case 'Increase / (Decrease) in provisions and other current Liabilities':
+      /**
+       * FORMULA = (BS!C69+BS!C70+BS!C58+BS!C59)-(BS!B69+BS!B70+BS!B58+BS!B59)
+       */
+      const crntOthrCrntLiablity = balanceSheetData['(b) other current liabilities'][subKey];
+      const crntCProvision = balanceSheetData['(c) provisions'][subKey];
+      const crntBProvision = balanceSheetData['(b) provision'][subKey];
+      const crntDefrdTaxLiability = balanceSheetData['(c)  deferred tax liabilities(net)'][subKey];
+      
+      const crntPAndCLTotal = convertToNumberOrZero(crntOthrCrntLiablity) + 
+      convertToNumberOrZero(crntCProvision) + 
+      convertToNumberOrZero(crntBProvision) + 
+      convertToNumberOrZero(crntDefrdTaxLiability);
+
+      const prevPandCLTotal = convertToNumberOrZero(balanceSheetData['(b) other current liabilities'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(c) provisions'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(b) provision'][prevKey]) + 
+      convertToNumberOrZero(balanceSheetData['(c)  deferred tax liabilities(net)'][prevKey]);
+
+      return convertToNumberOrZero(crntPAndCLTotal) - convertToNumberOrZero(prevPandCLTotal);
+
+    case 'Increase / (Decrease) in Non-Current Liabilities':
+      /**
+       * FORMULA = (BS!C60-BS!B60)
+       */
+      const crnOthrNonCrrntLiability = balanceSheetData['(d) other non current liabilities'][subKey];
+
+      const prevOthrNonCrrntLiability = balanceSheetData['(d) other non current liabilities'][prevKey];
+
+      return crnOthrNonCrrntLiability - prevOthrNonCrrntLiability;
+
+    case 'Increase / (Decrease) in Tax Liabilities':
+      /**
+       * FORMULA = BS!C71-BS!B71
+       */
+      const crntCTL = balanceSheetData['(d) current tax liabilities(net)'][subKey];
+
+      const prevCTL = balanceSheetData['(d) current tax liabilities(net)'][prevKey];
+      
+      return convertToNumberOrZero(crntCTL) - convertToNumberOrZero(prevCTL);
+      
+    case 'Effect of foreign exchange':
+      return profitLossData['Foreign currency translation gains'][subKey];
+      
+    case 'Income taxes paid':
+      return profitLossData['Total Tax Expense'][subKey];
+
+    case 'Net cash from operating activities':
+      /**
+       * FORMULA = SUM(C3:C22)
+       */
+      return convertToNumberOrZero(cashFlowPayload[1][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[3][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[4][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[5][subKey]) +
+      convertToNumberOrZero(cashFlowPayload[6][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[7][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[9][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[10][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[11][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[12][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[13][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[14][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[15][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[16][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[17][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[18][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[19][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[20][subKey])
+
+    case 'Purchase/Sale  of property, plant and equipment':
+      /**
+       * FORMULA = -((BS!C6+BS!C7+BS!C8+BS!C13+BS!C11+BS!C12)+'P&L'!D32-(BS!B6+BS!B7+BS!B8+BS!B13+BS!B12+BS!B11))
+       */
+      const movableObject = balanceSheetData['(i) moveable'];
+      const immovableObject = balanceSheetData['(ii) immoveable'];
+      const capWrkInPrgressObject = balanceSheetData['(b) capital work in progress'];
+      const othrIntangbleAsstObject = balanceSheetData['(e) other intangible assets'];
+      const intangbleAsstUDObject = balanceSheetData['(f) intangible assets under development'];
+      const bioAsstObject = balanceSheetData['(g) biological assets other than bearer plants'];
+
+      const crntmovableProp = movableObject[subKey];
+      const crntimmovableProp = immovableObject[subKey];
+      const crntcapWrkInPrgressProp = capWrkInPrgressObject[subKey];
+      const crntothrIntangbleAsstProp = othrIntangbleAsstObject[subKey];
+      const crntIntangbleAsstUDProp = intangbleAsstUDObject[subKey];
+      const crntbioAsstProp = bioAsstObject[subKey];
+
+      const crntPPEtotal = convertToNumberOrZero(crntmovableProp) + convertToNumberOrZero(crntimmovableProp) + convertToNumberOrZero(crntcapWrkInPrgressProp) + convertToNumberOrZero(crntothrIntangbleAsstProp) + convertToNumberOrZero(crntIntangbleAsstUDProp) + convertToNumberOrZero(crntbioAsstProp);
+
+      const prevPPEtotal = convertToNumberOrZero(movableObject[prevKey]) + 
+      convertToNumberOrZero(immovableObject[prevKey]) + 
+      convertToNumberOrZero(capWrkInPrgressObject[prevKey]) + 
+      convertToNumberOrZero(othrIntangbleAsstObject[prevKey]) + 
+      convertToNumberOrZero(intangbleAsstUDObject[prevKey]) + 
+      convertToNumberOrZero(bioAsstObject[prevKey]);
+
+      const crntlessDpntAndAmortsn = convertToNumberOrZero(profitLossData['Less: Depreciation and amortization expense'][subKey]);
+
+      return -(convertToNumberOrZero(crntPPEtotal + crntlessDpntAndAmortsn - prevPPEtotal));
+
+    case 'Proceeds from sale of equipment':
+      return convertToNumberOrZero(profitLossData['Profit on sale of equipment'][subKey]) - 
+      convertToNumberOrZero(profitLossData['Other Non Operating Expenses'][subKey]);
+
+    case 'Proceeds from sale of intangibles':
+      return convertToNumberOrZero(profitLossData['Profit on sale of Intangible asset'][subKey]) - 
+      convertToNumberOrZero(profitLossData['Loss on sale of Intangible asset'][subKey]);
+
+    case 'Acquisition of investments':
+      /**
+       * FORMULA = -((BS!C9 + BS!C16 + BS!C17 + BS!C29) - (BS!B9 + BS!B16 + BS!B17 + BS!B29)) OR -(BS!C9-BS!B9+BS!C16+BS!C17-BS!B16+BS!B17+BS!C29-BS!B29)
+       */
+      const invObj = balanceSheetData['(c) investment property'];
+      const invSbsdryJvAssociateObj = balanceSheetData['(i)Investments in Subsidiary/JV/Associate'];
+      const othrNCrntInvObj = balanceSheetData['(ii)Other Non-Current Investments'];
+      const crntInveObj = balanceSheetData['(i)Current investment'];
+
+      const crntAItotal = convertToNumberOrZero(invObj[subKey]) + 
+      convertToNumberOrZero(invSbsdryJvAssociateObj[subKey]) + 
+      convertToNumberOrZero(othrNCrntInvObj[subKey]) + 
+      convertToNumberOrZero(crntInveObj[subKey]);
+
+      const prevAItotal = convertToNumberOrZero(invObj[prevKey]) + 
+      convertToNumberOrZero(invSbsdryJvAssociateObj[prevKey]) + 
+      convertToNumberOrZero(othrNCrntInvObj[prevKey]) + 
+      convertToNumberOrZero(crntInveObj[prevKey]);
+
+      return -(convertToNumberOrZero(crntAItotal + prevAItotal));
+
+    case 'Net cash used in investing activities':
+      /**
+       * FORMULA =SUM(C26:C29)
+       */
+      return convertToNumberOrZero(cashFlowPayload[23][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[24][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[25][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[26][subKey]);
+      
+    case 'Proceed from issue of share capital':
+      /**
+       * FORMULA = BS!C43-BS!B43
+       */
+      const eqtyShareCapObj = balanceSheetData['(a) Equity share capital'];
+      const crntEqtyShareCap = eqtyShareCapObj[subKey];
+
+      const prevEqtyShareCap = eqtyShareCapObj[prevKey];
+
+      return convertToNumberOrZero(crntEqtyShareCap) - convertToNumberOrZero(prevEqtyShareCap);
+
+    case 'Proceeds/Repayment from long-term borrowings':
+      /**
+       * FORMULA = BS!C55-BS!B55
+       */
+      const borrowingObj = balanceSheetData['(i)borrowings'];
+      const crntBorrowing = borrowingObj[subKey];
+
+      const prevBorrowing = borrowingObj[prevKey];
+
+      return convertToNumberOrZero(crntBorrowing) - convertToNumberOrZero(prevBorrowing);
+
+    case 'Proceeds/Repayment Short-term borrowings':
+      /**
+       * FORMULA = BS!C66-BS!B66
+       */
+      const borrObj = balanceSheetData['(i) borrowings'];
+      const crntBorr = borrObj[subKey];
+
+      const prevBorr = borrObj[prevKey];
+
+      return convertToNumberOrZero(crntBorr) - convertToNumberOrZero(prevBorr);
+
+    case 'Proceeds / (repayment) of lease liability, net':
+      /**
+       * FORMULA = (BS!C57-BS!B57)
+       */
+      const leaseLiablityObj= balanceSheetData['(iii) lease liabilities'];
+      const crntLeaseLiability = leaseLiablityObj[subKey];
+
+      const prevLeaseLiability = leaseLiablityObj[prevKey];
+
+      return convertToNumberOrZero(crntLeaseLiability) - convertToNumberOrZero(prevLeaseLiability);
+
+    case 'Finance cost ':
+      return -(convertToNumberOrZero(cashFlowPayload[5][subKey]));
+
+    case 'Net cash used in financing activities':
+      /**
+       * FORMULA = SUM(C33:C37)
+       */
+      return convertToNumberOrZero(cashFlowPayload[29][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[30][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[31][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[32][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[33][subKey]);
+
+    case 'Net increase in cash and cash equivalents (I+II+III)':
+      return convertToNumberOrZero(cashFlowPayload[21][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[27][subKey]) + 
+      convertToNumberOrZero(cashFlowPayload[34][subKey]);
+
+    case 'Cash and cash equivalents at beginning of period':
+      /**
+       * FORMULA 
+       * First column is empty 
+       * For second column = BS['(iii) cash and cash equivalents'][C1]
+       */
+      const cashEqvObj = balanceSheetData['(iii) cash and cash equivalents'];
+
+      // We want to replace 2nd column with previous key,
+      // hence we start by comparing index equal to 1
+      if(keysToProcess.indexOf(subKey) === 1){
+        return cashEqvObj[prevKey]
+      }
+
+      // We want the main addition to start from 3 column,
+      // hence we start by comparing index greater than 1
+      else if(keysToProcess.indexOf(subKey) > 1){
+        return convertToNumberOrZero(cashFlowPayload[35][prevKey]) + convertToNumberOrZero(cashFlowPayload[36][prevKey]); 
+      }
+      return ''
+
+    case 'Cash and cash equivalents at end of period (IV+V)':
+      const cashEqObj = balanceSheetData['(iii) cash and cash equivalents'];
+
+      if(keysToProcess.indexOf(subKey) === 0){
+        return cashEqObj[subKey]
+      }
+
+      // We want the main addition to start from 3 column,
+      // hence we start by comparing index greater than 1
+      else if(keysToProcess.indexOf(subKey) > 0){
+        return convertToNumberOrZero(cashFlowPayload[35][subKey]) + convertToNumberOrZero(cashFlowPayload[36][subKey]); 
+      }
+
+      default:
+        return '';
+  }
+}
+
+export async function assessmentOfWCformulas(balanceSheetData, key, subKey, assessmentPayload, keysToProcess?){
+  let prevKey,nextKey=0;
+  if(keysToProcess?.length){
+    prevKey = keysToProcess[keysToProcess.indexOf(subKey) - 1];
+    nextKey = keysToProcess[keysToProcess.indexOf(subKey) + 1];
+  }
+  switch(key){
+    case 'Inventories':
+      /**
+       * FORMULA = BS!B27
+       */
+      return convertToNumberOrZero(balanceSheetData['(a) inventories'][subKey]);
+
+    case 'Trade receivables':
+      /**
+       * FORMULA = BS!B30
+       */
+      return convertToNumberOrZero(balanceSheetData['(ii) trade receivables'][subKey]);
+
+    case 'Short Term loans & Advances':
+      /**
+       * FORMULA = BS!B33
+       */
+      return convertToNumberOrZero(balanceSheetData['(v) short term loans & advances'][subKey]);
+      
+    case 'current tax assets (net)':
+      /**
+       * FORMULA = BS!B34
+       */
+      return convertToNumberOrZero(balanceSheetData['(vii) current tax assets (net)'][subKey]);
+      
+    case 'other current assets':
+      /**
+       * FORMULA = BS!B35
+      */
+      return convertToNumberOrZero(balanceSheetData['(c) other current assets'][subKey]);
+
+    case 'Long Term loans & Advances':
+      /**
+       * FORMULA = BS!B18
+       */
+      return convertToNumberOrZero(balanceSheetData['(iii)long term loans and advances'][subKey]);
+
+    case 'deferred tax assets(net)':
+      /**
+       * FORMULA = BS!B19
+       */
+      return convertToNumberOrZero(balanceSheetData['(iv) deferred tax assets(net)'][subKey]);
+
+    case 'other non-current assets':
+      /**
+       * FORMULA = BS!B20
+       */
+      return convertToNumberOrZero(balanceSheetData['(j) other non-current assets'][subKey]);
+
+    case 'Total Assets (A)':
+      /**
+       * FORMULA = SUM(B2:B10)
+       */
+      return convertToNumberOrZero(assessmentPayload[1][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[2][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[3][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[4][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[5][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[6][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[7][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[8][subKey]);
+
+    case 'Trade payables':
+      /**
+       * FORMULA = BS!B67
+       */
+      return convertToNumberOrZero(balanceSheetData['(ii) trade payables'][subKey]);
+
+    case 'Other financial liabilities':
+      /**
+       * FORMULA = BS!B68
+       */
+      return convertToNumberOrZero(balanceSheetData['(iii) other financial liabilities(other than these specified in item (c))'][subKey]);
+
+    case 'Other current liabilities':
+      /**
+       * FORMULA = BS!B69
+       */
+      return convertToNumberOrZero(balanceSheetData['(b) other current liabilities'][subKey]);
+
+    case 'Provisions':
+      /**
+       * FORMULA = BS!B70
+       */
+      return convertToNumberOrZero(balanceSheetData['(c) provisions'][subKey]);
+
+    case 'Current tax liabilities(net)':
+      /**
+       * FORMULA = BS!B71
+       */
+      return convertToNumberOrZero(balanceSheetData['(d) current tax liabilities(net)'][subKey]);
+
+    case 'Other Non-Current financial liabilities':
+      /**
+       * FORMULA = BS!B56
+       */
+      return convertToNumberOrZero(balanceSheetData['(ii) other financial liabilities'][subKey]);
+
+    case 'Lease liabilities':
+      /**
+       * FORMULA = BS!B57
+       */
+      return convertToNumberOrZero(balanceSheetData['(iii) lease liabilities'][subKey]);
+
+    case 'Provision':
+      /**
+       * FORMULA = BS!B58
+       */
+      return convertToNumberOrZero(balanceSheetData['(b) provision'][subKey]);
+
+    case 'Deferred tax liabilities(net)':
+      /**
+       * FORMULA = BS!B59 
+       */
+      return convertToNumberOrZero(balanceSheetData['(c)  deferred tax liabilities(net)'][subKey]);
+
+    case 'Other non current liabilities':
+      /**
+       * FORMULA = BS!B60
+       */
+      return convertToNumberOrZero(balanceSheetData['(d) other non current liabilities'][subKey]);
+
+    case 'Total Liabilities (B)':
+      /**
+       * FORMULA = SUM(B13:B22)
+       */
+      return convertToNumberOrZero(assessmentPayload[11][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[12][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[13][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[14][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[15][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[16][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[17][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[18][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[19][subKey]) + 
+      convertToNumberOrZero(assessmentPayload[20][subKey]);
+
+    case 'Non-Cash Working Capital (A-B)':
+      /**
+       * FORMULA = B11-B23
+       */
+      return convertToNumberOrZero(assessmentPayload[9][subKey]) - 
+      convertToNumberOrZero(assessmentPayload[21][subKey]);
+
+    case 'Change in NCA':
+      /**
+       * FORMULA = B24-C24
+       */
+      return convertToNumberOrZero(assessmentPayload[22][prevKey]) - 
+      convertToNumberOrZero(assessmentPayload[22][subKey]);
+    
+    default:
+      return '';
+  }
+
+}
+
+function sortCashFlowObjectKeys(obj, provDate){
+  const order = ['Sr No', 'Particulars', `${provDate}`];
+  const sortedObj = {};
+
+  order.forEach(key => {
+    if (key in obj) {
+      sortedObj[key] = obj[key];
+    }
+  });
+
+  Object.keys(obj).sort().forEach(key => {
+    if (!order.includes(key)) {
+      sortedObj[key] = obj[key];
+    }
+  });
+
+  return sortedObj;
+}
+
+export function sortArrayOfObjects(arr, provDate) {
+  return arr.map(item => sortCashFlowObjectKeys(item, provDate));
+}
+
+export const EXCEL_CONVENTION = {
+  'BS': {
+    key: 'BS',
+    EAkey: 'balanceSheetdata',
+    EAcountCheck:'balanceSheetRowCount'
+  },
+  'P&L': {
+    key: 'P&L',
+    EAkey:'profitLossSheetdata',
+    EAcountCheck:'profitLossSheetRowCount'
+  },
+  'Cash Flow': {
+    key: 'Cash Flow',
+    EAkey:'cashFlowSheetdata',
+    EAcountCheck:'cashFlowSheetRowCount'
+  },
+  'Rule 11 UA':{
+    key:'Rule 11 UA',
+    EAkey:'rule11UaSheetdata',
+    EAcountCheck: 'rule11UaSheetRowCount'
+  },
+  'Assessment of Working Capital': {
+    key: 'Assessment of Working Capital',
+    EAkey:'assessmentSheetData',
+    EAcountCheck:'assessmentSheetRowCount'
   }
 }

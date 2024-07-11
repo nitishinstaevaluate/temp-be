@@ -1,17 +1,36 @@
 import { IsNotEmpty, IsNumber, IsString, IsOptional, IsArray, ValidateNested } from "class-validator";
 
 export class ExcelArchiveDto {
-    @IsNotEmpty({ message: 'companyId cannot be empty' })
+    @IsNotEmpty({ message: 'processStateId cannot be empty' })
+    @IsString({ message: 'processStateId is required' })
+    processStateId: string;
+    
+    @IsNotEmpty({ message: 'fileName cannot be empty' })
     @IsString({ message: 'filename is required' })
     fileName: string;
     
-    @IsNotEmpty({ message: 'sheetName cannot be empty' })
-    @IsString({ message: 'sheetName should be string' })
-    sheetName: string;
+    @IsString({ message: 'sheetUploaded is required' })
+    sheetUploaded: string;
     
-    @IsNotEmpty({ message: 'rowCount cannot be empty' })
-    @IsNumber({}, { message: 'rowCount should be a number' })
-    rowCount: number;
+    @IsOptional()
+    @IsNumber({}, { message: 'profitLossRowCount should be a number' })
+    profitLossSheetRowCount: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'cashFlowSheetRowCount should be a number' })
+    cashFlowSheetRowCount: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'balanceSheetRowCount should be a number' })
+    balanceSheetRowCount: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'rule11UaSheetRowCount should be a number' })
+    rule11UaSheetRowCount: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'assessmentSheetRowCount should be a number' })
+    assessmentSheetRowCount: number;
     
     @IsNotEmpty({ message: 'fileSize cannot be empty' })
     @IsString({ message: 'fileSize should be string' })
@@ -25,12 +44,32 @@ export class ExcelArchiveDto {
     @IsString({ message: 'importedBy should be string' })
     importedBy: string;
 
-
     @IsNotEmpty({ message: 'status cannot be empty' })
     @IsString({ message: 'status should be string' })
     status: string;
     
-    @IsArray({ message: 'excel data must be an array' })
+    @IsOptional()
+    @IsArray({ message: 'balanceSheetdata must be an array' })
     @ValidateNested({ each: true })
-    data: [];
+    balanceSheetdata: [];
+
+    @IsOptional()
+    @IsArray({ message: 'profitLossSheetdata must be an array' })
+    @ValidateNested({ each: true })
+    profitLossSheetdata: [];
+
+    @IsOptional()
+    @IsArray({ message: 'cashFlowSheetdata must be an array' })
+    @ValidateNested({ each: true })
+    cashFlowSheetdata: [];
+
+    @IsOptional()
+    @IsArray({ message: 'assessmentSheetData must be an array' })
+    @ValidateNested({ each: true })
+    assessmentSheetData: [];
+
+    @IsOptional()
+    @IsArray({ message: 'rule11UaSheetdata must be an array' })
+    @ValidateNested({ each: true })
+    rule11UaSheetdata: [];
   }

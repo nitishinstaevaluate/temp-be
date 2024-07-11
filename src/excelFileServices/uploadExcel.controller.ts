@@ -47,8 +47,11 @@ export class UploadController {
   // @UseGuards(KeyCloakAuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file', { storage }))
-  async uploadFile(@UploadedFile() formData) {
-    return await this.excelSheetService.pushInitialFinancialSheet(formData);
+  async uploadFile(
+    @UploadedFile() formData,  
+    @Body('processId') processId: string,
+    @Req() request) {
+    return this.excelSheetService.uploadExcelProcess(formData, processId, request);
   }
 
   // @UseGuards(KeyCloakAuthGuard)
@@ -66,13 +69,14 @@ export class UploadController {
   }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('sheet/:fileName/:sheetName')
+  @Get('sheet/:fileName/:sheetName/:processStateId')
   getSheetData(
     @Param('fileName') fileName: string,
     @Param('sheetName') sheetName: string,
+    @Param('processStateId') processStateId: string,
     @Req() request
   ) :Observable<any> {
-     return from(this.excelSheetService.getSheetData(fileName, sheetName, request))
+     return from(this.excelSheetService.getSheetData(fileName, sheetName, request, processStateId))
     .pipe(
       catchError((error) => {
         return throwError (error);
@@ -109,7 +113,7 @@ export class UploadController {
 
   @UseGuards(KeyCloakAuthGuard)
   @Post('modifyExcel')
-  async modifyExcel(@Body() excelData){
-    return await this.excelSheetService.modifyExcelSheet(excelData);
+  async modifyExcel(@Body() excelData, @Req() request){
+    return await this.excelSheetService.modifyExcelSheet(excelData, request);
   }
 }

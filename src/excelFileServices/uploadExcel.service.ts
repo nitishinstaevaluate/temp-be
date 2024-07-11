@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as xlsx from 'xlsx';
@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, mainLogo } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, CASH_FLOW, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -45,246 +45,726 @@ export class ExcelSheetService {
     private readonly terminalValueWorkingService: terminalValueWorkingService,
     private readonly excelArchiveService: ExcelArchiveService,
     private readonly authTokenService:authenticationTokenService){}
-    getSheetData(fileName: string, sheetName: string, request): Observable<any> {
+    getSheetData(fileName: string, sheetName: string, request, processStateId): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
         
-    return from(this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(fileName)).pipe(
-      switchMap((filePath:any)=>{
-        const fileType = path.extname(filePath);
-        const stats = fs.statSync(filePath);
-        const fileSize = stats.size;
-        return from(this.readFile(filePath)).pipe(
-          switchMap((workbook) => {
-            return from(this.copyWorksheets(workbook,fileName)).pipe(
-                switchMap((response)=>{
-                  switch(sheetName){
-                    case 'BS':
-                    case 'P&L':
-                      if (!workbook.SheetNames.includes(sheetName)) {
-                        return throwError( {
-                          message: `${sheetName} Sheet not found`,
-                          status: false
-                        });
-                      }
-                      const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                      sheetData.forEach((row:any) => {
-                         for (let columns in row) {
-                           if (typeof row[columns] === 'string') {
-                             row[columns] = row[columns].replace(/\r\n/g, '');
-                         }
-                       
-                           if (typeof row[columns] === 'number') {
-                             row[columns] = parseFloat(row[columns].toFixed(2));
-                           }
-                           if (typeof columns === 'string') {
-                             const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-                             // const cleanedColumn = columns.replace(/^\s+/g, '');
-                             // console.log(cleanedColumn)
-                             if (columns !== cleanedColumn) {
-                               row[cleanedColumn] = row[columns];
-                               //   console.log(row[cleanedColumn])
-                               delete row[columns];
-                             }
-                           }
-                         }
-                       });
-                       return from(this.transformData(sheetData)).pipe(
-                        switchMap((excelData)=>{
-                          return from(this.createStructure(excelData,sheetName)).pipe(
-                            switchMap((structure)=>{
-                              // return of(structure);
-                              return of({
-                                data:structure,
-                                msg:`Excel Sheet Fetched`,
-                                status:true
-                              });
-                            })
-                          )
-                        //  return of(excelData)
-                       }),
-                       catchError((error)=>{
-                        return throwError(error)
-                       })
-                       )
-                    break;
+        return from (this.excelArchiveService.fetchExcelByProcessStateId(processStateId)).pipe(
+          switchMap((excelArchiveData)=>{
+            const excelRowCount = excelArchiveData[EXCEL_CONVENTION[sheetName]?.EAcountCheck] || 0;
+            if(excelRowCount){
+              console.log("fetched data from db")
+              return of({
+                data:excelArchiveData[EXCEL_CONVENTION[sheetName]?.EAkey],
+                msg:`Excel Sheet Fetched`,
+                status:true
+              });
+            }
+            else{
+              return from(this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(fileName)).pipe(
+                switchMap((filePath:any)=>{
+                  const fileType = path.extname(filePath);
+                  const stats = fs.statSync(filePath);
+                  const fileSize = stats.size;
+                  return from(this.readFile(filePath)).pipe(
+                    switchMap((workbook) => {
+                      return from(this.copyWorksheets(workbook,fileName)).pipe(
+                          switchMap((response)=>{
+                            switch(sheetName){
+                              case 'BS':
+                              case 'P&L':
+                                if (!workbook.SheetNames.includes(sheetName)) {
+                                  return throwError( {
+                                    message: `${sheetName} Sheet not found`,
+                                    status: false
+                                  });
+                                }
+                                const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                                sheetData.forEach((row:any) => {
+                                   for (let columns in row) {
+                                     if (typeof row[columns] === 'string') {
+                                       row[columns] = row[columns].replace(/\r\n/g, '');
+                                   }
+                                 
+                                     if (typeof row[columns] === 'number') {
+                                       row[columns] = parseFloat(row[columns].toFixed(2));
+                                     }
+                                     if (typeof columns === 'string') {
+                                       const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+                                       // const cleanedColumn = columns.replace(/^\s+/g, '');
+                                       // console.log(cleanedColumn)
+                                       if (columns !== cleanedColumn) {
+                                         row[cleanedColumn] = row[columns];
+                                         //   console.log(row[cleanedColumn])
+                                         delete row[columns];
+                                       }
+                                     }
+                                   }
+                                 });
+                                 return from(this.transformData(sheetData)).pipe(
+                                  switchMap((excelData)=>{
+                                    return from(this.createStructure(excelData,sheetName)).pipe(
+                                      switchMap((structure:any)=>{
+                                            const payload = {
+                                              processStateId,
+                                              fileName,
+                                              fileSize,
+                                              fileType,
+                                              filePath,
+                                              structure:structure,
+                                              sheetName
+                                            }
+                                           return from(this.updateBSorPLexcelArchive(payload, request)).pipe(
+                                            switchMap((response)=>{
+                                              return of({
+                                                data:response.data,
+                                                msg:"excel Sheet Fetched",
+                                                status:true
+                                              });
+                                            }),
+                                            catchError((error)=>{
+                                              return throwError(error)
+                                            })
+                                           )
+                                      })
+                                    )
+                                 }),
+                                 catchError((error)=>{
+                                  return throwError(error)
+                                 })
+                                 )
+                              break;
+          
+                            case 'Assessment of Working Capital':
+                              return from(this.generateAssessmentOfWCExcel(workbook, processStateId, fileName, filePath, fileSize, fileType, request)).pipe(
+                                switchMap((response)=>{
+                                  return of({
+                                    data:response.data,
+                                    msg:"assessment Sheet Fetched",
+                                    status:true
+                                  });
+                                }),
+                                catchError((error)=>{
+                                  return throwError(error)
+                                })
+                              )
+                              break;
 
-              case 'Assessment of Working Capital':
-                if(!workbook.SheetNames.includes(sheetName)){
-                  return from(new Promise((resolve, reject) => {
-                      let workbookXLSX = xlsx.readFile(filePath);
-                    resolve(workbookXLSX);
-                    })).pipe(
-                      switchMap((workbookXLSX: any) => {
-                      const worksheet1 = workbookXLSX.Sheets['P&L'];
-                      return from(getYearsList(worksheet1)).pipe(
-                        switchMap((years) => {
-   
-                           const balanceSheet = workbookXLSX.Sheets['BS']
-                         return from(this.generatePayload(years,balanceSheet)).pipe(
-                           switchMap((data)=>{
-                             // console.log(data,"final opayload")
-                             return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
-                               switchMap((response) => {
-                                 if (response) {
-                                   return from(this.formatExcelResult(response)).pipe(
-                                     switchMap((excelData)=>{
-                                       return of({
-                                         data:excelData,
-                                         msg:"Assessment Sheet Fetched",
-                                         status:true
-                                       });
-                                     }),catchError((error)=>{
-                                       return throwError(error)
-                                     })
-                                   )
-   
-                                 } else {
-                                   return throwError('Error: Response not found');
-                                 }
-                               }),
-                               catchError((error) => {
-                                 return throwError(error);
-                               })
-                             );
+                              case 'Cash Flow':
+                                return from(this.generateCashFlowExcel(workbook, processStateId, fileName, filePath, fileSize, fileType, request)).pipe(
+                                  switchMap((response)=>{
+                                    return of({
+                                      data:response.data,
+                                      msg:"Cash flow Sheet Fetched",
+                                      status:true
+                                    });
+                                  }),
+                                catchError((error)=>{
+                                  return throwError(error)
+                                }))
+                                break;
+
+                              case 'Rule 11 UA':
+                                if (!workbook.SheetNames.includes(sheetName)) {
+                                  return throwError( {
+                                    message: `${sheetName} Sheet not found`,
+                                    status: false
+                                  });
+                                }
+                                const elevenUaSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                                 return from(this.transformData(elevenUaSheetData)).pipe(
+                                  switchMap((excelData)=>{
+                                    return from(this.createStructure(excelData,sheetName)).pipe(
+                                      switchMap((structure)=>{
+                                        return of({
+                                          data:structure.ruleElevenUaStructure,
+                                          msg:`Excel Sheet Fetched`,
+                                          status:true
+                                        });
+                                      })
+                                    )
+                                  }),
+                                  catchError((error)=>{
+                                    return throwError(error)
+                                  })
+                                 )
+          
+                              break;   
+          
+                              case 'Slump Sale':
+                                if (!workbook.SheetNames.includes(sheetName)) {
+                                  return throwError( {
+                                    message: `${sheetName} Sheet not found`,
+                                    status: false
+                                  });
+                                }
+                                const slumpSaleSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                                 return from(this.transformData(slumpSaleSheetData)).pipe(
+                                  switchMap((excelData)=>{
+                                    return from(this.createStructure(excelData,sheetName)).pipe(
+                                      switchMap((structureResponse:any)=>{
+                                        return from(this.fetchUserInfo(request)).pipe(
+                                          switchMap((authUser)=>{
+                                            //  let excelArchive = new ExcelArchiveDto();
+                                            //  excelArchive.fileName = fileName;
+                                            //  excelArchive.sheetName = sheetName;
+                                            //  excelArchive.rowCount = structureResponse.rows;
+                                            //  excelArchive.fileSize = `${fileSize}B`;
+                                            //  excelArchive.fileType = fileType;
+                                            //  excelArchive.importedBy = authUser?.userInfo?.userId;
+                                            //  excelArchive.status = 'complete';
+                                            //  excelArchive.data = structureResponse.slumpSaleStructure
+                                            
+                                            //  return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+                                            //   switchMap((excelArchiveResponse)=>{
+                                            //     return of({
+                                            //       data:structureResponse.slumpSaleStructure,
+                                            //       msg:`Excel Sheet Fetched`,
+                                            //       status:true
+                                            //     });
+                                            //   }),
+                                            //   catchError((error)=>{
+                                            //     return throwError(error)
+                                            //   })
+                                            //  )
+                                                return of({
+                                                  data:structureResponse.slumpSaleStructure,
+                                                  msg:`Excel Sheet Fetched`,
+                                                  status:true
+                                                }); 
+                                          })
+                                        )
+                                      })
+                                    )
+                                  }),
+                                  catchError((error)=>{
+                                    return throwError(error)
+                                  })
+                                 )
+          
+                              break;   
+                            }
+                          }),
+                          catchError((error) => {
+                            return throwError(error)
+                          })
+                        )
+              
+                    }),
+                    catchError((error) => {
+                      return throwError(error)
+                    })
+                  )
+                  },
+                 ),
+                 catchError((error) => {
+                  return throwError(error)
+                })
+                )
+            }
+          })
+        )
+      }
+
+   async updateBalanceSheetRetainersAndCashEquivalent(fileName: string, request, processStateId){
+      try{
+        /**
+         * Row Auto-adjuster for Balance Sheet:
+         * Firstly it updates 'Cash and cash equivalents at end of period (IV+V)' from Current Assets 
+         * Secondly it updates '(iv) Retained Earnings' from equity in balance sheet
+         * Start with loading Balance Sheet JSON from DB --- [It cannot be empty by any means]
+         * 
+         * Load Cash Flow JSON by either fetching or creating one into DB
+         * Load Profit Loss JSON from DB --- [It cannot be empty by any means]
+         * 
+         * Seperate 'Cash and cash equivalents at end of period (IV+V)' row from Cash Flow
+         * Seperate 'Profit/(loss) for the period (IX+XII)' row from Profit Loss
+         * 
+         * Loop Balance Sheet JSON, by using sysCode, start conditioning the objects
+         * Condition 1 - For '(iii) cash and cash equivalents'
+         * Condition 2 - For '(iv) Retained Earnings'
+         * Create array containing cell Address, row number, syscode
+         * 
+         * Start looping around the array 
+         * Load workbook, read excel, start dynamic append worksheets, at the end write it
+         * 
+         * Update balance sheet JSON into mongodb using processStateId
+         */
+
+        const balanceSheetName:any = EXCEL_CONVENTION.BS.key;
+
+        const excelArchiveData:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
+
+        const balanceSheetRowCount = excelArchiveData?.balanceSheetRowCount || 0;
+        const cashFlowRowCount = excelArchiveData?.cashFlowSheetRowCount || 0;
+        const profitLossRowCount = excelArchiveData?.profitLossSheetRowCount || 0;
+
+        if(!balanceSheetRowCount) throw new NotFoundException({status:false,msg:`Balance sheet not found in MongoDb for processId ${processStateId}`, description:"try loading balance sheet again"})
+        if(!profitLossRowCount) throw new NotFoundException({status:false,msg:`profit and loss sheet not found in MongoDb for processId ${processStateId}`, description:"try loading profit loss sheet again"})
+
+        const balanceSheetData = excelArchiveData?.balanceSheetdata;
+        const profitLossSheetData = excelArchiveData?.profitLossSheetdata;
+
+        let cashFlowSheetData;
+        if(!cashFlowRowCount){
+          cashFlowSheetData = (await this.getSheetData(fileName, EXCEL_CONVENTION['Cash Flow'].key, request, processStateId).toPromise())?.data;
+        }
+        else{
+          cashFlowSheetData = excelArchiveData.cashFlowSheetdata;
+        }
+
+        let cashEquivalentFromCashFlow = [];
+        for await(const indCashFlowData of cashFlowSheetData){
+          /**
+           * Line Item : Cash and cash equivalents at end of period (IV+V)
+           */
+          if(indCashFlowData.lineEntry.sysCode === 7038){
+            cashEquivalentFromCashFlow.push(indCashFlowData);
+          }
+        }
+
+        let periodProfitLoss = [];
+        for await(const indPLdata of profitLossSheetData){
+          /**
+           * Line Item : Profit/(loss) for the period (IX+XII)
+           */
+          if(indPLdata.lineEntry.sysCode === 6040){
+            periodProfitLoss.push(indPLdata);
+          }
+        }
+
+        let bsStruc = [];
+        const A_CHAR_CODE = 65;
+        
+        for await (const indBSdata of balanceSheetData) {
+          const sortedData = Object.keys(indBSdata).sort((a, b) => (/\d{2}-\d{2}-\d{4}/.test(a) ? -1 : 1)).reduce((acc, key) => ({ ...acc, [key]: indBSdata[key] }), {});
+          const keysToProcess = Object.keys(sortedData).filter(key => key !== 'lineEntry');
+            /**
+             * Line Item : (iii) cash and cash equivalents
+             */
+            if (indBSdata.lineEntry.sysCode === 8027) {
+                for await (const key of keysToProcess) {
+                    const nextKeyIndex = keysToProcess.indexOf(key) + 1;
+                    if (keysToProcess[nextKeyIndex]) {
+                        const cellAddressColumn = String.fromCharCode(A_CHAR_CODE + nextKeyIndex + 1);
+                        const cellAddress = `${cellAddressColumn}${indBSdata.lineEntry.rowNumber}`;
+                        const newValue = cashEquivalentFromCashFlow[0]?.[keysToProcess[nextKeyIndex]] ?? 0;
+        
+                        const bsExcelSheetLogger = {
+                            excelSheet: EXCEL_CONVENTION.BS.key,
+                            excelSheetId: fileName,
+                            processStateId: processStateId,
+                            oldValue: 0,
+                            newValue,
+                            particulars:'(iii) cash and cash equivalents',
+                            cellData: [
+                                {
+                                    cellAddress,
+                                    columnCell: cellAddressColumn,
+                                    rowCell: indBSdata.lineEntry.rowNumber,
+                                    sysCode: 8027
+                                }
+                            ]
+                        };
+        
+                        bsStruc.push(bsExcelSheetLogger);
+                    }
+                }
+            }
+            /**
+             * Line Item : (iv) Retained Earnings
+             */
+            if (indBSdata.lineEntry.sysCode === 8042) {
+                for await (const key of keysToProcess) {
+
+                    const nextKeyIndex = keysToProcess.indexOf(key) + 1;
+                    if (keysToProcess[nextKeyIndex]) {
+
+                        const cellAddressColumn = String.fromCharCode(A_CHAR_CODE + nextKeyIndex + 1);
+                        const cellAddress = `${cellAddressColumn}${indBSdata.lineEntry.rowNumber}`;
+                        indBSdata[keysToProcess[nextKeyIndex]] = convertToNumberOrZero(indBSdata[key]) + convertToNumberOrZero(periodProfitLoss[0]?.[keysToProcess[nextKeyIndex]] ?? 0);
+        
+                        const bsExcelSheetLogger = {
+                            excelSheet: EXCEL_CONVENTION.BS.key,
+                            excelSheetId: fileName,
+                            processStateId: processStateId,
+                            oldValue: 0,
+                            newValue:indBSdata[keysToProcess[nextKeyIndex]],
+                            particulars:'(iv) Retained Earnings',
+                            cellData: [
+                                {
+                                    cellAddress,
+                                    columnCell: cellAddressColumn,
+                                    rowCell: indBSdata.lineEntry.rowNumber,
+                                    sysCode: 8042
+                                }
+                            ]
+                        };
+        
+                        bsStruc.push(bsExcelSheetLogger);
+                    }
+                }
+            }
+        }
+
+            const workbook= new ExcelJS.Workbook();
+            await workbook.xlsx.readFile(path.join(process.cwd(), 'uploads', fileName));
+            let worksheet:any = workbook.getWorksheet(balanceSheetName);
+            for await (const indBS of bsStruc){
+              const structure:any = V2_BALANCE_SHEET;
+
+              for await(const cells of indBS.cellData) {
+                worksheet.getCell(`${cells.cellAddress}`).value = indBS.newValue;
+                await new Promise<void>(async (resolve) => {      
+                  for await(let mainData of structure){
+                    await new Promise<void>(async (resolve) => {
+                      const dependentArray = mainData.lineEntry?.dependent;
+                      const sysCode = mainData.lineEntry?.sysCode;
+                      if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) {
+                        let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
+                        const formulaComputation = await this.formulaComputations(formulae,worksheet)
+                        worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = formulaComputation;
+                      }
+                   resolve();
+                    })
+                  }
+                resolve();
+              })
+              }
+            }
+
+            await workbook.xlsx.writeFile(path.join(process.cwd(), 'uploads', fileName), balanceSheetName);
+
+            await this.updateFinancialSheet(path.join(process.cwd(), 'uploads', fileName));
+            
+            const evaluatedValues:any = await this.fetchSheetData(path.join(process.cwd(), 'uploads', fileName), balanceSheetName);
+        
+            let excelArchive = new ExcelArchiveDto();
+
+            excelArchive.processStateId = processStateId;
+            excelArchive.status = 'completed';
+            excelArchive.balanceSheetRowCount = evaluatedValues.rows;
+            excelArchive.balanceSheetdata = evaluatedValues.balanceSheetStructure;
+            excelArchive.fileName = fileName;
+            excelArchive.sheetUploaded = EXCEL_CONVENTION.BS.key;
+
+            const authUser = await this.fetchUserInfo(request);
+            excelArchive.importedBy = authUser?.userInfo?.userId;
+
+            await this.excelArchiveService.upsertExcel(excelArchive);
+
+            return {
+              data:evaluatedValues.balanceSheetStructure,
+              msg:`Excel Sheet Fetched`,
+              status:true
+            };
+        
+      }
+      catch(error){
+        throw error;
+      }
+    }
+    generateAssessmentOfWCExcel(workbook,  processStateId, fileName, filePath, fileSize, fileType, request){
+      if(!workbook.SheetNames.includes(EXCEL_CONVENTION['Assessment of Working Capital'].key)){
+        return from(new Promise((resolve, reject) => {
+            let workbookXLSX = xlsx.readFile(filePath);
+          resolve(workbookXLSX);
+          })).pipe(
+            switchMap((workbookXLSX: any) => {
+            const worksheet1 = workbookXLSX.Sheets['P&L'];
+            return from(getYearsList(worksheet1)).pipe(
+              switchMap((years) => {
+
+                 const balanceSheet = workbookXLSX.Sheets['BS']
+               return from(this.generateAssessmentOfWCpayload(years,balanceSheet, processStateId)).pipe(
+                 switchMap((data)=>{
+                   return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
+                     switchMap((response) => {
+                       if (response) {
+                         return from(this.formatExcelResult(response)).pipe(
+                           switchMap((excelData)=>{
+                            const assessmentPayload = {
+                              processStateId,
+                              fileName,
+                              fileSize,
+                              fileType,
+                              filePath,
+                              response,
+                              excelData
+                            }
+                            return from(this.updateAssessmentArchive(assessmentPayload, request)).pipe(
+                              switchMap((assessmentArchiveResponse)=>{
+                                return of({
+                                  data:excelData,
+                                  msg:"Assessment Sheet Fetched",
+                                  status:true
+                                });
+                              }),
+                              catchError((error)=>{
+                                return throwError(error)
+                              })
+                            )
                            }),catchError((error)=>{
                              return throwError(error)
                            })
                          )
-                       
-                         }),
-                         catchError((error) => {
-                           return throwError(error);
-                         })
-                         );
+                       } else {
+                         return throwError('Error: Response not found');
+                       }
+                     }),
+                     catchError((error) => {
+                       return throwError(error);
+                     })
+                   );
+                 }),catchError((error)=>{
+                   return throwError(error)
+                 })
+               )
+             
+               }),
+               catchError((error) => {
+                 return throwError(error);
+               })
+               );
+                }),
+                catchError((error) => {
+                  console.error('Error reading file:', error);
+                  return throwError(error);
+                })
+              );
+           }
+           else{
+             return from(this.appendSheetInExcel(filePath,[])).pipe(
+               switchMap((response)=>{
+                 if(response){
+                   if (response) {
+                     return from(this.formatExcelResult(response)).pipe(
+                       switchMap((excelData)=>{
+                        const assessmentPayload = {
+                          processStateId,
+                          fileName,
+                          fileSize,
+                          fileType,
+                          filePath,
+                          response,
+                          excelData
+                        }
+                        return from(this.updateAssessmentArchive(assessmentPayload, request)).pipe(
+                          switchMap((assessmentArchiveResponse)=>{
+                            return of({
+                              data:excelData,
+                              msg:"Assessment Sheet Fetched",
+                              status:true
+                            });
                           }),
-                          catchError((error) => {
-                            console.error('Error reading file:', error);
-                            return throwError(error);
+                          catchError((error)=>{
+                            return throwError(error)
                           })
-                        );
-                     }
-                     else{
-                       return from(this.appendSheetInExcel(filePath,[])).pipe(
-                         switchMap((response)=>{
-                           if(response){
-                             if (response) {
-                               return from(this.formatExcelResult(response)).pipe(
-                                 switchMap((excelData)=>{
-                                   return of({
-                                     data:excelData,
-                                     msg:"Assessment Sheet Fetched",
-                                     status:true
-                                   });
-                                 }),catchError((error)=>{
-                                   return throwError(error)
-                                 })
-                               )
-   
-                             } else {
-                               return throwError('Error: Response not found');
-                             }
-                           }
-                         }),catchError((error)=>{
-                             return throwError(error)
-                         })
-                       )
-                     }
-                    break;
-                    
-                    case 'Rule 11 UA':
-                      if (!workbook.SheetNames.includes(sheetName)) {
-                        return throwError( {
-                          message: `${sheetName} Sheet not found`,
-                          status: false
+                        )
+                       }),catchError((error)=>{
+                         return throwError(error)
+                       })
+                     )
+
+                   } else {
+                     return throwError('Error: Response not found');
+                   }
+                 }
+               }),catchError((error)=>{
+                   return throwError(error)
+               })
+             )
+           }
+    }
+      
+    generateCashFlowExcel(workbook,  processStateId, fileName, filePath, fileSize, fileType, request){
+      if(!workbook.SheetNames.includes(EXCEL_CONVENTION['Cash Flow'].key)){
+        return from(new Promise((resolve, reject) => {
+            let workbookXLSX = xlsx.readFile(filePath);
+          resolve(workbookXLSX);
+          })).pipe(
+            switchMap((workbookXLSX: any) => {
+            const worksheet1 = workbookXLSX.Sheets[EXCEL_CONVENTION['BS'].key];
+            return from(getYearsList(worksheet1)).pipe(
+              switchMap((years) => {
+               const profitLossSheet = workbookXLSX.Sheets[EXCEL_CONVENTION['P&L'].key]
+               return from(this.generateCashFlowPayload(years, profitLossSheet, processStateId)).pipe(
+                 switchMap((data)=>{
+                   return from(this.appendCashFlowSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
+                    switchMap((response:any) => {
+                        const payload = {
+                          response,
+                          fileName,
+                          filePath,
+                          fileSize,
+                          fileType,
+                          processStateId
+                        }
+                         return from(this.updateCashFlowArchive(payload, request)).pipe(
+                          switchMap((excelArchiveResponse)=>{
+                               if (response) {
+                                     return of({
+                                       data:response.data,
+                                       msg:"Cash flow Sheet Fetched",
+                                       status:true
+                                     });        
+                               } else 
+                                 return throwError('Error: Response not found');
+                          })
+                         )
+                       }),
+                     catchError((error) => {
+                       return throwError(error);
+                     })
+                   );
+                 }),catchError((error)=>{
+                   return throwError(error)
+                 })
+               )
+              
+               }),
+               catchError((error) => {
+                 return throwError(error);
+               })
+               );
+                }),
+                catchError((error) => {
+                  console.error('Error reading file:', error);
+                  return throwError(error);
+                })
+              );
+      }
+      else{
+        return from(this.appendCashFlowSheetInExcel(filePath,[])).pipe(
+          switchMap((response)=>{
+            if(response){
+              const payload = {
+                response,
+                fileName,
+                filePath,
+                fileSize,
+                fileType,
+                processStateId
+              }
+               return from(this.updateCashFlowArchive(payload, request)).pipe(
+                switchMap((excelArchiveResponse)=>{
+                     if (response) {
+                        return of({
+                          data:response.data,
+                          msg:"Assessment Sheet Fetched",
+                          status:true
                         });
-                      }
-                      const elevenUaSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                       return from(this.transformData(elevenUaSheetData)).pipe(
-                        switchMap((excelData)=>{
-                          return from(this.createStructure(excelData,sheetName)).pipe(
-                            switchMap((structure)=>{
-                              return of({
-                                data:structure,
-                                msg:`Excel Sheet Fetched`,
-                                status:true
-                              });
-                            })
-                          )
-                        }),
-                        catchError((error)=>{
-                          return throwError(error)
-                        })
-                       )
-
-                    break;   
-
-                    case 'Slump Sale':
-                      if (!workbook.SheetNames.includes(sheetName)) {
-                        return throwError( {
-                          message: `${sheetName} Sheet not found`,
-                          status: false
-                        });
-                      }
-                      const slumpSaleSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                       return from(this.transformData(slumpSaleSheetData)).pipe(
-                        switchMap((excelData)=>{
-                          return from(this.createStructure(excelData,sheetName)).pipe(
-                            switchMap((structureResponse:any)=>{
-                              return from(this.fetchUserInfo(request)).pipe(
-                                switchMap((authUser)=>{
-                                   let excelArchive = new ExcelArchiveDto();
-                                   excelArchive.fileName = fileName;
-                                   excelArchive.sheetName = sheetName;
-                                   excelArchive.rowCount = structureResponse.rows;
-                                   excelArchive.fileSize = `${fileSize}B`;
-                                   excelArchive.fileType = fileType;
-                                   excelArchive.importedBy = authUser?.userInfo?.userId;
-                                   excelArchive.status = 'complete';
-                                   excelArchive.data = structureResponse.slumpSaleStructure
-                                  
-                                   return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
-                                    switchMap((excelArchiveResponse)=>{
-                                      return of({
-                                        data:structureResponse.slumpSaleStructure,
-                                        msg:`Excel Sheet Fetched`,
-                                        status:true
-                                      });
-                                    }),
-                                    catchError((error)=>{
-                                      return throwError(error)
-                                    })
-                                   )
-                                })
-                              )
-                            })
-                          )
-                        }),
-                        catchError((error)=>{
-                          return throwError(error)
-                        })
-                       )
-
-                    break;   
-                  }
-              }),
-            catchError((error) => {
-                return throwError(error)
-            })
-        );
-          }),
-          catchError((error) => {
-            return throwError(error)
+                     } else 
+                       return throwError('Error: Response not found');
+                })
+               )
+            }
+          }),catchError((error)=>{
+              return throwError(error)
           })
         )
-        },
-       ),
-       catchError((error) => {
-        return throwError(error)
-      })
-      )
       }
+    }
 
+    updateAssessmentArchive(payload,request){
+      let excelArchive = new ExcelArchiveDto();
+      excelArchive.fileName = payload.fileName;
+      excelArchive.sheetUploaded = EXCEL_CONVENTION['Assessment of Working Capital'].key;
+      excelArchive.fileSize = `${payload.fileSize}B`;
+      excelArchive.fileType = payload.fileType;
+      excelArchive.status = 'complete';
+      excelArchive.processStateId = payload.processStateId;
+      excelArchive.assessmentSheetData = payload.excelData;
+      excelArchive.assessmentSheetRowCount = payload.response.rows;
+      return from(this.fetchUserInfo(request)).pipe(
+        switchMap((authUser)=>{
+          excelArchive.importedBy = authUser?.userInfo?.userId;
+          return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+            switchMap((excelArchiveResponse)=>{
+              return of({
+                data:payload.excelData,
+                msg:`Excel Sheet Fetched`,
+                status:true
+              });
+            }),
+            catchError((error)=>{
+              return throwError(error)
+            })
+            )
+
+        }),
+        catchError((error)=>{
+          return throwError(error)
+        })
+      )
+    }
+
+    updateCashFlowArchive(payload,request){
+      let excelArchive = new ExcelArchiveDto();
+      excelArchive.fileName = payload.fileName;
+      excelArchive.sheetUploaded = EXCEL_CONVENTION['Cash Flow'].key;
+      excelArchive.fileSize = `${payload.fileSize}B`;
+      excelArchive.fileType = payload.fileType;
+      excelArchive.status = 'complete';
+      excelArchive.processStateId = payload.processStateId;
+      excelArchive.cashFlowSheetdata = payload?.response?.data;
+      excelArchive.cashFlowSheetRowCount = payload?.response?.rows;
+      return from(this.fetchUserInfo(request)).pipe(
+        switchMap((authUser)=>{
+          excelArchive.importedBy = authUser?.userInfo?.userId;
+          return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+            switchMap((excelArchiveResponse)=>{
+              return of({
+                data:payload.response.data,
+                msg:`Excel Sheet Fetched`,
+                status:true
+              });
+            }),
+            catchError((error)=>{
+              return throwError(error)
+            })
+            )
+
+        }),
+        catchError((error)=>{
+          return throwError(error)
+        })
+      )
+    }
+
+    updateBSorPLexcelArchive(payload, request){
+      let excelArchive = new ExcelArchiveDto();
+      excelArchive.fileName = payload.fileName;
+      excelArchive.sheetUploaded = payload.sheetName;
+      excelArchive.fileSize = `${payload.fileSize}B`;
+      excelArchive.fileType = payload.fileType;
+      excelArchive.status = 'complete';
+      excelArchive.processStateId = payload.processStateId;
+      if(payload.sheetName === 'BS') {
+        excelArchive.balanceSheetdata = payload.structure.balanceSheetStructure 
+        excelArchive.balanceSheetRowCount = payload.structure.rows;
+      }else{
+        excelArchive.profitLossSheetdata = payload.structure.profitAndLossSheetStructure 
+        excelArchive.profitLossSheetRowCount = payload.structure.rows;
+      }
+      return from(this.fetchUserInfo(request)).pipe(
+        switchMap((authUser)=>{
+          excelArchive.importedBy = authUser?.userInfo?.userId;
+           return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+            switchMap((excelArchiveResponse)=>{
+              return of({
+                data:payload.sheetName === 'BS' ? payload.structure.balanceSheetStructure : payload.structure.profitAndLossSheetStructure,
+                msg:`Excel Sheet Fetched`,
+                status:true
+              });
+            }),
+            catchError((error)=>{
+              return throwError(error)
+            })
+           )
+        })
+      )
+    }
       
       async copyWorksheets(workbook, fileName) {
         // const uploadDir = path.join(__dirname, '../../uploads');
@@ -2162,15 +2642,34 @@ export class ExcelSheetService {
         }
       }
 
-  async modifyExcelSheet(data) {
+  async modifyExcelSheet(data, request) {
     try {
       switch(data.excelSheet){
         case 'P&L':
-          // const uploadDirPl = path.join(__dirname, '../../uploads');
           const uploadDirPl = path.join(process.cwd(),'uploads');
           const filePathPl = path.join(uploadDirPl, data.excelSheetId);
-
           const updateProfitAndLossExcel = await this.updateExcel(filePathPl,data,data.excelSheet);
+          const fileType = path.extname(filePathPl);
+          const stats = fs.statSync(filePathPl);
+          const fileSize = stats.size;
+          
+          const payload = {
+            processStateId: data.processStateId,
+            fileName:updateProfitAndLossExcel.modifiedFileName,
+            fileSize,
+            fileType,
+            structure:{
+              profitAndLossSheetStructure:updateProfitAndLossExcel.data,
+              rows:updateProfitAndLossExcel.rows
+            },
+            sheetName:data.excelSheet
+          }
+          await this.updateBSorPLexcelArchive(payload, request).toPromise();
+          await this.excelArchiveService.removeAssessmentOfWCbyProcessStateId(data.processStateId);
+          await this.excelArchiveService.removeCashFlowByProcessStateId(data.processStateId);
+          await this.getSheetData(updateProfitAndLossExcel.modifiedFileName, 'Cash Flow', request, data.processStateId).toPromise();
+          await this.updateBalanceSheetRetainersAndCashEquivalent(updateProfitAndLossExcel.modifiedFileName, request, data.processStateId);
+
           return (
             {
               data:updateProfitAndLossExcel.data,
@@ -2187,10 +2686,32 @@ export class ExcelSheetService {
           const uploadDirBs = path.join(process.cwd(),'uploads');
           const filePathBs = path.join(uploadDirBs, data.excelSheetId);
   
+          const fileBsType = path.extname(filePathBs);
+          const statsBs = fs.statSync(filePathBs);
+          const fileBsSize = statsBs.size;
           const updateBalanceSheetExcel = await this.updateExcel(filePathBs,data,data.excelSheet);
+          await this.excelArchiveService.removeAssessmentOfWCbyProcessStateId(data.processStateId);
+          await this.excelArchiveService.removeCashFlowByProcessStateId(data.processStateId);
+
+           const bspayload = {
+            processStateId: data.processStateId,
+            fileName:updateBalanceSheetExcel.modifiedFileName,
+            fileSize:fileBsSize,
+            fileType:fileBsType,
+            structure:{
+              balanceSheetStructure:updateBalanceSheetExcel.data,
+              rows:updateBalanceSheetExcel.rows
+            },
+            sheetName:data.excelSheet
+          }
+          await this.updateBSorPLexcelArchive(bspayload, request).toPromise();
+
+          await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Cash Flow', request, data.processStateId).toPromise();
+          const adjustRetainersAndCashEqv = await this.updateBalanceSheetRetainersAndCashEquivalent(updateBalanceSheetExcel.modifiedFileName, request, data.processStateId);
+         
           return (
             {
-              data:updateBalanceSheetExcel.data,
+              data:adjustRetainersAndCashEqv.data,
               status:true,
               msg:'Excel Updated Successfully',
               originalFileName:updateBalanceSheetExcel.originalFileName,
@@ -2201,30 +2722,31 @@ export class ExcelSheetService {
 
         case 'Assessment of Working Capital':
           // const uploadDirAssessmentSheet = path.join(__dirname, '../../uploads');
-          const uploadDirAssessmentSheet = path.join(process.cwd(),'uploads');
-          const filePathAssessmentSheet = path.join(uploadDirAssessmentSheet, data.excelSheetId);
-          const updatedExcelAssessment = await this.appendSheetInExcel(filePathAssessmentSheet,data);
+          // const uploadDirAssessmentSheet = path.join(process.cwd(),'uploads');
+          // const filePathAssessmentSheet = path.join(uploadDirAssessmentSheet, data.excelSheetId);
+          // const updatedExcelAssessment = await this.appendSheetInExcel(filePathAssessmentSheet,data);
   
-          if(updatedExcelAssessment.status){
-            const formatExcel = await this.formatExcelResult(updatedExcelAssessment);
-            return (
-              {
-                data:formatExcel,
-                status:true,
-                msg:'Excel Updated Successfully',
-                originalFileName:updatedExcelAssessment.originalFileName,
-                modifiedFileName:updatedExcelAssessment.modifiedFileName
-              }
-            );
-          }
-          else{
-            return of(
-              {
-                msg:'Excel update failed',
-                updatedExcelAssessment
-              }
-            )
-          }
+          // if(updatedExcelAssessment.status){
+          //   const formatExcel = await this.formatExcelResult(updatedExcelAssessment);
+          //   return (
+          //     {
+          //       data:formatExcel,
+          //       status:true,
+          //       msg:'Excel Updated Successfully',
+          //       originalFileName:updatedExcelAssessment.originalFileName,
+          //       modifiedFileName:updatedExcelAssessment.modifiedFileName
+          //     }
+          //   );
+          // }
+          // else{
+          //   return of(
+          //     {
+          //       msg:'Excel update failed',
+          //       updatedExcelAssessment
+          //     }
+          //   )
+          // }
+
         break;
 
         case 'Rule 11 UA':
@@ -2253,11 +2775,7 @@ export class ExcelSheetService {
       // }
      
     } catch (error) {
-      return of({
-        msg: "Something went wrong",
-        error: error.message,
-        status: false,
-      });
+      throw error;
     }
   }
 
@@ -2270,7 +2788,21 @@ export class ExcelSheetService {
     }
       for await(let item of excelData.data){
         const { Particulars, ...rest } = item;
-        arrayExcel.push({lineEntry:ASSESSMENT_DATA[index]?.lineEntry,...rest});
+        arrayExcel.push({lineEntry:V2_ASSESSMENT_OF_WORKING_CAPITAL[index]?.lineEntry,...rest});
+        index++;
+      }
+     return arrayExcel;  
+    }
+    async formatCashFlowExcelResult(excelData){
+      let arrayExcel = [];
+      let index = 0;
+      const emptyLineIndex = excelData.findIndex(item=>item?.Particulars ==="  ");
+    if(emptyLineIndex !== -1){
+      excelData.splice(emptyLineIndex,1)
+    }
+      for await(let item of excelData){
+        const { Particulars, ...rest } = item;
+        arrayExcel.push({lineEntry:CASH_FLOW[index]?.lineEntry,...rest});
         index++;
       }
      return arrayExcel;  
@@ -2292,19 +2824,18 @@ export class ExcelSheetService {
 
         headerRow.eachCell((cell) => {
           cell.fill = {
-              type: 'pattern',
-              pattern: 'solid',
-              fgColor: { argb: 'D3D3D3' },
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '195478' } // Background color
           };
           cell.font = {
-              size: 14,
-              bold: true,
-              color: { argb: '000000' },
+            size: 11,
+            bold: true,
+            color: { argb: 'FFFFFF' },
           };
-          cell.alignment = {
+            cell.alignment = {
               vertical: 'middle',
               horizontal: 'center',
-              wrapText: true,
           };
         });
 
@@ -2317,37 +2848,20 @@ export class ExcelSheetService {
           const dataRow = sheet.addRow(Object.values(row));
 
           dataRow.eachCell((cell, cellNumber) => {
-              cell.font = {
-                  size: 12,
-                  color: { argb: '333333' },
-              };
-              cell.alignment = {
-                  vertical: 'middle',
-                  horizontal: 'center',
-                  wrapText: true,
-              };
-
-              if (cellNumber === 1 && (index === 0 || index === 11)) {
-                  cell.fill = {
-                      type: 'pattern',
-                      pattern: 'solid',
-                      fgColor: { argb: 'ADD8E6' },
-                  };
-                  cell.font = {
-                      size: 14,
-                      color: { argb: '000080' },
-                      bold: true,
-                  };
-              }
+            cell.font = {
+              size: 11,
+              color: { argb: '333333' },
+            };
+            cell.alignment = {
+                vertical: 'middle',
+                wrapText: true,
+                horizontal: typeof cell.value === 'number' ? 'right' : 'left'
+            };
+            
+            cell.numFmt = '#,##0.00'
+             
           });
         });
-
-        const a2 = sheet.getRow(2);
-        const a13 = sheet.getRow(13);
-
-        a2.protection = { locked: true };
-        a13.protection = { locked: true };
-        sheet.getRow(1).protection = { locked: true };
 
         sheet.columns.forEach((column) => {
           let maxLength = 0;
@@ -2366,124 +2880,317 @@ export class ExcelSheetService {
         return {
           msg:'Excel Appended Successfully',
           status:true,
-          data:evaluatedValues
+          data:evaluatedValues.formattedData,
+          rows:evaluatedValues.indexing
         };
       }
       else {
-        // console.log(data,"new data that needs to be appended/updated")
         if(data.length === 0){
           const evaluatedValues = await this.readAndEvaluateExcel(filepath);
-          // console.log(formattedData,"if length === 0")
           return {
             msg:'Excel Fetched Successfully',
             status:true,
-            data:evaluatedValues
+            data: evaluatedValues.formattedData,
+            rows: evaluatedValues.indexing
           }
         }
-        else{
-          let  editedFilePath='';
-          // const uploadDir = path.join(__dirname, '../../uploads');
-          const uploadDir = path.join(process.cwd(),'uploads');
-          if(data?.excelSheetId.includes('edited')){
-             editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
-          }
-          else{
-            editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
-          }
-          const workbook= new ExcelJS.Workbook();
-          await workbook.xlsx.readFile(filepath);
-          let worksheet:any = workbook.getWorksheet('Assessment of Working Capital');
+        // else{
+        //   let  editedFilePath='';
+        //   // const uploadDir = path.join(__dirname, '../../uploads');
+        //   const uploadDir = path.join(process.cwd(),'uploads');
+        //   if(data?.excelSheetId.includes('edited')){
+        //      editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
+        //   }
+        //   else{
+        //     editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
+        //   }
+        //   const workbook= new ExcelJS.Workbook();
+        //   await workbook.xlsx.readFile(filepath);
+        //   let worksheet:any = workbook.getWorksheet('Assessment of Working Capital');
 
-          // manage dynamic formulas
-          let startingCalcuationIndex,maxCalculationIndex, summationVlaue=0;
-            for await(const cells of data.cellData) {
-              await new Promise<void>(async (resolve) => {
-                worksheet.getCell(`${cells.cellAddress}`).value = data.newValue;
-                if(cells.sysCode === 3009){
-                  startingCalcuationIndex = 3;
-                  maxCalculationIndex = 10;
-                }
-                else{
-                  startingCalcuationIndex = 14;
-                  maxCalculationIndex = 20;
-                }
-                for(let i = startingCalcuationIndex;i<=maxCalculationIndex;i++){
-                  const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value);
-                   summationVlaue =summationVlaue + (checkIfValue ?  parseFloat(worksheet.getCell(`${cells.columnCell}${i}`).value) : 0);
-                }
+        //   // manage dynamic formulas
+        //   let startingCalcuationIndex,maxCalculationIndex, summationVlaue=0;
+        //     for await(const cells of data.cellData) {
+        //       await new Promise<void>(async (resolve) => {
+        //         worksheet.getCell(`${cells.cellAddress}`).value = data.newValue;
+        //         if(cells.sysCode === 3009){
+        //           startingCalcuationIndex = 3;
+        //           maxCalculationIndex = 10;
+        //         }
+        //         else{
+        //           startingCalcuationIndex = 14;
+        //           maxCalculationIndex = 20;
+        //         }
+        //         for(let i = startingCalcuationIndex;i<=maxCalculationIndex;i++){
+        //           const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value);
+        //            summationVlaue =summationVlaue + (checkIfValue ?  parseFloat(worksheet.getCell(`${cells.columnCell}${i}`).value) : 0);
+        //         }
     
-              for await(let mainData of ASSESSMENT_DATA){
-                await new Promise<void>(async (resolve) => {
+        //       for await(let mainData of ASSESSMENT_DATA){
+        //         await new Promise<void>(async (resolve) => {
 
-                    const dependentArray = mainData.lineEntry?.dependent;
-                    const sysCode = mainData.lineEntry?.sysCode;
-                    if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) { //update total
-                      // let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
-                      // console.log(summationVlaue,"formulae")
+        //             const dependentArray = mainData.lineEntry?.dependent;
+        //             const sysCode = mainData.lineEntry?.sysCode;
+        //             if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) { //update total
+        //               // let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
+        //               // console.log(summationVlaue,"formulae")
                       
-                        // const cell:any = worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value;
-                        worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue?.toFixed(2);
+        //                 // const cell:any = worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value;
+        //                 worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue?.toFixed(2);
                         
-                     }
+        //              }
 
-                    if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3020) { // update net operating assets
-                        worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = (worksheet.getCell(`${cells.columnCell}11`)?.value - worksheet.getCell(`${cells.columnCell}21`)?.value).toFixed(2);
-                    }
+        //             if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3020) { // update net operating assets
+        //                 worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = (worksheet.getCell(`${cells.columnCell}11`)?.value - worksheet.getCell(`${cells.columnCell}21`)?.value).toFixed(2);
+        //             }
 
-                    if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3021) { // update change in nca 
-                      let  firstRowName=[]
-                      let letterIndex = 0; //starting capital letter in ascii format
+        //             if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3021) { // update change in nca 
+        //               let  firstRowName=[]
+        //               let letterIndex = 0; //starting capital letter in ascii format
                       
-                      worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
-                        row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-                          if (rowNumber === 1 && cell.text) {
-                            firstRowName.push(letterIndex);
-                          }
-                          letterIndex++;
-                        });
-                      });
+        //               worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+        //                 row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        //                   if (rowNumber === 1 && cell.text) {
+        //                     firstRowName.push(letterIndex);
+        //                   }
+        //                   letterIndex++;
+        //                 });
+        //               });
 
-                      for await (let columns of firstRowName){
-                        const currentColumn =   String.fromCharCode(65 + columns);
-                        const previousColumn =  String.fromCharCode(65 + columns - 1);
+        //               for await (let columns of firstRowName){
+        //                 const currentColumn =   String.fromCharCode(65 + columns);
+        //                 const previousColumn =  String.fromCharCode(65 + columns - 1);
                         
-                        if( previousColumn !== '@' ){
-                          const currentCellValue = await worksheet.getCell(`${currentColumn}23`)?.value;
-                          const previousCellValue =await worksheet.getCell(`${previousColumn}23`)?.value;
-                          const updatedValue =(previousCellValue - currentCellValue).toFixed(2);
-                          if (!isNaN(parseInt(updatedValue)) ) {
-                            worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
-                          }
-                          else{
-                            worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value ='';
+        //                 if( previousColumn !== '@' ){
+        //                   const currentCellValue = await worksheet.getCell(`${currentColumn}23`)?.value;
+        //                   const previousCellValue =await worksheet.getCell(`${previousColumn}23`)?.value;
+        //                   const updatedValue =(previousCellValue - currentCellValue).toFixed(2);
+        //                   if (!isNaN(parseInt(updatedValue)) ) {
+        //                     worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
+        //                   }
+        //                   else{
+        //                     worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value ='';
 
-                          }
-                        }
-                      }
-                    }
-                 resolve();
-                  })
-                }
-              resolve();
-            })
-            }
+        //                   }
+        //                 }
+        //               }
+        //             }
+        //          resolve();
+        //           })
+        //         }
+        //       resolve();
+        //     })
+        //     }
           
-        await workbook.xlsx.writeFile(editedFilePath); // Changed by SHAQUE 24-Feb-2024 due to still error in assessment of WC// Rechanged by SANKET 26-Feb-2024, removed below promise statement
-        // await new Promise<void>(async (resolve) => {
-        //   workbook.xlsx.writeFile(editedFilePath);
-        //   resolve();
-        // });
+        // await workbook.xlsx.writeFile(editedFilePath); // Changed by SHAQUE 24-Feb-2024 due to still error in assessment of WC// Rechanged by SANKET 26-Feb-2024, removed below promise statement
+        // // await new Promise<void>(async (resolve) => {
+        // //   workbook.xlsx.writeFile(editedFilePath);
+        // //   resolve();
+        // // });
 
-        await this.updateFinancialSheet(editedFilePath);
-          const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
+        // await this.updateFinancialSheet(editedFilePath);
+        //   const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
+        //   return {
+        //     msg:'Excel Updated Successfully',
+        //     status:true,
+        //     data:evaluatedValues,
+        //     originalFileName: `${data?.excelSheetId}`,
+        //     modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
+        //   }
+        // }
+      }
+    }
+    catch(error){
+      throw  error
+    }
+  }
+  async appendCashFlowSheetInExcel(filepath,data){
+    try{
+      let sheet;
+      const workbook:any = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filepath);
+      let alreadyExistCashFlowSheet = workbook.getWorksheet('Cash Flow');
+      if(!alreadyExistCashFlowSheet){
+        sheet = workbook.addWorksheet('Cash Flow');
+
+        const headers = Object.keys(data[0]);
+        sheet.addRow(headers);
+
+        const headerRow = sheet.getRow(1);
+
+        headerRow.eachCell((cell) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '195478' } // Background color
+        };
+        cell.font = {
+          size: 11,
+          bold: true,
+          color: { argb: 'FFFFFF' },
+        };
+          cell.alignment = {
+            vertical: 'middle',
+            horizontal: 'center',
+        };
+        });
+
+        sheet.autoFilter = {
+            from: { row: 1, column: 1 },
+            to: { row: 1, column: headers.length },
+        };
+
+        data.forEach((row, index) => {
+          const dataRow = sheet.addRow(Object.values(row));
+
+          dataRow.eachCell((cell, cellNumber) => {
+              cell.font = {
+                  size: 11,
+                  color: { argb: '333333' },
+              };
+              cell.alignment = {
+                vertical: 'middle',
+                wrapText: true,
+                horizontal: typeof cell.value === 'number' ? 'right' : 'left'
+              };
+              cell.numFmt = '#,##0.00';
+          });
+        });
+
+        sheet.columns.forEach((column) => {
+          let maxLength = 0;
+          column.eachCell({ includeEmpty: true }, (cell) => {
+              const length = cell.value ? cell.value.toString().length : 0;
+              maxLength = Math.max(length, maxLength);
+          });
+
+          column.width = maxLength < 20 ? 20 : maxLength + 2; // Minimum width set to 20 for readability
+        });
+
+        await workbook.xlsx.writeFile(filepath);
+        await this.updateFinancialSheet(filepath);
+        const evaluatedValues = await this.readAndEvaluateCashFlowExcel(filepath)
+      
+        return {
+          msg:'Excel Appended Successfully',
+          status:true,
+          data:evaluatedValues.formattedData,
+          rows:evaluatedValues.indexing
+        };
+      }
+      else {
+          const evaluatedValues = await this.readAndEvaluateCashFlowExcel(filepath);
           return {
-            msg:'Excel Updated Successfully',
+            msg:'Excel Fetched Successfully',
             status:true,
-            data:evaluatedValues,
-            originalFileName: `${data?.excelSheetId}`,
-            modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
+            data:evaluatedValues.formattedData,
+            rows:evaluatedValues.indexing
           }
-        }
+        // }
+      //   else{
+      //     let  editedFilePath='';
+      //     // const uploadDir = path.join(__dirname, '../../uploads');
+      //     const uploadDir = path.join(process.cwd(),'uploads');
+      //     if(data?.excelSheetId.includes('edited')){
+      //        editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
+      //     }
+      //     else{
+      //       editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
+      //     }
+      //     const workbook= new ExcelJS.Workbook();
+      //     await workbook.xlsx.readFile(filepath);
+      //     let worksheet:any = workbook.getWorksheet('Assessment of Working Capital');
+
+      //     // manage dynamic formulas
+      //     let startingCalcuationIndex,maxCalculationIndex, summationVlaue=0;
+      //       for await(const cells of data.cellData) {
+      //         await new Promise<void>(async (resolve) => {
+      //           worksheet.getCell(`${cells.cellAddress}`).value = data.newValue;
+      //           if(cells.sysCode === 3009){
+      //             startingCalcuationIndex = 3;
+      //             maxCalculationIndex = 10;
+      //           }
+      //           else{
+      //             startingCalcuationIndex = 14;
+      //             maxCalculationIndex = 20;
+      //           }
+      //           for(let i = startingCalcuationIndex;i<=maxCalculationIndex;i++){
+      //             const checkIfValue = isNotEmpty(worksheet.getCell(`${cells.columnCell}${i}`)?.value);
+      //              summationVlaue =summationVlaue + (checkIfValue ?  parseFloat(worksheet.getCell(`${cells.columnCell}${i}`).value) : 0);
+      //           }
+    
+      //         for await(let mainData of ASSESSMENT_DATA){
+      //           await new Promise<void>(async (resolve) => {
+
+      //               const dependentArray = mainData.lineEntry?.dependent;
+      //               const sysCode = mainData.lineEntry?.sysCode;
+      //               if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) { //update total
+      //                 // let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
+      //                 // console.log(summationVlaue,"formulae")
+                      
+      //                   // const cell:any = worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value;
+      //                   worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = summationVlaue?.toFixed(2);
+                        
+      //                }
+
+      //               if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3020) { // update net operating assets
+      //                   worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = (worksheet.getCell(`${cells.columnCell}11`)?.value - worksheet.getCell(`${cells.columnCell}21`)?.value).toFixed(2);
+      //               }
+
+      //               if (dependentArray && sysCode && dependentArray.includes(cells.sysCode) && mainData.lineEntry.sysCode === 3021) { // update change in nca 
+      //                 let  firstRowName=[]
+      //                 let letterIndex = 0; //starting capital letter in ascii format
+                      
+      //                 worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+      //                   row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+      //                     if (rowNumber === 1 && cell.text) {
+      //                       firstRowName.push(letterIndex);
+      //                     }
+      //                     letterIndex++;
+      //                   });
+      //                 });
+
+      //                 for await (let columns of firstRowName){
+      //                   const currentColumn =   String.fromCharCode(65 + columns);
+      //                   const previousColumn =  String.fromCharCode(65 + columns - 1);
+                        
+      //                   if( previousColumn !== '@' ){
+      //                     const currentCellValue = await worksheet.getCell(`${currentColumn}23`)?.value;
+      //                     const previousCellValue =await worksheet.getCell(`${previousColumn}23`)?.value;
+      //                     const updatedValue =(previousCellValue - currentCellValue).toFixed(2);
+      //                     if (!isNaN(parseInt(updatedValue)) ) {
+      //                       worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value = updatedValue;
+      //                     }
+      //                     else{
+      //                       worksheet.getCell(`${currentColumn}${mainData.lineEntry?.rowNumber}`).value ='';
+
+      //                     }
+      //                   }
+      //                 }
+      //               }
+      //            resolve();
+      //             })
+      //           }
+      //         resolve();
+      //       })
+      //       }
+          
+      //   await workbook.xlsx.writeFile(editedFilePath); // Changed by SHAQUE 24-Feb-2024 due to still error in assessment of WC// Rechanged by SANKET 26-Feb-2024, removed below promise statement
+      //   // await new Promise<void>(async (resolve) => {
+      //   //   workbook.xlsx.writeFile(editedFilePath);
+      //   //   resolve();
+      //   // });
+
+      //   await this.updateFinancialSheet(editedFilePath);
+      //     const evaluatedValues = await this.readAndEvaluateExcel(editedFilePath);
+      //     return {
+      //       msg:'Excel Updated Successfully',
+      //       status:true,
+      //       data:evaluatedValues,
+      //       originalFileName: `${data?.excelSheetId}`,
+      //       modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
+      //     }
+      //   }
       }
     }
     catch(error){
@@ -2491,33 +3198,30 @@ export class ExcelSheetService {
     }
   }
 
-  async updateExcel(filepath,data,sheetName){
+  async updateExcel(filepath,data,sheetName, deleteAssessmentSheet?){
     const workbook= new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filepath);
     let worksheet:any = workbook.getWorksheet(sheetName);
-    const structure:any = sheetName === 'P&L' ? PROFIT_LOSS : sheetName === 'BS' ? BALANCE_SHEET : sheetName === 'Rule 11 UA' ? RULE_ELEVEN_UA : ''; 
+    const structure:any = sheetName === 'P&L' ? V2_PROFIT_LOSS : sheetName === 'BS' ? V2_BALANCE_SHEET : sheetName === 'Rule 11 UA' ? RULE_ELEVEN_UA : ''; 
 
     let  editedFilePath='';
-          // const uploadDir = path.join(__dirname, '../../uploads');
-          const uploadDir = path.join(process.cwd(),'uploads');
-          if(data?.excelSheetId.includes('edited')){
-             editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
-          }
-          else{
-            editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
-          }
-
+    // const uploadDir = path.join(__dirname, '../../uploads');
+    const uploadDir = path.join(process.cwd(),'uploads');
+    if(data?.excelSheetId.includes('edited')){
+        editedFilePath = path.join(uploadDir, `${data?.excelSheetId}`);
+    }
+    else{
+      editedFilePath = path.join(uploadDir, `edited-${data?.excelSheetId}`);
+    }
     for await(const cells of data.cellData) {
       worksheet.getCell(`${cells.cellAddress}`).value = data.newValue;
       await new Promise<void>(async (resolve) => {      
         for await(let mainData of structure){
           await new Promise<void>(async (resolve) => {
-            
             const dependentArray = mainData.lineEntry?.dependent;
             const sysCode = mainData.lineEntry?.sysCode;
             if (dependentArray && sysCode && dependentArray.includes(cells.sysCode)) {     //updating cells
               let formulae = mainData.lineEntry?.formula.replace(/currentOne/g, cells.columnCell);
-              // console.log(formulae,"formula list")
               const formulaComputation = await this.formulaComputations(formulae,worksheet)
               worksheet.getCell(`${cells.columnCell}${mainData.lineEntry?.rowNumber}`).value = formulaComputation;
             }
@@ -2527,14 +3231,36 @@ export class ExcelSheetService {
       resolve();
     })
     }
-  
+
+    if(sheetName === EXCEL_CONVENTION['P&L'].key || sheetName === EXCEL_CONVENTION['BS'].key){
+
+      const sheet = workbook.getWorksheet(EXCEL_CONVENTION['Cash Flow'].key);
+      if (sheet) {
+          workbook.removeWorksheet(sheet.id);
+      } else {
+          console.log(`Sheet with name "${EXCEL_CONVENTION['Cash Flow'].key}" not found.`);
+      }
+    }
+
+    if(deleteAssessmentSheet && sheetName === EXCEL_CONVENTION['BS'].key){
+
+      const sheet = workbook.getWorksheet(EXCEL_CONVENTION['Assessment of Working Capital'].key);
+      if (sheet) {
+          workbook.removeWorksheet(sheet.id);
+      } else {
+          console.log(`Sheet with name "${EXCEL_CONVENTION['Assessment of Working Capital'].key}" not found.`);
+      }
+    }
+    
+
 await workbook.xlsx.writeFile(editedFilePath,sheetName);
 await this.updateFinancialSheet(editedFilePath);
 const evaluatedValues = await this.fetchSheetData(editedFilePath,sheetName);
 return {
   msg:'Excel Updated Successfully',
   status:true,
-  data:evaluatedValues,
+  data:sheetName === EXCEL_CONVENTION['P&L'].key ? evaluatedValues.profitAndLossSheetStructure : evaluatedValues.balanceSheetStructure,
+  rows:evaluatedValues.rows,
   originalFileName: `${data?.excelSheetId}`,
   modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
 }
@@ -2598,13 +3324,13 @@ return {
         // console.log(updateStructure,"new updated strucuture")
         return updateStructure;
   }
-  async  readAndEvaluateExcel(filepath): Promise<any[]> {
+  async  readAndEvaluateExcel(filepath){
  
     let jsonData = xlsx.utils.sheet_to_json((await this.readFile(filepath)).Sheets['Assessment of Working Capital'], { header: 1 });
           
     const head:any = jsonData[0];
     const formattedData = [];
-
+    let indexing = 0;
     for (let i = 1; i < jsonData.length; i++) {
       const row = jsonData[i];
       const obj = {};
@@ -2614,20 +3340,88 @@ return {
       }
 
       formattedData.push(obj);
+      indexing++;
     }
-    const emptyLineIndex = formattedData.findIndex(item=>item.Particulars ==="  ");
-    if(emptyLineIndex !== -1){
-      formattedData.splice(emptyLineIndex,1)
-    }
+    // const emptyLineIndex = formattedData.findIndex(item=>item.Particulars ==="  ");
+    // if(emptyLineIndex !== -1){
+    //   formattedData.splice(emptyLineIndex,1);
+    // }
   
-  return formattedData;
+  return {formattedData, indexing};
 }
+  async  readAndEvaluateCashFlowExcel(filepath){
+ 
+    let jsonData = xlsx.utils.sheet_to_json((await this.readFile(filepath)).Sheets['Cash Flow'], { header: 1 });
+          
+    const head:any = jsonData[0];
+    const formattedData = [];
+    let indexing = 0;
+    for (let i = 1; i < jsonData.length; i++) {
+      const row = jsonData[i];
+      const obj = {};
 
-async generatePayload(years,balanceSheet){
+      for (let j = 0; j < head.length; j++) {
+          obj[head[j]] = row[j] || row[j] === '' ? row[j] : null;
+      }
+
+      formattedData.push(obj);
+      indexing++;
+    }
+
+    const updatedCashFlow = await this.formatCashFlowExcelResult(formattedData);
+  
+  return {formattedData:updatedCashFlow ,indexing};
+}
+// Older assessment function for generating assessment payload structure 
+// async generatePayload(years,balanceSheet){
+//     let transformedObject = years.reduce((acc, year, index, array) => {
+//       if (index < array.length - 1) {
+//           const nextYear = array[index + 1];
+//           acc[`${year}-${nextYear}`] = '';
+//       }
+//       return acc;
+//   }, {});
+//   let provisionalDate = balanceSheet['B1'].v
+//   transformedObject = {
+//     [provisionalDate]: '',
+//     ...transformedObject
+// };
+//   // console.log(transformedObject,"transformed object")
+//   const payload = ASSESSMENT_DATA.map((data,index)=>{
+//     if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
+//       const transformedEntry = { Particulars: data.lineEntry?.particulars };
+//       for (const key in transformedObject) {
+//           transformedEntry[key] = null;
+//       }
+//       return transformedEntry;
+//     }
+
+//     return {
+//     Particulars:data.lineEntry?.particulars,
+//     ...transformedObject
+//     }
+    
+//   })
+
+//   const calculatedPayload = await this.assessmentCalculations(payload,balanceSheet);
+//   const emptySpaceOne = calculatedPayload.findIndex(item=>item.Particulars === 'Operating Liabilities');
+//   if(emptySpaceOne !== -1){
+//     calculatedPayload.splice(emptySpaceOne,0,{Particulars: '  '})
+//   }
+//   const emptySpaceTwo = calculatedPayload.findIndex(item=>item.Particulars === 'Net Operating Assets');
+//   if(emptySpaceTwo !== -1){
+//     calculatedPayload.splice(emptySpaceTwo,0,{Particulars: '  '})
+//   }
+ 
+//   return calculatedPayload;
+// }
+
+
+async generateAssessmentOfWCpayload(years, balanceSheet, processStateId){
     let transformedObject = years.reduce((acc, year, index, array) => {
       if (index < array.length - 1) {
           const nextYear = array[index + 1];
-          acc[`${year}-${nextYear}`] = '';
+          acc[`20${year}-20${nextYear}`] = '';
       }
       return acc;
   }, {});
@@ -2636,8 +3430,7 @@ async generatePayload(years,balanceSheet){
     [provisionalDate]: '',
     ...transformedObject
 };
-  // console.log(transformedObject,"transformed object")
-  const payload = ASSESSMENT_DATA.map((data,index)=>{
+  const payload = V2_ASSESSMENT_OF_WORKING_CAPITAL.map((data,index)=>{
     if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
       const transformedEntry = { Particulars: data.lineEntry?.particulars };
       for (const key in transformedObject) {
@@ -2653,176 +3446,361 @@ async generatePayload(years,balanceSheet){
     
   })
 
-  const calculatedPayload = await this.assessmentCalculations(payload,balanceSheet);
-  const emptySpaceOne = calculatedPayload.findIndex(item=>item.Particulars === 'Operating Liabilities');
-  if(emptySpaceOne !== -1){
-    calculatedPayload.splice(emptySpaceOne,0,{Particulars: '  '})
-  }
-  const emptySpaceTwo = calculatedPayload.findIndex(item=>item.Particulars === 'Net Operating Assets');
-  if(emptySpaceTwo !== -1){
-    calculatedPayload.splice(emptySpaceTwo,0,{Particulars: '  '})
-  }
+  const calculatedPayload = await this.assessmentCalculations(payload, processStateId, provisionalDate);
+  // const emptySpaceOne = calculatedPayload.findIndex(item=>item.Particulars === 'Operating Liabilities');
+  // if(emptySpaceOne !== -1){
+  //   calculatedPayload.splice(emptySpaceOne,0,{Particulars: '  '})
+  // }
+  // const emptySpaceTwo = calculatedPayload.findIndex(item=>item.Particulars === 'Net Operating Assets');
+  // if(emptySpaceTwo !== -1){
+  //   calculatedPayload.splice(emptySpaceTwo,0,{Particulars: '  '})
+  // }
  
   return calculatedPayload;
 }
 
-async assessmentCalculations(payload,balanceSheet){
-  /*
-  *This function gets called twice
-  *Once while appending assessment sheet for the first time
-  *Second time when you modify assessment sheet [Recalculation purpose]
-  */
-  await Promise.all(payload.map(async (data,i) => {
-    let keysToProcess = Object.keys(data).filter(key => key !== 'Particulars');
-        if (i === 1) {
+async generateCashFlowPayload(years,profitLossSheet, processStateId){
+    let transformedObject = years.reduce((acc, year, index, array) => {
+      if (index < array.length - 1) {
+          const nextYear = array[index + 1];
+          acc[`20${year}-20${nextYear}`] = '';
+      }
+      return acc;
+  }, {});
+  let provisionalDate = profitLossSheet['C1'].v
+  transformedObject = {
+    [provisionalDate]: '',
+    ...transformedObject
+};
+const payload = CASH_FLOW.map((data,index)=>{
+  if(data.lineEntry.sysCode === 7001 || data.lineEntry.sysCode === 7003 || data.lineEntry.sysCode === 7009 || data.lineEntry.sysCode === 7023 || data.lineEntry.sysCode === 7029){
+    const transformedEntry = { Particulars: data.lineEntry?.particulars };
+    for (const key in transformedObject) {
+      transformedEntry[key] = null;
+    }
+    if(data.lineEntry?.romanIndex){
+      transformedEntry['Sr No'] = data.lineEntry.romanIndex;
+    }
+    else{
+      transformedEntry['Sr No'] = null;
+    }
+      return transformedEntry;
+  }
+  if(data.lineEntry?.romanIndex){
+    return {
+      ['Sr No']:data.lineEntry.romanIndex,
+      Particulars:data.lineEntry?.particulars,
+      ...transformedObject
+    }
+  }
+  
+  return {
+    ['Sr No']:null,
+    Particulars:data.lineEntry?.particulars,
+    ...transformedObject
+  }
+  
+})
+  const calculatedPayload = await this.cashFlowCalculations(payload,processStateId, provisionalDate);
+  return calculatedPayload;
+}
 
-            for (const key of keysToProcess) {
-                data[key] = (await getCellValue(
-                    balanceSheet,
-                    `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.tradeReceivablesRow}`
-                ))?.toFixed(2);
-            }
-        }
-        if(i === 2){
+// Older assessment of WC function to calculate assessment sheet (Manual process)
+// async assessmentCalculations(payload,balanceSheet){
+//   /*
+//   *This function gets called twice
+//   *Once while appending assessment sheet for the first time
+//   *Second time when you modify assessment sheet [Recalculation purpose]
+//   */
+//   await Promise.all(payload.map(async (data,i) => {
+//     let keysToProcess = Object.keys(data).filter(key => key !== 'Particulars');
+//         if (i === 1) {
 
-          for (const key of keysToProcess) {
-              data[key] = (await getCellValue(
-                  balanceSheet,
-                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.unbilledRevenuesRow}`
-              ))?.toFixed(2);
-          }
-        }
-        if(i === 3){
+//             for (const key of keysToProcess) {
+//                 data[key] = (await getCellValue(
+//                     balanceSheet,
+//                     `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.tradeReceivablesRow}`
+//                 ))?.toFixed(2);
+//             }
+//         }
+//         if(i === 2){
 
-          for (const key of keysToProcess) {
-              data[key] = (await getCellValue(
-                  balanceSheet,
-                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.inventoriesRow}`
-              ))?.toFixed(2);
-          }
-        }
-        if(i === 4){
+//           for (const key of keysToProcess) {
+//               data[key] = (await getCellValue(
+//                   balanceSheet,
+//                   `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.unbilledRevenuesRow}`
+//               ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 3){
 
-          for (const key of keysToProcess) {
-              data[key] = (await getCellValue(
-                  balanceSheet,
-                  `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.advancesRow}`
-              ))?.toFixed(2);
-          }
-        }
-        if(i === 5){
+//           for (const key of keysToProcess) {
+//               data[key] = (await getCellValue(
+//                   balanceSheet,
+//                   `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.inventoriesRow}`
+//               ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 4){
 
-          for (const key of keysToProcess) {
-            /*
-            *Please make sure to re-update/comment whichever formula want to remove directly in this function block [ related to asssessment sheet only ]
-            *If don't, will make you cry
-            */
-            // data[key] = (await getCellValue(
-            //     balanceSheet,
-            //     `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermInvestmentsRow}`
-            // ))?.toFixed(2);
-             data[key] = 0;
-          }
-        }
-        if(i === 6){
+//           for (const key of keysToProcess) {
+//               data[key] = (await getCellValue(
+//                   balanceSheet,
+//                   `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.advancesRow}`
+//               ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 5){
 
-          for (const key of keysToProcess) {
-              data[key] = (await getCellValue(
-                  balanceSheet,
-                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentAssetsRow}`
-              ))?.toFixed(2);
-          }
-        }
-        if(i === 7){
+//           for (const key of keysToProcess) {
+//             /*
+//             *Please make sure to re-update/comment whichever formula want to remove directly in this function block [ related to asssessment sheet only ]
+//             *If don't, will make you cry
+//             */
+//             // data[key] = (await getCellValue(
+//             //     balanceSheet,
+//             //     `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermInvestmentsRow}`
+//             // ))?.toFixed(2);
+//              data[key] = 0;
+//           }
+//         }
+//         if(i === 6){
 
-          for (const key of keysToProcess) {
-              data[key] = (await getCellValue(
-                  balanceSheet,
-                  `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherNonCurrentAssetsRow}`
-              ))?.toFixed(2);
-          }
+//           for (const key of keysToProcess) {
+//               data[key] = (await getCellValue(
+//                   balanceSheet,
+//                   `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentAssetsRow}`
+//               ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 7){
 
-        }
+//           for (const key of keysToProcess) {
+//               data[key] = (await getCellValue(
+//                   balanceSheet,
+//                   `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherNonCurrentAssetsRow}`
+//               ))?.toFixed(2);
+//           }
+
+//         }
        
-        if(i === 9){
+//         if(i === 9){
 
-          for await (const key of keysToProcess) {
-              data[key] = (parseFloat(payload[1][key] ?? 0) + parseFloat(payload[2][key] ?? 0) + parseFloat(payload[3][key] ?? 0) + parseFloat(payload[4][key] ?? 0) + parseFloat(payload[5][key] ?? 0) + parseFloat(payload[6][key] ?? 0) + parseFloat(payload[7][key] ?? 0)).toFixed(2);
+//           for await (const key of keysToProcess) {
+//               data[key] = (parseFloat(payload[1][key] ?? 0) + parseFloat(payload[2][key] ?? 0) + parseFloat(payload[3][key] ?? 0) + parseFloat(payload[4][key] ?? 0) + parseFloat(payload[5][key] ?? 0) + parseFloat(payload[6][key] ?? 0) + parseFloat(payload[7][key] ?? 0)).toFixed(2);
+//           }
+//         }
+//         if(i===11){
+
+//           for (const key of keysToProcess) {
+//             data[key] = (await getCellValue(
+//                 balanceSheet,
+//                 `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.tradePayablesRow}`
+//             ))?.toFixed(2);
+//         }
+//         }
+//         if(i===12){
+
+//           for (const key of keysToProcess) {
+//             data[key] = (await getCellValue(
+//                 balanceSheet,
+//                 `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.employeePayablesRow}`
+//             ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 13){
+
+//           for (const key of keysToProcess) {
+//             data[key] = (await getCellValue(
+//                 balanceSheet,
+//                 `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.lcPayablesRow}`
+//             ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 14){
+
+//           for (const key of keysToProcess) {
+//             data[key] = (await getCellValue(
+//                 balanceSheet,
+//                 `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentLiabilitiesRow}`
+//             ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 15){
+
+//           for (const key of keysToProcess) {
+//             data[key] = (await getCellValue(
+//                 balanceSheet,
+//                 `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermProvisionsRow}`
+//             ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 16){
+
+//           for (const key of keysToProcess) {
+//             data[key] = (await getCellValue(
+//                 balanceSheet,
+//                 `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.longTermProvisionRow}`
+//             ))?.toFixed(2);
+//           }
+//         }
+//         if(i === 18){
+//           for await(const key of keysToProcess) {
+//             data[key] = (parseFloat(payload[11][key] ?? 0) + parseFloat(payload[12][key] ?? 0) + parseFloat(payload[13][key] ?? 0) + parseFloat(payload[14][key] ?? 0) + parseFloat(payload[15][key] ?? 0) + parseFloat(payload[16][key] ?? 0)).toFixed(2); 
+//         }
+//       }
+//       if(i ===19){ // add net operating liablities in excel
+//         for await(const key of keysToProcess) {
+//           data[key] = (parseFloat(payload[9][key] ?? 0) - parseFloat(payload[18][key] ?? 0)).toFixed(2); 
+//         }
+//       }
+//       if(i ===20){
+//         for await(const key of keysToProcess) { // add change in nca in excel
+//           if(keysToProcess.indexOf(key) < keysToProcess.length-1){
+//                 data[ keysToProcess[  keysToProcess.indexOf(key)+1]] = (parseFloat(payload[19][key] ?? 0) - parseFloat(payload[19][`${await keysToProcess[await keysToProcess.indexOf(key)+1]}`] ?? 0)).toFixed(2); 
+//            }
+//       }
+//       }
+// }));
+// return payload
+// }
+
+async assessmentCalculations(payload, processStateId, provDate){
+  try{
+    const excelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
+    const balanceSheetRowCount = excelArchive?.balanceSheetRowCount || 0;
+    let balanceSheetExcelArchive = {};
+    if(balanceSheetRowCount){
+      const balanceSheetData:any = excelArchive.balanceSheetdata;
+      for await (const indBSArchive of balanceSheetData){
+        const {lineEntry, ...rest} = indBSArchive;
+        balanceSheetExcelArchive[indBSArchive.lineEntry.particulars] = rest;
+      } 
+    }
+
+    let indexing = 0;
+
+    for await(const indStructure of payload){
+      let keysToProcess = Object.keys(indStructure).filter(key => key !== 'Particulars');
+
+       /**
+       * [Outer IF condition] 
+       * Index 0 = Operating Assets:
+       * Index 10 = Operating Liabilities
+       * Used for ignoring headers, 
+       * Since we dont do any calculations for header rows
+       * 
+       * [Inner IF condition]
+       * Index 23 = Change In NCA
+       * We want to handle special cases where
+       * need to ignore provisional date/year column and begin with next column
+       */
+
+       if(indexing !== 0 && indexing !== 10){
+        if(indexing !== 23){
+          for await (const key of keysToProcess){
+            indStructure[key] = await assessmentOfWCformulas(balanceSheetExcelArchive, indStructure.Particulars, key, payload, keysToProcess);
           }
         }
-        if(i===11){
-
-          for (const key of keysToProcess) {
-            data[key] = (await getCellValue(
-                balanceSheet,
-                `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.tradePayablesRow}`
-            ))?.toFixed(2);
-        }
-        }
-        if(i===12){
-
-          for (const key of keysToProcess) {
-            data[key] = (await getCellValue(
-                balanceSheet,
-                `${columnsList[keysToProcess.indexOf(key)] + sheet2_BSObj.employeePayablesRow}`
-            ))?.toFixed(2);
+        else{
+          for await (const key of keysToProcess){
+            if(keysToProcess[keysToProcess.indexOf(key)+1]){
+              indStructure[keysToProcess[keysToProcess.indexOf(key)+1]] = await assessmentOfWCformulas( balanceSheetExcelArchive, indStructure.Particulars, keysToProcess[keysToProcess.indexOf(key)+1], payload, keysToProcess);
+            }
           }
-        }
-        if(i === 13){
-
-          for (const key of keysToProcess) {
-            data[key] = (await getCellValue(
-                balanceSheet,
-                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.lcPayablesRow}`
-            ))?.toFixed(2);
-          }
-        }
-        if(i === 14){
-
-          for (const key of keysToProcess) {
-            data[key] = (await getCellValue(
-                balanceSheet,
-                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.otherCurrentLiabilitiesRow}`
-            ))?.toFixed(2);
-          }
-        }
-        if(i === 15){
-
-          for (const key of keysToProcess) {
-            data[key] = (await getCellValue(
-                balanceSheet,
-                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.shortTermProvisionsRow}`
-            ))?.toFixed(2);
-          }
-        }
-        if(i === 16){
-
-          for (const key of keysToProcess) {
-            data[key] = (await getCellValue(
-                balanceSheet,
-                `${columnsList[keysToProcess.indexOf(key) ] + sheet2_BSObj.longTermProvisionRow}`
-            ))?.toFixed(2);
-          }
-        }
-        if(i === 18){
-          for await(const key of keysToProcess) {
-            data[key] = (parseFloat(payload[11][key] ?? 0) + parseFloat(payload[12][key] ?? 0) + parseFloat(payload[13][key] ?? 0) + parseFloat(payload[14][key] ?? 0) + parseFloat(payload[15][key] ?? 0) + parseFloat(payload[16][key] ?? 0)).toFixed(2); 
         }
       }
-      if(i ===19){ // add net operating liablities in excel
-        for await(const key of keysToProcess) {
-          data[key] = (parseFloat(payload[9][key] ?? 0) - parseFloat(payload[18][key] ?? 0)).toFixed(2); 
+      indexing++;
+    }
+    return payload;
+  }
+  catch(error){
+    throw error;
+  }
+}
+
+async cashFlowCalculations(payload, processStateId, provDate){
+  try{
+    const excelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
+    const profitLossSheetRowCount = excelArchive?.profitLossSheetRowCount || 0;
+    const balanceSheetRowCount = excelArchive?.balanceSheetRowCount || 0;
+    let profitLossExcelArchive = {}, balanceSheetExcelArchive = {};
+    if(profitLossSheetRowCount && balanceSheetRowCount){
+      const profitLossData:any = excelArchive.profitLossSheetdata;
+      const balanceSheetData:any = excelArchive.balanceSheetdata;
+      for await (const indPLArchive of profitLossData){
+            const {lineEntry, 'Sr no.': srNo, ...rest} = indPLArchive; 
+            profitLossExcelArchive[indPLArchive.lineEntry.particulars] = rest;
+          }
+          for await (const indBSArchive of balanceSheetData){
+        const {lineEntry, ...rest} = indBSArchive; 
+            balanceSheetExcelArchive[indBSArchive.lineEntry.particulars] = rest;
+      }
+    }
+    
+    let indexing = 0;
+    for await(const indStructure of payload){
+      let keysToProcess = Object.keys(indStructure).filter(key => key !== 'Particulars' && key !== 'Sr No');
+
+      /**
+       * [Outer IF condition] 
+       * Index 0 = Operating Cash Flow:
+       * Index 2 = Adjustments for:
+       * Index 8 = Working capital changes:
+       * Index 22 = Cash flows from investing activities
+       * Index 28 = Cash flows from financing activities
+       * Used for ignoring headers, 
+       * Since we dont do any calculations for header rows
+       * 
+       * [Inner IF condition]
+       * Index 9 = (Increase) / Decrease in trade and other receivables
+       * Index 10 = (Increase) / Decrease in inventories
+       * Index 11 = (Increase) / Decrease in Other Current Assets
+       * Index 12 = (Increase) / Decrease in Loans & Advances
+       * Index 13 = (Increase) / Decrease in Tax Assets
+       * Index 14 = Increase / (Decrease) in trade payables
+       * Index 15 = Increase / (Decrease) in  other payables
+       * Index 16 = Increase / (Decrease) in provisions and other current Liabilities
+       * Index 17 = Increase / (Decrease) in Non-Current Liabilities
+       * Index 18 = Increase / (Decrease) in Tax Liabilities
+       * Index 23 = Purchase/Sale  of property, plant and equipment
+       * Index 26 = Acquisition of investments
+       * Index 29 = Proceed from issue of share capital
+       * Index 30 = Proceeds/Repayment from long-term borrowings
+       * Index 31 = Proceeds/Repayment Short-term borrowings
+       * Index 32 = Proceeds / (repayment) of lease liability, net
+       * Index 36 = Cash and cash equivalents at beginning of period
+       * We want to handle special cases where
+       * need to ignore provisional date/year column and begin with next column
+       */
+      if(indexing !== 0 && indexing !== 2 && indexing !== 8  && indexing !== 22  && indexing !== 28){
+
+        if(indexing !== 9 && indexing !== 10 && indexing !== 11 && 
+          indexing !== 12 && indexing !== 13 && indexing !== 14 && 
+          indexing !== 15 && indexing !== 16 && indexing !== 17 && 
+          indexing !== 18 && indexing !== 23 && indexing !== 26 &&
+          indexing !== 29 && indexing !== 30 && indexing !== 31 &&
+          indexing !== 32 && indexing !== 36){
+          for await (const key of keysToProcess){
+            indStructure[key] = await cashFlowFormulas(profitLossExcelArchive, balanceSheetExcelArchive, indStructure.Particulars, key, payload, keysToProcess);
+          }
+        }
+        else{
+          for await (const key of keysToProcess){
+            if(keysToProcess[keysToProcess.indexOf(key)+1]){
+              indStructure[keysToProcess[keysToProcess.indexOf(key)+1]] = await cashFlowFormulas(profitLossExcelArchive, balanceSheetExcelArchive, indStructure.Particulars, keysToProcess[keysToProcess.indexOf(key)+1], payload, keysToProcess);
+            }
+          }
         }
       }
-      if(i ===20){
-        for await(const key of keysToProcess) { // add change in nca in excel
-          if(keysToProcess.indexOf(key) < keysToProcess.length-1){
-                data[ keysToProcess[  keysToProcess.indexOf(key)+1]] = (parseFloat(payload[19][key] ?? 0) - parseFloat(payload[19][`${await keysToProcess[await keysToProcess.indexOf(key)+1]}`] ?? 0)).toFixed(2); 
-           }
-      }
-      }
-}));
-return payload
+      indexing++
+    }
+    const sort = sortArrayOfObjects(payload, provDate)
+    return sort;
+
+  }catch(error){
+    throw error
+  }
 }
 
 async createStructure(data,sheetName){
@@ -2833,48 +3811,44 @@ async createStructure(data,sheetName){
   let ruleElevenUaStructure = [];
   let slumpSaleStructure = [];
   if(sheetName === 'BS'){
-      data.map((element)=>{
-        const {Particulars,...rest} = element; 
-        for (const lineItems of BALANCE_SHEET){
-          if(element.Particulars === lineItems.lineEntry.particulars){
-            balanceSheetStructure.push({lineEntry:lineItems.lineEntry,...rest})
+    let rows = 0;
+
+      for await (const indBSArchive of data){
+        for await (const BSstructure of V2_BALANCE_SHEET){
+          if(BSstructure.lineEntry.particulars === indBSArchive.Particulars){
+            const { Particulars, ...rest } = indBSArchive;
+            balanceSheetStructure.push({lineEntry:BSstructure.lineEntry,...rest});
+            rows ++;
           }
         }
-      })
-
-      balanceSheetStructure.splice(balanceSheetStructure.findIndex(item=>item.lineEntry.particulars === 'TOTAL' && item.lineEntry.sysCode === 2035)+1,1)
-      balanceSheetStructure.splice(balanceSheetStructure.findIndex(item=>item.lineEntry.particulars === 'TOTAL' && item.lineEntry.sysCode === 2064)-1,1)
-    return balanceSheetStructure;
+    }
+    return { balanceSheetStructure, rows};
   }
   else if(sheetName === 'P&L'){
-    // data.map((element)=>{
-    //   const {Particulars,...rest} = element;
-    //   for (const lineItems of PROFIT_LOSS){
-    //     if(element.Particulars === lineItems.lineEntry.particulars){
-    //       profitAndLossSheetStructure.push({lineEntry:lineItems.lineEntry,...rest})
-    //     }
-    //   }
-    // })
-    let index = 0
-    for await(let item of data){
-      if(PROFIT_LOSS[index]?.lineEntry){
-        const { Particulars, ...rest } = item;
-        profitAndLossSheetStructure.push({lineEntry:PROFIT_LOSS[index]?.lineEntry,...rest});
-        index++;
+    let rows = 0;
+    for await (const indPLArchive of data){
+      for await (const PLstructure of V2_PROFIT_LOSS){
+        if(PLstructure.lineEntry.particulars === indPLArchive.Particulars){
+        const { Particulars, ...rest } = indPLArchive;
+          profitAndLossSheetStructure.push({lineEntry:PLstructure.lineEntry,...rest});
+          rows ++;
+        }
       }
-    }
-    return profitAndLossSheetStructure;
+  }
+    return {profitAndLossSheetStructure, rows};
   }
   else if(sheetName === 'Rule 11 UA'){
+    let rows = 0;
     data.map((element)=>{
       const {Particulars,...rest} = element; 
       for (const lineItems of RULE_ELEVEN_UA){
         if(element.Particulars === lineItems.lineEntry.particulars){
-          ruleElevenUaStructure.push({lineEntry:lineItems.lineEntry,...rest})
+          ruleElevenUaStructure.push({lineEntry:lineItems.lineEntry,...rest});
+          rows ++;
         }
       }
     })
-    return ruleElevenUaStructure;
+    return {ruleElevenUaStructure, rows};
   }
   else if(sheetName === 'Slump Sale'){
     let rows = 0
@@ -2933,5 +3907,25 @@ async fetchUserInfo(request){
   const userInfo =await KCGuard.fetchAuthUser(request).toPromise();
   // console.log(userInfo,"user Info")
   return { userInfo }
+}
+
+async uploadExcelProcess(formData, processId, request){
+  try{
+    await this.excelArchiveService.removeExcelByProcessId(processId);
+    const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
+    /**
+     * When user uploads excel,
+     * 1. Create copy of the excel     
+     * 2. Adjust retainers and cash & cash equivalent line items in Balance Sheet 
+     */
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processId).toPromise();
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processId).toPromise();
+    await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processId);
+    return uploadedFileData;
+
+  }
+  catch(error){
+    throw error;
+  }
 }
 }
