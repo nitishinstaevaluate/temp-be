@@ -5,20 +5,20 @@ import { convertToNumberOrZero, getCellValue } from './common.methods';
 
 //worksheet1 is P&L sheet and worksheet2 is BS sheet.
 // Old Pat function 
-// export async function GetPAT(i: number, worksheet1: any) {
-//   //formula: =+'P&L'!B42
-//   // console.log(worksheet1);
-//   const pat = await getCellValue(
-//     worksheet1,
-//     `${columnsList[i] + sheet1_PLObj.patRow}`,
-//   );
+export async function GetPAT(i: number, worksheet1: any) {
+  //formula: =+'P&L'!B42
+  // console.log(worksheet1);
+  const pat = await getCellValue(
+    worksheet1,
+    `${columnsList[i] + sheet1_PLObj.patRow}`,
+  );
 
-//   // console.log(`${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`);
-//   // console.log(`${columnsList[i+1] + sheet1_PLObj.changeInInventoryRow}`);
-//   return pat;
-// }
+  // console.log(`${columnsList[i] + sheet1_PLObj.changeInInventoryRow}`);
+  // console.log(`${columnsList[i+1] + sheet1_PLObj.changeInInventoryRow}`);
+  return pat;
+}
 export async function v2PatComputation(subkey, profitLossData: any) {
-  return convertToNumberOrZero(profitLossData[V2_PL_RAW_LINE_ITEMS.earningsBefreEBITrow.particulars][subkey]);
+  return convertToNumberOrZero(profitLossData[V2_PL_RAW_LINE_ITEMS.prftLossForPerdFromContnuingOprtionsRow.particulars][subkey]);
 }
 // Old function
 // export async function DepAndAmortisation(i: number, worksheet1: any) {
@@ -707,94 +707,94 @@ export async function CapitalStructure(i: number, worksheet2: any) {
 }
 
 // Old function
-// export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number, inputs: any) {
-//   //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
-//   // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
-//   // user may chose to enter values hence calculate as BS!D7:D22 sum)
+export async function CapitalStruc(i: number, worksheet2: any, shareHolderFunds: number, inputs: any) {
+  //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).
+  // As: (BS!D27 + BS!D36)/(BS!D6 note this formula is already a sum in sheet but
+  // user may chose to enter values hence calculate as BS!D7:D22 sum)
 
-//   // Total Equity = Shareholders' Funds - Preference Share Capital
-//   // Total Debt = Other Unsecured Loans + Long Term Borrowings + Liability component of CCD's + Short Term Borrowings
-//   // Total Preference Share Capital = Preference Share Capital
+  // Total Equity = Shareholders' Funds - Preference Share Capital
+  // Total Debt = Other Unsecured Loans + Long Term Borrowings + Liability component of CCD's + Short Term Borrowings
+  // Total Preference Share Capital = Preference Share Capital
 
-//   // =+(BS!B27+BS!B26+BS!B36)/(BS!B6-BS!B8)
-//   // (longTermBorrowingsRow + otherUnsecuredLoans + shortTermBorrowingsRow ) / (shareholderFunds - preferenceShareCapital)
+  // =+(BS!B27+BS!B26+BS!B36)/(BS!B6-BS!B8)
+  // (longTermBorrowingsRow + otherUnsecuredLoans + shortTermBorrowingsRow ) / (shareholderFunds - preferenceShareCapital)
 
-//   // const shareholderFunds = await this.getShareholderFunds(i,worksheet2);
-//   let capitalStructure;
+  // const shareholderFunds = await this.getShareholderFunds(i,worksheet2);
+  let capitalStructure;
 
 
-//     if (!inputs.capitalStructureType || inputs.capitalStructureType === 'Company_Based') {
+    if (!inputs.capitalStructureType || inputs.capitalStructureType === 'Company_Based') {
   
-//       const preferenceShareCapital = await getCellValue(
-//         worksheet2,
-//         `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
-//       );
+      const preferenceShareCapital = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
+      );
 
-//       const otherUnsecuredLoans = await getCellValue(
-//         worksheet2,
-//         `${columnsList[i] + sheet2_BSObj.otherUnsecuredLoansRow}`,
-//       );
+      const otherUnsecuredLoans = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.otherUnsecuredLoansRow}`,
+      );
 
-//       const liabilityComponentofCCD = await getCellValue(
-//         worksheet2,
-//         `${columnsList[i] + sheet2_BSObj.liabilityComponentofCCDRow}`,
-//       );
-//       const longTermBorrowings = await getCellValue(
-//         worksheet2,
-//         `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
-//       );
-//       const shortTermBorrowings = await getCellValue(
-//         worksheet2,
-//         `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
-//       );
+      const liabilityComponentofCCD = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.liabilityComponentofCCDRow}`,
+      );
+      const longTermBorrowings = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.longTermBorrowingsRow}`,
+      );
+      const shortTermBorrowings = await getCellValue(
+        worksheet2,
+        `${columnsList[i] + sheet2_BSObj.shortTermBorrowingsRow}`,
+      );
 
-//       const totalCapital = (longTermBorrowings + otherUnsecuredLoans + shortTermBorrowings) / (shareHolderFunds - preferenceShareCapital);
-//       // const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
+      const totalCapital = (longTermBorrowings + otherUnsecuredLoans + shortTermBorrowings) / (shareHolderFunds - preferenceShareCapital);
+      // const totalDebt = otherUnsecuredLoans + longTermBorrowings +liabilityComponentofCCD +shortTermBorrowings;
 
-//       // const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
-//       const debtProp = totalCapital / (1 + totalCapital);
-//       const equityProp = 1 - debtProp;
-//       const prefProp = 1 - debtProp - equityProp;
+      // const totalCapital = totalEquity + preferenceShareCapital + totalDebt;
+      const debtProp = totalCapital / (1 + totalCapital);
+      const equityProp = 1 - debtProp;
+      const prefProp = 1 - debtProp - equityProp;
 
-//       capitalStructure = {
-//         capitalStructureType: 'Company_Based',
-//         debtProp: debtProp,
-//         equityProp: equityProp,
-//         prefProp: prefProp,
-//         totalCapital: totalCapital           // this is actual value and not a proporation.
-//       }
-//     } else if (inputs.capitalStructureType === 'Industry_Based') {
-//       const debtRatio = parseFloat(inputs.capitalStructure.deRatio) / 100;
-//       const totalCapital = 1 + debtRatio;
-//       const debtProp = debtRatio / totalCapital;
-//       const equityProp = 1 - debtProp;
-//       const prefProp = 0 // By default this is 0 for Industry
+      capitalStructure = {
+        capitalStructureType: 'Company_Based',
+        debtProp: debtProp,
+        equityProp: equityProp,
+        prefProp: prefProp,
+        totalCapital: totalCapital           // this is actual value and not a proporation.
+      }
+    } else if (inputs.capitalStructureType === 'Industry_Based') {
+      const debtRatio = parseFloat(inputs.capitalStructure.deRatio) / 100;
+      const totalCapital = 1 + debtRatio;
+      const debtProp = debtRatio / totalCapital;
+      const equityProp = 1 - debtProp;
+      const prefProp = 0 // By default this is 0 for Industry
 
-//       capitalStructure = {
-//         capitalStructureType: 'Industry_Based',
-//         debtProp: debtProp,
-//         equityProp: equityProp,
-//         prefProp: prefProp,
-//         totalCapital: totalCapital           // this is actual value and not a proporation.
-//       }
+      capitalStructure = {
+        capitalStructureType: 'Industry_Based',
+        debtProp: debtProp,
+        equityProp: equityProp,
+        prefProp: prefProp,
+        totalCapital: totalCapital           // this is actual value and not a proporation.
+      }
 
-//     } else if (inputs.capitalStructureType === 'Target_Based') {
-//       const totalCapital = 1;                 // total is always 1
-//       const debtProp = parseFloat(inputs.capitalStructure.debtProp) / 100;
-//       const equityProp = parseFloat(inputs.capitalStructure.equityProp) / 100;
-//       const prefProp = parseFloat(inputs.capitalStructure.prefProp) / 100;
+    } else if (inputs.capitalStructureType === 'Target_Based') {
+      const totalCapital = 1;                 // total is always 1
+      const debtProp = parseFloat(inputs.capitalStructure.debtProp) / 100;
+      const equityProp = parseFloat(inputs.capitalStructure.equityProp) / 100;
+      const prefProp = parseFloat(inputs.capitalStructure.prefProp) / 100;
 
-//       capitalStructure = {
-//         capitalStructureType: 'Target_Based',
-//         debtProp: debtProp,
-//         equityProp: equityProp,
-//         prefProp: prefProp,
-//         totalCapital: totalCapital           // this is actual value and not a proporation.
-//       }
+      capitalStructure = {
+        capitalStructureType: 'Target_Based',
+        debtProp: debtProp,
+        equityProp: equityProp,
+        prefProp: prefProp,
+        totalCapital: totalCapital           // this is actual value and not a proporation.
+      }
 
-//     }
-//     return capitalStructure;
-//   }
+    }
+    return capitalStructure;
+  }
 
 export async function capitalStructureComputation(provisionalDate, balanceSheetData: any, inputs: any) {
   //formula: if company based use: long term borrowing + short term / net worth (Other equity + eq + pref).

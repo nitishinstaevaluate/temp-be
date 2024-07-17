@@ -19,7 +19,7 @@ import {
   calculateDaysFromDate,
   getRequestAuth,
 } from '../excelFileServices/common.methods';
-import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
+// import {CapitalStruc} from '../excelFileServices/fcfeAndFCFF.method';
 import { utilsService } from 'src/utils/utils.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
 import { MODEL } from 'src/constants/constants';

@@ -3927,6 +3927,7 @@ async uploadExcelProcess(formData, processId, request){
     await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processId).toPromise();
     await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processId).toPromise();
     await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processId);
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processId).toPromise();
     return uploadedFileData;
 
   }
