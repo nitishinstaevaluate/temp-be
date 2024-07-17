@@ -25,6 +25,8 @@ import { MarketPriceService } from './market-price.service';
 import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
 import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
 import { SensitivityAnalysisModule } from 'src/sensitivity-analysis/sensitivity-analysis.module';
+import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
+import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
@@ -32,7 +34,8 @@ import { SensitivityAnalysisModule } from 'src/sensitivity-analysis/sensitivity-
       { name: 'processManager', schema: ProcessManagerSchema }, 
       { name: 'dataChecklist', schema: DataCheckListSchema },
       { name: 'mandate', schema: MandateSchema },
-      { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema }
+      { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema },
+      { name: 'excelArchive', schema: ExcelArchiveSchema },
     ]),
     IndustryModule,
     MastersModule,
@@ -57,7 +60,8 @@ import { SensitivityAnalysisModule } from 'src/sensitivity-analysis/sensitivity-
     terminalValueWorkingService,
     ProcessStatusManagerService,
     MarketPriceService,
-    SensitivityAnalysisService
+    SensitivityAnalysisService,
+    ExcelArchiveService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService, terminalValueWorkingService],
 })

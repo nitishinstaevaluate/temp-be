@@ -318,7 +318,7 @@ export class ExcelSheetService {
           /**
            * Line Item : Cash and cash equivalents at end of period (IV+V)
            */
-          if(indCashFlowData.lineEntry.sysCode === 7038){
+          if(indCashFlowData.lineEntry.sysCode === 7039){
             cashEquivalentFromCashFlow.push(indCashFlowData);
           }
         }
@@ -374,7 +374,7 @@ export class ExcelSheetService {
             /**
              * Line Item : (iv) Retained Earnings
              */
-            if (indBSdata.lineEntry.sysCode === 8042) {
+            if (indBSdata.lineEntry.sysCode === 8044) {
                 for await (const key of keysToProcess) {
 
                     const nextKeyIndex = keysToProcess.indexOf(key) + 1;
@@ -396,7 +396,7 @@ export class ExcelSheetService {
                                     cellAddress,
                                     columnCell: cellAddressColumn,
                                     rowCell: indBSdata.lineEntry.rowNumber,
-                                    sysCode: 8042
+                                    sysCode: 8044
                                 }
                             ]
                         };
@@ -2669,6 +2669,7 @@ export class ExcelSheetService {
           await this.excelArchiveService.removeCashFlowByProcessStateId(data.processStateId);
           await this.getSheetData(updateProfitAndLossExcel.modifiedFileName, 'Cash Flow', request, data.processStateId).toPromise();
           await this.updateBalanceSheetRetainersAndCashEquivalent(updateProfitAndLossExcel.modifiedFileName, request, data.processStateId);
+          await this.getSheetData(updateProfitAndLossExcel.modifiedFileName, 'Assessment of Working Capital', request, data.processStateId).toPromise();
 
           return (
             {
@@ -2708,6 +2709,7 @@ export class ExcelSheetService {
 
           await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Cash Flow', request, data.processStateId).toPromise();
           const adjustRetainersAndCashEqv = await this.updateBalanceSheetRetainersAndCashEquivalent(updateBalanceSheetExcel.modifiedFileName, request, data.processStateId);
+          await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Assessment of Working Capital', request, data.processStateId).toPromise();
          
           return (
             {
@@ -3242,7 +3244,7 @@ export class ExcelSheetService {
       }
     }
 
-    if(deleteAssessmentSheet && sheetName === EXCEL_CONVENTION['BS'].key){
+    if(sheetName === EXCEL_CONVENTION['BS'].key){
 
       const sheet = workbook.getWorksheet(EXCEL_CONVENTION['Assessment of Working Capital'].key);
       if (sheet) {
@@ -3686,18 +3688,22 @@ async assessmentCalculations(payload, processStateId, provDate){
        /**
        * [Outer IF condition] 
        * Index 0 = Operating Assets:
-       * Index 10 = Operating Liabilities
+       * Index 9 = Operating Liabilities
        * Used for ignoring headers, 
        * Since we dont do any calculations for header rows
        * 
        * [Inner IF condition]
-       * Index 23 = Change In NCA
+       * Index 21 = Change In NCA
        * We want to handle special cases where
        * need to ignore provisional date/year column and begin with next column
+       * 
+       * Special Cases
+       * Removed Deferred Tax Asset
+       * Removed Deferred Tax Liability
        */
 
-       if(indexing !== 0 && indexing !== 10){
-        if(indexing !== 23){
+       if(indexing !== 0 && indexing !== 9){
+        if(indexing !== 21){
           for await (const key of keysToProcess){
             indStructure[key] = await assessmentOfWCformulas(balanceSheetExcelArchive, indStructure.Particulars, key, payload, keysToProcess);
           }

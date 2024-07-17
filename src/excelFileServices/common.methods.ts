@@ -410,3 +410,21 @@ export function getRequestAuth(headers){
      }
    } 
 }
+
+export function getDateKey(obj) {
+  return Object.keys(obj).find(key => GET_DATE_MONTH_YEAR_FORMAT.test(key));
+}
+
+export function extractYearsFromKeys(obj) {
+  const yearPattern = /\b\d{4}\b/g;
+  const years = new Set();
+
+  Object.keys(obj).forEach(key => {
+    const matches = key.match(yearPattern);
+    if (matches) {
+      matches.forEach(year => years.add(year.slice(-2)));
+    }
+  });
+
+  return Array.from(years).sort();
+}
