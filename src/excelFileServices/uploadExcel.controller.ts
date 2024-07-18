@@ -50,8 +50,9 @@ export class UploadController {
   async uploadFile(
     @UploadedFile() formData,  
     @Body('processId') processId: string,
+    @Body('modelName') modelName: string, 
     @Req() request) {
-    return this.excelSheetService.uploadExcelProcess(formData, processId, request);
+    return this.excelSheetService.uploadExcelProcess(formData, processId, modelName, request);
   }
 
   // @UseGuards(KeyCloakAuthGuard)

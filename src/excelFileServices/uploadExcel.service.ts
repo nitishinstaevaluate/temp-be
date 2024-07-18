@@ -176,11 +176,26 @@ export class ExcelSheetService {
                                   switchMap((excelData)=>{
                                     return from(this.createStructure(excelData,sheetName)).pipe(
                                       switchMap((structure)=>{
-                                        return of({
-                                          data:structure.ruleElevenUaStructure,
-                                          msg:`Excel Sheet Fetched`,
-                                          status:true
-                                        });
+                                        const elevenUaPayload = {
+                                          fileName,
+                                          filePath,
+                                          fileSize,
+                                          sheetName,
+                                          processStateId,
+                                          structure
+                                        }
+                                        return from(this.updateRuleElevenUaArchive(elevenUaPayload,request)).pipe(
+                                          switchMap((archiveResponse)=>{
+                                            return of({
+                                              data:archiveResponse.data,
+                                              msg:`Excel Sheet Fetched`,
+                                              status:true
+                                            });
+                                          }),catchError((error)=>{
+                                            return throwError(error);
+                                          })
+                                        )
+                                        
                                       })
                                     )
                                   }),
@@ -754,6 +769,36 @@ export class ExcelSheetService {
             switchMap((excelArchiveResponse)=>{
               return of({
                 data:payload.sheetName === 'BS' ? payload.structure.balanceSheetStructure : payload.structure.profitAndLossSheetStructure,
+                msg:`Excel Sheet Fetched`,
+                status:true
+              });
+            }),
+            catchError((error)=>{
+              return throwError(error)
+            })
+           )
+        })
+      )
+    }
+
+    updateRuleElevenUaArchive(payload, request){
+      let excelArchive = new ExcelArchiveDto();
+      excelArchive.fileName = payload.fileName;
+      excelArchive.fileSize = payload.fileSize;
+      excelArchive.fileType = payload.fileType;
+      excelArchive.processStateId = payload.processStateId;
+      excelArchive.sheetUploaded = EXCEL_CONVENTION['Rule 11 UA'].key;
+      excelArchive.status = 'complete';
+      excelArchive.rule11UaSheetdata = payload?.structure?.ruleElevenUaStructure;
+      excelArchive.rule11UaSheetRowCount = payload?.structure?.rows;
+
+      return from(this.fetchUserInfo(request)).pipe(
+        switchMap((authUser)=>{
+          excelArchive.importedBy = authUser?.userInfo?.userId;
+           return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+            switchMap((excelArchiveResponse)=>{
+              return of({
+                data:excelArchive.rule11UaSheetdata,
                 msg:`Excel Sheet Fetched`,
                 status:true
               });
@@ -2756,7 +2801,25 @@ export class ExcelSheetService {
           const uploadDirRuleElevenUa = path.join(process.cwd(),'uploads');
           const filePathRuleElevenUa = path.join(uploadDirRuleElevenUa, data.excelSheetId);
 
+          const fileRUAType = path.extname(filePathRuleElevenUa);
+          const statsRUA = fs.statSync(filePathRuleElevenUa);
+          const fileRUASize = statsRUA.size;
+
           const updateRuleElevenUaExcel = await this.updateExcel(filePathRuleElevenUa,data,data.excelSheet);
+
+          const ruleElevenUapayload = {
+            processStateId: data.processStateId,
+            fileName:updateRuleElevenUaExcel.modifiedFileName,
+            fileSize:fileRUASize,
+            fileType:fileRUAType,
+            structure:{
+              ruleElevenUaStructure:updateRuleElevenUaExcel.data,
+              rows:updateRuleElevenUaExcel.rows
+            },
+            sheetName:data.excelSheet
+          }
+          await this.updateRuleElevenUaArchive(ruleElevenUapayload, request).toPromise();
+
           return (
             {
               data:updateRuleElevenUaExcel.data,
@@ -2767,15 +2830,6 @@ export class ExcelSheetService {
             }
           );
       }
-      // if(data.excelSheet == 'P&L'){
-        
-      // }
-      // else if(data.excelSheet === 'BS'){
-        
-      // }
-      // else if(data.excelSheet === 'Assessment of Working Capital'){
-      // }
-     
     } catch (error) {
       throw error;
     }
@@ -3204,6 +3258,8 @@ export class ExcelSheetService {
     const workbook= new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filepath);
     let worksheet:any = workbook.getWorksheet(sheetName);
+    console.log(worksheet,"worksheet")
+    console.log(sheetName,"sheetname")
     const structure:any = sheetName === 'P&L' ? V2_PROFIT_LOSS : sheetName === 'BS' ? V2_BALANCE_SHEET : sheetName === 'Rule 11 UA' ? RULE_ELEVEN_UA : ''; 
 
     let  editedFilePath='';
@@ -3258,10 +3314,21 @@ export class ExcelSheetService {
 await workbook.xlsx.writeFile(editedFilePath,sheetName);
 await this.updateFinancialSheet(editedFilePath);
 const evaluatedValues = await this.fetchSheetData(editedFilePath,sheetName);
+
+let excelData;
+if(sheetName === EXCEL_CONVENTION['P&L'].key){
+  excelData = evaluatedValues.profitAndLossSheetStructure;
+}
+else if(sheetName === EXCEL_CONVENTION['BS'].key){
+  excelData = evaluatedValues.balanceSheetStructure;
+}
+else if(sheetName === EXCEL_CONVENTION['Rule 11 UA'].key){
+  excelData = evaluatedValues.ruleElevenUaStructure;
+}
 return {
   msg:'Excel Updated Successfully',
   status:true,
-  data:sheetName === EXCEL_CONVENTION['P&L'].key ? evaluatedValues.profitAndLossSheetStructure : evaluatedValues.balanceSheetStructure,
+  data:excelData,
   rows:evaluatedValues.rows,
   originalFileName: `${data?.excelSheetId}`,
   modifiedFileName: data?.excelSheetId.includes('edited') ? `${data?.excelSheetId}` : `edited-${data?.excelSheetId}`,
@@ -3323,7 +3390,7 @@ return {
     }
         const modifiedData = await this.transformData(sheetData);
         const updateStructure = await this.createStructure(modifiedData,sheetName);
-        // console.log(updateStructure,"new updated strucuture")
+        console.log(updateStructure,"new updated strucuture")
         return updateStructure;
   }
   async  readAndEvaluateExcel(filepath){
@@ -3915,7 +3982,7 @@ async fetchUserInfo(request){
   return { userInfo }
 }
 
-async uploadExcelProcess(formData, processId, request){
+async uploadExcelProcess(formData, processId, modelName, request){
   try{
     await this.excelArchiveService.removeExcelByProcessId(processId);
     const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
@@ -3924,10 +3991,12 @@ async uploadExcelProcess(formData, processId, request){
      * 1. Create copy of the excel     
      * 2. Adjust retainers and cash & cash equivalent line items in Balance Sheet 
      */
-    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processId).toPromise();
-    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processId).toPromise();
-    await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processId);
-    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processId).toPromise();
+    if(modelName === 'containsProfitLossAndBalanceSheet'){
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processId).toPromise();
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processId).toPromise();
+      await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processId);
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processId).toPromise();
+    }
     return uploadedFileData;
 
   }

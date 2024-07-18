@@ -819,3 +819,333 @@ export const ASSESSMENT_OF_WC_RAW_LINE_ITEMS = {
         rowNumber:25
       }
 }
+
+export const RULE_ELEVEN_UA_RAW_LINE_ITEMS = {
+    assets:{
+        particulars : "Assets",
+        sysCode:4001,
+        rowNumber:2,
+        innerAsset:{
+            nonCurrentAssetRow:{
+                particulars : "Non-current Assets",
+                sysCode:4002,
+                rowNumber:3,
+                innerNonCurrentAssetRow:{
+                    tanibleAssets: {
+                        particulars : "Tangible Assets",
+                        sysCode:4003,
+                        rowNumber:4
+                    },
+                    immovableProperty:{
+                        particulars : "- Immovable Property",
+                        sysCode:4004,
+                        editable:true,
+                        subHeader:true,
+                        rowNumber:5
+                    },
+                    jewellery:{
+                        particulars : "- Jewellery",
+                        sysCode:4005,
+                        rowNumber:6
+                    },
+                    artisticWork:{
+                        particulars : "- Artistic Work",
+                        sysCode:4006,
+                        rowNumber:7
+                    },
+                    sharesAndSecurities:{
+                        particulars : "-Shares & Securities",
+                        sysCode:4007,
+                        rowNumber:8
+                    },
+                    otherTangibleAssets:{
+                        particulars : "- Other Tangible Assets",
+                        sysCode:4008,
+                        rowNumber:9
+                    },
+                    intangibleAssets:{
+                        particulars : "Intangible Assets",
+                        sysCode:4009,
+                        rowNumber:10
+                    },
+                    rightOfUseAssets:{
+                        particulars : "Right of use assets",
+                        sysCode:4010,
+                        rowNumber:11
+                    },
+                    invstment:{
+                        particulars : "Investments",
+                        sysCode:4011,
+                        rowNumber:12
+                    },
+                    invstmntInShareAndSecurities:{
+                        particulars : "- Investments in Share & Securities",
+                        sysCode:4012,
+                        rowNumber:13                        
+                    },
+                    othrInvstmnt:{
+                        particulars : "- Other Investments",
+                        sysCode:4013,
+                        rowNumber:14                        
+                    },
+                    financialAssets:{
+                        particulars : "Financial Assets",
+                        sysCode:4014,
+                        rowNumber:16
+                    },
+                    incmetxAsstNet:{
+                        particulars : "Income Tax Assets (Net)",
+                        sysCode:4015,
+                        rowNumber:17
+                    },
+                    advnceTx:{
+                        particulars : "- Advance Tax",
+                        sysCode:4016,
+                        rowNumber:18
+                    },
+                    incmeTaxRefnd:{
+                        particulars : "- Income Tax Refund",
+                        sysCode:4017,
+                        rowNumber:19
+                    },
+                    deffrdTxAsstNet:{
+                        particulars : "Deferred Tax Assets (Net)",
+                        sysCode:4018,
+                        rowNumber:20
+                    },
+                    othrNonCrrntAsst:{
+                        particulars : "Other non-current assets",
+                        sysCode:4019,
+                        rowNumber:21
+                    }
+                }
+            },
+            currentAssetRow:{
+                particulars : "Current Assets",
+                sysCode:4020,
+                rowNumber:23,
+                innerCrrntAsset:{
+                    financialAsst:{
+                        particulars : "Financial Assets ",
+                        sysCode:4021,
+                        rowNumber:24
+                    },
+                    crntInvstmnt:{
+                        particulars : "Current Investments",
+                        sysCode:4022,
+                        rowNumber:25                        
+                    },
+                    invsmntInShrsAndSecrities:{
+                        particulars : "- Investments in Share & Securities ",
+                        sysCode:4023,
+                        rowNumber:26
+                    },
+                    othrInvstmnt:{
+                        particulars : "- Other Investments ",
+                        sysCode:4024,
+                        rowNumber:27
+                    },
+                    trdeRcvbles:{
+                        particulars : "Trade Receivables",
+                        sysCode:4025,
+                        rowNumber:28
+                    },
+                    cashNcashEqvlnt:{
+                        particulars : "Cash & Cash Equivalents",
+                        sysCode:4026,
+                        rowNumber:29
+                    },
+                    bnkBlncesOthrThnAbve:{
+                        particulars : "Bank balances other than above",
+                        sysCode:4027,
+                        rowNumber:30
+                    },
+                    loans:{
+                        particulars : "Loans",
+                        sysCode:4028,
+                        rowNumber:31              
+                    },
+                    othrFncialAsst:{
+                        particulars : "Other Financial assets",
+                        sysCode:4029,
+                        rowNumber:32
+                    },
+                    unblledWrkInPrgss:{
+                        particulars : "Unbilled work in progress (contract assets)",
+                        sysCode:4030,
+                        rowNumber:33              
+                    },
+                    othrCrrntAsset:{
+                        particulars : "Other Current Assets",
+                        sysCode:4031,
+                        rowNumber:34
+                    },
+                    tdsRecvbles:{
+                        particulars : "- TDS Receivable",
+                        sysCode:4032,
+                        rowNumber:35              
+                    },
+                    advnceTxPaid:{
+                        particulars : "- Advance Tax Paid",
+                        sysCode:4033,
+                        rowNumber:36              
+                    },
+                    prlmnryExpnse:{
+                        particulars : "- Preliminary Expenses",
+                        sysCode:4034,
+                        rowNumber:37               
+                    },
+                    prOprtveExpnse:{
+                        particulars : "- Pre-operative Expenses",
+                        sysCode:4035,
+                        rowNumber:38              
+                    },
+                    othrMisclneousExpnse:{
+                        particulars : "- Other Miscellaneous Expenses",
+                        sysCode:4036,
+                        rowNumber:39              
+                    },
+                }             
+            },
+            totalAsset:{
+                particulars : "Total Assets",
+                sysCode:4037,
+                rowNumber:41,
+                dependent:[4004,4005,4006,4007,4008,4009,4010,4011,4012,4013,4014,4015,4016,4017,4018,4019,4021,4022,4023,4024,4025,4026,4027,4028,4029,4030,4031,4032,4033,4034,4035,4036],
+                formula:'currentOne5+currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne24+currentOne25+currentOne26+currentOne27+currentOne28+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37+currentOne38+currentOne39',
+            }
+        }
+    },
+    equityAndLiabilities:{
+        particulars : "Equity & Liabilities",
+        sysCode:4038,
+        rowNumber:43,
+        innerEquityAndLiability:{
+            equityRow:{
+                particulars : "Equity",
+                sysCode:4039,
+                rowNumber:44,
+                innerEquityRow:{
+                    shareCapital: {
+                          particulars : "Share Capital",
+                          sysCode:4040,
+                          rowNumber:45
+                    },
+                    rsrveAndSrplus: {
+                        particulars : "Reserve & Surplus",
+                        sysCode:4041,
+                        rowNumber:46
+                    },
+                    amntSetAprtForPymntOfDvdnds:{
+                        particulars : "Amount Set Apart for payment of Dividends",
+                        sysCode:4042,
+                        rowNumber:47
+                    }
+                }
+            },
+            liabilitiesRow:{
+                nonCurrentLiabilitiesRow:{
+                    particulars : "Non-Current Liabilities",
+                    sysCode:4043,
+                    rowNumber:49,
+                    innerNonCrrntLiabilitiesRow:{
+                        financialLiability:{
+                              particulars : "Financial Liabilities",
+                              sysCode:4044,
+                              rowNumber:50
+                        },
+                        brrwing: {
+                            particulars : "- Borrowings",
+                            sysCode:4045,
+                            rowNumber:51
+                        },
+                        leaseLiability:{
+                            particulars : "- Lease Liabilities",
+                            sysCode:4046,
+                            rowNumber:52
+                        },
+                        prvsion:{
+                            particulars : "Provisions",
+                            sysCode:4047,
+                            rowNumber:53
+                        },
+                        prvsionForTxation:{
+                            particulars : "- Provision for Taxation",
+                            sysCode:4048,
+                            rowNumber:54
+                        },
+                        othrPrvsion:{
+                            particulars : "- Other Provisions",
+                            sysCode:4049,
+                            rowNumber:55
+                        },
+                        dfredTxLiabilityNet:{
+                            particulars : "Deferred Tax Liabilites (net)",
+                            sysCode:4050,
+                            rowNumber:56
+                        },
+                        othrNonCrrntLiability:{
+                            particulars : "Other non-current liabilities",
+                            sysCode:4051,
+                            rowNumber:57
+                        },
+                    }       
+                },
+                currentLiabilitiesRow:{
+                    particulars : "Current Liabilities",
+                    sysCode:4052,
+                    rowNumber:59,
+                    innerCrrntLiabilitiesRow:{
+                        financialLiability:{
+                              particulars : "Financial Liabilities ",
+                              sysCode:4053,
+                              rowNumber:60
+                        },
+                        brrwing:{
+                            particulars : "- Borrowings ",
+                            sysCode:4054,
+                            rowNumber:61
+                        },
+                        leaseLiability:{
+                            particulars : "- Lease Liabilities ",
+                            sysCode:4055,
+                            rowNumber:62
+                        },
+                        tradePyble:{
+                            particulars : "- Trade Payables",
+                            sysCode:4056,
+                            rowNumber:63
+                        },
+                        othrFncialLiability:{
+                            particulars : "- Other financial liabilities",
+                            sysCode:4057,
+                            rowNumber:64
+                        },
+                        provsions:{
+                            particulars : "Provisions ",
+                            sysCode:4058,
+                            rowNumber:65
+                        },
+                        crntTxLiability:{
+                            particulars : "Current Tax liabilities",
+                            sysCode:4059,
+                            rowNumber:66
+                        },
+                        othrCrntLiability:{
+                            particulars : "Other Current liabilities",
+                            sysCode:4060,
+                            rowNumber:67
+                        }
+                    }
+                }
+            },
+            totalEquityAndLiabilityRow:{
+                particulars : "Total Equity & Liabilities",
+                sysCode:4061,
+                rowNumber:69,
+                dependent:[4040,4041,4042,4044,4045,4046,4047,4048,4049,4050,4051,4053,4054,4055,4056,4057,4058,4059,4060],
+                formula:'currentOne45+currentOne46+currentOne47+currentOne50+currentOne51+currentOne52+currentOne53+currentOne54+currentOne55+currentOne56+currentOne57+currentOne60+currentOne61+currentOne62+currentOne63+currentOne64+currentOne65+currentOne66+currentOne67'
+            }
+        }
+    }
+}
