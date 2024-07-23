@@ -34,15 +34,41 @@ import { SensitivityAnalysisModule } from './sensitivity-analysis/sensitivity-an
 require('dotenv').config();
 
 @Module({
-  imports: [UsersModule,MastersModule,
-    ValuationProcessModule,ExportResultsModule,
-    AuthenticationModule,IndustryModule,LoggerModule,MongooseModule.forRoot(process.env.DBCONN),
-    ConfigModule.forRoot(),
+  imports: [
+    UsersModule,
+    MastersModule,
+    ValuationProcessModule,
+    ExportResultsModule,
+    AuthenticationModule,
+    IndustryModule,
+    LoggerModule,
     DataReferencesModule,
-    CalculationModule,ReportModule,ProcessStatusManagerModule,ElevenUaModule,CiqSpModule,UtilsModule, CiqElasticSearchModule, ContactSalesModule, FuseSearchModule, EmailModule,
-    ExcelArchiveModule,SensitivityAnalysisModule],
-  controllers: [AppController,UploadController,ExportTemplateController], //ImportController
-  providers: [AppService,ExcelSheetService, thirdpartyApiAggregateService, KeyCloakAuthGuard],//ImportService
+    CalculationModule,
+    ReportModule,
+    ProcessStatusManagerModule,
+    ElevenUaModule,
+    CiqSpModule,
+    UtilsModule,
+    CiqElasticSearchModule,
+    ContactSalesModule,
+    FuseSearchModule,
+    EmailModule,
+    ExcelArchiveModule,
+    SensitivityAnalysisModule,
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.DBCONN),
+  ],
+  controllers: [
+    AppController,
+    UploadController,
+    ExportTemplateController
+  ], //ImportController
+  providers: [
+    AppService,
+    ExcelSheetService,
+    thirdpartyApiAggregateService,
+    KeyCloakAuthGuard
+  ],//ImportService
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

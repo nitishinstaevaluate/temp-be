@@ -806,11 +806,10 @@ export class FCFEAndFCFFService {
               addInterestAdjTaxes = await this.recalculateInterestAdjustedTaxes(counter, keysToProcess, profitLossComputed, aggregatePayload?.inputs?.taxRate, true);
             }
             else if(counter !== yearLength){
-              pat  = await this.recalculatePat(counter, keysToProcess, profitLossComputed);
-              depAndAmortisation = await this.recalculateDepnAndAmortisation(counter, keysToProcess,  profitLossComputed);
-              otherNonCashItems = await this.recalculateOtherNonCashItems(counter, keysToProcess, profitLossComputed);
-              addInterestAdjTaxes = await this.recalculateInterestAdjustedTaxes(counter, keysToProcess, profitLossComputed, aggregatePayload?.inputs?.taxRate);
-
+              pat  = await this.recalculatePat(counter+1, keysToProcess, profitLossComputed);
+              depAndAmortisation = await this.recalculateDepnAndAmortisation(counter+1, keysToProcess,  profitLossComputed);
+              otherNonCashItems = await this.recalculateOtherNonCashItems(counter+1, keysToProcess, profitLossComputed);
+              addInterestAdjTaxes = await this.recalculateInterestAdjustedTaxes(counter+1, keysToProcess, profitLossComputed, aggregatePayload?.inputs?.taxRate);
             }
 
             if(counter !== yearLength){
@@ -819,7 +818,7 @@ export class FCFEAndFCFFService {
             
             deferredTaxAssets = await v2DeferredTaxAssets(keysToProcess[counter], balanceSheetComputed, keysToProcess);
             
-            changeInFixedAssets =  await v2changeInFixedAsset(keysToProcess[counter], balanceSheetComputed, profitLossComputed, keysToProcess);  //Since formula for changeInFixedAssets =  -(closing value - opening value + depnAndAmortisation) - As per discussions with sonal  02-03-2024
+            changeInFixedAssets =  - (await v2changeInFixedAsset(keysToProcess[counter], balanceSheetComputed, profitLossComputed, keysToProcess) + depAndAmortisation);  //Since formula for changeInFixedAssets =  -(closing value - opening value + depnAndAmortisation) - As per discussions with sonal  02-03-2024
 
             debtAsOnDate = await v2GetDebtAsOnDate(keysToProcess[counter], balanceSheetComputed);
 

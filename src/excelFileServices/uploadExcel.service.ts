@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, CASH_FLOW, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -27,6 +27,7 @@ import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 import { userRoles } from 'src/library/enums/user-roles.enum';
+import BTree from 'sorted-btree';
 require('dotenv').config();
 
 @Injectable()
@@ -3738,12 +3739,18 @@ async assessmentCalculations(payload, processStateId, provDate){
   try{
     const excelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
     const balanceSheetRowCount = excelArchive?.balanceSheetRowCount || 0;
-    let balanceSheetExcelArchive = {};
+
+    /**
+     * The BTree package import is little wonky
+     * Note: [ Instead of SortedMap instance, use BTree instance ]
+     */
+    const balanceSheetExcelBtree = new BTree();
+
     if(balanceSheetRowCount){
       const balanceSheetData:any = excelArchive.balanceSheetdata;
       for await (const indBSArchive of balanceSheetData){
         const {lineEntry, ...rest} = indBSArchive;
-        balanceSheetExcelArchive[indBSArchive.lineEntry.particulars] = rest;
+        balanceSheetExcelBtree.set(indBSArchive.lineEntry.particulars, rest);
       } 
     }
 
@@ -3772,13 +3779,13 @@ async assessmentCalculations(payload, processStateId, provDate){
        if(indexing !== 0 && indexing !== 9){
         if(indexing !== 21){
           for await (const key of keysToProcess){
-            indStructure[key] = await assessmentOfWCformulas(balanceSheetExcelArchive, indStructure.Particulars, key, payload, keysToProcess);
+            indStructure[key] = await assessmentOfWCformulas(balanceSheetExcelBtree, indStructure.Particulars, key, payload, keysToProcess);
           }
         }
         else{
           for await (const key of keysToProcess){
             if(keysToProcess[keysToProcess.indexOf(key)+1]){
-              indStructure[keysToProcess[keysToProcess.indexOf(key)+1]] = await assessmentOfWCformulas( balanceSheetExcelArchive, indStructure.Particulars, keysToProcess[keysToProcess.indexOf(key)+1], payload, keysToProcess);
+              indStructure[keysToProcess[keysToProcess.indexOf(key)+1]] = await assessmentOfWCformulas(balanceSheetExcelBtree, indStructure.Particulars, keysToProcess[keysToProcess.indexOf(key)+1], payload, keysToProcess);
             }
           }
         }
@@ -3797,26 +3804,30 @@ async cashFlowCalculations(payload, processStateId, provDate){
     const excelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
     const profitLossSheetRowCount = excelArchive?.profitLossSheetRowCount || 0;
     const balanceSheetRowCount = excelArchive?.balanceSheetRowCount || 0;
-    let profitLossExcelArchive = {}, balanceSheetExcelArchive = {};
+
+    /**
+     * The BTree package import is little wonky
+     * Note: [ Instead of SortedMap instance, use BTree instance ]
+     */
+    const sortedProfitLossBtree = new BTree();
+    const sortedBalanceSheetBtree = new BTree();
+
     if(profitLossSheetRowCount && balanceSheetRowCount){
       const profitLossData:any = excelArchive.profitLossSheetdata;
       const balanceSheetData:any = excelArchive.balanceSheetdata;
+
       for await (const indPLArchive of profitLossData){
-            const {lineEntry, 'Sr no.': srNo, ...rest} = indPLArchive; 
-            profitLossExcelArchive[indPLArchive.lineEntry.particulars] = rest;
-          }
-          for await (const indBSArchive of balanceSheetData){
+        const {lineEntry, 'Sr no.': srNo, ...rest} = indPLArchive; 
+        sortedProfitLossBtree.set(indPLArchive.lineEntry.particulars, rest )
+      }
+      for await (const indBSArchive of balanceSheetData){
         const {lineEntry, ...rest} = indBSArchive; 
-            balanceSheetExcelArchive[indBSArchive.lineEntry.particulars] = rest;
+        sortedBalanceSheetBtree.set(indBSArchive.lineEntry.particulars, rest);
       }
     }
-    
-    let indexing = 0;
-    for await(const indStructure of payload){
-      let keysToProcess = Object.keys(indStructure).filter(key => key !== 'Particulars' && key !== 'Sr No');
-
-      /**
-       * [Outer IF condition] 
+    //#region INFO 
+     /**
+       * [Outer IF condition] -- outerIgnoredIndexes
        * Index 0 = Operating Cash Flow:
        * Index 2 = Adjustments for:
        * Index 8 = Working capital changes:
@@ -3825,7 +3836,7 @@ async cashFlowCalculations(payload, processStateId, provDate){
        * Used for ignoring headers, 
        * Since we dont do any calculations for header rows
        * 
-       * [Inner IF condition]
+       * [Inner IF condition] -- innerHandledIndexes
        * Index 9 = (Increase) / Decrease in trade and other receivables
        * Index 10 = (Increase) / Decrease in inventories
        * Index 11 = (Increase) / Decrease in Other Current Assets
@@ -3842,31 +3853,47 @@ async cashFlowCalculations(payload, processStateId, provDate){
        * Index 30 = Proceeds/Repayment from long-term borrowings
        * Index 31 = Proceeds/Repayment Short-term borrowings
        * Index 32 = Proceeds / (repayment) of lease liability, net
-       * Index 36 = Cash and cash equivalents at beginning of period
+       * Index 33 = Share Application money pending
+       * Index 37 = Cash and cash equivalents at beginning of period
        * We want to handle special cases where
        * need to ignore provisional date/year column and begin with next column
        */
-      if(indexing !== 0 && indexing !== 2 && indexing !== 8  && indexing !== 22  && indexing !== 28){
+      //#endregion INFO
+    let indexing = 0;
+    const outerIgnoredIndexes = new Set(CASHFLOW_HEADER_LINE_ITEM);
+    const innerHandledIndexes = new Set(CASHFLOW_LINE_ITEMS_SKIP);
 
-        if(indexing !== 9 && indexing !== 10 && indexing !== 11 && 
-          indexing !== 12 && indexing !== 13 && indexing !== 14 && 
-          indexing !== 15 && indexing !== 16 && indexing !== 17 && 
-          indexing !== 18 && indexing !== 23 && indexing !== 26 &&
-          indexing !== 29 && indexing !== 30 && indexing !== 31 &&
-          indexing !== 32 && indexing !== 36){
-          for await (const key of keysToProcess){
-            indStructure[key] = await cashFlowFormulas(profitLossExcelArchive, balanceSheetExcelArchive, indStructure.Particulars, key, payload, keysToProcess);
-          }
-        }
-        else{
-          for await (const key of keysToProcess){
-            if(keysToProcess[keysToProcess.indexOf(key)+1]){
-              indStructure[keysToProcess[keysToProcess.indexOf(key)+1]] = await cashFlowFormulas(profitLossExcelArchive, balanceSheetExcelArchive, indStructure.Particulars, keysToProcess[keysToProcess.indexOf(key)+1], payload, keysToProcess);
-            }
+    for await (const indStructure of payload) {
+      const keysToProcess = Object.keys(indStructure).filter(key => key !== 'Particulars' && key !== 'Sr No');
+
+      if (!outerIgnoredIndexes.has(indStructure.Particulars)) {
+        for await (const key of keysToProcess) {
+          const i = keysToProcess.indexOf(key);
+          
+          if (!innerHandledIndexes.has(indStructure.Particulars)) {
+            indStructure[key] = await cashFlowFormulas(
+              sortedProfitLossBtree,
+              sortedBalanceSheetBtree,
+              indStructure.Particulars,
+              key,
+              payload,
+              keysToProcess
+            );
+          } else {
+            const nextKey = keysToProcess[i + 1];
+            if(!nextKey) continue;
+            indStructure[nextKey] = await cashFlowFormulas(
+              sortedProfitLossBtree,
+              sortedBalanceSheetBtree,
+              indStructure.Particulars,
+              nextKey,
+              payload,
+              keysToProcess
+            );
           }
         }
       }
-      indexing++
+      indexing++;
     }
     const sort = sortArrayOfObjects(payload, provDate)
     return sort;

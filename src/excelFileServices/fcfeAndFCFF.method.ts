@@ -77,7 +77,7 @@ export async function v2otherNonOperatingAssetsComputation(subkey, profitLossDat
   const otherNonOperatingIncome = profitLossData[V2_PL_RAW_LINE_ITEMS.othrNonOperatingIncomeRow.particulars][subkey];
   const otherNonOperatingExpense = profitLossData[V2_PL_RAW_LINE_ITEMS.expensesRow.innerExpnseRow.othrNonOpertingExpnseRow.particulars][subkey];
 
-  return convertToNumberOrZero(otherNonOperatingIncome) + convertToNumberOrZero(otherNonOperatingExpense);
+  return (-convertToNumberOrZero(otherNonOperatingIncome) + convertToNumberOrZero(otherNonOperatingExpense));
 }
 
 export async function ChangeInNCA(i: number, worksheet2: any,worksheet3:any) {
@@ -424,15 +424,8 @@ export async function v2changeInFixedAsset(subkey, balanceSheetData, profitLossD
 
   const nextTotal = convertToNumberOrZero(nextMovableProp) + convertToNumberOrZero(nextImmovableProp) + convertToNumberOrZero(nextCapitalWorkInPrgrs) + 
   convertToNumberOrZero(nextOthrTangibleAsset) + convertToNumberOrZero(nextIntangibleAssetDevelopment) + convertToNumberOrZero(nextBiologicalAsset);
-  /**
-   * Profit loss depn and amortisation extraction
-   * */
-
-  const crntlessDpntAndAmortsn = convertToNumberOrZero(profitLossData[V2_PL_RAW_LINE_ITEMS.earningsBfrEBITDArow.innerEarningsBefreEBITDArow.lessDepcrtionAndAmorstionExpnseRow.particulars][nextKey]);
   
-  return -(nextTotal + crntlessDpntAndAmortsn - crntTotal); 
-
-
+  return nextTotal - crntTotal;
 }
 
 // Old function

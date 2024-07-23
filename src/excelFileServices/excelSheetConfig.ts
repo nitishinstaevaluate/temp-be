@@ -1149,3 +1149,208 @@ export const RULE_ELEVEN_UA_RAW_LINE_ITEMS = {
         }
     }
 }
+
+export const CASH_FLOW_RAW_LINE_ITEMS = {
+    operatingCashFlow:{
+        particulars : "Operating Cash Flow:",
+        sysCode:7001,
+        rowNumber:2,
+        romanIndex:'I'
+    },
+    proftBefreIntrsTxAndExptionalItm: {
+        particulars : "Profit before Interest tax and exceptional items",
+        sysCode:7002,
+        rowNumber:3,
+    },
+    adjFor:{
+        particulars : "Adjustments for:",
+        sysCode:7003,
+        rowNumber:4,
+    },
+    depAndAmortstn:{
+        particulars : "Depreciation & Amortization",
+        sysCode:7004,
+        rowNumber:5,
+    },
+    invstmntIncme: {
+        particulars : "Investment income",
+        sysCode:7005,
+        rowNumber:6,
+    },
+    financeCst:{
+        particulars : "Finance cost",
+        sysCode:7006,
+        rowNumber:7,
+    },
+    prftLssOnSleOfPrptyPlntEqpmnt:{
+        particulars : "Profit / (Loss) on the sale of property, plant & equipment",
+        sysCode:7007,
+        rowNumber:8,
+    },
+    prftLssOnSleOfIntngbleAsset:{
+        particulars : "Profit / (Loss) on the sale of intangible assets",
+        sysCode:7008,
+        rowNumber:9,
+    },
+    wrkingCptalChnges:{
+        particulars : "Working capital changes:",
+        sysCode:7009,
+        header:true,
+        rowNumber:10,
+    },
+    incrseDecrseInTrdeAndOthrRecvbles:{
+        particulars : "(Increase) / Decrease in trade and other receivables",
+        sysCode:7010,
+        rowNumber:11,
+    },
+    incrseDecrseInInvntories:{
+        particulars : "(Increase) / Decrease in inventories",
+        sysCode:7011,
+        rowNumber:12,
+    },
+    incrseDecrseInOthrCrntAsst:{
+        particulars : "(Increase) / Decrease in Other Current Assets",
+        sysCode:7012,
+        rowNumber:13,
+    },
+    incrseDecrseInLoansAndAdvnces:{
+        particulars : "(Increase) / Decrease in Loans & Advances",
+        sysCode:7013,
+        rowNumber:14,
+    },
+    incrseDecrseInTxAsst:{
+        particulars : "(Increase) / Decrease in Tax Assets",
+        sysCode:7014,
+        rowNumber:15,
+    },
+    incrseDecrseInTrdePyble:{
+        particulars : "Increase / (Decrease) in trade payables",
+        sysCode:7015,
+        rowNumber:16,
+    },
+    incrseDecrseInOthrPyble:{
+        particulars : "Increase / (Decrease) in  other payables",
+        sysCode:7016,
+        rowNumber:17,
+    },
+    incrseDecrseInPrvsionAndOthrCrrntLiabilities:{
+        particulars : "Increase / (Decrease) in provisions and other current Liabilities",
+        sysCode:7017,
+        rowNumber:18,
+    },
+    incrseDecrseInNonCrrntLiabilities:{
+        particulars : "Increase / (Decrease) in Non-Current Liabilities",
+        sysCode:7018,
+        rowNumber:19,
+    },
+    incrseDecrseInTxLiabilities:{
+        particulars : "Increase / (Decrease) in Tax Liabilities",
+        sysCode:7019,
+        rowNumber:20,
+    },
+    effctOfForegnExchnge:{
+        particulars : "Effect of foreign exchange",
+        sysCode:7020,
+        rowNumber:21,
+    },
+    incmeTxPd:{
+        particulars : "Income taxes paid",
+        sysCode:7021,
+        rowNumber:22,
+    },
+    ntCshFrmOprtingActvties:{
+        particulars : "Net cash from operating activities",
+        sysCode:7022,
+        rowNumber:23,
+    },
+    cshFlowFrmInvstingActvties:{
+        particulars : "Cash flows from investing activities",
+        sysCode:7023,
+        rowNumber:25,
+        romanIndex:'II'
+    },
+    prchseSleOfPrptyPlntEqpmnt:{
+        particulars : "Purchase/Sale  of property, plant and equipment",
+        sysCode:7024,
+        rowNumber:26,
+    },
+    prcdFrmSleOfEqpmnt:{
+        particulars : "Proceeds from sale of equipment",
+        sysCode:7025,
+        rowNumber:27,
+    },
+    prcdFrmSleOfIntngble:{
+        particulars : "Proceeds from sale of intangibles",
+        sysCode:7026,
+        rowNumber:28,
+    },
+    acqstionOfInvstmnt:{
+        particulars : "Acquisition of investments",
+        sysCode:7027,
+        rowNumber:29,
+    },
+    ntCshUsdInInvstingActvties:{
+        particulars : "Net cash used in investing activities",
+        sysCode:7028,
+        rowNumber:30,
+    },
+    cshFlwFrmFinancingActvties:{
+        particulars : "Cash flows from financing activities",
+        sysCode:7029,
+        rowNumber:32,
+        romanIndex:'III'
+    },
+    prcdFrmIssueOfShreOfCptal:{
+        particulars : "Proceed from issue of share capital",
+        sysCode:7030,
+        rowNumber:33,
+    },
+    prcdFrmIssueOfPrfrnceShreCptl:{
+        particulars : "Proceed from issue of preference share capital",
+        sysCode:7031,
+        rowNumber:34,
+    },
+    prcdRepymntFrmLngTrmBrrwing:{
+        particulars : "Proceeds/Repayment from long-term borrowings",
+        sysCode:7032,
+        rowNumber:35,
+    },
+    prcRepymntFrmShrtTrmBrrwing:{
+        particulars : "Proceeds/Repayment Short-term borrowings",
+        sysCode:7033,
+        rowNumber:36,
+    },
+    prcdRepymntOfLseLiabilityNt:{
+        particulars : "Proceeds / (repayment) of lease liability, net",
+        sysCode:7034,
+        rowNumber:37,
+    },
+    financeCostv2:{
+        particulars : "Finance cost ",
+        sysCode:7035,
+        rowNumber:38,
+    },
+    ntCshUsdInFncingActvties:{
+        particulars : "Net cash used in financing activities",
+        sysCode:7036,
+        rowNumber:39,
+    },
+    ntIncrseInCshAndCshEqvlnt:{
+        particulars : "Net increase in cash and cash equivalents (I+II+III)",
+        sysCode:7037,
+        rowNumber:41,
+        romanIndex:'IV'
+    },
+    cshAndCshEqvlntAtBggningOfPrd:{
+        particulars : "Cash and cash equivalents at beginning of period",
+        sysCode:7038,
+        rowNumber:43,
+        romanIndex:'V'
+    },
+    cshAndCshEqvlntAtBggningOfPrdIVV:{
+        particulars : "Cash and cash equivalents at end of period (IV+V)",
+        sysCode:7039,
+        rowNumber:45,
+        romanIndex:'VI'
+    },
+}
