@@ -87,7 +87,7 @@ export class ReportService {
           if(MB01){
             htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);
           }
-          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
+          else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[2]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
             htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
           }
 
@@ -212,7 +212,7 @@ export class ReportService {
     if(MB01){
       htmlFilePath = path.join(process.cwd(), 'html-template', `multi-model-report.html`);
     }
-    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
+    else if(reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[0]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[2]) || reportDetails.reportPurpose.includes(Object.keys(REPORT_PURPOSE)[4])){
       htmlFilePath = path.join(process.cwd(), 'html-template', `${approach === METHODS_AND_APPROACHES[0] ? 'basic-report' : (approach === METHODS_AND_APPROACHES[3] || approach === METHODS_AND_APPROACHES[4]) ? 'comparable-companies-report' : approach === METHODS_AND_APPROACHES[2]? 'multi-model-report':''}.html`);
     }
 
