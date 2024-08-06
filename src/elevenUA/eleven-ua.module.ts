@@ -26,6 +26,7 @@ import { ReportModule } from 'src/report/report.module';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
 import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
+import { CalculationModule } from 'src/calculation/calculation.module';
 
 @Module({
   providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService, SensitivityAnalysisService],
@@ -42,6 +43,7 @@ import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensi
   UsersModule,
   ValuationProcessModule,
   ProcessStatusManagerModule,
+  CalculationModule,
   forwardRef(() => ReportModule),
   JwtModule.register({
     secret: process.env.JWT_SECRET,
