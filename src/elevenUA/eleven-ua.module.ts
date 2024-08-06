@@ -28,6 +28,7 @@ import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sen
 import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
+import { CalculationModule } from 'src/calculation/calculation.module';
 
 @Module({
   providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService, SensitivityAnalysisService, ExcelArchiveService],
@@ -45,6 +46,7 @@ import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schem
   UsersModule,
   ValuationProcessModule,
   ProcessStatusManagerModule,
+  CalculationModule,
   forwardRef(() => ReportModule),
   JwtModule.register({
     secret: process.env.JWT_SECRET,

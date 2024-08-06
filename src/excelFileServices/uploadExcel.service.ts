@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -28,6 +28,7 @@ import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.ser
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 import { userRoles } from 'src/library/enums/user-roles.enum';
 import BTree from 'sorted-btree';
+import { CalculationService } from 'src/calculation/calculation.service';
 require('dotenv').config();
 
 @Injectable()
@@ -45,7 +46,8 @@ export class ExcelSheetService {
     private readonly elevenUaService: ElevenUaService,
     private readonly terminalValueWorkingService: terminalValueWorkingService,
     private readonly excelArchiveService: ExcelArchiveService,
-    private readonly authTokenService:authenticationTokenService){}
+    private readonly authTokenService:authenticationTokenService,
+    private readonly calculationService: CalculationService){}
     getSheetData(fileName: string, sheetName: string, request, processStateId): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
@@ -847,7 +849,7 @@ export class ExcelSheetService {
 
       async generateValuation(id,model,specificity,res, processId, terminalValueType, formatType, request) {
         try {
-          const valuationResult = await this.valuationService.getValuationById(id);
+          const valuationResult:any = await this.valuationService.getValuationById(id);
           const transposedData = [];
           const modifiedDataSet = [];
           let htmlFilePath,pdfFilePath;
@@ -876,7 +878,7 @@ export class ExcelSheetService {
           } 
           else {
              htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
-             pdfFilePath = path.join(process.cwd(), 'pdf', `Ifinworth Valuation-${dateStamp}.pdf`);
+             pdfFilePath = path.join(process.cwd(), 'pdf', `PAVIN-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
               if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
@@ -884,7 +886,17 @@ export class ExcelSheetService {
             }
           }
 
-          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles);
+          let getCapitalStructure;
+          if(valuationResult.inputData[0].model.includes(MODEL[1])){
+            const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
+             getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(
+              +valuationResult.inputData[0].adjustedCostOfEquity,
+              valuationResult.inputData[0].excelSheetId,+valuationResult.inputData[0].costOfDebt,
+              +valuationResult.inputData[0].copShareCapital,+valuationResult.inputData[0].capitalStructure.deRatio,
+              valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
+              );
+          }
+          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure);
         
           if (valuationResult.modelResults.length > 0) {
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -895,7 +907,7 @@ export class ExcelSheetService {
               case 'PDF':
                 const pdf = await this.generatePdf(html, pdfFilePath, roles);
                 res.setHeader('Content-Type', 'application/pdf');
-                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.pdf"`);
+                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'PAVIN' }-${dateStamp}.pdf"`);
                 res.send(pdf);
                 break;
               case 'DOCX':
@@ -905,7 +917,7 @@ export class ExcelSheetService {
                 let wordBuffer = fs.readFileSync(wordFilePath);
                 
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.docx"`);
+                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'PAVIN' }-${dateStamp}.docx"`);
 
                 res.send(wordBuffer);
                 break;
@@ -916,7 +928,7 @@ export class ExcelSheetService {
                 let excelBuffer = fs.readFileSync(excelFilePath);
                 
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'Ifinworth Valuation' }-${dateStamp}.xlsx"`);
+                res.setHeader('Content-Disposition', `attachment; filename="${model !== 'null' ? model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Comparable Companies': model : 'PAVIN' }-${dateStamp}.xlsx"`);
 
                 res.send(excelBuffer);
                 break;
@@ -1026,6 +1038,7 @@ export class ExcelSheetService {
             path: pdfFilePath,
             format: 'A4' as puppeteer.PaperFormat, // Cast 'A4' to PaperFormat
             displayHeaderFooter: true,
+            printBackground: true,
             footerTemplate: MB01 ? 
             `<table style="margin: 20px; width: 100%;">
             <tr>
@@ -1049,7 +1062,7 @@ export class ExcelSheetService {
                   <tr>
                     <td style="width: 15%;">&nbsp;</td>
                     <td style="width: 70%; text-align: center;">
-                      <span style="font-size: 10px;">Ifinworth | Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+                      <span style="font-size: 10px;">PAVIN | Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
                     </td>
                     <td style="width: 15%; font-size: 10px;">V1/ March / 2024</td>
                   </tr>
@@ -1079,7 +1092,7 @@ export class ExcelSheetService {
           
             <table border="0" cellspacing="0" cellpadding="0" style="height: 20px;width:100% !important;padding-left:2%;">
               <tr>
-                <td style="border-bottom: solid 2px #03002f !important; font-size: 13px; height: 5px;width:100% !important;">Ifinworth Advisors Private Ltd.</td>
+                <td style="border-bottom: solid 2px #03002f !important; font-size: 13px; height: 5px;width:100% !important;">Pavin Valtech Private Ltd.</td>
               </tr>
 
               <tr>
@@ -1139,7 +1152,7 @@ export class ExcelSheetService {
       
       }
 
-      async loadHelpers(transposedData,valuationResult, terminalType, roles){
+      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure){
         hbs.registerHelper('ifMB01',()=>{
           if(roles?.length)
               return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
@@ -1188,6 +1201,53 @@ export class ExcelSheetService {
               return valuationResult.inputData[0]?.wacc?.toFixed(2);
           return '0';
         })
+        hbs.registerHelper('costOfDebt',()=>{
+          if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
+              return parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(2);
+          return '0';
+          })
+          hbs.registerHelper('taxRate',()=>{
+            if(valuationResult.inputData[0] ) 
+                return valuationResult.inputData[0]?.taxRate;
+            return '0';
+          })
+  
+          hbs.registerHelper('costOfDebtMultipliedTaxRate',()=>{
+            if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
+                return (convertToNumberOrZero(valuationResult.inputData[0]?.costOfDebt) * convertToNumberOrZero(this.fetchTotalTaxRate(valuationResult))/100).toFixed(2);
+            return '0';
+          })
+        
+          hbs.registerHelper('postCostOfDebt',()=>{
+            if(valuationResult.inputData[0].model.includes(MODEL[1])){
+              return this.calculateCostOfDebt(valuationResult);
+            } 
+            return '0';
+          })
+  
+          hbs.registerHelper('capitalStructureType', ()=>{
+            const capitalStructureType = getCapitalStructure.result.capitalStructure.capitalStructureType;
+            if(capitalStructureType){
+              return CAPITAL_STRUCTURE_TYPE[`${capitalStructureType}`];
+            }
+            return '';
+          })
+  
+          hbs.registerHelper('equityOrDebt', (proportion)=>{
+            return this.computeProportions(valuationResult, proportion, getCapitalStructure);
+           })
+  
+           hbs.registerHelper('calculateWeightedProportion', (basis)=>{
+             const proportion = this.computeProportions(valuationResult, basis, getCapitalStructure);
+             if(basis === 'equity'){
+               const adjCoe = valuationResult.inputData[0].adjustedCostOfEquity?.toFixed(2) || 0;
+               return (convertToNumberOrZero(adjCoe) * convertToNumberOrZero(proportion)/100).toFixed(2);
+             }
+             else{
+               const postCostOfDebt = this.calculateCostOfDebt(valuationResult) || 0;
+               return (convertToNumberOrZero(postCostOfDebt) * convertToNumberOrZero(proportion)/100).toFixed(2)
+             }
+           })
         hbs.registerHelper('modelCheck',(txt,options)=>{
           if (!valuationResult || !valuationResult.modelResults || valuationResult.modelResults.length === 0) {
             return ''; // Return an empty string if there are no results to check
@@ -4029,6 +4089,71 @@ async uploadExcelProcess(formData, processId, modelName, request){
   }
   catch(error){
     throw error;
+  }
+}
+
+calculateCostOfDebt(valuationResult){
+  let costOfDebt:any =  parseFloat(valuationResult.inputData[0]?.costOfDebt)?.toFixed(2) || 0;
+  let taxRate = this.fetchTotalTaxRate(valuationResult);
+  return (((costOfDebt/100)*(1-parseFloat(taxRate)/100))*100).toFixed(2);
+}
+
+fetchTotalTaxRate(valuationResult){
+  return valuationResult.inputData[0]?.taxRate ? 
+    (
+      `${valuationResult.inputData[0]?.taxRate}`.includes('%') ? 
+      valuationResult.inputData[0]?.taxRate.split('%')[0] :
+      valuationResult.inputData[0]?.taxRate
+    ) : 
+    0;
+}
+
+computeProportions(valuationResult, proportion, getCapitalStructure){
+  if(valuationResult.inputData[0].capitalStructureType === 'Industry_Based'){
+    let debtProp, equityProp;
+    if(valuationResult.inputData[0]?.formTwoData?.betaFrom !== BETA_FROM.ASWATHDAMODARAN){
+      const debtRatio = parseFloat(valuationResult.inputData[0].capitalStructure.deRatio) / 100;
+      const totalCapital = 1 + debtRatio;
+      debtProp = debtRatio / totalCapital;
+      equityProp = 1 - debtProp;
+    }
+    else{
+      const deRatio = valuationResult.inputData[0]?.formTwoData?.aswathDamodaranSelectedBetaObj?.deRatio;
+      if(deRatio){
+        const updateDeRatio = `${deRatio}`.includes('%') ? deRatio.split('%')[0] : deRatio;
+        debtProp = (convertToNumberOrZero(updateDeRatio)/100).toFixed(2);
+        equityProp = 1;
+      }else{
+        debtProp = 0;
+        equityProp = 0;
+      }
+    }
+    if(proportion === 'equity'){
+      return convertToNumberOrZero(parseFloat(equityProp) * 100).toFixed(2);
+    }
+    else{
+      return convertToNumberOrZero(parseFloat(debtProp) * 100).toFixed(2);
+    }
+  }
+  else if(valuationResult.inputData[0].capitalStructureType === 'Target_Based'){
+    const debtProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.debtProp)/100).toFixed(2);
+    const equityProp = (convertToNumberOrZero(valuationResult.inputData[0]?.capitalStructure.equityProp)/100)?.toFixed(2);
+    if(proportion === 'equity'){
+      return convertToNumberOrZero(parseFloat(equityProp) * 100).toFixed(2);
+    }
+    else{
+      return convertToNumberOrZero(parseFloat(debtProp) * 100).toFixed(2);
+    }
+  }
+  else{   //This is for company based capital structure --- (needs verification)
+    const debtProp = getCapitalStructure.result.capitalStructure.debtProp;
+    const equityProp = getCapitalStructure.result.capitalStructure.equityProp;
+    if(proportion === 'equity'){
+      return convertToNumberOrZero(parseFloat(equityProp) * 100).toFixed(2);
+    }
+    else{
+      return convertToNumberOrZero(parseFloat(debtProp) * 100).toFixed(2);
+    }
   }
 }
 }
