@@ -224,9 +224,9 @@ export class navReportService {
                 formattedValues = modelName.flatMap((models) => {
                     return valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
-                        const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                        const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
                         const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                        const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                        const valuePerShare = fairValue < faceValue ? faceValue : fairValue;
                         const formattedNumber = formatPositiveAndNegativeValues(valuePerShare);
                         return `${formattedNumber}/-`;
                     }
@@ -253,9 +253,9 @@ export class navReportService {
                  modelName.flatMap((models) => {
                     valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
-                        const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                        const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
                         const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                        if(bookValue < faceValue){
+                        if(fairValue < faceValue){
                             isNegativeValuePerShare = true;
                         }
                     }
@@ -286,9 +286,9 @@ export class navReportService {
                     return valuationResult.modelResults.flatMap((response) => {
                     
                     if (response.model === models && models === 'NAV') {
-                        const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                        const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
                         const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                        const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                        const valuePerShare = fairValue < faceValue ? faceValue : fairValue;
                         let formattedNumber = convertToNumberOrZero(valuePerShare);
                         // if(`${formattedNumber}`.includes('-')){
                         // formattedNumber = Math.floor(10).toLocaleString('en-IN');

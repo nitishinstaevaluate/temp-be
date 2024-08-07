@@ -1083,7 +1083,7 @@ export class ReportService {
             }
             // Calculate weightage for NAV
             if(response.model === MODEL[5] && this.checkModelExist(MODEL[5], modelArray)){
-              let navApproachValuePerShare = response?.valuationData?.valuePerShare?.bookValue || 0;
+              let navApproachValuePerShare = response?.valuationData?.valuePerShare?.fairValue || 0;
               valuePerShare =  this.formatPositiveAndNegativeValues(navApproachValuePerShare);
             }
 
@@ -1116,7 +1116,7 @@ export class ReportService {
                 return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
               }
               if (response.model === models && models === 'NAV') {
-                const formattedNumber = response?.valuationData?.valuePerShare?.bookValue;
+                const formattedNumber = response?.valuationData?.valuePerShare?.fairValue;
                 return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
               }
               return [];
@@ -1169,9 +1169,9 @@ export class ReportService {
              modelName.flatMap((models) => {
                 valuationResult.modelResults.flatMap((response) => {
                 if (response.model === models && models === 'NAV') {
-                    const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                    const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
                     const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                    if(bookValue < faceValue){
+                    if(fairValue < faceValue){
                         isNegativeValuePerShare = true
                     }
                 }
@@ -1216,9 +1216,9 @@ export class ReportService {
                   return `Rupees ${converter.toWords(formattedNumber)} Only`;
                 }
                 if (response.model === models && models === 'NAV') {
-                  const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
+                  const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
                   const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                  const valuePerShare = bookValue < faceValue ? faceValue : bookValue;
+                  const valuePerShare = fairValue < faceValue ? faceValue : fairValue;
                   let formattedNumber = Math.floor(valuePerShare);
                   // if(`${formattedNumber}`.includes('-')){
                   //   formattedNumber = Math.floor(10).toLocaleString('en-IN');
@@ -1277,7 +1277,7 @@ export class ReportService {
           let navApproachEquityValue = 0;
           valuationResult.modelResults.map((response)=>{
             if(response.model === MODEL[5]){
-              navApproachEquityValue = response?.valuationData?.equityValue?.bookValue || 0;
+              navApproachEquityValue = response?.valuationData?.equityValue?.fairValue || 0;
             }
           })
           equityPerShare.push(this.formatPositiveAndNegativeValues(navApproachEquityValue))
