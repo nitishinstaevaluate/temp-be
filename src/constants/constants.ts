@@ -1367,7 +1367,7 @@ export const ASSESSMENT_DATA = [
       "lineEntry": {
         particulars : "Tangible Assets",
         sysCode:4003,
-        editable:true,
+        editable:false,
         rowNumber:4
       }
     },
