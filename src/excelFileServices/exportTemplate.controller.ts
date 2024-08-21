@@ -338,6 +338,10 @@ async addCellAutoFilters(worksheet, projectionYears){
       from: { row: 1, column: worksheet.getColumn(startColumn).number },
       to: { row: 1, column: worksheet.getColumn(endColumn).number }
   };
+
+  worksheet.views = [
+      { state: 'frozen', ySplit: 1 } 
+  ];
 }
 
 getColumnLabel(index) {

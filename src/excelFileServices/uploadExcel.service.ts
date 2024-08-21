@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -3451,7 +3451,6 @@ return {
     }
         const modifiedData = await this.transformData(sheetData);
         const updateStructure = await this.createStructure(modifiedData,sheetName);
-        console.log(updateStructure,"new updated strucuture")
         return updateStructure;
   }
   async  readAndEvaluateExcel(filepath){
@@ -4071,6 +4070,11 @@ async fetchUserInfo(request){
 
 async uploadExcelProcess(formData, processId, modelName, request){
   try{
+    if(modelName === 'containsProfitLossAndBalanceSheet'){
+      const {validationStat, errorStack} = await this.validateExcelTemplate(formData);
+      if(validationStat) throw new NotFoundException(errorStack.join('\n')).getResponse();
+    }
+
     await this.excelArchiveService.removeExcelByProcessId(processId);
     const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
     /**
@@ -4155,5 +4159,165 @@ computeProportions(valuationResult, proportion, getCapitalStructure){
       return convertToNumberOrZero(parseFloat(debtProp) * 100).toFixed(2);
     }
   }
+}
+
+async validateExcelTemplate(formData){
+  const errorSet = [];
+
+  let workbook = xlsx.readFile(path.join(process.cwd(), 'uploads', formData.filename))
+  let validationStat = false;
+  const sheetNames = workbook.SheetNames;
+
+  const boolContainsProfitLossAndBalanceSheet = sheetNames.length && 
+    (
+      sheetNames.includes(EXCEL_CONVENTION.BS.key) || 
+      sheetNames.includes(EXCEL_CONVENTION['P&L'].key)
+    );
+
+    let headLabels = {}, particularsList:any = {};
+  if(boolContainsProfitLossAndBalanceSheet){
+    for await(const indSheet of sheetNames){
+      particularsList[`${indSheet}`] = particularsList[`${indSheet}`] || [];
+      headLabels[`${indSheet}`] = headLabels[`${indSheet}`] || [];
+
+      const { sheetData, maxKeysObject } = this.sanitiseCells(workbook, indSheet);
+      
+      headLabels[indSheet] = Object.keys(maxKeysObject);
+      particularsList[`${indSheet}`] = sheetData.map((_cell:any) => { return {Particulars: _cell.Particulars}});
+    }
+  }
+
+  /**
+   * DUPLICACY VALIDATION
+   * Check for duplicate rows
+   */
+  for(let i = 0; i < sheetNames.length; i++){
+    const seen = new Set();
+
+    for(let j = 0; j < particularsList[sheetNames[i]].length; j++){
+      const row = particularsList[sheetNames[i]][j];
+      if(seen.has(row.Particulars)) errorSet.push(`Duplicate row detected in [${sheetNames[i]}], Row - ${j + 1}: "${row.Particulars}".`);  
+      if(!seen.has(row.Particulars)) seen.add(row.Particulars);
+    }
+  }
+  if (errorSet.length) return {validationStat: true, errorStack: errorSet};
+
+
+  /**
+   * BS LINE ITEMS
+   * Validate by iterating every line item
+   */
+  if(particularsList?.BS?.length){
+    const BSstructure  = V2_BALANCE_SHEET.map(bs=>{ return bs.lineEntry.particulars});
+
+    let index = 1;
+    for await(const indBS of particularsList?.BS){
+      if(BSstructure[index-1] !== indBS.Particulars.trim()){
+        errorSet.push(`Excel: [BS] - Required: "${[...BSstructure][index-1]}" ; Received: "${indBS.Particulars}".`);
+      }
+      index++;
+    }
+  }
+
+  /**
+   * PL LINE ITEMS
+   * Validate by iterating every line item
+   */
+  if(particularsList?.['P&L']?.length){
+    const PLstructure  = V2_PROFIT_LOSS.map(bs=>{ return bs.lineEntry.particulars});
+    
+    let index = 1;
+    for await(const indPL of particularsList['P&L']){
+      if(PLstructure[index - 1] !== indPL.Particulars.trim()){
+        errorSet.push(`Excel: [PL] - Required: "${[...PLstructure][index-1]}" ; Received: "${indPL.Particulars}".`);
+      }
+      index++;
+    }
+  }
+
+  /**
+   * DATE COLUMN VALIDATION
+   * Column 2 in BS, Column 3 in PL
+   */
+    const boolPLDate = `${headLabels['P&L'][2]}`.trim().match(DATE_REGEX);
+    const boolBSDate = `${headLabels['BS'][1]}`.trim().match(DATE_REGEX);
+
+    const emptyPLexist = headLabels['P&L'].includes('__EMPTY');
+    const emptyBSexist = headLabels['BS'].includes('__EMPTY');
+    
+    if(emptyBSexist) errorSet.push(`Excel: [BS] - Data integrity error: Found an empty column.`) 
+    if(emptyPLexist) errorSet.push(`Excel: [PL] - Data integrity error: Found an empty column.`) 
+    
+    if(emptyBSexist || emptyPLexist) return {validationStat:true, errorStack:errorSet};
+    if(!boolPLDate && !emptyPLexist) errorSet.push(`Critical Error: [PL] Date format must be "DD-MM-YYYY". Received "${headLabels['P&L'][2]}".`)
+    if(!boolBSDate && !emptyBSexist) errorSet.push(`Critical Error: [BS] Date format must be "DD-MM-YYYY". Received "${headLabels['BS'][1]}".`)
+
+
+  /**
+   * YEARS COLUMN VALIDATION
+   * Column 3 onwards in BS, Column 4 onwards in PL
+   */
+  const PLyears = headLabels['P&L'].splice(3, headLabels['P&L'].length-1);
+  const BSyears = headLabels['BS'].splice(2, headLabels['BS'].length-1);
+  if(PLyears.length !== BSyears.length) errorSet.push(`Content Verification Error: Column length mismatch detected in both Excel files.`);
+
+  const yearStruccture = [PLyears, BSyears];
+  for(let i = 0;;){
+    if(i > yearStruccture.length - 1) break;
+    for (let j = 0;;){
+      if(j > yearStruccture[i].length - 1) break;
+      if(!yearStruccture[i][j].match(YEAR_REGEX)) errorSet.push(`Content Verification Error: [${i === 0 ? 'P&L' : 'BS'}] - The year format should be "YYYY-YYYY". Received: "${yearStruccture[i][j]}".`)
+      j++;
+    }
+    i++;
+  }
+
+  if(errorSet.length) validationStat = true; 
+
+  return {validationStat, errorStack:errorSet};
+}
+
+sanitiseCells(workbook,sheetName){
+  const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  sheetData.forEach((row:any) => {
+    for (let columns in row) {
+      if (typeof row[columns] === 'string') {
+        row[columns] = row[columns].replace(/\r\n/g, '');
+      }
+
+      if (typeof row[columns] === 'number') {
+        row[columns] = parseFloat(row[columns].toFixed(2));
+      }
+      
+      if (typeof columns === 'string') {
+        const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+        if (columns !== cleanedColumn) {
+          row[cleanedColumn] = row[columns];
+          delete row[columns];
+        }
+      }
+
+    }
+  });
+
+  let maxKeys = Object.keys(sheetData[0]).length;
+  let maxKeysObject = sheetData[0];
+
+  for (let i = 0; i<sheetData.length; i++){
+    const numKeys = Object.keys(sheetData[i]).length;
+        if (numKeys > maxKeys) {
+          maxKeys = numKeys;
+          maxKeysObject = sheetData[i];
+        }
+  }
+  return {sheetData, maxKeysObject}
+}
+
+fetchSheetName(workbook){
+  const sheetNames: string[] = [];
+  workbook.eachSheet((worksheet, sheetId) => {
+    sheetNames.push(worksheet.name);
+  });
+  return sheetNames;
 }
 }

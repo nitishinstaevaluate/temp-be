@@ -52,7 +52,7 @@ export class UploadController {
     @Body('processId') processId: string,
     @Body('modelName') modelName: string, 
     @Req() request) {
-    return this.excelSheetService.uploadExcelProcess(formData, processId, modelName, request);
+      return  await this.excelSheetService.uploadExcelProcess(formData, processId, modelName, request);
   }
 
   // @UseGuards(KeyCloakAuthGuard)
