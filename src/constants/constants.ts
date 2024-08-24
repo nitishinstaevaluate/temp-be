@@ -2204,3 +2204,5 @@ export const EXPECTED_MARKET_RETURN_HISTORICAL_TYPE = {
     historicalValue:1000
   }
 }
+
+export const MODEL_ASC_ORDER = ['FCFE', 'FCFF', 'NAV', 'Relative_Valuation', 'CTM', 'Market_Price'];
