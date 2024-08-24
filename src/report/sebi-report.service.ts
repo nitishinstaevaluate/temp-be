@@ -733,7 +733,7 @@ export class sebiReportService {
                     ${companyName}
                   </span>
                   <span class="s17"> 
-                    using Book Value method;
+                    using Net Asset Value method;
                   </span>
                 </p>
               `)
@@ -786,11 +786,11 @@ export class sebiReportService {
             let finalProjYear;
             finalYearColumn.map((elements)=>{
               if(elements.model === MODEL[0] || elements.model === MODEL[1]){
-                finalProjYear = elements.valuationData[elements.valuationData.length - 2].particulars;
+                finalProjYear = elements.valuationData[elements.valuationData.length - 1].particulars || '24-25';
               }
             })
             if(finalProjYear)
-              return `20${finalProjYear.split('-')[1]}`;
+              return `20${finalProjYear.split('-')[0]}-${finalProjYear.split('-')[1]}`;
             return '2028';
           })
 
