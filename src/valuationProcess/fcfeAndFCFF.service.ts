@@ -911,8 +911,8 @@ export class FCFEAndFCFFService {
                 convertToNumberOrZero(terminalValueAddInterestAdjTaxes) + 
                 convertToNumberOrZero(terminalValueDepAndAmortisation) + 
                 convertToNumberOrZero(otherNonCashItems) + 
-                convertToNumberOrZero(terminalValueNca) + 
-                convertToNumberOrZero(terminalValueChangeInBorrowings);
+                convertToNumberOrZero(terminalValueNca)
+                // convertToNumberOrZero(terminalValueChangeInBorrowings);
               }
               terminalValueWorking = {
                 particulars: 'Terminal Value',
@@ -932,6 +932,10 @@ export class FCFEAndFCFFService {
                 finalYearfreeCashFlow: fcff,
                 terminalValueBasedOnLastYear:fcfeValueAtTerminalRate,
                 explicitYear: `${parseInt(individualYear)-1}-${parseInt(individualYear)}`
+              }
+              // As per Nitish, for FCFF change in borrowings should not be applied
+              if(isFCFF){
+                delete terminalValueWorking.changeInBorrowing;
               }
             }
             
