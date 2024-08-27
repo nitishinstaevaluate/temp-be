@@ -29,7 +29,19 @@ import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensi
 import { CalculationModule } from 'src/calculation/calculation.module';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService, SensitivityAnalysisService],
+  providers: [
+    ElevenUaService,
+    ExcelSheetService,
+    ValuationsService,
+    FCFEAndFCFFService,
+    IndustryService,
+    CustomLogger,
+    AuthenticationService, 
+    utilsService, 
+    thirdpartyApiAggregateService, 
+    authenticationTokenService, 
+    SensitivityAnalysisService,
+  ],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },
