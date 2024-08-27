@@ -217,7 +217,7 @@ export class sebiReportService {
 
           hbs.registerHelper('marketPriceMethodAnnexureSerialNo',()=>{
             if(valuationResult.inputData[0].model) 
-                return convertToRomanNumeral(valuationResult.inputData[0].model.length, true);
+                return convertToRomanNumeral(valuationResult.inputData[0].model.length - 1, true);
             return 'I';
           })
     
