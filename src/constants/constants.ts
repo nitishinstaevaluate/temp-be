@@ -2058,7 +2058,11 @@ export const MNEMONIC_ENUMS = {
   IQ_VOLUME: 'IQ_VOLUME',
   IQ_VWAP: 'IQ_VWAP',
   IQ_BETA: 'IQ_BETA',
-  IQ_BETA_5YR: 'IQ_BETA_5YR'
+  IQ_BETA_5YR: 'IQ_BETA_5YR',
+  /**
+   * Not Entitled Series
+   */
+  IQ_EBIT_CS: 'IQ_EBIT_CS' 
 }
 
 export const MNEMONICS_ARRAY = [
