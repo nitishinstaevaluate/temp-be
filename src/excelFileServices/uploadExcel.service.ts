@@ -316,7 +316,7 @@ export class ExcelSheetService {
              htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
              pdfFilePath = path.join(process.cwd(), 'pdf', `PAVIN-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
-              if(data.model === MODEL[0] || data.model == MODEL[1]){
+              if(data.model === MODEL[0] || data.model === MODEL[1]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }  
             }
