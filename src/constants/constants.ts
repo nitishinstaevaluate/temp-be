@@ -2168,8 +2168,8 @@ export const EXPECTED_MARKET_RETURN_TYPE = {
 }
 
 export const ALL_MODELS = {
-  FCFE:'Free Cash Flow to Equity',
-  FCFF:'Free Cash Flow to Firm',
+  FCFE:'Discounted Cash Flow',
+  FCFF:'Discounted Cash Flow',
   Relative_Valuation:'Comparable Companies',
   CTM:'Comparable Transaction',
   NAV:'Net Asset Value',
