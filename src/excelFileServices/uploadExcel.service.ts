@@ -294,7 +294,7 @@ export class ExcelSheetService {
           let wordFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.docx`);
           let excelFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.xlsx`);
 
-           const headers = {
+          const headers = {
             authorization: request.headers.authorization
           }
           const { roles } = await this.authTokenService.fetchUserInfo(headers);
@@ -305,7 +305,7 @@ export class ExcelSheetService {
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
+                if(data.model === MODEL[0] || data.model === MODEL[1]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -316,7 +316,7 @@ export class ExcelSheetService {
              htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
              pdfFilePath = path.join(process.cwd(), 'pdf', `PAVIN-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
-              if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
+              if(data.model === MODEL[0] || data.model == MODEL[1]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }  
             }
@@ -1247,7 +1247,7 @@ export class ExcelSheetService {
           
           let arrayEquityValue = [];
           valuationResult.modelResults.forEach((result)=>{
-            if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+            if(Array.isArray(result.valuationData) && result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
               checkiIfStub=true;
             }
             if(result.model === 'FCFE'){
@@ -1804,7 +1804,7 @@ export class ExcelSheetService {
         hbs.registerHelper('ifStub',(options)=>{
           let checkiIfStub = false;
           valuationResult.modelResults.forEach((result)=>{
-            if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+            if(Array.isArray(result.valuationData) && result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
               checkiIfStub = true;
             }
           })
@@ -1819,7 +1819,7 @@ export class ExcelSheetService {
         hbs.registerHelper('ifEquityValProvisional',(options)=>{
           let checkiIfprovisional = false;
           valuationResult.modelResults.forEach((result)=>{
-            if(result.valuationData.some(obj => obj.hasOwnProperty('equityValueNew'))){
+            if(Array.isArray(result.valuationData) && result.valuationData.some(obj => obj.hasOwnProperty('equityValueNew'))){
               checkiIfprovisional = true;
             }
           })
@@ -2028,6 +2028,16 @@ export class ExcelSheetService {
           const next40Elements = sharePriceDetails.slice(30, 70);
           return next40Elements
         })
+        hbs.registerHelper('sharePriceDataN30', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const next30Elements = sharePriceDetails.slice(30, 60);
+          return next30Elements
+        })
         hbs.registerHelper('sharePriceDataN40Length', ()=>{
           let sharePriceDetails = [];
           valuationResult.modelResults.map((response)=>{
@@ -2038,6 +2048,16 @@ export class ExcelSheetService {
           const next40Elements = sharePriceDetails.slice(40, 80);
           return next40Elements?.length ? true : false;
         })
+        hbs.registerHelper('sharePriceDataN30Length', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const next30Elements = sharePriceDetails.slice(30, 60);
+          return next30Elements?.length ? true : false;
+        })
         hbs.registerHelper('sharePriceDataRemaining', ()=>{
           let sharePriceDetails = [];
           valuationResult.modelResults.map((response)=>{
@@ -2045,7 +2065,7 @@ export class ExcelSheetService {
              sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
             }
           })
-          const remainingElements = sharePriceDetails.slice(70);
+          const remainingElements = sharePriceDetails.slice(60);
           return remainingElements
         })
         hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
@@ -2055,12 +2075,31 @@ export class ExcelSheetService {
              sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
             }
           })
-          const remainingElements = sharePriceDetails.slice(80);
+          const remainingElements = sharePriceDetails.slice(60);
           return remainingElements?.length ? true : false;
         })
 
         hbs.registerHelper('updateDateFormat',(val)=>{
           return formatDateHyphenToDDMMYYYY(val);
+        })
+
+        hbs.registerHelper('sharePriceDataF40', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const first40Elements = sharePriceDetails.slice(0, 40);
+          return first40Elements
+        })
+        hbs.registerHelper('formatValue',(value)=>{
+          return formatPositiveAndNegativeValues(value);
+        })
+        hbs.registerHelper('currencyUnit',()=>{
+          if(valuationResult.inputData[0].currencyUnit)
+            return valuationResult.inputData[0].currencyUnit;
+          return 'INR';
         })
       }  
 
