@@ -2058,7 +2058,11 @@ export const MNEMONIC_ENUMS = {
   IQ_VOLUME: 'IQ_VOLUME',
   IQ_VWAP: 'IQ_VWAP',
   IQ_BETA: 'IQ_BETA',
-  IQ_BETA_5YR: 'IQ_BETA_5YR'
+  IQ_BETA_5YR: 'IQ_BETA_5YR',
+  /**
+   * Not Entitled Series
+   */
+  IQ_EBIT_CS: 'IQ_EBIT_CS' 
 }
 
 export const MNEMONICS_ARRAY = [
@@ -2168,8 +2172,8 @@ export const EXPECTED_MARKET_RETURN_TYPE = {
 }
 
 export const ALL_MODELS = {
-  FCFE:'Free Cash Flow to Equity',
-  FCFF:'Free Cash Flow to Firm',
+  FCFE:'Discounted Cash Flow',
+  FCFF:'Discounted Cash Flow',
   Relative_Valuation:'Comparable Companies',
   CTM:'Comparable Transaction',
   NAV:'Net Asset Value',
