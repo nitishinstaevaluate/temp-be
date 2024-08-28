@@ -552,7 +552,8 @@ export class FCFEAndFCFFService {
       const data = await this.transformData(resultAggregate.resultArray);
       return {
         result: resultAggregate.resultArray, tableData:data.transposedResult, 
-        valuation:checkIfStub? resultAggregate.resultArray[0].equityValueNew :resultAggregate.resultArray[0].equityValue,
+        // valuation:checkIfStub? resultAggregate.resultArray[0].equityValueNew :resultAggregate.resultArray[0].equityValue,
+        valuation:resultAggregate.resultArray[0].valuePerShare,
         columnHeader:data.columnHeader,provisionalDate,
         terminalValueWorking:resultAggregate.terminalValueWorking,
         msg: 'Executed Successfully' 
@@ -1098,7 +1099,8 @@ export class FCFEAndFCFFService {
      let dcfValuationDto = new PostDcfValuationDto();
      dcfValuationDto.model = inputs.model.includes('FCFE') ? MODEL[0] : MODEL[1];
      dcfValuationDto.valuationData = transformValuation.transposedResult;
-     dcfValuationDto.valuation = isStubRequired? firstElement.equityValueNew : firstElement.equityValue;
+    //  dcfValuationDto.valuation = isStubRequired? firstElement.equityValueNew : firstElement.equityValue;
+     dcfValuationDto.valuation = firstElement.valuePerShare;
      dcfValuationDto.terminalYearWorking = terminalYearWorking;
      dcfValuationDto.columnHeader = transformValuation.columnHeader;
      dcfValuationDto.provisionalDate = provisionalDate;
@@ -1326,7 +1328,8 @@ export class FCFEAndFCFFService {
    let dcfValuationDto = new PostDcfValuationDto();
    dcfValuationDto.model = inputs.model.includes('FCFE') ? MODEL[0] : MODEL[1];
    dcfValuationDto.valuationData = transformValuation.transposedResult;
-   dcfValuationDto.valuation = isStubRequired? firstElement.equityValueNew : firstElement.equityValue;
+  //  dcfValuationDto.valuation = isStubRequired? firstElement.equityValueNew : firstElement.equityValue;
+   dcfValuationDto.valuation = firstElement.valuePerShare;
    dcfValuationDto.terminalYearWorking = terminalYearWorking;
    dcfValuationDto.columnHeader = transformValuation.columnHeader;
    dcfValuationDto.provisionalDate = provisionalDate;

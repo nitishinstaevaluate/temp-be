@@ -69,7 +69,7 @@ export class MarketPriceService {
         const vwap10Days = this.calculateVwap(sharePrice90Days, true);
         const vwap90Days = this.calculateVwap(sharePrice90Days, false);
 
-        const valuePerShare = vwap90Days > vwap10Days ? vwap90Days : vwap10Days;
+        const valuePerShare = vwap90Days > vwap10Days ? convertToNumberOrZero(vwap90Days) : convertToNumberOrZero(vwap10Days);
 
         return { vwap10Days, vwap90Days, valuePerShare }
     }

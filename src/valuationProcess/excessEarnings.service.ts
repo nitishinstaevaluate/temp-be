@@ -208,7 +208,8 @@ export class ExcessEarningsService {
     return {
       result: finalResult,
       tableData: data.transposedResult,
-      valuation:checkIfStub ? finalResult[0].equityValueNew : finalResult[0].equityValue, //to be defined
+      // valuation:checkIfStub ? finalResult[0].equityValueNew : finalResult[0].equityValue, //to be defined
+      valuation:finalResult[0].valuePerShare, //to be defined
       columnHeader:data.columnHeader, provisionalDate,
       message: 'Valuation calcuated using excess earnings model',
       status: true
