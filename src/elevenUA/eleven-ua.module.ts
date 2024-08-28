@@ -31,7 +31,20 @@ import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schem
 import { CalculationModule } from 'src/calculation/calculation.module';
 
 @Module({
-  providers: [ElevenUaService,ExcelSheetService,ValuationsService,FCFEAndFCFFService,IndustryService,CustomLogger,AuthenticationService, utilsService, thirdpartyApiAggregateService, authenticationTokenService, SensitivityAnalysisService, ExcelArchiveService],
+  providers: [
+    ElevenUaService,
+    ExcelSheetService,
+    ValuationsService,
+    FCFEAndFCFFService,
+    IndustryService,
+    CustomLogger,
+    AuthenticationService, 
+    utilsService, 
+    thirdpartyApiAggregateService, 
+    authenticationTokenService, 
+    SensitivityAnalysisService,
+    ExcelArchiveService
+  ],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
     { name:'ruleelevenua',schema:ElevenUaSchema },

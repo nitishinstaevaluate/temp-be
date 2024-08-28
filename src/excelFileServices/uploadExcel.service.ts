@@ -7,7 +7,8 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects, ALL_MODELS } from 'src/constants/constants';
+// import { ALL_MODELS, ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -847,8 +848,9 @@ export class ExcelSheetService {
         });
       }
 
-      async generateValuation(id,model,specificity,res, processId, terminalValueType, formatType, request) {
+      async generateValuation(payload, res, request) {
         try {
+          const { id,model,specificity, processId, terminalValueType, formatType, modelWeightageData } = payload;
           const valuationResult:any = await this.valuationService.getValuationById(id);
           const transposedData = [];
           const modifiedDataSet = [];
@@ -858,7 +860,7 @@ export class ExcelSheetService {
           let wordFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.docx`);
           let excelFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.xlsx`);
 
-           const headers = {
+          const headers = {
             authorization: request.headers.authorization
           }
           const { roles } = await this.authTokenService.fetchUserInfo(headers);
@@ -869,7 +871,7 @@ export class ExcelSheetService {
             for await (let data of valuationResult.modelResults) {
               if (data.model === model) {
                 modifiedDataSet.push(data);
-                if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
+                if(data.model === MODEL[0] || data.model === MODEL[1]){
                   transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
                 }
               }
@@ -880,7 +882,7 @@ export class ExcelSheetService {
              htmlFilePath = path.join(process.cwd(), 'html-template', 'main-pdf.html');
              pdfFilePath = path.join(process.cwd(), 'pdf', `PAVIN-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
-              if(data.model === MODEL[0] || data.model === MODEL[1] || data.model !== MODEL[3]){
+              if(data.model === MODEL[0] || data.model === MODEL[1]){
                 transposedData.push({ model: data.model, data: await this.fcfeService.transformData(data.valuationData) });
               }  
             }
@@ -896,7 +898,7 @@ export class ExcelSheetService {
               valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
               );
           }
-          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure);
+          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure, modelWeightageData);
         
           if (valuationResult.modelResults.length > 0) {
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -1152,7 +1154,7 @@ export class ExcelSheetService {
       
       }
 
-      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure){
+      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure, modelWeightageData){
         hbs.registerHelper('ifMB01',()=>{
           if(roles?.length)
               return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
@@ -1811,7 +1813,7 @@ export class ExcelSheetService {
           
           let arrayEquityValue = [];
           valuationResult.modelResults.forEach((result)=>{
-            if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+            if(Array.isArray(result.valuationData) && result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
               checkiIfStub=true;
             }
             if(result.model === 'FCFE'){
@@ -2368,7 +2370,7 @@ export class ExcelSheetService {
         hbs.registerHelper('ifStub',(options)=>{
           let checkiIfStub = false;
           valuationResult.modelResults.forEach((result)=>{
-            if(result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
+            if(Array.isArray(result.valuationData) && result.valuationData.some(obj => obj.hasOwnProperty('stubAdjValue'))){
               checkiIfStub = true;
             }
           })
@@ -2383,7 +2385,7 @@ export class ExcelSheetService {
         hbs.registerHelper('ifEquityValProvisional',(options)=>{
           let checkiIfprovisional = false;
           valuationResult.modelResults.forEach((result)=>{
-            if(result.valuationData.some(obj => obj.hasOwnProperty('equityValueNew'))){
+            if(Array.isArray(result.valuationData) && result.valuationData.some(obj => obj.hasOwnProperty('equityValueNew'))){
               checkiIfprovisional = true;
             }
           })
@@ -2592,6 +2594,16 @@ export class ExcelSheetService {
           const next40Elements = sharePriceDetails.slice(30, 70);
           return next40Elements
         })
+        hbs.registerHelper('sharePriceDataN30', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const next30Elements = sharePriceDetails.slice(30, 60);
+          return next30Elements
+        })
         hbs.registerHelper('sharePriceDataN40Length', ()=>{
           let sharePriceDetails = [];
           valuationResult.modelResults.map((response)=>{
@@ -2602,6 +2614,16 @@ export class ExcelSheetService {
           const next40Elements = sharePriceDetails.slice(40, 80);
           return next40Elements?.length ? true : false;
         })
+        hbs.registerHelper('sharePriceDataN30Length', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const next30Elements = sharePriceDetails.slice(30, 60);
+          return next30Elements?.length ? true : false;
+        })
         hbs.registerHelper('sharePriceDataRemaining', ()=>{
           let sharePriceDetails = [];
           valuationResult.modelResults.map((response)=>{
@@ -2609,7 +2631,7 @@ export class ExcelSheetService {
              sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
             }
           })
-          const remainingElements = sharePriceDetails.slice(70);
+          const remainingElements = sharePriceDetails.slice(60);
           return remainingElements
         })
         hbs.registerHelper('sharePriceDataRemainingLength', ()=>{
@@ -2619,12 +2641,61 @@ export class ExcelSheetService {
              sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
             }
           })
-          const remainingElements = sharePriceDetails.slice(80);
+          const remainingElements = sharePriceDetails.slice(60);
           return remainingElements?.length ? true : false;
         })
 
         hbs.registerHelper('updateDateFormat',(val)=>{
           return formatDateHyphenToDDMMYYYY(val);
+        })
+
+        hbs.registerHelper('sharePriceDataF40', ()=>{
+          let sharePriceDetails = [];
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.sharePriceLastNinetyDays){
+             sharePriceDetails = response.valuationData.sharePriceLastNinetyDays;
+            }
+          })
+          const first40Elements = sharePriceDetails.slice(0, 40);
+          return first40Elements
+        })
+        hbs.registerHelper('formatValue',(value)=>{
+          return formatPositiveAndNegativeValues(value);
+        })
+        hbs.registerHelper('currencyUnit',()=>{
+          if(valuationResult.inputData[0].currencyUnit)
+            return valuationResult.inputData[0].currencyUnit;
+          return 'INR';
+        })
+        hbs.registerHelper('modelWeightageTab', ()=>{
+         if(!modelWeightageData?.modelValue?.length) return [];
+
+          const createTab = (weightObj, srNo) => {
+            const wgtdVal = formatPositiveAndNegativeValues(weightObj.weightedValue);
+            const indctVal = formatPositiveAndNegativeValues(weightObj.indicatedValue);
+            return {
+              wghtSrNo:srNo,
+              model:ALL_MODELS[`${weightObj.model}`],
+              indctVal: indctVal === '-' ? '0' : indctVal,
+              wght: weightObj.weight * 100,
+              wghtdVal: wgtdVal === '-' ? '0' : wgtdVal
+            }
+          }
+
+          let totalWeightage = [], ctr = 1;
+          for(const indWeights of modelWeightageData?.modelValue){
+            totalWeightage.push(createTab(indWeights, ctr));
+            ctr++;
+          }
+          return totalWeightage;
+        }) 
+
+        hbs.registerHelper('modelWeightageLength', ()=>{
+          return modelWeightageData && modelWeightageData?.modelValue?.length;
+        })
+
+        hbs.registerHelper('totalModWeightPrShare', ()=>{
+          return formatPositiveAndNegativeValues(modelWeightageData?.weightedVal);
         })
       }  
 

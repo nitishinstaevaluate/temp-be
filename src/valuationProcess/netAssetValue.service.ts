@@ -473,7 +473,8 @@ export class NetAssetValueService {
     let provisionalDate = provDtRef;
     return {
       result: finalResult,
-      valuation: equityValue,
+      // valuation: equityValue,
+      valuation: valuePerShare,
       provisionalDate,
       msg: 'Net Asset Value Calculated Successfully',
       status: true
