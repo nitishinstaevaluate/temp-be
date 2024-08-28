@@ -2375,7 +2375,7 @@ export class sebiReportService {
               const weightedValue = convertToNumberOrZero(valuePerShare) * weight / 100;
               computedArray.push({
                 apprch:approach,
-                method: `${ALL_MODELS[method]} Method`,
+                method: (method === MODEL[0] || method === MODEL[1]) ? 'Discounted Cash Flow Method' :`${ALL_MODELS[method]} Method`,
                 valPrShre: formatPositiveAndNegativeValues(valuePerShare),
                 wghts: weight.toFixed(2),
                 wghtdVal: weightedValue ? formatPositiveAndNegativeValues(weightedValue) : 0
@@ -2400,7 +2400,7 @@ export class sebiReportService {
           
               // NAV Approach Calculation
               if (model === MODEL[5] && this.checkModelExist(MODEL[5], modelArray)) {
-                const navApproachValuePerShare = response?.valuationData?.valuePerShare?.bookValue || 0;
+                const navApproachValuePerShare = response?.valuationData?.valuePerShare?.fairValue || 0;
                 addWeightedValue('Cost Approach', model, navApproachValuePerShare, navApproachWeight);
               }
           
@@ -2450,10 +2450,10 @@ export class sebiReportService {
             }
             else {
               if(reportDetails?.modelWeightageValue){
-                const equityValue = reportDetails.modelWeightageValue.weightedVal;
-                const outstandingShares = valuationResult.inputData[0].outstandingShares;
+                // const equityValue = reportDetails.modelWeightageValue.weightedVal;
+                // const outstandingShares = valuationResult.inputData[0].outstandingShares;
                 // const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
-                const finalValue = formatPositiveAndNegativeValues(bool === 'true' ? customRound(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares) : equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares);
+                const finalValue = formatPositiveAndNegativeValues(bool === 'true' ? customRound(reportDetails.modelWeightageValue.weightedVal) : reportDetails.modelWeightageValue.weightedVal);
                 return `${finalValue && finalValue !== '-' ? finalValue :  0}/-`
               }
             }

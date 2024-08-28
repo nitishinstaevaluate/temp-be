@@ -79,18 +79,13 @@ export class UploadController {
   }
 
   // @UseGuards(KeyCloakAuthGuard)
-  @Get('export-valuation/:reportId/:model/:specificity/:processId/:terminalType/:type')
+  @Post('export-valuation')
   async generatePdf(
-    @Param('reportId') reportId : string,
-    @Param('model') model : string = null,
-    @Param('specificity') specificity : boolean = false, 
-    @Param('processId') processId : string, 
-    @Param('terminalType') terminalType : string, 
-    @Param('type') formatType : string,
+    @Body() payload:any,
     @Res() res,
     @Req() request,
   ) {
-    return await this.excelSheetService.generateValuation(reportId,model,specificity,res, processId, terminalType, formatType, request);
+    return await this.excelSheetService.generateValuation(payload, res, request);
   }
 
   // @UseGuards(KeyCloakAuthGuard)

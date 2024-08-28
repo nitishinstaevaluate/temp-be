@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
+import { ALL_MODELS, ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
@@ -283,8 +283,9 @@ export class ExcelSheetService {
         });
       }
 
-      async generateValuation(id,model,specificity,res, processId, terminalValueType, formatType, request) {
+      async generateValuation(payload, res, request) {
         try {
+          const { id,model,specificity, processId, terminalValueType, formatType, modelWeightageData } = payload;
           const valuationResult:any = await this.valuationService.getValuationById(id);
           const transposedData = [];
           const modifiedDataSet = [];
@@ -332,7 +333,7 @@ export class ExcelSheetService {
               valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
               );
           }
-          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure);
+          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure, modelWeightageData);
         
           if (valuationResult.modelResults.length > 0) {
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -588,7 +589,7 @@ export class ExcelSheetService {
       
       }
 
-      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure){
+      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure, modelWeightageData){
         hbs.registerHelper('ifMB01',()=>{
           if(roles?.length)
               return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
@@ -2100,6 +2101,36 @@ export class ExcelSheetService {
           if(valuationResult.inputData[0].currencyUnit)
             return valuationResult.inputData[0].currencyUnit;
           return 'INR';
+        })
+        hbs.registerHelper('modelWeightageTab', ()=>{
+         if(!modelWeightageData?.modelValue?.length) return [];
+
+          const createTab = (weightObj, srNo) => {
+            const wgtdVal = formatPositiveAndNegativeValues(weightObj.weightedValue);
+            const indctVal = formatPositiveAndNegativeValues(weightObj.indicatedValue);
+            return {
+              wghtSrNo:srNo,
+              model:ALL_MODELS[`${weightObj.model}`],
+              indctVal: indctVal === '-' ? '0' : indctVal,
+              wght: weightObj.weight * 100,
+              wghtdVal: wgtdVal === '-' ? '0' : wgtdVal
+            }
+          }
+
+          let totalWeightage = [], ctr = 1;
+          for(const indWeights of modelWeightageData?.modelValue){
+            totalWeightage.push(createTab(indWeights, ctr));
+            ctr++;
+          }
+          return totalWeightage;
+        }) 
+
+        hbs.registerHelper('modelWeightageLength', ()=>{
+          return modelWeightageData && modelWeightageData?.modelValue?.length;
+        })
+
+        hbs.registerHelper('totalModWeightPrShare', ()=>{
+          return formatPositiveAndNegativeValues(modelWeightageData?.weightedVal);
         })
       }  
 

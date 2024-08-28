@@ -358,7 +358,7 @@ export class RelativeValuationService {
     });
     return {
       result: finalResult,
-      valuation: { finalPriceAvg: avgPricePerShareAvg, finalPriceMed: avgPricePerShareAvg },
+      valuation: { finalPriceAvg: fairValuePerShareAvg, finalPriceMed: fairValuePerShareAvg },
       msg: 'Executed Successfully',
     };
  }

@@ -1126,10 +1126,17 @@ export class ReportService {
         }
         else {
           if(reportDetails?.modelWeightageValue){
-            const equityValue = reportDetails.modelWeightageValue.weightedVal;
-            const outstandingShares = valuationResult.inputData[0].outstandingShares;
+            // const equityValue = reportDetails.modelWeightageValue.weightedVal;
+            // const outstandingShares = valuationResult.inputData[0].outstandingShares;
             // const finalValue =  Math.floor(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares).toLocaleString('en-IN'); // use muliplier
-            const finalValue = formatPositiveAndNegativeValues(bool === 'true' ? customRound(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares) : equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares);
+            const finalValue = formatPositiveAndNegativeValues(
+              bool === 'true' ?
+              customRound(reportDetails.modelWeightageValue.weightedVal) :
+              reportDetails.modelWeightageValue.weightedVal
+              // bool === 'true' ? 
+              // customRound(equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares) : 
+              // equityValue*GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`]/outstandingShares
+            );
             return `${finalValue}/-`
           }
         }
@@ -1245,8 +1252,12 @@ export class ReportService {
         let equityPerShare = [];
         let checkiIfStub = false;
         if(reportDetails?.modelWeightageValue && valuationResult?.modelResults?.length > 1){
-          const number = this.formatPositiveAndNegativeValues(reportDetails.modelWeightageValue.weightedVal);
-          return number;
+          const outstandingShares = valuationResult.inputData[0].outstandingShares;
+          const finalValue = this.formatPositiveAndNegativeValues(
+            reportDetails.modelWeightageValue.weightedVal*outstandingShares/GET_MULTIPLIER_UNITS[`${valuationResult?.inputData[0]?.reportingUnit}`] 
+          );
+          // const number = this.formatPositiveAndNegativeValues(reportDetails.modelWeightageValue.weightedVal);
+          return finalValue;
         }
         if(transposedData[0]?.data.transposedResult[1]){
           valuationResult.modelResults.map((response)=>{
