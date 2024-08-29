@@ -2126,7 +2126,7 @@ export class ExcelSheetService {
         }) 
 
         hbs.registerHelper('modelWeightageLength', ()=>{
-          return modelWeightageData && modelWeightageData?.modelValue?.length;
+          return modelWeightageData && modelWeightageData?.modelValue?.length > 1;
         })
 
         hbs.registerHelper('totalModWeightPrShare', ()=>{
