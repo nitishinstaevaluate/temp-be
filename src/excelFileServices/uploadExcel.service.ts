@@ -361,7 +361,7 @@ export class ExcelSheetService {
             /**
              * Line Item : (iii) cash and cash equivalents
              */
-            if (indBSdata.lineEntry.sysCode === 8027) {
+            if (indBSdata.lineEntry.sysCode === 8029) {
                 for await (const key of keysToProcess) {
                     const nextKeyIndex = keysToProcess.indexOf(key) + 1;
                     if (keysToProcess[nextKeyIndex]) {
@@ -381,7 +381,7 @@ export class ExcelSheetService {
                                     cellAddress,
                                     columnCell: cellAddressColumn,
                                     rowCell: indBSdata.lineEntry.rowNumber,
-                                    sysCode: 8027
+                                    sysCode: 8029
                                 }
                             ]
                         };
@@ -393,7 +393,7 @@ export class ExcelSheetService {
             /**
              * Line Item : (iv) Retained Earnings
              */
-            if (indBSdata.lineEntry.sysCode === 8044) {
+            if (indBSdata.lineEntry.sysCode === 8046) {
                 for await (const key of keysToProcess) {
 
                     const nextKeyIndex = keysToProcess.indexOf(key) + 1;
@@ -415,7 +415,7 @@ export class ExcelSheetService {
                                     cellAddress,
                                     columnCell: cellAddressColumn,
                                     rowCell: indBSdata.lineEntry.rowNumber,
-                                    sysCode: 8044
+                                    sysCode: 8046
                                 }
                             ]
                         };
@@ -4283,7 +4283,7 @@ async validateExcelTemplate(formData){
 
     let index = 1;
     for await(const indBS of particularsList?.BS){
-      if(BSstructure[index-1] !== indBS.Particulars.trim()){
+      if(BSstructure[index-1] !== indBS.Particulars){
         errorSet.push(`Excel: [BS] - Required: "${[...BSstructure][index-1]}" ; Received: "${indBS.Particulars}".`);
       }
       index++;
@@ -4299,7 +4299,7 @@ async validateExcelTemplate(formData){
     
     let index = 1;
     for await(const indPL of particularsList['P&L']){
-      if(PLstructure[index - 1] !== indPL.Particulars.trim()){
+      if(PLstructure[index - 1] !== indPL.Particulars){
         errorSet.push(`Excel: [PL] - Required: "${[...PLstructure][index-1]}" ; Received: "${indPL.Particulars}".`);
       }
       index++;

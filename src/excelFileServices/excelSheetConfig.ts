@@ -157,326 +157,337 @@ export const V2_BS_RAW_LINE_ITEMS = {
                                 sysCode:8005,
                                 rowNumber:7,
                         },
-                        capitalWorkInPrgrsRow: {
-                                particulars : "(b) capital work in progress",
+                        lndAndBuildingRow: {
+                                particulars : " - Land & Building",
                                 sysCode:8006,
                                 rowNumber:8,
                         },
-                        invstmntPrptyRow: {
-                                particulars : "(c) investment property",
+                        plntAndMachnryRow: {
+                                particulars : " - Plant & Machinery",
                                 sysCode:8007,
                                 rowNumber:9,
                         },
-                        goodwillRow: {
-                                particulars : "(d) goodwill",
+                        capitalWorkInPrgrsRow: {
+                                particulars : "(b) capital work in progress",
                                 sysCode:8008,
                                 rowNumber:10,
                         },
-                        otherIntangibleAssetRow: {
-                                particulars : "(e) other intangible assets",
+                        invstmntPrptyRow: {
+                                particulars : "(c) investment property",
                                 sysCode:8009,
                                 rowNumber:11,
                         },
-                        intangibleAssetsIUnderDevelopmentRow: {
-                                particulars : "(f) intangible assets under development",
+                        goodwillRow: {
+                                particulars : "(d) goodwill",
                                 sysCode:8010,
                                 rowNumber:12,
                         },
-                        biologicalAssetBearerPlantRow: {
-                                particulars : "(g) biological assets other than bearer plants",
+                        otherIntangibleAssetRow: {
+                                particulars : "(e) other intangible assets",
                                 sysCode:8011,
                                 rowNumber:13,
                         },
-                        rightUseOfAssetRow: {
-                                particulars : "(h) right of use of assets",
+                        intangibleAssetsIUnderDevelopmentRow: {
+                                particulars : "(f) intangible assets under development",
                                 sysCode:8012,
                                 rowNumber:14,
                         },
-                        financialAssetRow: {
-                                particulars : "(i) financial assets",
+                        biologicalAssetBearerPlantRow: {
+                                particulars : "(g) biological assets other than bearer plants",
                                 sysCode:8013,
                                 rowNumber:15,
                         },
-                        invstmntSubsdryAssciateRow: {
-                                particulars : "(i)Investments in Subsidiary/JV/Associate",
+                        rightUseOfAssetRow: {
+                                particulars : "(h) right of use of assets",
                                 sysCode:8014,
                                 rowNumber:16,
                         },
-                        othrNonCrrntInvstmntRow: {
-                                particulars : "(ii)Other Non-Current Investments",
+                        financialAssetRow: {
+                                particulars : "(i) financial assets",
                                 sysCode:8015,
                                 rowNumber:17,
                         },
-                        longTermLoanAdvncesRow: {
-                                particulars : "(iii)long term loans and advances",
+                        invstmntSubsdryAssciateRow: {
+                                particulars : "(i)Investments in Subsidiary/JV/Associate",
                                 sysCode:8016,
                                 rowNumber:18,
                         },
-                        deferredTaxAssetRow: {
-                                particulars : "(iv) deferred tax assets(net)",
+                        othrNonCrrntInvstmntRow: {
+                                particulars : "(ii)Other Non-Current Investments",
                                 sysCode:8017,
                                 rowNumber:19,
                         },
-                        othrNonCrrntAssetRow: {
-                                particulars : "(j) other non-current assets",
+                        longTermLoanAdvncesRow: {
+                                particulars : "(iii)long term loans and advances",
                                 sysCode:8018,
                                 rowNumber:20,
                         },
-                        othrNonOprtingAssetRow: {
-                                particulars : "Other Non-Operating Assets",
+                        deferredTaxAssetRow: {
+                                particulars : "(iv) deferred tax assets(net)",
                                 sysCode:8019,
                                 rowNumber:21,
                         },
-                        depositRow: {
-                                particulars : "Deposits",
+                        othrNonCrrntAssetRow: {
+                                particulars : "(j) other non-current assets",
                                 sysCode:8020,
                                 rowNumber:22,
                         },
+                        othrNonOprtingAssetRow: {
+                                particulars : "Other Non-Operating Assets",
+                                sysCode:8021,
+                                rowNumber:23,
+                        },
+                        depositRow: {
+                                particulars : "Deposits",
+                                sysCode:8022,
+                                rowNumber:24,
+                        },
                         totalNonCrrntAssetRow: {
                                 particulars : "Total non current assets",
-                                sysCode:8021,
-                                rowNumber:24,
-                                dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020],
-                                formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22"
+                                sysCode:8023,
+                                rowNumber:26,
+                                dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022],
+                                formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24"
                         },
                     }
                 },
                 currentAssetsRow: {
                     particulars : "Current assets",
-                    sysCode:8022,
-                    rowNumber:26,
+                    sysCode:8024,
+                    rowNumber:28,
                     innerCurrentAssetRow:{
                         invntoriesRow: {
                             particulars : "(a) inventories",
-                            sysCode:8023,
-                            rowNumber:27
+                            sysCode:8025,
+                            rowNumber:29
                         },
                         financialAssetRow: {
                                 particulars : "(b) financial assets",
-                                sysCode:8024,
-                                rowNumber:28
-                        },
-                        crrntInvstmentRow: {
-                                particulars : "(i)Current investment",
-                                sysCode:8025,
-                                rowNumber:29
-                        },
-                        tradeReceivablesRow: {
-                                particulars : "(ii) trade receivables",
                                 sysCode:8026,
                                 rowNumber:30
                         },
-                        cashNcashEqvlentRow: {
-                                particulars : "(iii) cash and cash equivalents",
+                        crrntInvstmentRow: {
+                                particulars : "(i)Current investment",
                                 sysCode:8027,
                                 rowNumber:31
                         },
-                        bankBlnceOthr3AboveRow: {
-                                particulars : "(iv) bank balance other than (iii)above",
+                        tradeReceivablesRow: {
+                                particulars : "(ii) trade receivables",
                                 sysCode:8028,
                                 rowNumber:32
                         },
-                        shortTermLoanAdvncesRow: {
-                                particulars : "(v) short term loans & advances",
+                        cashNcashEqvlentRow: {
+                                particulars : "(iii) cash and cash equivalents",
                                 sysCode:8029,
                                 rowNumber:33
                         },
-                        crrntTaxAssetNetRow: {
-                                particulars : "(vii) current tax assets (net)",
+                        bankBlnceOthr3AboveRow: {
+                                particulars : "(iv) bank balance other than (iii)above",
                                 sysCode:8030,
                                 rowNumber:34
                         },
-                        othrCrrntAssetRow: {
-                                particulars : "(c) other current assets",
+                        shortTermLoanAdvncesRow: {
+                                particulars : "(v) short term loans & advances",
                                 sysCode:8031,
                                 rowNumber:35
                         },
+                        crrntTaxAssetNetRow: {
+                                particulars : "(vii) current tax assets (net)",
+                                sysCode:8032,
+                                rowNumber:36
+                        },
+                        othrCrrntAssetRow: {
+                                particulars : "(c) other current assets",
+                                sysCode:8033,
+                                rowNumber:37
+                        },
                         totalCrrntAssetRow: {
                                 particulars : "Total current assets",
-                                sysCode:8032,
-                                dependent:[8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031],
-                                formula:"currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35"
+                                sysCode:8034,
+                                rowNumber:38,
+                                dependent:[8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033,],
+                                formula:"currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37"
                         },
                     }
                 },
                 totalAssetRow: {
                     particulars : "Total Assets",
-                    sysCode:8033,
-                    rowNumber:38,
-                    dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031],
-                    formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35"
+                    sysCode:8035,
+                    rowNumber:40,
+                    dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033],
+                    formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24+currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37"
                 }
             },
     },
     equityAndLiabilitiesRow: {
         particulars : "EQUITY AND LIABILITIES",
-        sysCode:8034,
-        rowNumber:40,
+        sysCode:8036,
+        rowNumber:42,
         innerEquityAndLiabilities:{
             equityRow:{
                 particulars : "Equity",
-                sysCode:8035,
-                rowNumber:42,
+                sysCode:8037,
+                rowNumber:44,
                 innerEquityRow:{
                     equityShareCapitalRow: {
                         particulars : "(a) Equity share capital",
-                        sysCode:8036,
-                        rowNumber:43,
+                        sysCode:8038,
+                        rowNumber:45,
                     },
                     prfnceShareCapitalRow: {
                             particulars : "(b) Preference share capital",
-                            sysCode:8037,
-                            rowNumber:44,
+                            sysCode:8039,
+                            rowNumber:46,
                     },
                     equityInfusionRow: {
                             particulars : "(c) Equity Infusion",
-                            sysCode:8038,
-                            rowNumber:45
+                            sysCode:8040,
+                            rowNumber:47
                     },
                     shareApplicationMoneyPendingAlltmntRow: {
                             particulars : "(d) Share Application Money Pending Allotment",
-                            sysCode:8039,
-                            rowNumber:46
+                            sysCode:8041,
+                            rowNumber:48
                     },
                     othrEquityRow: {
                             particulars : "(e) other equity",
-                            sysCode:8040,
-                            rowNumber:47
-                    }, 
-                    secrtiesPrmiumRow: {
-                            particulars : "(i) Securities Premium",
-                            sysCode:8041,
-                            rowNumber:48
-                    }, 
-                    revaluationResrveRow: {
-                            particulars : "(ii) revaluation Reserve",
                             sysCode:8042,
                             rowNumber:49
                     }, 
-                    gnrlRsrveRow: {
-                            particulars : "(iii) General Reserves",
+                    secrtiesPrmiumRow: {
+                            particulars : "(i) Securities Premium",
                             sysCode:8043,
                             rowNumber:50
                     }, 
-                    retainedEarningRow: {
-                            particulars : "(iv) Retained Earnings",
+                    revaluationResrveRow: {
+                            particulars : "(ii) revaluation Reserve",
                             sysCode:8044,
                             rowNumber:51
                     }, 
+                    gnrlRsrveRow: {
+                            particulars : "(iii) General Reserves",
+                            sysCode:8045,
+                            rowNumber:52
+                    }, 
+                    retainedEarningRow: {
+                            particulars : "(iv) Retained Earnings",
+                            sysCode:8046,
+                            rowNumber:53
+                    }, 
                     totalEquityRow: {
                             particulars : "Total Equity",
-                            sysCode:8045,
-                            rowNumber:52,
-                            dependent:[8036, 8037, 8038, 8039, 8040, 8041, 8042, 8043, 8044],
-                            formula:"currentOne43+currentOne44+currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51"
+                            sysCode:8047,
+                            rowNumber:54,
+                            dependent:[8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046],
+                            formula:"currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53"
                     }, 
                 }
             },
             liabilitiesRow:{
                 particulars : "Liabilities",
-                sysCode:8046,
-                rowNumber:54,
+                sysCode:8048,
+                rowNumber:56,
                 innerLiabilities:{
                     nonCrrntLiabilitiesRow: {
                         particulars : "Non-current liabilities",
-                        sysCode:8047,
-                        rowNumber:55,
+                        sysCode:8049,
+                        rowNumber:57,
                         innerNonCurrentLiabilitiesRow:{
                             financialLiabilitiesRow: {
                                 particulars : "(a)financial liabilities",
-                                sysCode:8048,
-                                rowNumber:56
+                                sysCode:8050,
+                                rowNumber:58
                             }, 
                             longTermBorrowingsRow: {
                                     particulars : "(i)borrowings",
-                                    sysCode:8049,
-                                    rowNumber:57
-                            }, 
-                            othrFinancialLiabilitiesRow: {
-                                    particulars : "(ii) other financial liabilities",
-                                    sysCode:8050,
-                                    rowNumber:58
-                            }, 
-                            leaseLiabilitesRow: {
-                                    particulars : "(iii) lease liabilities",
                                     sysCode:8051,
                                     rowNumber:59
                             }, 
-                            provisionRow: {
-                                    particulars : "(b) provision",
+                            othrFinancialLiabilitiesRow: {
+                                    particulars : "(ii) other financial liabilities",
                                     sysCode:8052,
                                     rowNumber:60
                             }, 
-                            deffrdTaxLiabilitiesNetRow: {
-                                    particulars : "(c)  deferred tax liabilities(net)",
+                            leaseLiabilitesRow: {
+                                    particulars : "(iii) lease liabilities",
                                     sysCode:8053,
                                     rowNumber:61
                             }, 
-                            othrNonCrrntLiabilitiesRow: {
-                                    particulars : "(d) other non current liabilities",
+                            provisionRow: {
+                                    particulars : "(b) provision",
                                     sysCode:8054,
                                     rowNumber:62
                             }, 
-                            othrNonOperatingLiabilitiesRow: {
-                                    particulars : "(e) other non operating liabilities",
+                            deffrdTaxLiabilitiesNetRow: {
+                                    particulars : "(c)  deferred tax liabilities(net)",
                                     sysCode:8055,
                                     rowNumber:63
                             }, 
+                            othrNonCrrntLiabilitiesRow: {
+                                    particulars : "(d) other non current liabilities",
+                                    sysCode:8056,
+                                    rowNumber:64
+                            }, 
+                            othrNonOperatingLiabilitiesRow: {
+                                    particulars : "(e) other non operating liabilities",
+                                    sysCode:8057,
+                                    rowNumber:65
+                            }, 
                             totalNonCurrentLiabilitiesRow: {
                                     particulars : "Total Non - current Liabilities",
-                                    sysCode:8056,
-                                    rowNumber:64,
-                                    dependent:[8049, 8050, 8051, 8052, 8053, 8054, 8055],
-                                    formula:"currentOne57+currentOne58+currentOne59+currentOne60+currentOne61+currentOne62+currentOne63"
+                                    sysCode:8058,
+                                    rowNumber:66,
+                                    dependent:[8051, 8052, 8053, 8054, 8055, 8056, 8057],
+                                    formula:"currentOne59+currentOne60+currentOne61+currentOne62+currentOne63+currentOne64+currentOne65"
                             },
                         }
                     },
                     currentLiabilitiesRow:{
                         particulars : "Current liabilities",
-                        sysCode:8057,
-                        rowNumber:66,
+                        sysCode:8059,
+                        rowNumber:68,
                         innerCurrentLiabilitiesRow:{
                             financialLiabilitiesRow: {
                                 particulars : "(a) financial liabilities",
-                                sysCode:8058,
-                                rowNumber:67
-                            }, 
-                            borrowingsRow: {
-                                particulars : "(i) borrowings",
-                                sysCode:8059,
-                                rowNumber:68
-                            }, 
-                            tradePayableRow: {
-                                particulars : "(ii) trade payables",
                                 sysCode:8060,
                                 rowNumber:69
                             }, 
-                            otherFinancialLiabilitiesOthrSpcfdItmCRow:{
-                                particulars : "(iii) other financial liabilities(other than these specified in item (c))",
+                            borrowingsRow: {
+                                particulars : "(i) borrowings",
                                 sysCode:8061,
                                 rowNumber:70
                             }, 
-                            othrCrrntLiabilitiesRow: {
-                                particulars : "(b) other current liabilities",
+                            tradePayableRow: {
+                                particulars : "(ii) trade payables",
                                 sysCode:8062,
                                 rowNumber:71
                             }, 
-                            prvsionRow: {
-                                particulars : "(c) provisions",
+                            otherFinancialLiabilitiesOthrSpcfdItmCRow:{
+                                particulars : "(iii) other financial liabilities(other than these specified in item (c))",
                                 sysCode:8063,
                                 rowNumber:72
                             }, 
-                            crntTaxLaibilitiesRow: {
-                                particulars : "(d) current tax liabilities(net)",
+                            othrCrrntLiabilitiesRow: {
+                                particulars : "(b) other current liabilities",
                                 sysCode:8064,
                                 rowNumber:73
                             }, 
+                            prvsionRow: {
+                                particulars : "(c) provisions",
+                                sysCode:8065,
+                                rowNumber:74
+                            }, 
+                            crntTaxLaibilitiesRow: {
+                                particulars : "(d) current tax liabilities(net)",
+                                sysCode:8066,
+                                rowNumber:75
+                            }, 
                             totalCrrntLiabilitiesRow: {
                                 particulars : "Total Current Liabilities",
-                                sysCode:8065,
-                                rowNumber:74,
-                                dependent:[8059, 8060, 8061, 8062, 8063, 8064],
-                                formula:"currentOne68+currentOne69+currentOne70+currentOne71+currentOne72+currentOne73"
+                                sysCode:8067,
+                                rowNumber:76,
+                                dependent:[8061, 8062, 8063, 8064, 8065, 8066],
+                                formula:"currentOne70+currentOne71+currentOne72+currentOne73+currentOne74+currentOne75"
                             }
                         }
                     }
@@ -484,19 +495,19 @@ export const V2_BS_RAW_LINE_ITEMS = {
             },
             totalEquityAndLiabilitiesRow: {
                 particulars : "Total Equity and Liabilities",
-                sysCode:8066,
-                rowNumber:76,
-                dependent:[8036, 8037, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8049, 8050, 8051, 8052, 8053, 8054, 8055, 8059, 8060, 8061, 8062, 8063, 8064],
-                formula:"currentOne43+currentOne44+currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51+currentOne57+currentOne58+currentOne59+currentOne60+currentOne61+currentOne62+currentOne63+currentOne68+currentOne69+currentOne70+currentOne71+currentOne72+currentOne73"
+                sysCode:8068,
+                rowNumber:78,
+                dependent:[8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046, 8051, 8052, 8053, 8054, 8055, 8056, 8057, 8061, 8062, 8063, 8064, 8065, 8066],
+                formula:"currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53+currentOne59+currentOne60+currentOne61+currentOne62+currentOne63+currentOne64+currentOne65+currentOne70+currentOne71+currentOne72+currentOne73+currentOne74+currentOne75"
             },
         }
     },
     check: {
         particulars : "Check",
-        sysCode:8067,
-        rowNumber:78,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031, 8036, 8037, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8049, 8050, 8051, 8052, 8053, 8054, 8055, 8059, 8060, 8061, 8062, 8063, 8064],
-        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35-currentOne43-currentOne44-currentOne45-currentOne46-currentOne47-currentOne48-currentOne49-currentOne50-currentOne51-currentOne57-currentOne58-currentOne59-currentOne60-currentOne61-currentOne62-currentOne63-currentOne68-currentOne69-currentOne70-currentOne71-currentOne72-currentOne73"
+        sysCode:8069,
+        rowNumber:80,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046, 8051, 8052, 8053, 8054, 8055, 8056, 8057, 8061, 8062, 8063, 8064, 8065, 8066],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24+currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37-currentOne45-currentOne46-currentOne47-currentOne48-currentOne49-currentOne50-currentOne51-currentOne52-currentOne53-currentOne59-currentOne60-currentOne61-currentOne62-currentOne63-currentOne64-currentOne65-currentOne70-currentOne71-currentOne72-currentOne73-currentOne74-currentOne75"
     }
 }
 

@@ -404,26 +404,32 @@ export async function v2changeInFixedAsset(subkey, balanceSheetData, profitLossD
    */
   const crntMovableProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.movableRow.particulars][subkey];
   const crntImmovableProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.immovableRow.particulars][subkey];
+  const crntLndAndBuildingProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.lndAndBuildingRow.particulars][subkey];
+  const crntPlntAndMachnryProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.plntAndMachnryRow.particulars][subkey];
   const crntCapitalWorkInPrgrs = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.capitalWorkInPrgrsRow.particulars][subkey];
   const crntOthrTangibleAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.otherIntangibleAssetRow.particulars][subkey];
   const crntIntangibleAssetDevelopment = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.intangibleAssetsIUnderDevelopmentRow.particulars][subkey];
   const crntBiologicalAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.biologicalAssetBearerPlantRow.particulars][subkey];
   
-  const crntTotal = convertToNumberOrZero(crntMovableProp) + convertToNumberOrZero(crntImmovableProp) + convertToNumberOrZero(crntCapitalWorkInPrgrs) + 
-  convertToNumberOrZero(crntOthrTangibleAsset) + convertToNumberOrZero(crntIntangibleAssetDevelopment) + convertToNumberOrZero(crntBiologicalAsset);
+  const crntTotal = convertToNumberOrZero(crntMovableProp) + convertToNumberOrZero(crntImmovableProp) + convertToNumberOrZero(crntLndAndBuildingProp) + 
+  convertToNumberOrZero(crntPlntAndMachnryProp) + convertToNumberOrZero(crntCapitalWorkInPrgrs) + convertToNumberOrZero(crntOthrTangibleAsset) + 
+  convertToNumberOrZero(crntIntangibleAssetDevelopment) + convertToNumberOrZero(crntBiologicalAsset);
 
   /**
    * Next column extraction
    */
   const nextMovableProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.movableRow.particulars][nextKey];
   const nextImmovableProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.immovableRow.particulars][nextKey];
+  const nextLndAndBuildingProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.lndAndBuildingRow.particulars][nextKey];
+  const nextPlntAndMachnryProp = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.plntAndMachnryRow.particulars][nextKey];
   const nextCapitalWorkInPrgrs = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.capitalWorkInPrgrsRow.particulars][nextKey];
   const nextOthrTangibleAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.otherIntangibleAssetRow.particulars][nextKey];
   const nextIntangibleAssetDevelopment = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.intangibleAssetsIUnderDevelopmentRow.particulars][nextKey];
   const nextBiologicalAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.biologicalAssetBearerPlantRow.particulars][nextKey];
 
-  const nextTotal = convertToNumberOrZero(nextMovableProp) + convertToNumberOrZero(nextImmovableProp) + convertToNumberOrZero(nextCapitalWorkInPrgrs) + 
-  convertToNumberOrZero(nextOthrTangibleAsset) + convertToNumberOrZero(nextIntangibleAssetDevelopment) + convertToNumberOrZero(nextBiologicalAsset);
+  const nextTotal = convertToNumberOrZero(nextMovableProp) + convertToNumberOrZero(nextImmovableProp) + convertToNumberOrZero(nextLndAndBuildingProp) + 
+  convertToNumberOrZero(nextPlntAndMachnryProp) + convertToNumberOrZero(nextCapitalWorkInPrgrs) + convertToNumberOrZero(nextOthrTangibleAsset) + 
+  convertToNumberOrZero(nextIntangibleAssetDevelopment) + convertToNumberOrZero(nextBiologicalAsset);
   
   return nextTotal - crntTotal;
 }

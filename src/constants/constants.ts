@@ -3554,23 +3554,25 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(b) capital work in progress",
+        particulars : " - Land & Building",
         sysCode:8006,
         editable:true,
+        subHeader:true,
         rowNumber:8,
       }
   },
   {
     "lineEntry": {
-        particulars : "(c) investment property",
+        particulars : " - Plant & Machinery",
         sysCode:8007,
         editable:true,
+        subHeader:true,
         rowNumber:9,
       }
   },
   {
     "lineEntry": {
-        particulars : "(d) goodwill",
+        particulars : "(b) capital work in progress",
         sysCode:8008,
         editable:true,
         rowNumber:10,
@@ -3578,7 +3580,7 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(e) other intangible assets",
+        particulars : "(c) investment property",
         sysCode:8009,
         editable:true,
         rowNumber:11,
@@ -3586,7 +3588,7 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(f) intangible assets under development",
+        particulars : "(d) goodwill",
         sysCode:8010,
         editable:true,
         rowNumber:12,
@@ -3594,7 +3596,7 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(g) biological assets other than bearer plants",
+        particulars : "(e) other intangible assets",
         sysCode:8011,
         editable:true,
         rowNumber:13,
@@ -3602,7 +3604,7 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(h) right of use of assets",
+        particulars : "(f) intangible assets under development",
         sysCode:8012,
         editable:true,
         rowNumber:14,
@@ -3610,33 +3612,31 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(i) financial assets",
+        particulars : "(g) biological assets other than bearer plants",
         sysCode:8013,
-        // editable:true,
+        editable:true,
         rowNumber:15,
       }
   },
   {
     "lineEntry": {
-        particulars : "(i)Investments in Subsidiary/JV/Associate",
+        particulars : "(h) right of use of assets",
         sysCode:8014,
         editable:true,
-        subHeader:true,
         rowNumber:16,
       }
   },
   {
     "lineEntry": {
-        particulars : "(ii)Other Non-Current Investments",
+        particulars : "(i) financial assets",
         sysCode:8015,
-        editable:true,
-        subHeader:true,
+        // editable:true,
         rowNumber:17,
       }
   },
   {
     "lineEntry": {
-        particulars : "(iii)long term loans and advances",
+        particulars : "(i)Investments in Subsidiary/JV/Associate",
         sysCode:8016,
         editable:true,
         subHeader:true,
@@ -3645,7 +3645,7 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(iv) deferred tax assets(net)",
+        particulars : "(ii)Other Non-Current Investments",
         sysCode:8017,
         editable:true,
         subHeader:true,
@@ -3654,23 +3654,25 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(j) other non-current assets",
+        particulars : "(iii)long term loans and advances",
         sysCode:8018,
         editable:true,
+        subHeader:true,
         rowNumber:20,
       }
   },
   {
     "lineEntry": {
-        particulars : "Other Non-Operating Assets",
+        particulars : "(iv) deferred tax assets(net)",
         sysCode:8019,
-        header:true,
+        editable:true,
+        subHeader:true,
         rowNumber:21,
       }
   },
   {
     "lineEntry": {
-        particulars : "Deposits",
+        particulars : "(j) other non-current assets",
         sysCode:8020,
         editable:true,
         rowNumber:22,
@@ -3678,68 +3680,66 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "Total non current assets",
+        particulars : "Other Non-Operating Assets",
         sysCode:8021,
         header:true,
+        rowNumber:23,
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Deposits",
+        sysCode:8022,
+        editable:true,
         rowNumber:24,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020],
-        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22"
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total non current assets",
+        sysCode:8023,
+        header:true,
+        rowNumber:26,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24"
       }
   },
   {
     "lineEntry": {
         particulars : "Current assets",
-        sysCode:8022,
-        header:true,
-        rowNumber:26
-      }
-  },
-  {
-    "lineEntry": {
-        particulars : "(a) inventories",
-        sysCode:8023,
-        editable:true,
-        rowNumber:27
-      }
-  },
-  {
-    "lineEntry": {
-        particulars : "(b) financial assets",
         sysCode:8024,
-        // editable:true,
+        header:true,
         rowNumber:28
       }
   },
   {
     "lineEntry": {
-        particulars : "(i)Current investment",
+        particulars : "(a) inventories",
         sysCode:8025,
         editable:true,
-        subHeader:true,
         rowNumber:29
       }
   },
   {
     "lineEntry": {
-        particulars : "(ii) trade receivables",
+        particulars : "(b) financial assets",
         sysCode:8026,
-        editable:true,
-        subHeader:true,
+        // editable:true,
         rowNumber:30
       }
   },
   {
     "lineEntry": {
-        particulars : "(iii) cash and cash equivalents",
+        particulars : "(i)Current investment",
         sysCode:8027,
+        editable:true,
         subHeader:true,
-        // editable:true,
         rowNumber:31
       }
   },
   {
     "lineEntry": {
-        particulars : "(iv) bank balance other than (iii)above",
+        particulars : "(ii) trade receivables",
         sysCode:8028,
         editable:true,
         subHeader:true,
@@ -3748,16 +3748,16 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(v) short term loans & advances",
+        particulars : "(iii) cash and cash equivalents",
         sysCode:8029,
-        editable:true,
         subHeader:true,
+        // editable:true,
         rowNumber:33
       }
   },
   {
     "lineEntry": {
-        particulars : "(vii) current tax assets (net)",
+        particulars : "(iv) bank balance other than (iii)above",
         sysCode:8030,
         editable:true,
         subHeader:true,
@@ -3766,109 +3766,109 @@ export const V2_BALANCE_SHEET = [
   },
   {
     "lineEntry": {
-        particulars : "(c) other current assets",
+        particulars : "(v) short term loans & advances",
         sysCode:8031,
         editable:true,
+        subHeader:true,
         rowNumber:35
       }
   },
   {
     "lineEntry": {
-        particulars : "Total current assets",
+        particulars : "(vii) current tax assets (net)",
         sysCode:8032,
+        editable:true,
+        subHeader:true,
+        rowNumber:36
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "(c) other current assets",
+        sysCode:8033,
+        editable:true,
+        rowNumber:37
+      }
+  },
+  {
+    "lineEntry": {
+        particulars : "Total current assets",
+        sysCode:8034,
         header:true,
-        rowNumber:36,
-        dependent:[8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031],
-        formula:"currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35"
+        rowNumber:38,
+        dependent:[8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033,],
+        formula:"currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37"
       }
   },
   {
     "lineEntry": {
         particulars : "Total Assets",
-        sysCode:8033,
+        sysCode:8035,
         header:true,
-        rowNumber:38,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031],
-        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35"
+        rowNumber:40,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24+currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37"
       }
   },
   {
     "lineEntry": {
         particulars : "EQUITY AND LIABILITIES",
-        sysCode:8034,
-        header:true,
-        rowNumber:40
-      }
-  },
-  {
-    "lineEntry": {
-        particulars : "Equity",
-        sysCode:8035,
+        sysCode:8036,
         header:true,
         rowNumber:42
       }
   },
   {
     "lineEntry": {
+        particulars : "Equity",
+        sysCode:8037,
+        header:true,
+        rowNumber:44
+      }
+  },
+  {
+    "lineEntry": {
         particulars : "(a) Equity share capital",
-        sysCode:8036,
+        sysCode:8038,
         editable:true,
-        rowNumber:43,
+        rowNumber:45,
       }
   },
   {
     "lineEntry": {
         particulars : "(b) Preference share capital",
-        sysCode:8037,
+        sysCode:8039,
         editable:true,
-        rowNumber:44,
+        rowNumber:46,
       }
   },
   {
     "lineEntry": {
         particulars : "(c) Equity Infusion",
-        sysCode:8038,
+        sysCode:8040,
         editable:true,
-        rowNumber:45
+        rowNumber:47
       }
   },
   {
     "lineEntry": {
         particulars : "(d) Share Application Money Pending Allotment",
-        sysCode:8039,
+        sysCode:8041,
         editable:true,
-        rowNumber:46
+        rowNumber:48
       }
   },
   {
     "lineEntry": {
         particulars : "(e) other equity",
-        sysCode:8040,
-        // editable:true,
-        rowNumber:47
-      }
-  }, 
-  {
-    "lineEntry": {
-        particulars : "(i) Securities Premium",
-        sysCode:8041,
-        editable:true,
-        subHeader:true,
-        rowNumber:48
-      }
-  }, 
-  {
-    "lineEntry": {
-        particulars : "(ii) revaluation Reserve",
         sysCode:8042,
-        editable:true,
-        subHeader:true,
+        // editable:true,
         rowNumber:49
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(iii) General Reserves",
+        particulars : "(i) Securities Premium",
         sysCode:8043,
         editable:true,
         subHeader:true,
@@ -3877,68 +3877,68 @@ export const V2_BALANCE_SHEET = [
   }, 
   {
     "lineEntry": {
-        particulars : "(iv) Retained Earnings",
+        particulars : "(ii) revaluation Reserve",
         sysCode:8044,
-        // editable:true,
+        editable:true,
         subHeader:true,
         rowNumber:51
       }
   }, 
   {
     "lineEntry": {
-        particulars : "Total Equity",
+        particulars : "(iii) General Reserves",
         sysCode:8045,
+        editable:true,
+        subHeader:true,
+        rowNumber:52
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(iv) Retained Earnings",
+        sysCode:8046,
+        // editable:true,
+        subHeader:true,
+        rowNumber:53
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Equity",
+        sysCode:8047,
         header:true,
-        rowNumber:52,
-        dependent:[8036, 8037, 8038, 8039, 8040, 8041, 8042, 8043, 8044],
-        formula:"currentOne43+currentOne44+currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51"
+        rowNumber:54,
+        dependent:[8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046],
+        formula:"currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53"
       }
   }, 
   {
     "lineEntry": {
         particulars : "Liabilities",
-        sysCode:8046,
-        header:true,
-        rowNumber:54
-      }
-  }, 
-  {
-    "lineEntry": {
-        particulars : "Non-current liabilities",
-        sysCode:8047,
-        header:true,
-        rowNumber:55
-      }
-  }, 
-  {
-    "lineEntry": {
-        particulars : "(a)financial liabilities",
         sysCode:8048,
-        // editable:true,
+        header:true,
         rowNumber:56
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(i)borrowings",
+        particulars : "Non-current liabilities",
         sysCode:8049,
-        editable:true,
-        subHeader:true,
+        header:true,
         rowNumber:57
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(ii) other financial liabilities",
+        particulars : "(a)financial liabilities",
         sysCode:8050,
-        editable:true,
-        subHeader:true,
+        // editable:true,
         rowNumber:58
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(iii) lease liabilities",
+        particulars : "(i)borrowings",
         sysCode:8051,
         editable:true,
         subHeader:true,
@@ -3947,23 +3947,25 @@ export const V2_BALANCE_SHEET = [
   }, 
   {
     "lineEntry": {
-        particulars : "(b) provision",
+        particulars : "(ii) other financial liabilities",
         sysCode:8052,
         editable:true,
+        subHeader:true,
         rowNumber:60
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(c)  deferred tax liabilities(net)",
+        particulars : "(iii) lease liabilities",
         sysCode:8053,
         editable:true,
+        subHeader:true,
         rowNumber:61
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(d) other non current liabilities",
+        particulars : "(b) provision",
         sysCode:8054,
         editable:true,
         rowNumber:62
@@ -3971,7 +3973,7 @@ export const V2_BALANCE_SHEET = [
   }, 
   {
     "lineEntry": {
-        particulars : "(e) other non operating liabilities",
+        particulars : "(c)  deferred tax liabilities(net)",
         sysCode:8055,
         editable:true,
         rowNumber:63
@@ -3979,51 +3981,49 @@ export const V2_BALANCE_SHEET = [
   }, 
   {
     "lineEntry": {
-        particulars : "Total Non - current Liabilities",
+        particulars : "(d) other non current liabilities",
         sysCode:8056,
+        editable:true,
+        rowNumber:64
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(e) other non operating liabilities",
+        sysCode:8057,
+        editable:true,
+        rowNumber:65
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Non - current Liabilities",
+        sysCode:8058,
         header:true,
-        rowNumber:64,
-        dependent:[8049, 8050, 8051, 8052, 8053, 8054, 8055],
-        formula:"currentOne57+currentOne58+currentOne59+currentOne60+currentOne61+currentOne62+currentOne63"
+        rowNumber:66,
+        dependent:[8051, 8052, 8053, 8054, 8055, 8056, 8057],
+        formula:"currentOne59+currentOne60+currentOne61+currentOne62+currentOne63+currentOne64+currentOne65"
       }
   }, 
   {
     "lineEntry": {
         particulars : "Current liabilities",
-        sysCode:8057,
-        header:true,
-        rowNumber:66
-      }
-  }, 
-  {
-    "lineEntry": {
-        particulars : "(a) financial liabilities",
-        sysCode:8058,
-        // editable:true,
-        rowNumber:67
-      }
-  }, 
-  {
-    "lineEntry": {
-        particulars : "(i) borrowings",
         sysCode:8059,
-        editable:true,
-        subHeader:true,
+        header:true,
         rowNumber:68
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(ii) trade payables",
+        particulars : "(a) financial liabilities",
         sysCode:8060,
-        editable:true,
-        subHeader:true,
+        // editable:true,
         rowNumber:69
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(iii) other financial liabilities(other than these specified in item (c))",
+        particulars : "(i) borrowings",
         sysCode:8061,
         editable:true,
         subHeader:true,
@@ -4032,23 +4032,25 @@ export const V2_BALANCE_SHEET = [
   }, 
   {
     "lineEntry": {
-        particulars : "(b) other current liabilities",
+        particulars : "(ii) trade payables",
         sysCode:8062,
         editable:true,
+        subHeader:true,
         rowNumber:71
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(c) provisions",
+        particulars : "(iii) other financial liabilities(other than these specified in item (c))",
         sysCode:8063,
         editable:true,
+        subHeader:true,
         rowNumber:72
       }
   }, 
   {
     "lineEntry": {
-        particulars : "(d) current tax liabilities(net)",
+        particulars : "(b) other current liabilities",
         sysCode:8064,
         editable:true,
         rowNumber:73
@@ -4056,32 +4058,48 @@ export const V2_BALANCE_SHEET = [
   }, 
   {
     "lineEntry": {
-        particulars : "Total Current Liabilities",
+        particulars : "(c) provisions",
         sysCode:8065,
+        editable:true,
+        rowNumber:74
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "(d) current tax liabilities(net)",
+        sysCode:8066,
+        editable:true,
+        rowNumber:75
+      }
+  }, 
+  {
+    "lineEntry": {
+        particulars : "Total Current Liabilities",
+        sysCode:8067,
         header:true,
-        rowNumber:74,
-        dependent:[8059, 8060, 8061, 8062, 8063, 8064],
-        formula:"currentOne68+currentOne69+currentOne70+currentOne71+currentOne72+currentOne73"
+        rowNumber:76,
+        dependent:[8061, 8062, 8063, 8064, 8065, 8066],
+        formula:"currentOne70+currentOne71+currentOne72+currentOne73+currentOne74+currentOne75"
       }
   }, 
   {
     "lineEntry": {
         particulars : "Total Equity and Liabilities",
-        sysCode:8066,
+        sysCode:8068,
         header:true,
-        rowNumber:76,
-        dependent:[8036, 8037, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8049, 8050, 8051, 8052, 8053, 8054, 8055, 8059, 8060, 8061, 8062, 8063, 8064],
-        formula:"currentOne43+currentOne44+currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51+currentOne57+currentOne58+currentOne59+currentOne60+currentOne61+currentOne62+currentOne63+currentOne68+currentOne69+currentOne70+currentOne71+currentOne72+currentOne73"
+        rowNumber:78,
+        dependent:[8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046, 8051, 8052, 8053, 8054, 8055, 8056, 8057, 8061, 8062, 8063, 8064, 8065, 8066],
+        formula:"currentOne45+currentOne46+currentOne47+currentOne48+currentOne49+currentOne50+currentOne51+currentOne52+currentOne53+currentOne59+currentOne60+currentOne61+currentOne62+currentOne63+currentOne64+currentOne65+currentOne70+currentOne71+currentOne72+currentOne73+currentOne74+currentOne75"
       }
   }, 
   {
     "lineEntry": {
         particulars : "Check",
-        sysCode:8067,
+        sysCode:8069,
         header:true,
-        rowNumber:78,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8023, 8025, 8026, 8027, 8028, 8029, 8030, 8031, 8036, 8037, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8049, 8050, 8051, 8052, 8053, 8054, 8055, 8059, 8060, 8061, 8062, 8063, 8064],
-        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne16+currentOne17+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne27+currentOne29+currentOne30+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35-currentOne43-currentOne44-currentOne45-currentOne46-currentOne47-currentOne48-currentOne49-currentOne50-currentOne51-currentOne57-currentOne58-currentOne59-currentOne60-currentOne61-currentOne62-currentOne63-currentOne68-currentOne69-currentOne70-currentOne71-currentOne72-currentOne73"
+        rowNumber:80,
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046, 8051, 8052, 8053, 8054, 8055, 8056, 8057, 8061, 8062, 8063, 8064, 8065, 8066],
+        formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24+currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37-currentOne45-currentOne46-currentOne47-currentOne48-currentOne49-currentOne50-currentOne51-currentOne52-currentOne53-currentOne59-currentOne60-currentOne61-currentOne62-currentOne63-currentOne64-currentOne65-currentOne70-currentOne71-currentOne72-currentOne73-currentOne74-currentOne75"
       }
   }, 
 ]
@@ -4459,6 +4477,8 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
        */
       const movableObject = balanceSheetData.get('(i) moveable');
       const immovableObject = balanceSheetData.get('(ii) immoveable');
+      const lndAndBuildingObject = balanceSheetData.get(' - Land & Building');
+      const plntAndMachnryObject = balanceSheetData.get(' - Plant & Machinery');
       const capWrkInPrgressObject = balanceSheetData.get('(b) capital work in progress');
       const othrIntangbleAsstObject = balanceSheetData.get('(e) other intangible assets');
       const intangbleAsstUDObject = balanceSheetData.get('(f) intangible assets under development');
@@ -4466,15 +4486,19 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const crntmovableProp = movableObject[subKey];
       const crntimmovableProp = immovableObject[subKey];
+      const crntlndAndBuildingProp = lndAndBuildingObject[subKey];
+      const crntplntAndMachnryProp = plntAndMachnryObject[subKey];
       const crntcapWrkInPrgressProp = capWrkInPrgressObject[subKey];
       const crntothrIntangbleAsstProp = othrIntangbleAsstObject[subKey];
       const crntIntangbleAsstUDProp = intangbleAsstUDObject[subKey];
       const crntbioAsstProp = bioAsstObject[subKey];
 
-      const crntPPEtotal = convertToNumberOrZero(crntmovableProp) + convertToNumberOrZero(crntimmovableProp) + convertToNumberOrZero(crntcapWrkInPrgressProp) + convertToNumberOrZero(crntothrIntangbleAsstProp) + convertToNumberOrZero(crntIntangbleAsstUDProp) + convertToNumberOrZero(crntbioAsstProp);
+      const crntPPEtotal = convertToNumberOrZero(crntmovableProp) + convertToNumberOrZero(crntimmovableProp) + convertToNumberOrZero(crntlndAndBuildingProp) + convertToNumberOrZero(crntplntAndMachnryProp) + convertToNumberOrZero(crntcapWrkInPrgressProp) + convertToNumberOrZero(crntothrIntangbleAsstProp) + convertToNumberOrZero(crntIntangbleAsstUDProp) + convertToNumberOrZero(crntbioAsstProp);
 
       const prevPPEtotal = convertToNumberOrZero(movableObject[prevKey]) + 
       convertToNumberOrZero(immovableObject[prevKey]) + 
+      convertToNumberOrZero(lndAndBuildingObject[prevKey]) + 
+      convertToNumberOrZero(plntAndMachnryObject[prevKey]) + 
       convertToNumberOrZero(capWrkInPrgressObject[prevKey]) + 
       convertToNumberOrZero(othrIntangbleAsstObject[prevKey]) + 
       convertToNumberOrZero(intangbleAsstUDObject[prevKey]) + 
