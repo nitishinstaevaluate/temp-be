@@ -17,6 +17,7 @@ import {
   findAverage,
   findMedian,
   convertToNumberOrZero,
+  getDateKey,
 } from '../excelFileServices/common.methods';
 import { columnsList } from '../excelFileServices/excelSheetConfig';
 import * as XLSX from 'xlsx';
@@ -30,11 +31,13 @@ import { authenticationTokenService } from 'src/authentication/authentication-to
 import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 import { ValuationsService } from './valuationProcess.service';
 import { PostMainValuationDto, ValuationDto } from './dto/valuations.dto';
+import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 @Injectable()
 export class RelativeValuationService {
   constructor(private readonly customLogger: CustomLogger,
     private processStateManagerService: ProcessStatusManagerService,
-    private valuationService: ValuationsService
+    private valuationService: ValuationsService,
+    private excelArchiveService: ExcelArchiveService
   ) {}
   async Relative_Valuation(
     inputs: any,
@@ -48,29 +51,17 @@ export class RelativeValuationService {
       message: 'Request is entered into Relative Valuation Service.',
       userId: inputs.userId,
     });
-    const { outstandingShares, discountRateValue, valuationDate } = inputs;
-    const years = await getYearsList(worksheet1);
-    let multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
-    if (years === null)
-      return {
-        result: null,
-        msg: 'Please Separate Text Label and year with comma in B1 Cell in P&L Sheet1.',
-      };
-    const year = new Date(valuationDate).getFullYear().toString();
-    const columnIndex = years.indexOf(year);
-    console.log(columnsList[columnIndex], columnIndex, year);
-    
-    const column = columnsList[columnIndex];
-    // const column = 1;
+    const multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
     const companies = inputs.companies;
-    const industries = inputs.industries;
     const ratiotypebased = inputs.type;
-    // const peRatio = [];
-    // const pbRatio = [];
-    // const ebitda = [];
-    // const sales = [];
-    var companiesInfo: any;
-    let colNum =1;
+
+    const { outstandingShares, discountRateValue, processStateId} = inputs;
+
+    const { balanceSheetData, profitLossSheetData } = await this.getSheetData(processStateId);
+    const balanceSheetComputed = await this.serializeArrayObject(balanceSheetData);
+    const profitLossSheetComputed = await this.serializeArrayObject(profitLossSheetData);
+
+    const provisionalDate  = getDateKey(balanceSheetData[0]);
 
     let newPeRatioAvg,newPeRatioMed, newPbRatioAvg, newPbRatioMed, newEbitdaAvg, newEbitdaMed, newSalesAvg, newSalesMed;
     
@@ -89,79 +80,6 @@ export class RelativeValuationService {
           newSalesMed = indCompanies?.sales ? indCompanies.sales.toFixed(2) * (1-discountRateValue/100) : 0;
         }
       })
-    // const companiesInfo = {
-    //   peRatioAvg: findAverage(peRatio),
-    //   peRatioMed: findMedian(peRatio),
-    //   pbRatioAvg: findAverage(pbRatio),
-    //   pbRatioMed: findMedian(pbRatio),
-    //   ebitdaAvg: findAverage(ebitda),
-    //   ebitdaMed: findMedian(ebitda),
-    //   salesAvg: findAverage(sales),
-    //   salesMed: findMedian(sales),
-    // };
-    
-    // if (inputs.type == 'manual') {                // Make it smarter in next release
-    //   companies.map((company) => {
-    //     peRatio.push(company.peRatio);
-    //     pbRatio.push(company.pbRatio);
-    //     ebitda.push(company.ebitda);
-    //     sales.push(company.sales);
-    //   });
-
-    //    companiesInfo = {
-    //     peRatioAvg: findAverage(peRatio),
-    //     peRatioMed: findMedian(peRatio),
-    //     pbRatioAvg: findAverage(pbRatio),
-    //     pbRatioMed: findMedian(pbRatio),
-    //     ebitdaAvg: findAverage(ebitda),
-    //     ebitdaMed: findMedian(ebitda),
-    //     salesAvg: findAverage(sales),
-    //     salesMed: findMedian(sales),
-    //   };
-    // } else if (inputs.preferenceRatioSelect == RELATIVE_PREFERENCE_RATIO[0]){
-    //     companiesInfo = {
-    //     peRatioAvg: industries[0].currentPE,
-    //     peRatioMed: industries[0].currentPE,
-    //     pbRatioAvg: industries[0].pbv,
-    //     pbRatioMed: industries[0].pbv,
-    //     ebitdaAvg: industries[0].evEBITDA_PV,
-    //     ebitdaMed: industries[0].evEBITDA_PV,
-    //     salesAvg: industries[0].priceSales,
-    //     salesMed: industries[0].priceSales,
-    //   };
-    // }
-    // else if (inputs.preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1]){
-    //   companies.map((company) => {
-    //     peRatio.push(company.peRatio);
-    //     pbRatio.push(company.pbRatio);
-    //     ebitda.push(company.ebitda);
-    //     sales.push(company.sales);
-    //   });
-    //   companiesInfo = {
-    //     peRatioAvg: findAverage(peRatio),
-    //     peRatioMed: findMedian(peRatio),
-    //     pbRatioAvg: findAverage(pbRatio),
-    //     pbRatioMed: findMedian(pbRatio),
-    //     ebitdaAvg: findAverage(ebitda),
-    //     ebitdaMed: findMedian(ebitda),
-    //     salesAvg: findAverage(sales),
-    //     salesMed: findMedian(sales),
-    //   }
-    // }
-    //   else
-    //     // Do nothing for now
-    //   ;
-
-    // const abc= await netWorthOfComp(column, worksheet2);
-    // console.log('Hello Abc - ', abc);
-
-    // Valuation based on P/B Ratio
-
-    // version 1 starts
-    // const prefShareCap = await netWorthOfCompany(colNum, worksheet2);
-    // let netWorth = 0;
-    // netWorth = await getShareholderFunds(0, worksheet2);        // Always need the first column
-    // version 1 ends
 
     // re-valuate company average and median
     let selectedMultiples = [];
@@ -169,7 +87,7 @@ export class RelativeValuationService {
       selectedMultiples = Object.keys(multiples).filter(key => multiples[key]);
     }
 
-    let netWorth = await versionTwoNetWorthOfCompany(0, worksheet2);
+    let netWorth = await versionTwoNetWorthOfCompany(balanceSheetComputed,provisionalDate);
 
     const bookValue = netWorth * multiplier / outstandingShares;
     const pbMarketPriceAvg = netWorth * newPbRatioAvg.toFixed(2);
@@ -182,17 +100,17 @@ export class RelativeValuationService {
     // const peMarketPriceAvg = resProfitLoss.profitLossForYear * newPeRatioAvg;
     // const peMarketPriceMed = resProfitLoss.profitLossForYear * newPeRatioMed;
     // version 1 ends
-    let profitLossOfYear = await versionTwoProfitLossValues(0, worksheet1);
+    let profitLossOfYear = await versionTwoProfitLossValues(profitLossSheetComputed, provisionalDate);
     const peMarketPriceAvg = profitLossOfYear * newPeRatioAvg.toFixed(2);
     const peMarketPriceMed = profitLossOfYear * newPeRatioMed.toFixed(2);
 
     // Valuation based on EV/EBITDA
-    const ebitdaValue = await ebitdaMethod(colNum-1, worksheet1);
-    const cashEquivalent = await cashAndCashEquivalent(colNum-1, worksheet2);
+    const ebitdaValue = await ebitdaMethod(profitLossSheetComputed, provisionalDate);
+    const cashEquivalent = await cashAndCashEquivalent(balanceSheetComputed, provisionalDate);
     const enterpriseAvg = ebitdaValue * newEbitdaAvg.toFixed(2);
     const enterpriseMed = ebitdaValue * newEbitdaMed.toFixed(2);
 
-    const debt = await debtMethod(colNum-1, worksheet2);
+    const debt = await debtMethod(balanceSheetComputed, provisionalDate);
 
     const ebitdaEquityAvg = enterpriseAvg - debt + cashEquivalent;
     const ebitdaEquityMed = enterpriseMed - debt + cashEquivalent;
@@ -200,7 +118,7 @@ export class RelativeValuationService {
     const ebitdaMarketPriceMed = ebitdaEquityMed* multiplier / outstandingShares;
 
     // Valuation based on Price/Sales
-    const salesValue = await incomeFromOperation(colNum-1, worksheet1);
+    const salesValue = await incomeFromOperation(profitLossSheetComputed, provisionalDate);
     const salesEquityAvg = salesValue * newSalesAvg.toFixed(2);
     const salesEquityMed = salesValue * newSalesMed.toFixed(2);
     const salesMarketPriceAvg = salesEquityAvg / outstandingShares;
@@ -270,7 +188,7 @@ export class RelativeValuationService {
     // );
     let finalResult = {
       companies: companies,
-      companiesInfo: companiesInfo,
+      companiesInfo: '',
       // industries : industries,
       ratiotypebased : ratiotypebased,
       valuation: [
@@ -557,5 +475,33 @@ export class RelativeValuationService {
     const worksheet2 = workbook.Sheets['BS'];
 
     return { worksheet1, worksheet2 };
+  }
+
+  async getSheetData(processId){
+    try{
+      const loadExcelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processId);
+      if(loadExcelArchive?.balanceSheetRowCount && loadExcelArchive.profitLossSheetRowCount){
+        const balanceSheetData = loadExcelArchive.balanceSheetdata;
+        const profitLossSheetData = loadExcelArchive.profitLossSheetdata;
+        /**
+         * For Relative Valuation
+         * Do not need Assessment Sheet
+         */
+        return { profitLossSheetData, balanceSheetData };
+      }
+      return null;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  async serializeArrayObject(array){
+    let excelArchive = {};
+    for await (const indArchive of array){
+      const {lineEntry, 'Sr no.': srNo, ...rest} = indArchive; 
+      excelArchive[indArchive.lineEntry.particulars] = rest;
+    }
+    return excelArchive;
   }
 }

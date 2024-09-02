@@ -334,33 +334,45 @@ export class navReportService {
             return '';
             })
     
-        hbs.registerHelper('netAssetValue',()=>{
+        // hbs.registerHelper('netAssetValue',()=>{
+        //     let navData = [];
+        //     valuationResult.modelResults.forEach((result)=>{
+        //     if(result.model === MODEL[5]){
+        //         navData = Object.values(result.valuationData);
+        //     // const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
+        //     // const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
+        //     // const emptyObj={ //push this empty object to have empty td between two td tags
+        //     //     fieldName:'',
+        //     //     // type:'',
+        //     //     bookValue:'',
+        //     //     fairValue:''
+        //     //     }
+        //     // navData.splice(firmValueInd,0,emptyObj);
+        //     // navData.splice(netCurrentAssetInd,0,emptyObj);
+
+        //     // navData = navData.map((indNav)=>{
+        //     //     return {
+        //     //     fieldName:indNav.fieldName,
+        //     //     // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
+        //     //     // bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
+        //     //     // fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? formatPositiveAndNegativeValues(indNav.value): indNav?.value
+        //     //     bookValue:indNav?.bookValue,
+        //     //     fairValue:indNav?.fairValue
+        //     //     }
+        //     // })
+        //     }
+        //     })
+        //     return navData;
+        // })
+
+        hbs.registerHelper('iterateNAVData',(data)=>{
             let navData = [];
             valuationResult.modelResults.forEach((result)=>{
-            if(result.model === MODEL[5]){
-                navData = Object.values(result.valuationData);
-            const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
-            const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
-            const emptyObj={ //push this empty object to have empty td between two td tags
-                fieldName:'',
-                // type:'',
-                bookValue:'',
-                fairValue:''
-                }
-            navData.splice(firmValueInd,0,emptyObj);
-            navData.splice(netCurrentAssetInd,0,emptyObj);
-
-            navData = navData.map((indNav)=>{
-                return {
-                fieldName:indNav.fieldName,
-                // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
-                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? formatPositiveAndNegativeValues(indNav.value): indNav?.value
+                if(result.model === MODEL[5]){
+                    navData = Object.values(result.valuationData);
                 }
             })
-            }
-            })
-            return navData;
+            return this.navTableStructure(navData);
         })
     
 
@@ -561,5 +573,101 @@ export class navReportService {
                 HttpStatus.INTERNAL_SERVER_ERROR,
               );
         }
+    }
+
+    navTableStructure(nArray){
+        const navArray = nArray || [];
+        if(!navArray.length) return [];
+
+        const pageBreakIndex = navArray.findIndex(indEle => indEle.fieldName === 'Total Assets (A)');
+        const firstPart = navArray.slice(0, pageBreakIndex + 1);
+        const secondPart = navArray.slice(pageBreakIndex + 1);
+
+        const generateTableHTML = (array) => {
+            return `
+            <table style="border-collapse:collapse;margin-left:8pt;width: 100%;padding-top: 2%;" cellspacing="0">
+                <tr style="height:18pt">
+                    <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#001F5F">
+                        <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;padding-top:3px;padding-bottom:3px;color:#fff">
+                            Particulars
+                        </p>
+                    </td>
+                    <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#001F5F">
+                        <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;padding-top:3px;padding-bottom:3px;color:#fff">
+                            Book Value
+                        </p>
+                    </td>
+                    <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#001F5F">
+                        <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;padding-top:3px;padding-bottom:3px;color:#fff">
+                            Fair Value
+                        </p>
+                    </td>
+                </tr>
+                <tbody>
+                    ${array.map(indEle => {return this.navHTMLBinder(indEle)}).join('')}
+                </tbody>
+            </table>
+            `;
+        };
+
+        return `
+            ${generateTableHTML(firstPart)}
+            <div style="page-break-before: always;"></div>
+            <div style="padding-top:8%">
+            ${generateTableHTML(secondPart)}
+            </div> 
+        `;
+    }
+    
+    navHTMLBinder(parameters:any){
+        let backgroundColorStndrd = '#fff', fontColorStndrd = 'black', fontSizeStndrd = '13px !important', fontWeightStndrd = '400', boolEmptyRow = false, paddingLeftStndrd = '4pt';
+
+        if((parameters.reqLBrk || parameters.reqUBrk) && parameters.fieldName !== 'Total Assets (A)') boolEmptyRow = true;
+        if(parameters.fieldName === 'Value Per Share') {backgroundColorStndrd = '#001F5F';fontColorStndrd = '#fff'}
+        if(parameters.mainHead) {fontSizeStndrd = '16px'; fontWeightStndrd = '600';}
+        if(parameters.mainSubHead) {fontSizeStndrd = '14px'; fontWeightStndrd = '600';}
+        if(parameters.header) {fontWeightStndrd = '600';}
+        if(parameters.subHeader) {paddingLeftStndrd = '9pt';}
+        if(parameters.nestedSubHeader) paddingLeftStndrd = '15pt';
+
+        
+        let emptyRow = 
+        `<tr style="height:18pt">
+            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"></td>
+            <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"></td>
+            <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"></td>
+        </tr>`;
+
+        const finalHTMLFormation = 
+        `<tr style="height:18pt">
+
+            <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" 
+            bgcolor="${backgroundColorStndrd}">
+                <p class="s12" style="padding-left: ${paddingLeftStndrd};text-indent: 0pt;text-align: left;font-size: ${fontSizeStndrd};color:${fontColorStndrd};font-weight:${fontWeightStndrd};padding-top:3px;padding-bottom:3px">
+                    ${parameters.fieldName}
+                </p>
+            </td>
+
+            <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="${backgroundColorStndrd}">
+                <p class="s12" style="padding-right: 4pt;text-indent: 0pt;text-align: right;font-size: ${fontSizeStndrd};color:${fontColorStndrd};font-weight:${fontWeightStndrd};padding-top:3px;padding-bottom:3px">
+                    ${parameters?.bookValue ? formatPositiveAndNegativeValues(parameters.bookValue) : ''}
+                </p>
+            </td>
+
+            <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="${backgroundColorStndrd}">
+                <p class="s12" style="padding-right: 4pt;text-indent: 0pt;text-align: right;font-size: ${fontSizeStndrd};color:${fontColorStndrd};font-weight:${fontWeightStndrd};padding-top:3px;padding-bottom:3px">
+                    ${parameters?.fairValue ? formatPositiveAndNegativeValues(parameters.fairValue) : ''}
+                </p>
+            </td>
+
+        </tr>`
+
+        return boolEmptyRow ? 
+        (
+            parameters.reqLBrk ? 
+            finalHTMLFormation.concat(emptyRow) : 
+            emptyRow.concat(finalHTMLFormation)
+        ) : 
+        finalHTMLFormation;
     }
 }

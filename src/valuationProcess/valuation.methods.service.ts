@@ -102,14 +102,10 @@ export class ValuationMethodsService {
   }
 
   async Net_Asset_Value_method(
-    inputs: any,
-    worksheet1: any,
-    worksheet2: any,
+    inputs: any
   ): Promise<any> {
-    return await this.netAssetValueService.Net_Asset_Value(
-      inputs,
-      worksheet1,
-      worksheet2,
+    return await this.netAssetValueService.navValuation(
+      inputs
     );
   }
 

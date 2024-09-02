@@ -353,7 +353,7 @@ let workbook=null;
 
             case MODEL[5]: 
             const netAssetValueResponse = await this.valuationMethodsService
-            .Net_Asset_Value_method(inputs, worksheet1, worksheet2)
+            .Net_Asset_Value_method(inputs)
             valResult.push({
               model: MODEL[5],
               valuationData: netAssetValueResponse.result,

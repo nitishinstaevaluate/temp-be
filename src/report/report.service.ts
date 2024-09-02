@@ -2336,34 +2336,34 @@ export class ReportService {
         })
 
         // Nav helpers
-        hbs.registerHelper('netAssetValue',()=>{
-          let navData = [];
-          valuationResult.modelResults.forEach((result)=>{
-            if(result.model === MODEL[5]){
-              navData = Object.values(result.valuationData);
-             const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
-             const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
-             const emptyObj={ //push this empty object to have empty td between two td tags
-                fieldName:'',
-                // type:'',
-                bookValue:'',
-                fairValue:''
-              }
-             navData.splice(firmValueInd,0,emptyObj);
-             navData.splice(netCurrentAssetInd,0,emptyObj);
+        // hbs.registerHelper('netAssetValue',()=>{
+        //   let navData = [];
+        //   valuationResult.modelResults.forEach((result)=>{
+        //     if(result.model === MODEL[5]){
+        //       navData = Object.values(result.valuationData);
+        //      const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
+        //      const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
+        //      const emptyObj={ //push this empty object to have empty td between two td tags
+        //         fieldName:'',
+        //         // type:'',
+        //         bookValue:'',
+        //         fairValue:''
+        //       }
+        //      navData.splice(firmValueInd,0,emptyObj);
+        //      navData.splice(netCurrentAssetInd,0,emptyObj);
 
-             navData = navData.map((indNav)=>{
-              return {
-                fieldName:indNav.fieldName,
-                // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? this.formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
-                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? this.formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? this.formatPositiveAndNegativeValues(indNav.value): indNav?.value
-              }
-             })
-            }
-          })
-          return navData;
-        })
+        //      navData = navData.map((indNav)=>{
+        //       return {
+        //         fieldName:indNav.fieldName,
+        //         // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
+        //         bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? this.formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
+        //         fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? this.formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? this.formatPositiveAndNegativeValues(indNav.value): indNav?.value
+        //       }
+        //      })
+        //     }
+        //   })
+        //   return navData;
+        // })
 
         // hbs.registerHelper('reportSection',()=>{
         //   let outputObject = {};
@@ -2381,6 +2381,15 @@ export class ReportService {
         //   return `${Object.keys(outputObject)}`;
         // })
 
+        hbs.registerHelper('iterateNAVData', () => {
+          let navData = [];
+            valuationResult.modelResults.forEach((result)=>{
+                if(result.model === MODEL[5]){
+                    navData = Object.values(result.valuationData);
+                }
+            })
+            return this.navReportService.navTableStructure(navData);
+        })
         hbs.registerHelper('reportPurpose',()=>{
           if(reportDetails?.reportPurpose){
             let purposes = [];
