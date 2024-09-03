@@ -18,12 +18,12 @@ import { columnsList, sheet1_PLObj, sheet2_BSObj, V2_BS_RAW_LINE_ITEMS, V2_PL_RA
 export async function versionTwoNetWorthOfCompany(balanceSheetData, provisionalDate) {
     const totalEquity = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.totalEquityRow.particulars][provisionalDate];
     const prfrnceShreCptl = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.prfnceShareCapitalRow.particulars][provisionalDate];
-    const eqtyInfsn = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.equityInfusionRow.particulars][provisionalDate];
+    const revltionRsrve = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.revaluationResrveRow.particulars][provisionalDate];
     const shreApplctnMnyPndngAlltmnt = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.shareApplicationMoneyPendingAlltmntRow.particulars][provisionalDate];
     
     return convertToNumberOrZero(totalEquity) - 
     (
-      convertToNumberOrZero(prfrnceShreCptl) + convertToNumberOrZero(eqtyInfsn) + convertToNumberOrZero(shreApplctnMnyPndngAlltmnt)
+      convertToNumberOrZero(prfrnceShreCptl) + convertToNumberOrZero(revltionRsrve) + convertToNumberOrZero(shreApplctnMnyPndngAlltmnt)
     );
   }
 
