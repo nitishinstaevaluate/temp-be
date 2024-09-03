@@ -865,7 +865,7 @@ export class ExcelSheetService {
           }
           const { roles } = await this.authTokenService.fetchUserInfo(headers);
 
-          if (specificity === 'true' && model) {
+          if (specificity === true && model) {
              htmlFilePath = path.join(process.cwd(), 'html-template', `${model === MODEL[4] ? MODEL[2] : model}.html`);
              pdfFilePath = path.join(process.cwd(), 'pdf', `${model === MODEL[4] ? 'Comparable Industries' : model === MODEL[2] ? 'Relative Valuation': model }-${dateStamp}.pdf`);
             for await (let data of valuationResult.modelResults) {
@@ -2691,7 +2691,7 @@ export class ExcelSheetService {
         }) 
 
         hbs.registerHelper('modelWeightageLength', ()=>{
-          return modelWeightageData && modelWeightageData?.modelValue?.length;
+          return valuationResult.inputData[0]?.model?.length > 1 ? (modelWeightageData && modelWeightageData?.modelValue?.length > 1) : false;
         })
 
         hbs.registerHelper('totalModWeightPrShare', ()=>{
