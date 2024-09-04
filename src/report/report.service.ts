@@ -2869,9 +2869,9 @@ export class ReportService {
                       particular:'Value as per P/Sales',
                       fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.salesEquityAvg), // only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.salesEquityAvg))/100),  //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.salesEquityAvg))/100),  //only for calculating average
                     }
-                    sumOfWeightedValue += (25 * (valuationDetails.salesEquityAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.salesEquityAvg))/100;
                     totalWeightedAvgValuePrShare.push(evSales);
                   }
                   if(valuationDetails.particular === 'ebitda' && (!multiples ? true : multiples?.evEbitdaSelection)){
@@ -2879,10 +2879,10 @@ export class ReportService {
                       particular:'Value as per EV/EBITDA',
                       fairValOfEquity: this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityAvg), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.ebitdaEquityAvg))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.ebitdaEquityAvg))/100) //only for calculating average
                     }
                     
-                    sumOfWeightedValue += (25 * (valuationDetails.ebitdaEquityAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.ebitdaEquityAvg))/100;
                     totalWeightedAvgValuePrShare.push(evEbitda);
                   }
                   
@@ -2891,9 +2891,9 @@ export class ReportService {
                       particular:'Value as per P/BV',
                       fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceAvg), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.pbMarketPriceAvg))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.pbMarketPriceAvg))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += (25 * (valuationDetails.pbMarketPriceAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.pbMarketPriceAvg))/100;
                     totalWeightedAvgValuePrShare.push(priceToBookValue);
                   }
                   
@@ -2902,9 +2902,9 @@ export class ReportService {
                       particular:'Value as per P/E',
                       fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceAvg), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues((25 * (valuationDetails.peMarketPriceAvg))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.peMarketPriceAvg))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += (25 * (valuationDetails.peMarketPriceAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.peMarketPriceAvg))/100;
                     totalWeightedAvgValuePrShare.push(priceToEarnings);
                   }
                   if(valuationDetails.particular === 'result'){
