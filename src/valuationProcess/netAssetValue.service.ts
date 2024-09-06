@@ -75,7 +75,7 @@ export class NetAssetValueService {
           navStructure[key] = {
             fieldName: fieldInfo.xlField,
             bookValue: balanceSheetData[fieldInfo.xlField]?.[provisionalDate] || 0,
-            fairValue: matchingInput.value,
+            fairValue: matchingInput?.value || (balanceSheetData[fieldInfo.xlField]?.[provisionalDate] || 0),
             containsValue: true,
             header:fieldInfo?.header || false,
             subHeader:fieldInfo?.subHeader || false,
@@ -190,7 +190,8 @@ export class NetAssetValueService {
             ind === NAV_FIELD_MAPPER.nclPrvisn.fieldName || 
             ind === NAV_FIELD_MAPPER.nclDeferredTaxLb.fieldName || 
             ind === NAV_FIELD_MAPPER.nclOthrNCrntLb.fieldName || 
-            ind === NAV_FIELD_MAPPER.nclOthrNonOprtngLB.fieldName
+            ind === NAV_FIELD_MAPPER.nclOthrNonOprtngLB.fieldName ||
+            ind === NAV_FIELD_MAPPER.cntngntLbility.fieldName
           ){
             if(type === 'book_value') ttlNCrntLb += convertToNumberOrZero(structure[ind].bookValue);
             if(type === 'market_value') ttlNCrntLb += convertToNumberOrZero(structure[ind].fairValue);
@@ -234,9 +235,10 @@ export class NetAssetValueService {
         (convertToNumberOrZero(structure.headTotalAsst.fairValue) - convertToNumberOrZero(structure.headTotalLb.fairValue));
 
       case NAV_FIELD_MAPPER.valuePerShare.alias:
+        const multiplier = GET_MULTIPLIER_UNITS[`${input.reportingUnit}`];
         return type === 'book_value' ? 
-        convertToNumberOrZero(structure.headNtAsstVal.bookValue)/convertToNumberOrZero(structure.noOfShrs.bookValue) : 
-        convertToNumberOrZero(structure.headNtAsstVal.fairValue)/convertToNumberOrZero(structure.noOfShrs.fairValue);
+        convertToNumberOrZero(structure.headNtAsstVal.bookValue) * multiplier/convertToNumberOrZero(structure.noOfShrs.bookValue) : 
+        convertToNumberOrZero(structure.headNtAsstVal.fairValue) * multiplier/convertToNumberOrZero(structure.noOfShrs.fairValue);
 
       case NAV_FIELD_MAPPER.noOfShrs.alias:
         return input.outstandingShares;

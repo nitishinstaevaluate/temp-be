@@ -5201,6 +5201,10 @@ export const NAV_FIELD_MAPPER = {
     fieldName: 'nclOthrNonOprtngLB',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.othrNonOperatingLiabilitiesRow.particulars
   },
+  cntngntLbility:{
+    fieldName: 'cntngntLbility',
+    xlField: '(f) Less: Contingent Liabilities'
+  },
   headNCrntLb:{
     label:'Total Non-Current Liabilities',
     alias:'headNCrntLb',
