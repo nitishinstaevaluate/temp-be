@@ -13,6 +13,7 @@ import { CustomLogger } from 'src/loggerService/logger.service';
 import { GET_MULTIPLIER_UNITS, NAV_FIELD_MAPPER } from 'src/constants/constants';
 import { computeOtherNonCurrentAssets } from './net-asset-value.method';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
+import { convertToRomanNumeral } from 'src/report/report-common-functions';
 const date = require('date-and-time');
 @Injectable()
 export class NetAssetValueService {
@@ -62,18 +63,35 @@ export class NetAssetValueService {
   }
 
   async computeNavValuation(navInputs, balanceSheetData, provisionalDate, input){
-    let navStructure = {}, valuePerShare; 
+    let navStructure = {}, valuePerShare, node = '', root = ''; 
     if(!navInputs?.length) throw new Error('Nav input array found to be empty');
 
+    let childProcessTrck = 0, rootProcessTrck = 0;
     for (const key in NAV_FIELD_MAPPER) {
       const fieldInfo = NAV_FIELD_MAPPER[key];
     
       const matchingInput = navInputs.find(indEle => indEle.fieldName === key);
-    
+      const boolEmptyValidator = (fieldInfo.fieldName === NAV_FIELD_MAPPER.ncaImmoveable.fieldName && (balanceSheetData[NAV_FIELD_MAPPER.ncaPlntAndMachnry.xlField]?.[provisionalDate] || balanceSheetData[NAV_FIELD_MAPPER.ncaLndAndBlding.xlField]?.[provisionalDate])) || (matchingInput?.value || balanceSheetData[fieldInfo.xlField]?.[provisionalDate]);
+
+      if(fieldInfo?.node && node !== fieldInfo?.node) {
+        childProcessTrck = 0;
+        node = fieldInfo.node;
+      }
+
+      if(fieldInfo?.root && root !== fieldInfo?.root){
+        rootProcessTrck = 0;
+        root = fieldInfo.root;
+      }
+
+      const headerAdjuster = this.validateRoot(fieldInfo, boolEmptyValidator, root) ? `(${String.fromCharCode(97 + rootProcessTrck++)}) ${fieldInfo.marker}` :  false;
       if (matchingInput) {
+        if(!boolEmptyValidator) continue;
+
+        const fieldIdentifier = (node === fieldInfo?.leaf)  ? `(${convertToRomanNumeral(childProcessTrck++)}) ${fieldInfo.marker}` : fieldInfo?.xlField;         
+
         if (!fieldInfo.alias) {
-          navStructure[key] = {
-            fieldName: fieldInfo.xlField,
+          navStructure[key] = { 
+            fieldName: headerAdjuster || fieldIdentifier,
             bookValue: balanceSheetData[fieldInfo.xlField]?.[provisionalDate] || 0,
             fairValue: matchingInput?.value || (balanceSheetData[fieldInfo.xlField]?.[provisionalDate] || 0),
             containsValue: true,
@@ -87,9 +105,8 @@ export class NetAssetValueService {
           };
         }
       } else {
-        if (fieldInfo.alias) {
           navStructure[fieldInfo.alias] = {
-            fieldName: fieldInfo.label,
+            fieldName: headerAdjuster || fieldInfo.marker,
             fairValue:await this.innerCalculation(fieldInfo.alias,navStructure, 'market_value', input),
             bookValue:await this.innerCalculation(fieldInfo.alias,navStructure, 'book_value', input),
             containsValue: false,
@@ -101,13 +118,27 @@ export class NetAssetValueService {
             mainSubHead:fieldInfo.mainSubHead || false,
             nestedSubHeader:fieldInfo.nestedSubHeader || false
           };
+
           if (fieldInfo.alias === NAV_FIELD_MAPPER.valuePerShare.alias) valuePerShare = navStructure[fieldInfo.alias]
-        }
       }
     }
     return {navStructure, valuePerShare};
   }
 
+  validateRoot(fieldInfo, boolEmptyValidator, root){
+    if(
+      (
+        root === fieldInfo?.parent &&  boolEmptyValidator
+      ) || 
+      fieldInfo?.alias === NAV_FIELD_MAPPER.subHeadPrptyPlntAndEqpmnt.alias ||
+      fieldInfo?.alias === NAV_FIELD_MAPPER.subHeadFincialLb.alias ||
+      fieldInfo?.alias === NAV_FIELD_MAPPER.subHeadFincialNLb.alias ||
+      fieldInfo?.alias === NAV_FIELD_MAPPER.subHeadFincialCAsst.alias ||
+      fieldInfo?.alias === NAV_FIELD_MAPPER.subHeadFincialNCrntAsst.alias
+      
+    ) return true;
+    return false;
+  }
   async serializeArrayObject(array){
     let excelArchive = {};
     for await (const indArchive of array){

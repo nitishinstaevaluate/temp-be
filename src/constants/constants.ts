@@ -4974,105 +4974,142 @@ export const MODEL_ASC_ORDER = ['FCFE', 'FCFF', 'NAV', 'Relative_Valuation', 'CT
  */
 export const NAV_FIELD_MAPPER = {
   headAsst:{
-    label:'Assets',
+    marker:'Assets',
     alias:'headAsst',
     // header:true,
     reqLBrk:true,
     mainHead:true
   },
   headNCrntAsst:{
-    label:'Non Current Assets',
+    marker:'Non Current Assets',
     alias:'headNCrntAsst',
     // header: true,
     reqLBrk:false,
-    mainSubHead:true
+    mainSubHead:true,
+    root:'headNCrntAsst'
   },
   subHeadPrptyPlntAndEqpmnt:{
-    label:'(a) property, plant and equipment',
-    alias:'subHeadPrptyPlntAndEqpmnt'
+    marker:'Property, plant and equipment',
+    alias:'subHeadPrptyPlntAndEqpmnt',
+    node:'subHeadPrptyPlntAndEqpmnt',
+    parent:'headNCrntAsst'
   },
   ncaMoveable:{
     fieldName: 'ncaMoveable',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.movableRow.particulars,
-    subHeader:true
+    marker: 'Moveable',
+    subHeader:true,
+    leaf:'subHeadPrptyPlntAndEqpmnt'
   },
   ncaImmoveable:{
     fieldName: 'ncaImmoveable',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.immovableRow.particulars,
+    marker: 'Immoveable',
+    leaf:'subHeadPrptyPlntAndEqpmnt',
     subHeader:true
   },
   ncaPlntAndMachnry:{
     fieldName: 'ncaPlntAndMachnry',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.plntAndMachnryRow.particulars,
-    nestedSubHeader:true
+    nestedSubHeader:true,
+    // parent:'headNCrntAsst',
+    marker:'- Plant And Machinary'
   },
   ncaLndAndBlding:{
     fieldName: 'ncaLndAndBlding',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.lndAndBuildingRow.particulars,
-    nestedSubHeader:true
+    nestedSubHeader:true,
+    // parent:'headNCrntAsst',
+    marker:'- Land and building'
   },
   ncaCptlWrkInPrgrss:{
     fieldName: 'ncaCptlWrkInPrgrss',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.capitalWorkInPrgrsRow.particulars,
-    label:'Capital Work In Progress'
+    marker: 'Capital work in progress',
+    // label:'Capital Work In Progress',
+    parent:'headNCrntAsst'
   },
   ncaInvstmntPrprty:{
     fieldName: 'ncaInvstmntPrprty',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.invstmntPrptyRow.particulars,
-    label:'Investment Property'
+    marker: 'Investment property',
+    // label:'Investment Property',
+    parent:'headNCrntAsst'
   },
   ncaGoodwill:{
     fieldName: 'ncaGoodwill',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.goodwillRow.particulars,
-    label:'Goodwill'
+    marker: 'Goodwill',
+    // label:'Goodwill',
+    parent:'headNCrntAsst'
   },
   ncaOthrIntngbleAsst:{
     fieldName: 'ncaOthrIntngbleAsst',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.otherIntangibleAssetRow.particulars,
-    label:'Other Intangible Assets'
+    marker: 'Other intangible assets',
+    // label:'Other Intangible Assets',
+    parent:'headNCrntAsst'
   },
   ncaInTngbleAsstUndrDevlpmnt:{
     fieldName: 'ncaInTngbleAsstUndrDevlpmnt',
-    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.intangibleAssetsIUnderDevelopmentRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.intangibleAssetsIUnderDevelopmentRow.particulars,
+    marker: 'Intangible assets under development',
+    parent:'headNCrntAsst'
   },
   ncaBiolgclAsstOthrThnBrPlnt:{
     fieldName: 'ncaBiolgclAsstOthrThnBrPlnt',
-    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.biologicalAssetBearerPlantRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.biologicalAssetBearerPlantRow.particulars,
+    marker: 'Biological assets other than bearer plants',
+    parent:'headNCrntAsst'
   },
   ncaRghtOfUseOfAsst:{
     fieldName: 'ncaRghtOfUseOfAsst',
-    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.rightUseOfAssetRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.rightUseOfAssetRow.particulars,
+    marker: 'Right of use of assets',
+    parent:'headNCrntAsst'
   },
   subHeadFincialNCrntAsst:{
-    label:'(i) financial assets',
-    alias:'subHeadFincialNCrntAsst'
+    marker:'Financial assets',
+    alias:'subHeadFincialNCrntAsst',
+    node:'subHeadFincialNCrntAsst',
+    parent:'headNCrntAsst'
   },
   ncaInvstmntInSbsidryJvAssciate:{
     fieldName: 'ncaInvstmntInSbsidryJvAssciate',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.invstmntSubsdryAssciateRow.particulars,
-    subHeader:true
+    marker: 'Investments in Subsidiary/JV/Associate',
+    subHeader:true,
+    leaf:'subHeadFincialNCrntAsst'
   },
   ncaOthrNCrntInvstmnt:{
     fieldName: 'ncaOthrNCrntInvstmnt',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.othrNonCrrntInvstmntRow.particulars,
-    subHeader:true
+    marker: 'Other Non-Current Investments',
+    subHeader:true,
+    leaf:'subHeadFincialNCrntAsst'
   },
   ncaLngTrmLoansAndAdvncmnt:{
     fieldName: 'ncaLngTrmLoansAndAdvncmnt',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.longTermLoanAdvncesRow.particulars,
-    subHeader:true
+    marker: 'Long term loans and advances',
+    subHeader:true,
+    leaf:'subHeadFincialNCrntAsst'
   },
   ncaDffrdTxAsst:{
     fieldName: 'ncaDffrdTxAsst',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars,
-    subHeader:true
+    marker: 'Deferred tax assets (net)',
+    subHeader:true,
+    leaf:'subHeadFincialNCrntAsst'
   },
   ncaOthrNCrntAsst:{
     fieldName: 'ncaOthrNCrntAsst',
-    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.othrNonCrrntAssetRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.othrNonCrrntAssetRow.particulars,
+    marker: 'Other non-current assets',
+    parent:'headNCrntAsst'
   },
   headOthrNOA:{
-    label:'Other Non-Operating Assets',
+    marker:'Other Non-Operating Assets',
     // header: true,
     alias:'headOthrNOA',
     reqLBrk:false,
@@ -5084,68 +5121,87 @@ export const NAV_FIELD_MAPPER = {
     subHeader:true
   },
   headTotalNCrntAsst:{
-    label:'Total Non Current Assets',
+    marker:'Total Non Current Assets',
     alias:'headTotalNCrntAsst',
     header: true,
     reqLBrk:true,
     // reqUBrk:true,
   },
   headCrntAsst:{
-    label:'Current Assets',
+    marker:'Current Assets',
     alias:'headCrntAsst',
     // header: true,
-    mainSubHead:true
+    mainSubHead:true,
+    root:'headCrntAsst'
   },
   caInvntries:{
     fieldName: 'caInvntries',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.invntoriesRow.particulars,
+    marker: 'Inventories',
+    parent:'headCrntAsst'
     // subHeader:true
   },
   subHeadFincialCAsst:{
-    label:'(b) Financial Assets',
-    alias:'subHeadFincialCAsst'
+    marker:'Financial Assets',
+    alias:'subHeadFincialCAsst',
+    node:'subHeadFincialCAsst',
+    parent:'headCrntAsst'
   },
   caCrntInvstmnt:{
     fieldName: 'caCrntInvstmnt',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.crrntInvstmentRow.particulars,
-    subHeader:true
+    marker: 'Current investment',
+    subHeader:true,
+    leaf:'subHeadFincialCAsst'
   },
   caTrdeRecvbles:{
     fieldName: 'caTrdeRecvbles',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.tradeReceivablesRow.particulars,
-    subHeader:true
+    marker: 'Trade receivables',
+    subHeader:true,
+    leaf:'subHeadFincialCAsst'
   },
   caCshNCshEqvlnt:{
     fieldName: 'caCshNCshEqvlnt',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.cashNcashEqvlentRow.particulars,
-    subHeader:true
+    marker: 'Cash and cash equivalents',
+    subHeader:true,
+    leaf:'subHeadFincialCAsst'
   },
   caBnkBlnceOthrThn:{
     fieldName: 'caBnkBlnceOthrThn',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.bankBlnceOthr3AboveRow.particulars,
-    subHeader:true
+    marker: 'Bank balance other than (iii) above',
+    subHeader:true,
+    leaf:'subHeadFincialCAsst'
   },
   caShrtTrmLoansAndAdvnces:{
     fieldName: 'caShrtTrmLoansAndAdvnces',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.shortTermLoanAdvncesRow.particulars,
-    subHeader:true
+    marker: 'Short term loans & advances',
+    subHeader:true,
+    leaf:'subHeadFincialCAsst'
   },
   caCrntTxAsst:{
     fieldName: 'caCrntTxAsst',
     xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.crrntTaxAssetNetRow.particulars,
-    subHeader:true
+    marker: 'Current tax assets (net)',
+    subHeader:true,
+    leaf:'subHeadFincialCAsst'
   },
   caOthrCrntAsst:{
     fieldName: 'caOthrCrntAsst',
-    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.othrCrrntAssetRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.currentAssetsRow.innerCurrentAssetRow.othrCrrntAssetRow.particulars,
+    marker: 'Other current assets',
+    parent:'headCrntAsst'
   },
   headTotalCrntAsst:{
-    label:'Total Current Assets',
+    marker:'Total Current Assets',
     alias:'headTotalCrntAsst',
     header:true,
   },
   headTotalAsst:{
-    label:'Total Assets (A)',
+    marker:'Total Assets (A)',
     alias:'headTotalAsst',
     // header:true,
     reqLBrk:true,
@@ -5153,7 +5209,7 @@ export const NAV_FIELD_MAPPER = {
     mainSubHead:true
   }, 
   headLb:{
-    label:'Liabilities',
+    marker:'Liabilities',
     alias:'headLb',
     // header: true,
     reqLBrk:true,
@@ -5161,100 +5217,134 @@ export const NAV_FIELD_MAPPER = {
     mainSubHead:true
   },
   headNCL:{
-    label:'Non Current Liabilities',
+    marker:'Non Current Liabilities',
     alias:'headNCL',
     // header: true,
-    mainSubHead:true
+    mainSubHead:true,
+    root:'headNCL'
   },
   subHeadFincialLb:{
-    label:'(a) Financial Liabilities',
-    alias:'subHeadFincialLb'
+    marker:'Financial Liabilities',
+    alias:'subHeadFincialLb',
+    node:'subHeadFincialLb',
+    parent:'headNCL'
   },
   nclBrrwng:{
     fieldName: 'nclBrrwng',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.longTermBorrowingsRow.particulars,
-    subHeader:true
+    marker: 'Borrowings',
+    subHeader:true,
+    leaf:'subHeadFincialLb'
   },
   nclOthrFncialLb:{
     fieldName: 'nclOthrFncialLb',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.othrFinancialLiabilitiesRow.particulars,
-    subHeader:true
+    marker: 'Other financial liabilities',
+    subHeader:true,
+    leaf:'subHeadFincialLb'
   },
   nclLeaseLb:{
     fieldName: 'nclLeaseLb',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.leaseLiabilitesRow.particulars,
-    subHeader:true
+    marker: 'Lease liabilities',
+    subHeader:true,
+    leaf:'subHeadFincialLb'
   },
   nclPrvisn:{
     fieldName: 'nclPrvisn',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.provisionRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.provisionRow.particulars,
+    marker: 'Provision',
+    parent:'headNCL'
   },
   nclDeferredTaxLb:{
     fieldName: 'nclDeferredTaxLb',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars,
+    marker: 'Deferred tax liabilities (net)',
+    parent:'headNCL'
   },
   nclOthrNCrntLb:{
     fieldName: 'nclOthrNCrntLb',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.othrNonCrrntLiabilitiesRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.othrNonCrrntLiabilitiesRow.particulars,
+    marker: 'Other non current liabilities',
+    parent:'headNCL'
   },
   nclOthrNonOprtngLB:{
     fieldName: 'nclOthrNonOprtngLB',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.othrNonOperatingLiabilitiesRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.othrNonOperatingLiabilitiesRow.particulars,
+    marker: 'Other non operating liabilities',
+    parent:'headNCL'
   },
   cntngntLbility:{
     fieldName: 'cntngntLbility',
-    xlField: '(f) Less: Contingent Liabilities'
+    xlField: 'Less: Contingent Liabilities',
+    marker: 'Less: Contingent Liabilities',
+    parent:'headNCL'
   },
   headNCrntLb:{
-    label:'Total Non-Current Liabilities',
+    marker:'Total Non-Current Liabilities',
     alias:'headNCrntLb',
     header:true,
     reqLBrk:true
   },
   headCL:{
-    label:'Current Liabilities',
+    marker:'Current Liabilities',
     alias:'headCL',
     // header: true,
-    mainSubHead:true
+    mainSubHead:true,
+    root:'headCL'
   },
   subHeadFincialNLb:{
-    label:'(a) Financial Liabilities',
-    alias:'subHeadFincialNLb'
+    marker:'Financial Liabilities',
+    alias:'subHeadFincialNLb',
+    node:'subHeadFincialNLb',
+    parent:'headCL'
   },
   clBrrwng:{
     fieldName: 'clBrrwng',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.borrowingsRow.particulars,
-    subHeader:true
+    marker: 'Borrowings',
+    subHeader:true,
+    leaf:'subHeadFincialNLb'
   },
   clTrdePyble:{
     fieldName: 'clTrdePyble',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.tradePayableRow.particulars,
-    subHeader:true
+    marker: 'Trade payables',
+    subHeader:true,
+    leaf:'subHeadFincialNLb'
   },
   clOthrFncialLb:{
     fieldName: 'clOthrFncialLb',
     xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.otherFinancialLiabilitiesOthrSpcfdItmCRow.particulars,
-    subHeader:true
+    marker: 'Other financial liabilities(other than these specified in Provisions)',
+    subHeader:true,
+    leaf:'subHeadFincialNLb'
   },
   clOthrCrntLb:{
     fieldName: 'clOthrCrntLb',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.othrCrrntLiabilitiesRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.othrCrrntLiabilitiesRow.particulars,
+    marker: 'Other current liabilities',
+    parent:'headCL'
   },
   clPrvsion:{
     fieldName: 'clPrvsion',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.prvsionRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.prvsionRow.particulars,
+    marker: 'Provisions',
+    parent:'headCL'
   },
   clCrntTxLb:{
     fieldName: 'clCrntTxLb',
-    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.crntTaxLaibilitiesRow.particulars
+    xlField: V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.currentLiabilitiesRow.innerCurrentLiabilitiesRow.crntTaxLaibilitiesRow.particulars,
+    marker: 'Current tax liabilities (net)',
+    parent:'headCL'
   },
   headTotalCrntLb:{
-    label:'Total Current Liabilities',
+    marker:'Total Current Liabilities',
     alias:'headTotalCrntLb',
     header:true
   },
   headTotalLb:{
-    label:'Total Liabilities (B)',
+    marker:'Total Liabilities (B)',
     alias:'headTotalLb',
     // header:true,
     reqLBrk:true,
@@ -5262,17 +5352,17 @@ export const NAV_FIELD_MAPPER = {
     mainSubHead:true
   },
   headNtAsstVal:{
-    label:'Net Asset Value (A-B)',
+    marker:'Net Asset Value (A-B)',
     alias:'headNtAsstVal',
     // header:true,
     mainSubHead:true
   },
   noOfShrs:{
-    label: 'No. Of Shares',
+    marker: 'No. Of Shares',
     alias:'noOfShrs'
   },
   valuePerShare:{
-    label:'Value Per Share',
+    marker:'Value Per Share',
     alias:'valuePerShare',
     // header:true,
     mainSubHead:true
