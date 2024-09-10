@@ -19,7 +19,7 @@ export class MarketPriceService {
             const payload = {
                 companyDetails: {
                     date:convertUnixTimestampToQuarterAndYear(valuationDatePlusOneDayTimestamp).date,
-                    companyId:companyId
+                    companyId:companyId,
                 }
             }
             
@@ -31,24 +31,50 @@ export class MarketPriceService {
                 'Content-Type': 'application/json'
             }
 
-            const financialSegmentDetails:any = await axiosInstance.post(`${CIQ_ELASTIC_SEARCH_PRICE_EQUITY}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+            const financialSegmentDetailsNSE:any = await axiosInstance.post(
+                `${CIQ_ELASTIC_SEARCH_PRICE_EQUITY}`, 
+                {
+                    companyDetails: { 
+                        ...payload.companyDetails, 
+                        exchangeId: 161 
+                    }
+                }, 
+                { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+            const financialSegmentDetailsBSE:any = await axiosInstance.post(`${CIQ_ELASTIC_SEARCH_PRICE_EQUITY}`, 
+                {
+                    companyDetails: { 
+                        ...payload.companyDetails, 
+                        exchangeId: 39 
+                    }
+                }, 
+            { httpsAgent: axiosRejectUnauthorisedAgent, headers });
 
-            if(!financialSegmentDetails?.data?.data?.length)
+            if(!financialSegmentDetailsNSE?.data?.data?.length && !financialSegmentDetailsBSE?.data?.data?.length)
                 return new NotFoundException(`Share price data not found for companyId - ${companyId}`).getResponse();
 
-            const data = financialSegmentDetails.data?.data;
+            const dataNse = financialSegmentDetailsNSE.data?.data;
+            const dataBse = financialSegmentDetailsBSE.data?.data;
+
+            const data = await this.mergeData(dataNse, dataBse);
 
             const sharePrice10Days = await this.sharePrice10Days(data);
             const computations = await this.computeValuePerShare(data);
-            const equityValue = convertToNumberOrZero(computations.valuePerShare) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
+            const equityValueNse = convertToNumberOrZero(computations.valuePerShareNse) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
+            const equityValueBse = convertToNumberOrZero(computations.valuePerShareBse) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
             
             return {
                 sharePriceLastTenDays: sharePrice10Days,
                 sharePriceLastNinetyDays: data,
                 vwapLastTenDays: computations.vwap10Days,
                 vwapLastNinetyDays: computations.vwap90Days,
-                valuePerShare:computations.valuePerShare,
-                equityValue: equityValue
+                valuePerShare:{
+                    valuePerShareNse: computations.valuePerShareNse,
+                    valuePerShareBse: computations.valuePerShareBse
+                },
+                equityValue: {
+                    equityValueNse,
+                    equityValueBse
+                },
             }
         }
         catch(error){
@@ -60,6 +86,30 @@ export class MarketPriceService {
         }
       }
 
+      async mergeData(nseData, bseData) {
+        nseData = nseData || [];
+        bseData = bseData || [];
+      
+        const maxLength = Math.max(nseData.length, bseData.length);
+      
+        return Array.from({ length: maxLength }, (_, index) => {
+          const nseElement = nseData[index] || {};
+          const bseElement = bseData[index] || {};
+      
+          const { VOLUME: VOLUMENSE, VWAP: VWAPNSE, ...restNse } = nseElement;
+          const { VOLUME: VOLUMEBSE, VWAP: VWAPBSE, ...restBse } = bseElement;
+      
+          return {
+            VOLUMENSE: VOLUMENSE || null,
+            VOLUMEBSE: VOLUMEBSE || null,
+            VWAPBSE: VWAPBSE || null,
+            VWAPNSE: VWAPNSE || null,
+            ...restNse,
+            ...restBse,
+          };
+        });
+      }
+
       async sharePrice10Days(data){
         const createSplitter = [...data];
         return createSplitter.slice(0,10);
@@ -69,26 +119,36 @@ export class MarketPriceService {
         const vwap10Days = this.calculateVwap(sharePrice90Days, true);
         const vwap90Days = this.calculateVwap(sharePrice90Days, false);
 
-        const valuePerShare = vwap90Days > vwap10Days ? convertToNumberOrZero(vwap90Days) : convertToNumberOrZero(vwap10Days);
-
-        return { vwap10Days, vwap90Days, valuePerShare }
+        const valuePerShareNse = convertToNumberOrZero(vwap90Days.VWAPNSE) > convertToNumberOrZero(vwap10Days.VWAPNSE) ? convertToNumberOrZero(vwap90Days.VWAPNSE) : convertToNumberOrZero(vwap10Days.VWAPNSE);
+        const valuePerShareBse = convertToNumberOrZero(vwap90Days.VWAPBSE) > convertToNumberOrZero(vwap10Days.VWAPBSE) ? convertToNumberOrZero(vwap90Days.VWAPBSE) : convertToNumberOrZero(vwap10Days.VWAPBSE);
+        console.log(valuePerShareBse,valuePerShareNse,vwap90Days.VWAPBSE, vwap10Days.VWAPBSE)
+        return { vwap10Days, vwap90Days, valuePerShareNse, valuePerShareBse }
     }
       
     calculateVwap(sharePriceDetails, tenDaysBool){
-        let volumeSummation= 0, totalRevenueSummation = 0; 
+        let volumeSummationNse = 0, volumeSummationBse = 0, totalRevenueSummationNse = 0, totalRevenueSummationBse = 0; 
         (
             tenDaysBool ? 
             sharePriceDetails.slice(0, 10) : 
             sharePriceDetails
         ).map((indSharePrice)=>{
-            if(indSharePrice.VOLUME){
-                volumeSummation += convertToNumberOrZero(indSharePrice.VOLUME);
+            if(indSharePrice.VOLUMENSE){
+                volumeSummationNse += convertToNumberOrZero(indSharePrice.VOLUMENSE);
             }
-            if(indSharePrice.VWAP && indSharePrice.VOLUME){
-                totalRevenueSummation += (convertToNumberOrZero(indSharePrice.VOLUME) * convertToNumberOrZero(indSharePrice.VWAP));
+            if(indSharePrice.VOLUMEBSE){
+                volumeSummationBse += convertToNumberOrZero(indSharePrice.VOLUMEBSE);
+            }
+            if(indSharePrice.VWAPNSE && indSharePrice.VOLUMENSE){
+                totalRevenueSummationNse += (convertToNumberOrZero(indSharePrice.VOLUMENSE) * convertToNumberOrZero(indSharePrice.VWAPNSE));
+            }
+            if(indSharePrice.VWAPBSE && indSharePrice.VOLUMEBSE){
+                totalRevenueSummationBse += (convertToNumberOrZero(indSharePrice.VOLUMEBSE) * convertToNumberOrZero(indSharePrice.VWAPBSE));
             }
         })
         
-        return convertToNumberOrZero(totalRevenueSummation/volumeSummation).toFixed(2);
+        return {
+            VWAPNSE: convertToNumberOrZero(totalRevenueSummationNse/volumeSummationNse).toFixed(2),
+            VWAPBSE: convertToNumberOrZero(totalRevenueSummationBse/volumeSummationBse).toFixed(2),
+        };
       }
 }

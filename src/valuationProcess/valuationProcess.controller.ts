@@ -389,7 +389,9 @@ let workbook=null;
                   vwapLastNinetyDays: marketPriceResponse.vwapLastNinetyDays,
                 },
                 equityValue: marketPriceResponse.equityValue,
-                valuation:marketPriceResponse.valuePerShare
+                // equityValueBSE: marketPriceResponse.equityValueBse,
+                valuation:marketPriceResponse.valuePerShare,
+                // valuationBSE:marketPriceResponse.valuePerShareBse
               });
               tableResult.push({
                 model: MODEL[7],
@@ -400,7 +402,7 @@ let workbook=null;
                   vwapLastNinetyDays: marketPriceResponse.vwapLastNinetyDays,
                 },
                 equityValue: marketPriceResponse.equityValue,
-                valuation:marketPriceResponse.valuePerShare
+                valuation:marketPriceResponse.valuePerShare,
               });
               models.push(modelValue);
             break;  
