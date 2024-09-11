@@ -154,11 +154,11 @@
 
         .s12 {
             color: black;
-            font-family: "Times New Roman", serif;
+            font-family: 'Roboto', sans-serif;
             font-style: normal;
-            font-weight: normal;
-            text-decoration: underline;
-            font-size: 13pt;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 12pt;
         }
 
         .s13 {
@@ -1824,7 +1824,7 @@
        
     <!-- page 14 starts -->
     {{#modelIncludes 'NET_ASSET_VALUE_APPROACH'}}
-    <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
+    <div style="page-break-before: always;padding-top: 3%;padding-left: 6%;padding-right: 6%;">
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <p style="padding-top: 4pt;text-indent: 0pt;text-align: left;"><span class="h3">
             Annexure {{navAnnexureSerialNo}} – Determination of value of equity shares of </span>
@@ -1845,95 +1845,9 @@
             in {{reportingUnit}}
             {{/if}})
         </i></span></p>
-        <table style="border-collapse:collapse;width: 100%;" cellspacing="0">
-            <tr style="height:14pt">
-                <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#001F5F">
-                    <p class="s15" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;color: #ffffff;font-size: 13px !important;font-weight: bold;">
-                        Particulars</p>
-                </td>
-                <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#001F5F">
-                    <p class="s15" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;color: #ffffff;font-size: 13px !important;font-weight: bold;">
-                        Book Value</p>
-                </td>
-                <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#001F5F">
-                    <p class="s15" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;color: #ffffff;font-size: 13px !important;font-weight: bold;">
-                        Fair Value</p>
-                </td>
-            </tr>
-           
-            {{#each (netAssetValue data)}}
-            <tbody>
-              <tr style="height:14pt">
-                {{#if (checkHead fieldName "onlyValuePerShare" )}}
-
-                    {{#if (checkHead fieldName "")}}
-                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                        bgcolor="#001F5F">
-                        <p class="s15" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;color: white;font-size: 13px !important;font-weight: bold;">{{fieldName}}</p>
-                        </td>
-                    {{else}}
-                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                            bgcolor="#001F5F">
-                            <p class="s15" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;color: white;font-size: 13px !important;font-weight: bold;">{{fieldName}}</p>
-                        </td>
-                    {{/if}}
-                    <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#001F5F">
-                        <p class="s15" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;color: white;font-size: 13px !important;font-weight: bold;">{{bookValue}}
-                        </p>
-                    </td>
-                    <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                    bgcolor="#001F5F">
-                        
-                        <p class="s15" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;color: white;font-size: 13px !important;font-weight: bold;">{{fairValue}}
-                        </p>
-                    </td>
-                {{else}}
-                {{#if (checkSubHead fieldName "")}}
-                     {{#if (checkSubHead fieldName "")}}
-                        <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;color: black;">{{fieldName}}</p>
-                        </td>
-                    {{else}}
-                        <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s14" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;color: black;">{{fieldName}}</p>
-                        </td>
-                    {{/if}}
-                    
-                    <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s14" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;color: black;">{{bookValue}}</p>
-                    </td>
-                
-                    <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                        <p class="s14" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;color: black;">{{fairValue}}</p>
-                    </td>
-                {{else}}
-                    {{#if (checkHead fieldName "")}}
-                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s13" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;color: black;">{{fieldName}}</p>
-                        </td>
-                    {{else}}
-                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s13" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;color: black;">{{fieldName}}</p>
-                        </td>
-                    {{/if}}
-                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s13" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;color: black;">{{bookValue}}</p>
-                        </td>
-
-                        <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s13" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;color: black;">{{fairValue}}</p>
-                        </td>
-                    {{/if}}
-                {{/if}}
-                </tr>
-              </tr>
-          </tbody>
-          {{/each}}
-        </table>
+        <!-- NAV table starts -->
+        {{{iterateNAVData}}}
+        <!-- NAV table ends -->
 
         {{#if (isValuePerShareNegative 'NAV')}}
         <p style="line-height: 150%;text-align: justify;margin-left:8pt;padding-top: 2%;" >
