@@ -2400,34 +2400,15 @@ export class ExcelSheetService {
      
 
         // Nav helpers
-        hbs.registerHelper('netAssetValue',()=>{
+        hbs.registerHelper('iterateNAVData',(data)=>{
           let navData = [];
           valuationResult.modelResults.forEach((result)=>{
-            if(result.model === MODEL[5]){
-              navData = Object.values(result.valuationData);
-             const firmValueInd = navData.findIndex((item:any)=>item.fieldName === 'Firm Value');
-             const netCurrentAssetInd = navData.findIndex((item:any)=>item.fieldName === 'Net Current Assets');
-             const emptyObj={ //push this empty object to have empty td between two td tags
-                fieldName:'',
-                // type:'',
-                bookValue:'',
-                fairValue:''
+              if(result.model === MODEL[5]){
+                  navData = Object.values(result.valuationData);
               }
-             navData.splice(firmValueInd,0,emptyObj);
-             navData.splice(netCurrentAssetInd,0,emptyObj);
-
-             navData = navData.map((indNav)=>{
-              return {
-                fieldName:indNav.fieldName,
-                // type:indNav.type === 'book_value' ? 'Book Value' : indNav.type === 'market_value' ? 'Market Value' : indNav.type,
-                bookValue:indNav?.bookValue === null ? null : indNav?.bookValue === 0 || indNav?.bookValue ? formatPositiveAndNegativeValues(indNav.bookValue) : indNav?.bookValue,
-                fairValue:indNav?.fairValue === 0 || indNav?.fairValue ? formatPositiveAndNegativeValues(indNav.fairValue) : indNav.value  === 0 || indNav?.value ? formatPositiveAndNegativeValues(indNav.value): indNav?.value
-              }
-             })
-            }
           })
-          return navData;
-        })
+          return this.reportService.navHTMLBinding(navData, 23);
+      })
 
         hbs.registerHelper('companies', () => {
           let arrayCompany = [];

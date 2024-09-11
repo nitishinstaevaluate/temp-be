@@ -2388,7 +2388,7 @@ export class ReportService {
                     navData = Object.values(result.valuationData);
                 }
             })
-            return this.navReportService.navTableStructure(navData);
+            return this.navHTMLBinding(navData);
         })
         hbs.registerHelper('reportPurpose',()=>{
           if(reportDetails?.reportPurpose){
@@ -4022,5 +4022,9 @@ async validateReportClaims(roles, purposeOfReport){
       break;
   }
   return roleExist
+}
+
+navHTMLBinding(navData, splittingIndex?){
+  return this.navReportService.navTableStructure(navData, splittingIndex);
 }
 }

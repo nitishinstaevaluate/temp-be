@@ -575,11 +575,12 @@ export class navReportService {
         }
     }
 
-    navTableStructure(nArray){
+    navTableStructure(nArray, splittingIndex?){
         const navArray = nArray || [];
         if(!navArray.length) return [];
 
-        const pageBreakIndex = navArray.findIndex(indEle => indEle.fieldName === 'Total Assets (A)');
+        // const pageBreakIndex = navArray.findIndex(indEle => indEle.fieldName === 'Total Assets (A)');
+        const pageBreakIndex = splittingIndex ||  31; //Statically applying page-break after 31th Index
         const firstPart = navArray.slice(0, pageBreakIndex + 1);
         const secondPart = navArray.slice(pageBreakIndex + 1);
 
@@ -612,27 +613,84 @@ export class navReportService {
 
         return `
             ${generateTableHTML(firstPart)}
-            <div style="page-break-before: always;"></div>
-            <div style="padding-top:8%">
-            ${generateTableHTML(secondPart)}
-            </div> 
-        `;
+            ${secondPart.length > 0 ? `
+                <div style="page-break-before: always;"></div>
+                <div style="padding-top:8%">
+                ${generateTableHTML(secondPart)}
+                </div>
+            ` : ''}
+            `;
+
+       
     }
+
+    /**
+     * This is older function for generating NAV valuation table
+     * What it does:
+     * It checks for line item Liabilities - 
+     * Once found it divides the data into two
+     * First half contains Equity section
+     * Second half contains Liabilities section
+     * Which helps conditional rendering of pages using page-break statements
+     */
+    // navTableStructure(nArray){
+    //     const navArray = nArray || [];
+    //     if(!navArray.length) return [];
+
+    //     const pageBreakIndex = navArray.findIndex(indEle => indEle.fieldName === 'Total Assets (A)');
+    //     const firstPart = navArray.slice(0, pageBreakIndex + 1);
+    //     const secondPart = navArray.slice(pageBreakIndex + 1);
+
+    //     const generateTableHTML = (array) => {
+    //         return `
+    //         <table style="border-collapse:collapse;margin-left:8pt;width: 100%;padding-top: 2%;" cellspacing="0">
+    //             <tr style="height:18pt">
+    //                 <td style="width:227pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#001F5F">
+    //                     <p class="s12" style="padding-left: 2pt;text-indent: 0pt;line-height: 12pt;text-align: left;font-size: 13px !important;padding-top:3px;padding-bottom:3px;color:#fff">
+    //                         Particulars
+    //                     </p>
+    //                 </td>
+    //                 <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#001F5F">
+    //                     <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;padding-top:3px;padding-bottom:3px;color:#fff">
+    //                         Book Value
+    //                     </p>
+    //                 </td>
+    //                 <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#001F5F">
+    //                     <p class="s12" style="padding-right: 3pt;text-indent: 0pt;line-height: 12pt;text-align: right;font-size: 13px !important;padding-top:3px;padding-bottom:3px;color:#fff">
+    //                         Fair Value
+    //                     </p>
+    //                 </td>
+    //             </tr>
+    //             <tbody>
+    //                 ${array.map(indEle => {return this.navHTMLBinder(indEle)}).join('')}
+    //             </tbody>
+    //         </table>
+    //         `;
+    //     };
+
+    //     return `
+    //         ${generateTableHTML(firstPart)}
+    //         <div style="page-break-before: always;"></div>
+    //         <div style="padding-top:8%">
+    //         ${generateTableHTML(secondPart)}
+    //         </div> 
+    //     `;
+    // }
     
     navHTMLBinder(parameters:any){
-        let backgroundColorStndrd = '#fff', fontColorStndrd = 'black', fontSizeStndrd = '13px !important', fontWeightStndrd = '400', boolEmptyRow = false, paddingLeftStndrd = '4pt';
+        let backgroundColorStndrd = '#fff', fontColorStndrd = 'black', fontSizeStndrd = '12px !important', fontWeightStndrd = '400', boolEmptyRow = false, paddingLeftStndrd = '4pt';
 
-        if((parameters.reqLBrk || parameters.reqUBrk) && parameters.fieldName !== 'Total Assets (A)') boolEmptyRow = true;
+        if((parameters.reqLBrk || parameters.reqUBrk)) boolEmptyRow = true;
         if(parameters.fieldName === 'Value Per Share') {backgroundColorStndrd = '#001F5F';fontColorStndrd = '#fff'}
-        if(parameters.mainHead) {fontSizeStndrd = '16px'; fontWeightStndrd = '600';}
-        if(parameters.mainSubHead) {fontSizeStndrd = '14px'; fontWeightStndrd = '600';}
+        if(parameters.mainHead) {fontSizeStndrd = '15px'; fontWeightStndrd = '600';}
+        if(parameters.mainSubHead) {fontSizeStndrd = '13px'; fontWeightStndrd = '600';}
         if(parameters.header) {fontWeightStndrd = '600';}
         if(parameters.subHeader) {paddingLeftStndrd = '9pt';}
         if(parameters.nestedSubHeader) paddingLeftStndrd = '15pt';
 
         
         let emptyRow = 
-        `<tr style="height:18pt">
+        `<tr style="height:16pt">
             <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"></td>
             <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"></td>
             <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"></td>
