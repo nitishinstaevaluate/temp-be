@@ -263,7 +263,6 @@ export class ExportTemplateController {
                       bgColor: cell.fill.bgColor
                   };
                 }
-                // console.log() BDBDBD
                 const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
                 if (prevCell.border) {
                     worksheet.getCell(newCellAddress).border = {
