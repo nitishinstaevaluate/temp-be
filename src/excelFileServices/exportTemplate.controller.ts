@@ -188,6 +188,27 @@ export class ExportTemplateController {
    try{
     worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+        if (cell.value && 
+          typeof cell.value === 'string' && 
+          (
+            cell.value.toLowerCase().includes("cash and cash equivalent") || 
+            cell.value.toLowerCase().includes('retained earnings')
+          ) 
+        ) {
+          for (let i = 0; i < firsRowName.length; i++) {
+            if(sheetName === 'BS'){
+              if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' ){
+                const newCellAddress = firsRowName[i] + rowNumber;
+                worksheet.getCell(newCellAddress).fill = {
+                  type: 'pattern',
+                  pattern: 'solid',
+                  fgColor: { argb: 'FFBBBBBB' },
+                  bgColor: { argb: 'FFBBBBBB' }
+                };
+              }
+            }
+          }
+        }
         if (cell.formula) {
           for (let i = 0; i < firsRowName.length; i++) {
             if(sheetName === 'BS'){
@@ -242,6 +263,7 @@ export class ExportTemplateController {
                       bgColor: cell.fill.bgColor
                   };
                 }
+                // console.log() BDBDBD
                 const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
                 if (prevCell.border) {
                     worksheet.getCell(newCellAddress).border = {
