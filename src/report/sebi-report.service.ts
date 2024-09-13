@@ -2397,6 +2397,7 @@ export class sebiReportService {
               });
             }
           
+            const vwapType = allProcessStageDetails.stateInfo?.fifthStageInput?.vwapType;
             // Function to calculate weighted value and add to computedArray
             const addWeightedValue = (approach, method, valuePerShare, weight) => {
               const weightedValue = convertToNumberOrZero(valuePerShare) * weight / 100;
@@ -2435,7 +2436,7 @@ export class sebiReportService {
               if (model === MODEL[7] && this.checkModelExist(MODEL[7], modelArray)) {
                 const isSEBI = reportDetails.reportSection.includes("166(A) - SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018") && reportDetails.reportSection.length === 1;
                 if (isSEBI) {
-                  const marketPriceValuePerShare = response?.valuation || 0;
+                  const marketPriceValuePerShare = vwapType === 'vwapNse' ? (response?.valuation?.valuePerShareNse || 0) : (response?.valuation?.valuePerShareBse || 0);
                   addWeightedValue('Market Price Approach', model, marketPriceValuePerShare, marketPriceWeight);
                 }
               }
@@ -2507,6 +2508,15 @@ export class sebiReportService {
               }
             })
             return colspan;
+          })
+
+          hbs.registerHelper('vwapTypeCheck', (requestedType)=>{
+            const vwapType = allProcessStageDetails.stateInfo?.fifthStageInput?.vwapType;
+            if(vwapType){
+              if(vwapType === requestedType) return true;
+              return false;
+            }
+            return false;
           })
         }
         catch(error){
