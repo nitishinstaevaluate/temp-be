@@ -2508,31 +2508,58 @@ export class ExcelSheetService {
           return formatPositiveAndNegativeValues((convertToNumberOrZero(vwap) * convertToNumberOrZero(volume)));
         })
 
-        hbs.registerHelper('vwap90Days',()=>{
+        hbs.registerHelper('vwap90DaysNSE',()=>{
           let vwapLastNinetyDays = 0;
           valuationResult.modelResults.map((response)=>{
             if(response.model === MODEL[7] && response.valuationData?.vwapLastNinetyDays){
-              vwapLastNinetyDays = response.valuationData.vwapLastNinetyDays;
+              vwapLastNinetyDays = response.valuationData.vwapLastNinetyDays?.VWAPNSE;
+            }
+          })
+          return vwapLastNinetyDays;
+        })
+        hbs.registerHelper('vwap90DaysBSE',()=>{
+          let vwapLastNinetyDays = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.vwapLastNinetyDays){
+              vwapLastNinetyDays = response.valuationData.vwapLastNinetyDays?.VWAPBSE;
             }
           })
           return vwapLastNinetyDays;
         })
 
-        hbs.registerHelper('vwap10Days',()=>{
+        hbs.registerHelper('vwap10DaysNSE',()=>{
           let vwapLastTenDays = 0;
           valuationResult.modelResults.map((response)=>{
             if(response.model === MODEL[7] && response.valuationData?.vwapLastTenDays){
-              vwapLastTenDays = response.valuationData.vwapLastTenDays;
+              vwapLastTenDays = response.valuationData.vwapLastTenDays?.VWAPNSE;
+            }
+          })
+          return vwapLastTenDays;
+        })
+        hbs.registerHelper('vwap10DaysBSE',()=>{
+          let vwapLastTenDays = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7] && response.valuationData?.vwapLastTenDays){
+              vwapLastTenDays = response.valuationData.vwapLastTenDays?.VWAPBSE;
             }
           })
           return vwapLastTenDays;
         })
 
-        hbs.registerHelper('floorPriceVwap',()=>{
+        hbs.registerHelper('floorPriceVwapNSE',()=>{
           let valuePerShare = 0;
           valuationResult.modelResults.map((response)=>{
             if(response.model === MODEL[7]){
-              valuePerShare = response?.valuation;
+              valuePerShare = response?.valuation.valuePerShareNse;
+            }
+          })
+          return valuePerShare;
+        })
+        hbs.registerHelper('floorPriceVwapBSE',()=>{
+          let valuePerShare = 0;
+          valuationResult.modelResults.map((response)=>{
+            if(response.model === MODEL[7]){
+              valuePerShare = response?.valuation.valuePerShareBse;
             }
           })
           return valuePerShare;
