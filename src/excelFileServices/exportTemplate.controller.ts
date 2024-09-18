@@ -50,7 +50,8 @@ export class ExportTemplateController {
 
     let PLheaderRow = ['A1']; // Starting of PL header row
     let BSheaderRow = ['A1']; // Starting of BS header row
-    const filePath = `template/new-excel-template.xlsx`;
+    let CFHeaderRow = ['A1']; // Starting of Cash Flow header row
+    const filePath = `template/new-excel-template - Copy.xlsx`;
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).send('File not found');
@@ -60,15 +61,51 @@ export class ExportTemplateController {
 
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filePath);
+    const currentYear = new Date(getFinancialYearDate).getFullYear();
+
+
+    //#region Cash Flow Starts    
+    if(modelName !== MODEL[5] && modelName !== 'marketApproach'){
+      const cashFlowWorksheet:any = workbook.getWorksheet(6);
+      CFHeaderRow.push('B1')// Intentially pushing 'B' since we want to start adding years from C column and not from B
+      cashFlowWorksheet.getColumn(
+        'C',
+      ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
+      CFHeaderRow.push('C1');
+  
+      // if(modelName !== 'marketApproach'){
+        let cfcount = 0;
+        // Start for loop from C column incase of P&L, i = 2 
+        for (let i = 1; i <= projectionYears; i++) {
+          const columnLetter = columnsList[i+1];
+          CFHeaderRow.push(`${columnLetter}1`);
+          const headerText = `${currentYear + cfcount}-${currentYear + i}`;
+          cashFlowWorksheet.getColumn(columnLetter).header = headerText;
+          cashFlowWorksheet.getColumn(columnLetter).width = 15;
+          cfcount++;
+        }
+      // }
+  
+      await this.setHeaderStyles(cashFlowWorksheet, CFHeaderRow, '195478', 'FFFFFF'); 
+      await this.addCellAutoFilters(cashFlowWorksheet, CFHeaderRow.length);
+  
+      const getCashFlowFirstRow = await this.getFirstRowIndexName(cashFlowWorksheet);
+      await this.updateExcelFormulas(cashFlowWorksheet,getCashFlowFirstRow, 'Cash Flow');
+    }
+    else{
+      workbook.removeWorksheet(6);
+    }
+    //#endregion Cash Flow Ends
+    
+
 
     //#region Profit Loss excel
     /**
-     * Profit Loss excel Sheet Index starts from 5
+     * Profit Loss excel Sheet Index starts from 2
      */
     const worksheet:any = workbook.getWorksheet(2);
     
     PLheaderRow.push('B1')// Intentially pushing 'B' since we want to start adding years from C column and not from B
-    const currentYear = new Date(getFinancialYearDate).getFullYear();
     worksheet.getColumn(
       'C',
     ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
@@ -92,7 +129,6 @@ export class ExportTemplateController {
         count++;
       }
     }
-
     // Set common styles for all headers
     await this.setHeaderStyles(worksheet, PLheaderRow, '195478', 'FFFFFF'); 
     await this.addCellAutoFilters(worksheet, PLheaderRow.length);
@@ -205,6 +241,20 @@ export class ExportTemplateController {
                   fgColor: { argb: 'FFBBBBBB' },
                   bgColor: { argb: 'FFBBBBBB' }
                 };
+                if(rowNumber === 33){
+                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C43`;
+                  worksheet.getCell(newCellAddress).value = {
+                    formula: this.replaceColumnReferences(prevFormula),
+                    result: 0
+                  };
+                }
+                if(rowNumber === 53){
+                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `A49 + 'P&L'!C54`;
+                  worksheet.getCell(newCellAddress).value = {
+                    formula: this.replaceColumnReferences(prevFormula),
+                    result: 0
+                  };
+                }
               }
             }
           }
@@ -214,13 +264,11 @@ export class ExportTemplateController {
             if(sheetName === 'BS'){
               if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' ){
                 const columnLetter = String.fromCharCode(65 + colNumber - 1);
-                const cellAddress = columnLetter + rowNumber;
                 const newCellAddress = firsRowName[i] + rowNumber;
                 worksheet.getCell(newCellAddress).value = {
-                  formula: this.replaceColumnReferences(worksheet.getCell(cellAddress).formula, 'B', `${firsRowName[i]}`),
+                  formula: this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber)),
                   result: 0
                 };
-             
                 if (cell.fill) {
                   worksheet.getCell(newCellAddress).fill = {
                       type: 'pattern',
@@ -243,15 +291,15 @@ export class ExportTemplateController {
                       bold: true,
                   };
                 }
+                
               }
             }
-            else{
+            else if(sheetName === 'P&L'){
               if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' && firsRowName[i] !== 'C'){
                 const columnLetter = String.fromCharCode(65 + colNumber - 1);
-                const cellAddress = columnLetter + rowNumber;
                 const newCellAddress = firsRowName[i] + rowNumber;
                 worksheet.getCell(newCellAddress).value = {
-                  formula: this.replaceColumnReferences(worksheet.getCell(cellAddress).formula, 'C', `${firsRowName[i]}`),
+                  formula: this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber)),
                   result: 0
                 };
 
@@ -281,6 +329,39 @@ export class ExportTemplateController {
               }
 
             }
+            else {
+              if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' && firsRowName[i] !== 'C' && firsRowName[i] !== 'D'){
+                const columnLetter = String.fromCharCode(65 + colNumber - 1);
+                if(columnLetter !== 'D') continue;
+                const newCellAddress = firsRowName[i] + rowNumber;
+                worksheet.getCell(newCellAddress).value = {
+                  formula: this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber)),
+                  result: 0
+                };
+                if (cell.fill) {
+                  worksheet.getCell(newCellAddress).fill = {
+                      type: 'pattern',
+                      pattern: cell.fill.pattern,
+                      fgColor: cell.fill.fgColor,
+                      bgColor: cell.fill.bgColor
+                  };
+                }
+                const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
+                if (prevCell.border) {
+                    worksheet.getCell(newCellAddress).border = {
+                        top: prevCell.border.top,
+                        left: prevCell.border.left,
+                        bottom: prevCell.border.bottom,
+                        right: prevCell.border.right
+                    };
+                }
+                if (prevCell.font && prevCell.font.bold) {
+                  worksheet.getCell(newCellAddress).font = {
+                      bold: true,
+                  };
+                }
+              }
+            }
             // if(firsRowName[i]==='B'){   //Add date validation in excel 
             //   const dateValidationOptions = {
             //     type: 'date',
@@ -308,6 +389,14 @@ export class ExportTemplateController {
 }
 
 
+getPreviousAddress(elementAtChar, worksheet, rowNumber){
+  const columnCode = elementAtChar.charCodeAt(0);
+  const letter =  String.fromCharCode(columnCode - 1)
+  const prevCellAddress = letter + rowNumber;
+
+  return worksheet.getCell(prevCellAddress).formula;
+}
+
 /**
  * Used to Replace the old column Cell Alphabet with the new one
  * @param formula 
@@ -315,13 +404,21 @@ export class ExportTemplateController {
  * @param newColumn 
  * @returns 
  */
-replaceColumnReferences(formula, oldColumn, newColumn) {
-  const escapedOldColumn = oldColumn.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  
-  const regex = new RegExp(escapedOldColumn, 'g');
-  const newFormula = formula.replace(regex, newColumn);
-  
-  return newFormula;
+replaceColumnReferences(prevFormula) {
+  return prevFormula.replace(/([A-Z])([0-9])/g, (match, columnLetter, rest) => {
+    const nextColumnLetter = this.getNextColumnLetter(columnLetter);
+    return nextColumnLetter + rest;
+  });
+}
+
+/**
+ * 
+ * @param column 
+ * @returns 
+ */
+ getNextColumnLetter(column) {
+  const columnCode = column.charCodeAt(0);
+  return String.fromCharCode(columnCode + 1);
 }
 
 /**
