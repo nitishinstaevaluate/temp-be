@@ -91,6 +91,17 @@ export class ExportTemplateController {
   
       const getCashFlowFirstRow = await this.getFirstRowIndexName(cashFlowWorksheet);
       await this.updateExcelFormulas(cashFlowWorksheet,getCashFlowFirstRow, 'Cash Flow');
+      cashFlowWorksheet.protect('nitish@ifin', {
+          selectLockedCells: true,
+          selectUnlockedCells: true,
+          formatCells: false,
+          formatColumns: false,
+          formatRows: false,
+          insertColumns: false,
+          insertRows: false,
+          deleteColumns: false,
+          deleteRows: false
+      });
     }
     else{
       workbook.removeWorksheet(6);
@@ -135,7 +146,7 @@ export class ExportTemplateController {
     
     const getProfitLossFirstRow = await this.getFirstRowIndexName(worksheet);
     await this.updateExcelFormulas(worksheet,getProfitLossFirstRow, 'P&L');
-    //#endregion Profit Loss excel
+    //#endregion Profit Loss excel  
     
 
     //#region Balance Sheet Excel
@@ -242,14 +253,14 @@ export class ExportTemplateController {
                   bgColor: { argb: 'FFBBBBBB' }
                 };
                 if(rowNumber === 33){
-                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C43`;
+                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C44`;
                   worksheet.getCell(newCellAddress).value = {
                     formula: this.replaceColumnReferences(prevFormula),
                     result: 0
                   };
                 }
                 if(rowNumber === 53){
-                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `A49 + 'P&L'!C54`;
+                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `A53 + 'P&L'!C53`;
                   worksheet.getCell(newCellAddress).value = {
                     formula: this.replaceColumnReferences(prevFormula),
                     result: 0
