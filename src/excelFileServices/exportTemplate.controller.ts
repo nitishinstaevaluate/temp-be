@@ -87,21 +87,21 @@ export class ExportTemplateController {
       // }
   
       await this.setHeaderStyles(cashFlowWorksheet, CFHeaderRow, '195478', 'FFFFFF'); 
-      await this.addCellAutoFilters(cashFlowWorksheet, CFHeaderRow.length);
+      // await this.addCellAutoFilters(cashFlowWorksheet, CFHeaderRow.length);
   
       const getCashFlowFirstRow = await this.getFirstRowIndexName(cashFlowWorksheet);
       await this.updateExcelFormulas(cashFlowWorksheet,getCashFlowFirstRow, 'Cash Flow');
-      cashFlowWorksheet.protect('nitish@ifin', {
-          selectLockedCells: true,
-          selectUnlockedCells: true,
-          formatCells: false,
-          formatColumns: false,
-          formatRows: false,
-          insertColumns: false,
-          insertRows: false,
-          deleteColumns: false,
-          deleteRows: false
-      });
+      // cashFlowWorksheet.protect('nitish@ifin', {
+      //     selectLockedCells: true,
+      //     selectUnlockedCells: true,
+      //     formatCells: false,
+      //     formatColumns: false,
+      //     formatRows: false,
+      //     insertColumns: false,
+      //     insertRows: false,
+      //     deleteColumns: false,
+      //     deleteRows: false
+      // });
     }
     else{
       workbook.removeWorksheet(6);
@@ -142,7 +142,7 @@ export class ExportTemplateController {
     }
     // Set common styles for all headers
     await this.setHeaderStyles(worksheet, PLheaderRow, '195478', 'FFFFFF'); 
-    await this.addCellAutoFilters(worksheet, PLheaderRow.length);
+    // await this.addCellAutoFilters(worksheet, PLheaderRow.length);
     
     const getProfitLossFirstRow = await this.getFirstRowIndexName(worksheet);
     await this.updateExcelFormulas(worksheet,getProfitLossFirstRow, 'P&L');
@@ -174,7 +174,7 @@ export class ExportTemplateController {
 
     // Set common styles for all headers
     await this.setHeaderStyles(worksheet2, BSheaderRow, '195478', 'FFFFFF'); 
-    await this.addCellAutoFilters(worksheet2, BSheaderRow.length);
+    // await this.addCellAutoFilters(worksheet2, BSheaderRow.length);
   
     const getBalanceSheetFirstRow = await this.getFirstRowIndexName(worksheet2)
     await this.updateExcelFormulas(worksheet2,getBalanceSheetFirstRow, 'BS')
@@ -253,7 +253,7 @@ export class ExportTemplateController {
                   bgColor: { argb: 'FFBBBBBB' }
                 };
                 if(rowNumber === 33){
-                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C44`;
+                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C46`;
                   worksheet.getCell(newCellAddress).value = {
                     formula: this.replaceColumnReferences(prevFormula),
                     result: 0
