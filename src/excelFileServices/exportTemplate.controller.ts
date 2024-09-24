@@ -72,6 +72,7 @@ export class ExportTemplateController {
         'C',
       ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
       CFHeaderRow.push('C1');
+      cashFlowWorksheet.getCell('C1').value = { formula: `'BS'!B1` };
   
       // if(modelName !== 'marketApproach'){
         let cfcount = 0;
