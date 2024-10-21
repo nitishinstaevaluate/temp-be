@@ -30,6 +30,7 @@ import { authenticationTokenService } from 'src/authentication/authentication-to
 import { userRoles } from 'src/library/enums/user-roles.enum';
 import BTree from 'sorted-btree';
 import { CalculationService } from 'src/calculation/calculation.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
 require('dotenv').config();
 
 @Injectable()
@@ -48,16 +49,15 @@ export class ExcelSheetService {
     private readonly terminalValueWorkingService: terminalValueWorkingService,
     private readonly excelArchiveService: ExcelArchiveService,
     private readonly authTokenService:authenticationTokenService,
-    private readonly calculationService: CalculationService){}
+    private readonly calculationService: CalculationService,
+    private readonly processStateManagerService: ProcessStatusManagerService){}
     getSheetData(fileName: string, sheetName: string, request, processStateId): Observable<any> {
         // const uploadDir = path.join(__dirname, '../../uploads');
         // const filePath = path.join(uploadDir, fileName);
-        
         return from (this.excelArchiveService.fetchExcelByProcessStateId(processStateId)).pipe(
           switchMap((excelArchiveData)=>{
             const excelRowCount = excelArchiveData[EXCEL_CONVENTION[sheetName]?.EAcountCheck] || 0;
             if(excelRowCount){
-              console.log("fetched data from db")
               return of({
                 data:excelArchiveData[EXCEL_CONVENTION[sheetName]?.EAkey],
                 msg:`Excel Sheet Fetched`,
@@ -4190,24 +4190,36 @@ async fetchUserInfo(request){
 
 async uploadExcelProcess(formData, processId, modelName, request){
   try{
+    let processStateId = processId;
     const {validationStat, errorStack} = await this.validateExcelTemplate(formData, modelName);
     if(validationStat) throw new NotFoundException(errorStack.join('\n')).getResponse();
 
-    await this.excelArchiveService.removeExcelByProcessId(processId);
+    if(processStateId && processStateId !== "null") await this.excelArchiveService.removeExcelByProcessId(processStateId);
+
     const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
+    if(!processStateId || processStateId === "null"){
+      const processStateModel ={
+        firstStageInput:{
+          excelSheetId:uploadedFileData.excelSheetId
+        },
+        step:0
+      }
+     const processState = await this.processStateManagerService.upsertProcess(request, processStateModel, null);
+     processStateId = processState.processId;
+    }
     /**
      * When user uploads excel,
      * 1. Create copy of the excel     
      * 2. Adjust retainers and cash & cash equivalent line items in Balance Sheet 
      */
     if(modelName === XL_SHEET_ENUM[0]){
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processId).toPromise();
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processId).toPromise();
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Cash Flow'].key, request, processId).toPromise();
-      await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processId);
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processId).toPromise();
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Cash Flow'].key, request, processStateId).toPromise();
+      await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processStateId);
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processStateId).toPromise();
     }
-    return uploadedFileData;
+    return {excelSheetId:uploadedFileData.excelSheetId, processId: processStateId};
 
   }
   catch(error){
