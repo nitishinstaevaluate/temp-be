@@ -7,13 +7,13 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects, ALL_MODELS } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects, ALL_MODELS, GET_DATE_MONTH_YEAR_FORMAT, CURRENT_YEAR_CYCLE, XL_SHEET_ENUM } from 'src/constants/constants';
 // import { ALL_MODELS, ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero, formatDateHyphenToDDMMYYYY } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero, formatDateHyphenToDDMMYYYY, extractYearsFromKeys, getDateKey } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
 import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
@@ -337,7 +337,7 @@ export class ExcelSheetService {
           /**
            * Line Item : Cash and cash equivalents at end of period (IV+V)
            */
-          if(indCashFlowData.lineEntry.sysCode === 7039){
+          if(indCashFlowData.lineEntry.sysCode === 7040){
             cashEquivalentFromCashFlow.push(indCashFlowData);
           }
         }
@@ -357,15 +357,15 @@ export class ExcelSheetService {
         
         for await (const indBSdata of balanceSheetData) {
           const sortedData = Object.keys(indBSdata).sort((a, b) => (/\d{2}-\d{2}-\d{4}/.test(a) ? -1 : 1)).reduce((acc, key) => ({ ...acc, [key]: indBSdata[key] }), {});
-          const keysToProcess = Object.keys(sortedData).filter(key => key !== 'lineEntry');
-            /**
-             * Line Item : (iii) cash and cash equivalents
-             */
-            if (indBSdata.lineEntry.sysCode === 8029) {
+          /**
+           * Line Item : (iii) cash and cash equivalents
+          */
+         if (indBSdata.lineEntry.sysCode === 8029) {
+              const keysToProcess = Object.keys(sortedData).filter((key,index) => key !== 'lineEntry' && index !== 2);
                 for await (const key of keysToProcess) {
                     const nextKeyIndex = keysToProcess.indexOf(key) + 1;
                     if (keysToProcess[nextKeyIndex]) {
-                        const cellAddressColumn = String.fromCharCode(A_CHAR_CODE + nextKeyIndex + 1);
+                        const cellAddressColumn = String.fromCharCode(A_CHAR_CODE + nextKeyIndex + 2);
                         const cellAddress = `${cellAddressColumn}${indBSdata.lineEntry.rowNumber}`;
                         const newValue = cashEquivalentFromCashFlow[0]?.[keysToProcess[nextKeyIndex]] ?? 0;
         
@@ -394,14 +394,16 @@ export class ExcelSheetService {
              * Line Item : (iv) Retained Earnings
              */
             if (indBSdata.lineEntry.sysCode === 8046) {
+              const keysToProcess = Object.keys(sortedData).filter((key,index) => key !== 'lineEntry');
                 for await (const key of keysToProcess) {
 
-                    const nextKeyIndex = keysToProcess.indexOf(key) + 1;
+                    const nextKeyIndex = keysToProcess.indexOf(key) + 2;
+                    const currentKey = keysToProcess[keysToProcess.indexOf(key)+1];
                     if (keysToProcess[nextKeyIndex]) {
 
                         const cellAddressColumn = String.fromCharCode(A_CHAR_CODE + nextKeyIndex + 1);
                         const cellAddress = `${cellAddressColumn}${indBSdata.lineEntry.rowNumber}`;
-                        indBSdata[keysToProcess[nextKeyIndex]] = convertToNumberOrZero(indBSdata[key]) + convertToNumberOrZero(periodProfitLoss[0]?.[keysToProcess[nextKeyIndex]] ?? 0);
+                        indBSdata[keysToProcess[nextKeyIndex]] = convertToNumberOrZero(indBSdata[currentKey]) + convertToNumberOrZero(periodProfitLoss[0]?.[keysToProcess[nextKeyIndex]] ?? 0);
         
                         const bsExcelSheetLogger = {
                             excelSheet: EXCEL_CONVENTION.BS.key,
@@ -485,17 +487,17 @@ export class ExcelSheetService {
     }
     generateAssessmentOfWCExcel(workbook,  processStateId, fileName, filePath, fileSize, fileType, request){
       if(!workbook.SheetNames.includes(EXCEL_CONVENTION['Assessment of Working Capital'].key)){
-        return from(new Promise((resolve, reject) => {
-            let workbookXLSX = xlsx.readFile(filePath);
-          resolve(workbookXLSX);
-          })).pipe(
-            switchMap((workbookXLSX: any) => {
-            const worksheet1 = workbookXLSX.Sheets['P&L'];
-            return from(getYearsList(worksheet1)).pipe(
-              switchMap((years) => {
+        // return from(new Promise((resolve, reject) => {
+        //     let workbookXLSX = xlsx.readFile(filePath);
+        //   resolve(workbookXLSX);
+        //   })).pipe(
+        //     switchMap((workbookXLSX: any) => {
+            // const worksheet1 = workbookXLSX.Sheets['P&L'];
+            // return from(getYearsList(worksheet1)).pipe(
+            //   switchMap((years) => {
 
-                 const balanceSheet = workbookXLSX.Sheets['BS']
-               return from(this.generateAssessmentOfWCpayload(years,balanceSheet, processStateId)).pipe(
+                //  const balanceSheet = workbookXLSX.Sheets['BS']
+               return from(this.generateAssessmentOfWCpayload(processStateId)).pipe(
                  switchMap((data)=>{
                    return from(this.appendSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
                      switchMap((response) => {
@@ -540,17 +542,17 @@ export class ExcelSheetService {
                  })
                )
              
-               }),
-               catchError((error) => {
-                 return throwError(error);
-               })
-               );
-                }),
-                catchError((error) => {
-                  console.error('Error reading file:', error);
-                  return throwError(error);
-                })
-              );
+              //  }),
+              //  catchError((error) => {
+              //    return throwError(error);
+              //  })
+              //  );
+              //   }),
+              //   catchError((error) => {
+              //     console.error('Error reading file:', error);
+              //     return throwError(error);
+              //   })
+              // );
            }
            else{
              return from(this.appendSheetInExcel(filePath,[])).pipe(
@@ -597,7 +599,10 @@ export class ExcelSheetService {
     }
       
     generateCashFlowExcel(workbook,  processStateId, fileName, filePath, fileSize, fileType, request){
-      if(!workbook.SheetNames.includes(EXCEL_CONVENTION['Cash Flow'].key)){
+      if(workbook.SheetNames.includes(EXCEL_CONVENTION['Cash Flow'].key)){
+        delete workbook.Sheets['Cash Flow'];
+        workbook.SheetNames = workbook.SheetNames.filter(name => name !== 'Cash Flow');
+      }
         return from(new Promise((resolve, reject) => {
             let workbookXLSX = xlsx.readFile(filePath);
           resolve(workbookXLSX);
@@ -607,7 +612,7 @@ export class ExcelSheetService {
             return from(getYearsList(worksheet1)).pipe(
               switchMap((years) => {
                const profitLossSheet = workbookXLSX.Sheets[EXCEL_CONVENTION['P&L'].key]
-               return from(this.generateCashFlowPayload(years, profitLossSheet, processStateId)).pipe(
+               return from(this.generateCashFlowPayload(processStateId)).pipe(
                  switchMap((data)=>{
                    return from(this.appendCashFlowSheetInExcel(filePath, data)).pipe( /// pass the above created payload from generatePayload method
                     switchMap((response:any) => {
@@ -652,37 +657,37 @@ export class ExcelSheetService {
                   return throwError(error);
                 })
               );
-      }
-      else{
-        return from(this.appendCashFlowSheetInExcel(filePath,[])).pipe(
-          switchMap((response)=>{
-            if(response){
-              const payload = {
-                response,
-                fileName,
-                filePath,
-                fileSize,
-                fileType,
-                processStateId
-              }
-               return from(this.updateCashFlowArchive(payload, request)).pipe(
-                switchMap((excelArchiveResponse)=>{
-                     if (response) {
-                        return of({
-                          data:response.data,
-                          msg:"Assessment Sheet Fetched",
-                          status:true
-                        });
-                     } else 
-                       return throwError('Error: Response not found');
-                })
-               )
-            }
-          }),catchError((error)=>{
-              return throwError(error)
-          })
-        )
-      }
+      // }
+      // else{
+      //   return from(this.appendCashFlowSheetInExcel(filePath,[])).pipe(
+      //     switchMap((response)=>{
+      //       if(response){
+      //         const payload = {
+      //           response,
+      //           fileName,
+      //           filePath,
+      //           fileSize,
+      //           fileType,
+      //           processStateId
+      //         }
+      //          return from(this.updateCashFlowArchive(payload, request)).pipe(
+      //           switchMap((excelArchiveResponse)=>{
+      //                if (response) {
+      //                   return of({
+      //                     data:response.data,
+      //                     msg:"Assessment Sheet Fetched",
+      //                     status:true
+      //                   });
+      //                } else 
+      //                  return throwError('Error: Response not found');
+      //           })
+      //          )
+      //       }
+      //     }),catchError((error)=>{
+      //         return throwError(error)
+      //     })
+      //   )
+      // }
     }
 
     updateAssessmentArchive(payload,request){
@@ -2868,7 +2873,22 @@ export class ExcelSheetService {
         break;
 
         case 'BS':
-          // const uploadDirBs = path.join(__dirname, '../../uploads');
+          let containsBSonly = false;
+          if(
+            (
+              (
+                data?.model.includes(MODEL[2]) || data?.model.includes(MODEL[5])
+              ) &&
+              data?.model?.length === 1
+            ) ||
+            (
+              (
+                data?.model.includes(MODEL[2]) && data?.model.includes(MODEL[5])
+              ) &&
+              data?.model?.length === 2
+            )
+          ){ containsBSonly = true};
+
           const uploadDirBs = path.join(process.cwd(),'uploads');
           const filePathBs = path.join(uploadDirBs, data.excelSheetId);
   
@@ -2876,8 +2896,10 @@ export class ExcelSheetService {
           const statsBs = fs.statSync(filePathBs);
           const fileBsSize = statsBs.size;
           const updateBalanceSheetExcel = await this.updateExcel(filePathBs,data,data.excelSheet);
-          await this.excelArchiveService.removeAssessmentOfWCbyProcessStateId(data.processStateId);
-          await this.excelArchiveService.removeCashFlowByProcessStateId(data.processStateId);
+          if(!containsBSonly){
+            await this.excelArchiveService.removeAssessmentOfWCbyProcessStateId(data.processStateId);
+            await this.excelArchiveService.removeCashFlowByProcessStateId(data.processStateId);
+          }
 
            const bspayload = {
             processStateId: data.processStateId,
@@ -2890,12 +2912,14 @@ export class ExcelSheetService {
             },
             sheetName:data.excelSheet
           }
+          let adjustRetainersAndCashEqv =  await this.updateBSorPLexcelArchive(bspayload, request).toPromise();
           await this.updateBSorPLexcelArchive(bspayload, request).toPromise();
+          if(!containsBSonly){
+            await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Cash Flow', request, data.processStateId).toPromise();
+            adjustRetainersAndCashEqv = await this.updateBalanceSheetRetainersAndCashEquivalent(updateBalanceSheetExcel.modifiedFileName, request, data.processStateId);
+            await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Assessment of Working Capital', request, data.processStateId).toPromise();
+          }
 
-          await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Cash Flow', request, data.processStateId).toPromise();
-          const adjustRetainersAndCashEqv = await this.updateBalanceSheetRetainersAndCashEquivalent(updateBalanceSheetExcel.modifiedFileName, request, data.processStateId);
-          await this.getSheetData(updateBalanceSheetExcel.modifiedFileName, 'Assessment of Working Capital', request, data.processStateId).toPromise();
-         
           return (
             {
               data:adjustRetainersAndCashEqv.data,
@@ -3398,8 +3422,6 @@ export class ExcelSheetService {
     const workbook= new ExcelJS.Workbook();
     await workbook.xlsx.readFile(filepath);
     let worksheet:any = workbook.getWorksheet(sheetName);
-    console.log(worksheet,"worksheet")
-    console.log(sheetName,"sheetname")
     const structure:any = sheetName === 'P&L' ? V2_PROFIT_LOSS : sheetName === 'BS' ? V2_BALANCE_SHEET : sheetName === 'Rule 11 UA' ? RULE_ELEVEN_UA : ''; 
 
     let  editedFilePath='';
@@ -3430,7 +3452,7 @@ export class ExcelSheetService {
     })
     }
 
-    if(sheetName === EXCEL_CONVENTION['P&L'].key || sheetName === EXCEL_CONVENTION['BS'].key){
+    if((sheetName === EXCEL_CONVENTION['P&L'].key || sheetName === EXCEL_CONVENTION['BS'].key) && !deleteAssessmentSheet){
 
       const sheet = workbook.getWorksheet(EXCEL_CONVENTION['Cash Flow'].key);
       if (sheet) {
@@ -3440,7 +3462,7 @@ export class ExcelSheetService {
       }
     }
 
-    if(sheetName === EXCEL_CONVENTION['BS'].key){
+    if(sheetName === EXCEL_CONVENTION['BS'].key && !deleteAssessmentSheet){
 
       const sheet = workbook.getWorksheet(EXCEL_CONVENTION['Assessment of Working Capital'].key);
       if (sheet) {
@@ -3565,7 +3587,8 @@ return {
     const formattedData = [];
     let indexing = 0;
     for (let i = 1; i < jsonData.length; i++) {
-      const row = jsonData[i];
+      const row:any = jsonData[i];
+      if(!row.length) continue;
       const obj = {};
 
       for (let j = 0; j < head.length; j++) {
@@ -3577,7 +3600,6 @@ return {
     }
 
     const updatedCashFlow = await this.formatCashFlowExcelResult(formattedData);
-  
   return {formattedData:updatedCashFlow ,indexing};
 }
 // Older assessment function for generating assessment payload structure 
@@ -3625,21 +3647,24 @@ return {
 // }
 
 
-async generateAssessmentOfWCpayload(years, balanceSheet, processStateId){
-    let transformedObject = years.reduce((acc, year, index, array) => {
+async generateAssessmentOfWCpayload(processStateId){
+    const loadExcelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
+    const balanceSheetData = loadExcelArchive.balanceSheetdata;
+    const yearsList:any = extractYearsFromKeys(balanceSheetData[0]);
+    let provisionalDate = getDateKey(balanceSheetData[0]);
+    let transformedObject = yearsList.reduce((acc, year, index, array) => {
       if (index < array.length - 1) {
           const nextYear = array[index + 1];
           acc[`20${year}-20${nextYear}`] = '';
       }
       return acc;
   }, {});
-  let provisionalDate = balanceSheet['B1'].v
   transformedObject = {
     [provisionalDate]: '',
     ...transformedObject
 };
   const payload = V2_ASSESSMENT_OF_WORKING_CAPITAL.map((data,index)=>{
-    if(data.lineEntry.sysCode===3001 || data.lineEntry.sysCode === 3011){
+    if(data.lineEntry.sysCode===9001 || data.lineEntry.sysCode === 9011){
       const transformedEntry = { Particulars: data.lineEntry?.particulars };
       for (const key in transformedObject) {
           transformedEntry[key] = null;
@@ -3667,15 +3692,18 @@ async generateAssessmentOfWCpayload(years, balanceSheet, processStateId){
   return calculatedPayload;
 }
 
-async generateCashFlowPayload(years,profitLossSheet, processStateId){
-    let transformedObject = years.reduce((acc, year, index, array) => {
+async generateCashFlowPayload(processStateId){
+  const loadExcelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
+    const balanceSheetData = loadExcelArchive.balanceSheetdata;
+    const yearsList:any = extractYearsFromKeys(balanceSheetData[0]);
+    let provisionalDate = getDateKey(balanceSheetData[0]);
+    let transformedObject = yearsList.reduce((acc, year, index, array) => {
       if (index < array.length - 1) {
           const nextYear = array[index + 1];
           acc[`20${year}-20${nextYear}`] = '';
       }
       return acc;
   }, {});
-  let provisionalDate = profitLossSheet['C1'].v
   transformedObject = {
     [provisionalDate]: '',
     ...transformedObject
@@ -3939,10 +3967,10 @@ async assessmentCalculations(payload, processStateId, provDate){
 
 async cashFlowCalculations(payload, processStateId, provDate){
   try{
+    let firstColumnKey;
     const excelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processStateId);
     const profitLossSheetRowCount = excelArchive?.profitLossSheetRowCount || 0;
     const balanceSheetRowCount = excelArchive?.balanceSheetRowCount || 0;
-
     /**
      * The BTree package import is little wonky
      * Note: [ Instead of SortedMap instance, use BTree instance ]
@@ -3961,6 +3989,19 @@ async cashFlowCalculations(payload, processStateId, provDate){
       for await (const indBSArchive of balanceSheetData){
         const {lineEntry, ...rest} = indBSArchive; 
         sortedBalanceSheetBtree.set(indBSArchive.lineEntry.particulars, rest);
+        if(!firstColumnKey){
+          firstColumnKey = Object.keys(
+                            Object.keys(indBSArchive)
+                            .sort((a, b) => 
+                              (/\d{2}-\d{2}-\d{4}/.test(a) ? -1 : 1)
+                            )
+                            .reduce((acc, key) => 
+                              ({ ...acc, [key]: indBSArchive[key] }), {})
+                            )
+                            .filter((key,index) => 
+                              index === 2
+                          );
+        }
       }
     }
     //#region INFO 
@@ -4000,14 +4041,12 @@ async cashFlowCalculations(payload, processStateId, provDate){
     let indexing = 0;
     const outerIgnoredIndexes = new Set(CASHFLOW_HEADER_LINE_ITEM);
     const innerHandledIndexes = new Set(CASHFLOW_LINE_ITEMS_SKIP);
-
     for await (const indStructure of payload) {
-      const keysToProcess = Object.keys(indStructure).filter(key => key !== 'Particulars' && key !== 'Sr No');
+      const keysToProcess:any = Object.keys(indStructure).filter(key => key !== 'Particulars' && key !== 'Sr No');
 
       if (!outerIgnoredIndexes.has(indStructure.Particulars)) {
         for await (const key of keysToProcess) {
           const i = keysToProcess.indexOf(key);
-          
           if (!innerHandledIndexes.has(indStructure.Particulars)) {
             indStructure[key] = await cashFlowFormulas(
               sortedProfitLossBtree,
@@ -4015,7 +4054,8 @@ async cashFlowCalculations(payload, processStateId, provDate){
               indStructure.Particulars,
               key,
               payload,
-              keysToProcess
+              firstColumnKey,
+              keysToProcess,
             );
           } else {
             const nextKey = keysToProcess[i + 1];
@@ -4026,14 +4066,15 @@ async cashFlowCalculations(payload, processStateId, provDate){
               indStructure.Particulars,
               nextKey,
               payload,
-              keysToProcess
+              firstColumnKey,
+              keysToProcess,
             );
           }
         }
       }
       indexing++;
     }
-    const sort = sortArrayOfObjects(payload, provDate)
+    const sort = sortArrayOfObjects(payload, provDate);
     return sort;
 
   }catch(error){
@@ -4149,10 +4190,8 @@ async fetchUserInfo(request){
 
 async uploadExcelProcess(formData, processId, modelName, request){
   try{
-    if(modelName === 'containsProfitLossAndBalanceSheet'){
-      const {validationStat, errorStack} = await this.validateExcelTemplate(formData);
-      if(validationStat) throw new NotFoundException(errorStack.join('\n')).getResponse();
-    }
+    const {validationStat, errorStack} = await this.validateExcelTemplate(formData, modelName);
+    if(validationStat) throw new NotFoundException(errorStack.join('\n')).getResponse();
 
     await this.excelArchiveService.removeExcelByProcessId(processId);
     const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
@@ -4161,9 +4200,10 @@ async uploadExcelProcess(formData, processId, modelName, request){
      * 1. Create copy of the excel     
      * 2. Adjust retainers and cash & cash equivalent line items in Balance Sheet 
      */
-    if(modelName === 'containsProfitLossAndBalanceSheet'){
+    if(modelName === XL_SHEET_ENUM[0]){
       await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processId).toPromise();
       await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processId).toPromise();
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Cash Flow'].key, request, processId).toPromise();
       await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processId);
       await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processId).toPromise();
     }
@@ -4240,17 +4280,23 @@ computeProportions(valuationResult, proportion, getCapitalStructure){
   }
 }
 
-async validateExcelTemplate(formData){
+async validateExcelTemplate(formData, modelType){
+  if(modelType === XL_SHEET_ENUM[1]) return {validationStat: false};
   const errorSet = [];
 
-  let workbook = xlsx.readFile(path.join(process.cwd(), 'uploads', formData.filename))
+  let workbook = xlsx.readFile(path.join(process.cwd(), 'uploads', formData.filename));
   let validationStat = false;
   const sheetNames = workbook.SheetNames;
 
+  const isPL = sheetNames.includes(EXCEL_CONVENTION['P&L'].key);
+  const isBS = sheetNames.includes(EXCEL_CONVENTION['BS'].key);
+  const excelJSWorkbook = new ExcelJS.Workbook();
+  await excelJSWorkbook.xlsx.readFile(path.join(process.cwd(), 'uploads', formData.filename));
+
   const boolContainsProfitLossAndBalanceSheet = sheetNames.length && 
     (
-      sheetNames.includes(EXCEL_CONVENTION.BS.key) || 
-      sheetNames.includes(EXCEL_CONVENTION['P&L'].key)
+      isPL || 
+      isBS
     );
 
     let headLabels = {}, particularsList:any = {};
@@ -4259,12 +4305,16 @@ async validateExcelTemplate(formData){
       particularsList[`${indSheet}`] = particularsList[`${indSheet}`] || [];
       headLabels[`${indSheet}`] = headLabels[`${indSheet}`] || [];
 
-      const { sheetData, maxKeysObject } = this.sanitiseCells(workbook, indSheet);
-      
+      const worksheet = excelJSWorkbook.getWorksheet(indSheet);
+      const capturedHeaders = this.captureHeaders(worksheet);
+      const { sheetData, maxKeysObject, errorStack } = this.sanitiseCells(workbook, indSheet, capturedHeaders, modelType);
+
+      if(errorStack) {errorSet.push(errorStack); break};
       headLabels[indSheet] = Object.keys(maxKeysObject);
       particularsList[`${indSheet}`] = sheetData.map((_cell:any) => { return {Particulars: _cell.Particulars}});
     }
   }
+  if(errorSet.length) return {validationStat: true, errorStack: errorSet}
 
   /**
    * DUPLICACY VALIDATION
@@ -4285,7 +4335,7 @@ async validateExcelTemplate(formData){
    * BS LINE ITEMS
    * Validate by iterating every line item
    */
-  if(particularsList?.BS?.length){
+  if(particularsList?.BS?.length && isBS){
     const BSstructure  = V2_BALANCE_SHEET.map(bs=>{ return bs.lineEntry.particulars});
 
     let index = 1;
@@ -4301,7 +4351,7 @@ async validateExcelTemplate(formData){
    * PL LINE ITEMS
    * Validate by iterating every line item
    */
-  if(particularsList?.['P&L']?.length){
+  if(particularsList?.['P&L']?.length && isPL){
     const PLstructure  = V2_PROFIT_LOSS.map(bs=>{ return bs.lineEntry.particulars});
     
     let index = 1;
@@ -4317,17 +4367,20 @@ async validateExcelTemplate(formData){
    * DATE COLUMN VALIDATION
    * Column 2 in BS, Column 3 in PL
    */
-    const boolPLDate = `${headLabels['P&L'][2]}`.trim().match(DATE_REGEX);
-    const boolBSDate = `${headLabels['BS'][1]}`.trim().match(DATE_REGEX);
-
-    const emptyPLexist = headLabels['P&L'].includes('__EMPTY');
-    const emptyBSexist = headLabels['BS'].includes('__EMPTY');
-    
-    if(emptyBSexist) errorSet.push(`Excel: [BS] - Data integrity error: Found an empty column.`) 
-    if(emptyPLexist) errorSet.push(`Excel: [PL] - Data integrity error: Found an empty column.`) 
+    let emptyPLexist, emptyBSexist, boolBSDate;
+    if(isPL){
+      const boolPLDate = modelType === XL_SHEET_ENUM[2] ? `${headLabels['P&L'][2]}`.trim().match(DATE_REGEX) : `${headLabels['P&L'][3]}`.trim().match(DATE_REGEX) ;
+      emptyPLexist = headLabels['P&L'].includes('__EMPTY');
+      if(emptyPLexist) errorSet.push(`Excel: [PL] - Data integrity error: Found an empty column.`) 
+      if(!boolPLDate && !emptyPLexist) errorSet.push(`Critical Error: [PL] Date format must be "DD-MM-YYYY". Received "${headLabels['P&L'][2]}".`)
+    }
+    if(isBS){
+      boolBSDate = modelType === XL_SHEET_ENUM[2] || modelType === XL_SHEET_ENUM[3] ? `${headLabels['BS'][1]}`.trim().match(DATE_REGEX) : `${headLabels['BS'][2]}`.trim().match(DATE_REGEX);
+      emptyBSexist = headLabels['BS'].includes('__EMPTY');
+      if(emptyBSexist) errorSet.push(`Excel: [BS] - Data integrity error: Found an empty column.`) 
+    }
     
     if(emptyBSexist || emptyPLexist) return {validationStat:true, errorStack:errorSet};
-    if(!boolPLDate && !emptyPLexist) errorSet.push(`Critical Error: [PL] Date format must be "DD-MM-YYYY". Received "${headLabels['P&L'][2]}".`)
     if(!boolBSDate && !emptyBSexist) errorSet.push(`Critical Error: [BS] Date format must be "DD-MM-YYYY". Received "${headLabels['BS'][1]}".`)
 
 
@@ -4335,19 +4388,21 @@ async validateExcelTemplate(formData){
    * YEARS COLUMN VALIDATION
    * Column 3 onwards in BS, Column 4 onwards in PL
    */
-  const PLyears = headLabels['P&L'].splice(3, headLabels['P&L'].length-1);
-  const BSyears = headLabels['BS'].splice(2, headLabels['BS'].length-1);
-  if(PLyears.length !== BSyears.length) errorSet.push(`Content Verification Error: Column length mismatch detected in both Excel files.`);
-
-  const yearStruccture = [PLyears, BSyears];
-  for(let i = 0;;){
-    if(i > yearStruccture.length - 1) break;
-    for (let j = 0;;){
-      if(j > yearStruccture[i].length - 1) break;
-      if(!yearStruccture[i][j].match(YEAR_REGEX)) errorSet.push(`Content Verification Error: [${i === 0 ? 'P&L' : 'BS'}] - The year format should be "YYYY-YYYY". Received: "${yearStruccture[i][j]}".`)
-      j++;
+  if(modelType === XL_SHEET_ENUM[0]){
+    const PLyears = headLabels['P&L'].splice(4, headLabels['P&L'].length-1);
+    const BSyears = headLabels['BS'].splice(3, headLabels['BS'].length-1);
+    if(PLyears.length !== BSyears.length) errorSet.push(`Content Verification Error: Column length mismatch detected in both Excel files.`);
+  
+    const yearStruccture = [PLyears, BSyears];
+    for(let i = 0;;){
+      if(i > yearStruccture.length - 1) break;
+      for (let j = 0;;){
+        if(j > yearStruccture[i].length - 1) break;
+        if(!yearStruccture[i][j].match(YEAR_REGEX)) errorSet.push(`Content Verification Error: [${i === 0 ? 'P&L' : 'BS'}] - The year format should be "YYYY-YYYY". Received: "${yearStruccture[i][j]}".`)
+        j++;
+      }
+      i++;
     }
-    i++;
   }
 
   if(errorSet.length) validationStat = true; 
@@ -4355,7 +4410,18 @@ async validateExcelTemplate(formData){
   return {validationStat, errorStack:errorSet};
 }
 
-sanitiseCells(workbook,sheetName){
+captureHeaders(worksheet){
+  const columnCount = worksheet.columnCount;
+  const headerColumns = [];
+
+  for (let i = 1; i <= columnCount; i++) {
+    headerColumns.push(worksheet.getCell(1, i).value); 
+  }
+  return headerColumns;
+};
+
+sanitiseCells(workbook,sheetName, headers, approach){
+  let errorStack = '', sheetWiseCheck = {};
   const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
   sheetData.forEach((row:any) => {
     for (let columns in row) {
@@ -4376,7 +4442,23 @@ sanitiseCells(workbook,sheetName){
       }
 
     }
+    for(const indYear of headers){
+      sheetWiseCheck[sheetName] = sheetWiseCheck[sheetName] || [];
+      if(Object.keys(row).includes(indYear)) { sheetWiseCheck[sheetName] = {value: true, sheetName}; continue };
+      sheetWiseCheck[sheetName] = {value:false, year: indYear, sheetName};
+    }
   });
+  const errorCheck:any = Object.values(sheetWiseCheck).filter((item:any) => !item.value);
+  console.log(errorCheck,"error check")
+  if(errorCheck?.length){
+    const year = errorCheck[0].year;
+    if(year){
+      errorStack = `[${errorCheck[0].sheetName}]; Columns without data: ${errorCheck[0].year}`
+    }
+    else{
+      errorStack = `Found empty column in ${errorCheck[0].sheetName} Excel Sheet`
+    }
+  }
 
   let maxKeys = Object.keys(sheetData[0]).length;
   let maxKeysObject = sheetData[0];
@@ -4388,7 +4470,7 @@ sanitiseCells(workbook,sheetName){
           maxKeysObject = sheetData[i];
         }
   }
-  return {sheetData, maxKeysObject}
+  return {sheetData, maxKeysObject, errorStack}
 }
 
 fetchSheetName(workbook){

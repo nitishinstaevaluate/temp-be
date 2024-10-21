@@ -5,7 +5,7 @@ import * as stream from 'stream';
 import * as ExcelJS from 'exceljs';
 import { columnsList } from './excelSheetConfig';
 import { AuthGuard } from '@nestjs/passport';
-import { MODEL } from 'src/constants/constants';
+import { CASHFLOW_VALUE_UPDATION_LIST, EXCEL_CONVENTION, MODEL, XL_SHEET_ENUM } from 'src/constants/constants';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { templateYearSet } from './common.methods';
 
@@ -16,12 +16,12 @@ export class ExportTemplateController {
   @Get('/template')
   async download(
     @Query('projectionYears') projectionYears: number,
-    @Query('modelName') modelName: string | undefined,
+    @Query('modelName') modelType: string | undefined,
     @Query('valuationDate') valuationDate: string | undefined,
     @Res() res: Response,
   ) {
    try{
-    if(modelName === MODEL[6]){
+    if(modelType === XL_SHEET_ENUM[1]){
       const filePath = `template/ruleElevenUaTemplate.xlsx`;
       const buffer = fs.readFileSync(filePath);
 
@@ -34,7 +34,7 @@ export class ExportTemplateController {
       res.send(buffer);
     return;
     }
-    if(modelName === MODEL[8]){
+    if(modelType === XL_SHEET_ENUM[4]){
       const filePath = `template/slumpSaleTemplate.xlsx`;
       const buffer = fs.readFileSync(filePath);
 
@@ -51,7 +51,7 @@ export class ExportTemplateController {
     let PLheaderRow = ['A1']; // Starting of PL header row
     let BSheaderRow = ['A1']; // Starting of BS header row
     let CFHeaderRow = ['A1']; // Starting of Cash Flow header row
-    const filePath = `template/new-excel-template - Copy.xlsx`;
+    const filePath = `template/template-v2.xlsx`;
 
     if (!fs.existsSync(filePath)) {
       return res.status(404).send('File not found');
@@ -65,16 +65,15 @@ export class ExportTemplateController {
 
 
     //#region Cash Flow Starts    
-    if(modelName !== MODEL[5] && modelName !== 'marketApproach'){
+    if(modelType === XL_SHEET_ENUM[0]){
       const cashFlowWorksheet:any = workbook.getWorksheet(6);
       CFHeaderRow.push('B1')// Intentially pushing 'B' since we want to start adding years from C column and not from B
       cashFlowWorksheet.getColumn(
         'C',
       ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
       CFHeaderRow.push('C1');
-      cashFlowWorksheet.getCell('C1').value = { formula: `'BS'!B1` };
+      // cashFlowWorksheet.getCell('C1').value = { formula: `'BS'!B1` };
   
-      // if(modelName !== 'marketApproach'){
         let cfcount = 0;
         // Start for loop from C column incase of P&L, i = 2 
         for (let i = 1; i <= projectionYears; i++) {
@@ -85,13 +84,12 @@ export class ExportTemplateController {
           cashFlowWorksheet.getColumn(columnLetter).width = 15;
           cfcount++;
         }
-      // }
   
       await this.setHeaderStyles(cashFlowWorksheet, CFHeaderRow, '195478', 'FFFFFF'); 
       // await this.addCellAutoFilters(cashFlowWorksheet, CFHeaderRow.length);
   
       const getCashFlowFirstRow = await this.getFirstRowIndexName(cashFlowWorksheet);
-      await this.updateExcelFormulas(cashFlowWorksheet,getCashFlowFirstRow, 'Cash Flow');
+      await this.updateExcelFormulas(cashFlowWorksheet,getCashFlowFirstRow, EXCEL_CONVENTION['Cash Flow'].key, modelType);
       // cashFlowWorksheet.protect('nitish@ifin', {
       //     selectLockedCells: true,
       //     selectUnlockedCells: true,
@@ -115,38 +113,67 @@ export class ExportTemplateController {
     /**
      * Profit Loss excel Sheet Index starts from 2
      */
-    const worksheet:any = workbook.getWorksheet(2);
-    
-    PLheaderRow.push('B1')// Intentially pushing 'B' since we want to start adding years from C column and not from B
-    worksheet.getColumn(
-      'C',
-    ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
-    PLheaderRow.push('C1');
-    // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
-    // Add new columns with headers
-    if(modelName !== 'marketApproach'){
-      let count = 0;
-      // Start for loop from C column incase of P&L, i = 2 
-      // console.log(projectionYears,"projection years")
-      for (let i = 1; i <= projectionYears; i++) {
-        const columnLetter = columnsList[i+1];
-        PLheaderRow.push(`${columnLetter}1`);
-        const headerText = `${currentYear + count}-${currentYear + i}`;
-        if(!headerText){
-          // console.log(headerText,"all header", i)
+    if(modelType === XL_SHEET_ENUM[0]){
+      const plWorksheet:any = workbook.getWorksheet(2);
+      /**
+       * Intentially pushing 'B' & 'C' since we want to start adding years from D column
+       */
+      PLheaderRow.push('B1');
+      PLheaderRow.push('C1');
+
+      plWorksheet.getColumn(
+        'D',
+      ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
+      PLheaderRow.push('D1');
+
+      if(modelType !== 'marketApproach'){
+        let count = 0;
+        for (let i = 1; i <= projectionYears; i++) {
+          const columnLetter = columnsList[i+2];
+          PLheaderRow.push(`${columnLetter}1`);
+          const headerText = `${currentYear + count}-${currentYear + i}`;
+          plWorksheet.getColumn(columnLetter).header = headerText;
+          plWorksheet.getColumn(columnLetter).width = 15;
+          count++;
         }
-        // console.log(columnLetter,"column letter")
-        worksheet.getColumn(columnLetter).header = headerText;
-        worksheet.getColumn(columnLetter).width = 15;
-        count++;
       }
+
+      await this.setHeaderStyles(plWorksheet, PLheaderRow, '195478', 'FFFFFF'); 
+      // await this.addCellAutoFilters(plWorksheet, PLheaderRow.length);
+      
+      const getProfitLossFirstRow = await this.getFirstRowIndexName(plWorksheet);
+      await this.updateExcelFormulas(plWorksheet,getProfitLossFirstRow, EXCEL_CONVENTION['P&L'].key, modelType);
     }
-    // Set common styles for all headers
-    await this.setHeaderStyles(worksheet, PLheaderRow, '195478', 'FFFFFF'); 
-    // await this.addCellAutoFilters(worksheet, PLheaderRow.length);
+
+    if(modelType === XL_SHEET_ENUM[2]){
+      const plWorkSheet:any = workbook.getWorksheet(2);
+      PLheaderRow.push('B1');
+      plWorkSheet.getColumn(
+        'C',
+      ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
+      PLheaderRow.push('C1');
+
+      // for (let rowIndex = 1; rowIndex <= plWorkSheet.rowCount; rowIndex++) {
+      //   let row = plWorkSheet.getRow(rowIndex);
     
-    const getProfitLossFirstRow = await this.getFirstRowIndexName(worksheet);
-    await this.updateExcelFormulas(worksheet,getProfitLossFirstRow, 'P&L');
+      //   const cell = row.getCell(5);
+      //   cell.border = {
+      //     top: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+      //     left: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+      //     bottom: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+      //     right: { style: 'thin', color: { argb: 'FFBFBFBF' } },
+      //   };
+    
+      //   row.commit();
+      // }
+
+      plWorkSheet.spliceColumns(4, 1);  
+      await this.setHeaderStyles(plWorkSheet, PLheaderRow, '195478', 'FFFFFF'); 
+    }
+    
+    if(modelType === XL_SHEET_ENUM[3]){
+      workbook.removeWorksheet(2);
+    }
     //#endregion Profit Loss excel  
     
 
@@ -154,31 +181,58 @@ export class ExportTemplateController {
     /**
      * Balance Sheet Sheet Index starts from 5
      */
-    const worksheet2:any = workbook.getWorksheet(5);
-    worksheet2.getColumn(
-      'B',
-    ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
-    BSheaderRow.push('B1');
-    // `Provisionals/Audited Nos. close to valuation, ${currentYear - 1}-${currentYear}`;
-    // Add new columns with headers
-    if(modelName !== 'marketApproach'){
-    let count2 = 0;
-    for (let i = 1; i <= projectionYears; i++) {
-      const columnLetter = columnsList[i];
+    if(modelType !== XL_SHEET_ENUM[3] && modelType !== XL_SHEET_ENUM[2]){
+      const bsWorkSheet:any = workbook.getWorksheet(5);
+      BSheaderRow.push('B1');
+
+      bsWorkSheet.getColumn(
+        'C',
+      ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
+      BSheaderRow.push('C1');
+      
+      if(modelType !== 'marketApproach'){
+      let count2 = 0;
+      
+      for (let i = 1; i <= projectionYears; i++) {
+        const columnLetter = columnsList[i+1];
         BSheaderRow.push(`${columnLetter}1`);
         const headerText = `${currentYear + count2}-${currentYear + i}`;
-        worksheet2.getColumn(columnLetter).header = headerText;
-        worksheet2.getColumn(columnLetter).width = 15;
-      count2++;
-    }
-    }
+        bsWorkSheet.getColumn(columnLetter).header = headerText;
+        bsWorkSheet.getColumn(columnLetter).width = 15;
+        count2++;
+      }
+      }
 
-    // Set common styles for all headers
-    await this.setHeaderStyles(worksheet2, BSheaderRow, '195478', 'FFFFFF'); 
-    // await this.addCellAutoFilters(worksheet2, BSheaderRow.length);
-  
-    const getBalanceSheetFirstRow = await this.getFirstRowIndexName(worksheet2)
-    await this.updateExcelFormulas(worksheet2,getBalanceSheetFirstRow, 'BS')
+      await this.setHeaderStyles(bsWorkSheet, BSheaderRow, '195478', 'FFFFFF'); 
+      // await this.addCellAutoFilters(bsWorkSheet, BSheaderRow.length);
+    
+      const getBalanceSheetFirstRow = await this.getFirstRowIndexName(bsWorkSheet)
+      await this.updateExcelFormulas(bsWorkSheet,getBalanceSheetFirstRow, EXCEL_CONVENTION.BS.key, modelType);
+    }
+    else{
+      const bsWorkSheet:any = workbook.getWorksheet(5);
+      bsWorkSheet.getColumn(
+        'B',
+      ).header = `'{{Add provisional financial date in DD-MM-YYYY}} format`;
+      BSheaderRow.push('B1');
+
+      // for (let rowIndex = 1; rowIndex <= bsWorkSheet.rowCount; rowIndex++) {
+      //   let row = bsWorkSheet.getRow(rowIndex);
+    
+      //   const cell = row.getCell(3);
+    
+      //   cell.border = {
+      //     top: { style: 'thin', color: { argb: 'D9EAF7' } },
+      //     left: { style: 'thin', color: { argb: 'D9EAF7' } },
+      //     bottom: { style: 'thin', color: { argb: 'D9EAF7' } },
+      //     right: { style: 'thin', color: { argb: 'D9EAF7' } },
+      //   };
+    
+      //   row.commit();
+      // }
+      bsWorkSheet.spliceColumns(3, 1);  
+      await this.setHeaderStyles(bsWorkSheet, BSheaderRow, '195478', 'FFFFFF'); 
+    }
     //#endregion Balance Sheet Excel
 
     const buffer = await workbook.xlsx.writeBuffer();
@@ -218,7 +272,6 @@ export class ExportTemplateController {
             }
         });
     });
-
     return firstRowName;
    }
    catch(error){
@@ -232,168 +285,113 @@ export class ExportTemplateController {
    * @param firsRowName 
    * @param sheetName 
    */
-  async updateExcelFormulas(worksheet,firsRowName, sheetName){
+  async updateExcelFormulas(worksheet,firsRowName, sheetName, approach){
    try{
     worksheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+      let updationColumnFormulaReqd = false;
+    
       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-        if (cell.value && 
-          typeof cell.value === 'string' && 
-          (
-            cell.value.toLowerCase().includes("cash and cash equivalent") || 
-            cell.value.toLowerCase().includes('retained earnings')
-          ) 
-        ) {
+        const columnLetter = String.fromCharCode(65 + colNumber - 1);
+    
+        /**
+         * Cash and Retained Earnings logic 
+         * */ 
+        if (cell.value && typeof cell.value === 'string' && approach === XL_SHEET_ENUM[0]) {
+          const lowerCaseValue = cell.value.toLowerCase();
+    
+          if (lowerCaseValue.includes("cash and cash equivalent") || lowerCaseValue.includes("retained earnings")) {
+            /**
+             * For Balance Sheet (BS)
+             *  */ 
+            if (sheetName === 'BS') {
+              for (let i = 0; i < firsRowName.length; i++) {
+                if (!['A', 'B', 'C'].includes(firsRowName[i])) {
+                  const newCellAddress = firsRowName[i] + rowNumber;
+                  
+                  worksheet.getCell(newCellAddress).fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFBBBBBB' },
+                    bgColor: { argb: 'FFBBBBBB' }
+                  };
+    
+                  /**
+                   * Row 33 Special Handling (Cash Flow)
+                   * */ 
+                  if (rowNumber === 33) {
+                    const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C46`;
+                    const formula = this.replaceColumnReferences(prevFormula);
+                    worksheet.getCell(newCellAddress).value = { formula, result: 0 };
+                  }
+    
+                  /**
+                   * Row 53 Special Handling (Retained Earnings)
+                   *  */ 
+                  if (rowNumber === 53) {
+                    const prevFormula = (i === 4)
+                      ? `C53 + 'P&L'!E53`
+                      : this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `A53 + 'P&L'!D53`;
+                    const formula = this.replaceColumnReferences(prevFormula);
+                    worksheet.getCell(newCellAddress).value = { formula, result: 0 };
+                  }
+                }
+              }
+            }
+    
+          }
+          /**
+           * Check cross Columns Adjusting required for Cash Flow
+           */
+          if (sheetName === EXCEL_CONVENTION['Cash Flow'].key) {
+            updationColumnFormulaReqd = this.cashFlowColumnUpdationNeeded(cell.value);
+          }
+        }
+    
+        //#region Section: Balance Sheet (BS)
+        if (sheetName === 'BS' && cell.formula) {
           for (let i = 0; i < firsRowName.length; i++) {
-            if(sheetName === 'BS'){
-              if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' ){
-                const newCellAddress = firsRowName[i] + rowNumber;
-                worksheet.getCell(newCellAddress).fill = {
-                  type: 'pattern',
-                  pattern: 'solid',
-                  fgColor: { argb: 'FFBBBBBB' },
-                  bgColor: { argb: 'FFBBBBBB' }
-                };
-                if(rowNumber === 33){
-                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `'Cash Flow'!C46`;
-                  worksheet.getCell(newCellAddress).value = {
-                    formula: this.replaceColumnReferences(prevFormula),
-                    result: 0
-                  };
-                }
-                if(rowNumber === 53){
-                  const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber) || `A53 + 'P&L'!C53`;
-                  worksheet.getCell(newCellAddress).value = {
-                    formula: this.replaceColumnReferences(prevFormula),
-                    result: 0
-                  };
-                }
+            if (approach === XL_SHEET_ENUM[3] ? !['A', 'B'].includes(firsRowName[i]) : !['A', 'B', 'C'].includes(firsRowName[i])) {
+              const newCellAddress = firsRowName[i] + rowNumber;
+              const formula = this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber));
+              this.updateFormulasInWrksht(worksheet, newCellAddress, formula, cell, row, columnLetter);
+            }
+          }
+        }
+        //#endregion
+    
+        //#region  Section: Profit & Loss (P&L)
+        if (sheetName === 'P&L' && cell.formula && approach !== XL_SHEET_ENUM[3]) {
+          for (let i = 0; i < firsRowName.length; i++) {
+            if (!['A', 'B', 'C', 'D'].includes(firsRowName[i])) {
+              const newCellAddress = firsRowName[i] + rowNumber;
+              const formula = this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber));
+              this.updateFormulasInWrksht(worksheet, newCellAddress, formula, cell, row, columnLetter);
+            }
+          }
+        }
+        //#endregion
+    
+        //#region  Section: Cash Flow
+        if (sheetName === EXCEL_CONVENTION['Cash Flow'].key && cell.formula && approach === XL_SHEET_ENUM[0] ) {
+          for (let i = 0; i < firsRowName.length; i++) {
+            if (!['A', 'B', 'C', 'D'].includes(firsRowName[i])) {
+              const newCellAddress = firsRowName[i] + rowNumber;
+              const prevFormula = this.getPreviousAddress(firsRowName[i], worksheet, rowNumber);
+              const updatedFormula = (updationColumnFormulaReqd && firsRowName[i] === 'E')
+                ? prevFormula.replace(/B([0-9])/g, 'C$1')
+                : prevFormula;
+    
+              if (columnLetter === 'D') {
+                const cashFlowFormula = this.replaceColumnReferences(updatedFormula);
+                this.updateFormulasInWrksht(worksheet, newCellAddress, cashFlowFormula, cell, row, columnLetter);
               }
             }
           }
         }
-        if (cell.formula) {
-          for (let i = 0; i < firsRowName.length; i++) {
-            if(sheetName === 'BS'){
-              if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' ){
-                const columnLetter = String.fromCharCode(65 + colNumber - 1);
-                const newCellAddress = firsRowName[i] + rowNumber;
-                worksheet.getCell(newCellAddress).value = {
-                  formula: this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber)),
-                  result: 0
-                };
-                if (cell.fill) {
-                  worksheet.getCell(newCellAddress).fill = {
-                      type: 'pattern',
-                      pattern: cell.fill.pattern,
-                      fgColor: cell.fill.fgColor,
-                      bgColor: cell.fill.bgColor
-                  };
-                }
-                const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
-                if (prevCell.border) {
-                    worksheet.getCell(newCellAddress).border = {
-                        top: prevCell.border.top,
-                        left: prevCell.border.left,
-                        bottom: prevCell.border.bottom,
-                        right: prevCell.border.right
-                    };
-                }
-                if (prevCell.font && prevCell.font.bold) {
-                  worksheet.getCell(newCellAddress).font = {
-                      bold: true,
-                  };
-                }
-                
-              }
-            }
-            else if(sheetName === 'P&L'){
-              if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' && firsRowName[i] !== 'C'){
-                const columnLetter = String.fromCharCode(65 + colNumber - 1);
-                const newCellAddress = firsRowName[i] + rowNumber;
-                worksheet.getCell(newCellAddress).value = {
-                  formula: this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber)),
-                  result: 0
-                };
-
-                if (cell.fill) {
-                  worksheet.getCell(newCellAddress).fill = {
-                      type: 'pattern',
-                      pattern: cell.fill.pattern,
-                      fgColor: cell.fill.fgColor,
-                      bgColor: cell.fill.bgColor
-                  };
-                }
-                const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
-                if (prevCell.border) {
-                    worksheet.getCell(newCellAddress).border = {
-                        top: prevCell.border.top,
-                        left: prevCell.border.left,
-                        bottom: prevCell.border.bottom,
-                        right: prevCell.border.right
-                    };
-                }
-              
-                if (prevCell.font && prevCell.font.bold) {
-                  worksheet.getCell(newCellAddress).font = {
-                      bold: true,
-                  };
-                }
-              }
-
-            }
-            else {
-              if(firsRowName[i] !== 'A' && firsRowName[i] !== 'B' && firsRowName[i] !== 'C' && firsRowName[i] !== 'D'){
-                const columnLetter = String.fromCharCode(65 + colNumber - 1);
-                if(columnLetter !== 'D') continue;
-                const newCellAddress = firsRowName[i] + rowNumber;
-                worksheet.getCell(newCellAddress).value = {
-                  formula: this.replaceColumnReferences(this.getPreviousAddress(firsRowName[i], worksheet, rowNumber)),
-                  result: 0
-                };
-                if (cell.fill) {
-                  worksheet.getCell(newCellAddress).fill = {
-                      type: 'pattern',
-                      pattern: cell.fill.pattern,
-                      fgColor: cell.fill.fgColor,
-                      bgColor: cell.fill.bgColor
-                  };
-                }
-                const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
-                if (prevCell.border) {
-                    worksheet.getCell(newCellAddress).border = {
-                        top: prevCell.border.top,
-                        left: prevCell.border.left,
-                        bottom: prevCell.border.bottom,
-                        right: prevCell.border.right
-                    };
-                }
-                if (prevCell.font && prevCell.font.bold) {
-                  worksheet.getCell(newCellAddress).font = {
-                      bold: true,
-                  };
-                }
-              }
-            }
-            // if(firsRowName[i]==='B'){   //Add date validation in excel 
-            //   const dateValidationOptions = {
-            //     type: 'date',
-            //     operator: 'between',
-            //     allowBlank: false,
-            //     showInputMessage: true,
-            //     formula1: '01-01-2000', // Start date in dd-mm-yyyy format
-            //     formula2: '31-12-2022', // End date in dd-mm-yyyy format
-            //     promptTitle: 'Date Validation',
-            //     prompt: 'The date must be between 01-01-2022 and 31-12-2022',
-            // };
-            
-            // // Set date validation for cell A1
-            // worksheet.getCell('B1').dataValidation = dateValidationOptions;
-            // }
-          }
-        }
+        //#endregion
       });
     });
-
+    
   }
   catch(error){
     throw error;
@@ -442,21 +440,23 @@ replaceColumnReferences(prevFormula) {
 async setHeaderStyles(worksheet, headers, bgColor, textColor) {
   headers.forEach((header) => {
       const cell = worksheet.getCell(header);
-      cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: bgColor } // Background color
-      };
-      cell.font = {
-        size: 11,
-        bold: true,
-        color: { argb: textColor },
-    };
-    cell.alignment = {
-      vertical: 'middle',
-      horizontal: 'center',
-      // wrapText: true,
-  };
+      if(cell.value){
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: bgColor } // Background color
+        };
+        cell.font = {
+          size: 11,
+          bold: true,
+          color: { argb: textColor },
+        };
+        cell.alignment = {
+          vertical: 'middle',
+          horizontal: 'center',
+          // wrapText: true,
+         };
+      }
   });
 }
 
@@ -481,5 +481,38 @@ getColumnLabel(index) {
       index = Math.floor(index / 26) - 1;
   }
   return label;
+}
+
+cashFlowColumnUpdationNeeded(value){
+  return CASHFLOW_VALUE_UPDATION_LIST.some(_el => _el.toLowerCase() === value.toLowerCase());
+}
+
+updateFormulasInWrksht(worksheet, newCellAddress, formula, cell, row, columnLetter){
+  worksheet.getCell(newCellAddress).value = {
+    formula: formula,
+    result: 0
+  };
+  if (cell.fill) {
+    worksheet.getCell(newCellAddress).fill = {
+        type: 'pattern',
+        pattern: cell.fill.pattern,
+        fgColor: cell.fill.fgColor,
+        bgColor: cell.fill.bgColor
+    };
+  }
+  const prevCell = row.getCell(columnLetter); // Get previous cell in the same row
+  if (prevCell.border) {
+      worksheet.getCell(newCellAddress).border = {
+          top: prevCell.border.top,
+          left: prevCell.border.left,
+          bottom: prevCell.border.bottom,
+          right: prevCell.border.right
+      };
+  }
+  if (prevCell.font && prevCell.font.bold) {
+    worksheet.getCell(newCellAddress).font = {
+        bold: true,
+    };
+  }
 }
 }

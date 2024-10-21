@@ -497,7 +497,6 @@ export class FCFEAndFCFFService {
       // const yearsActual = await getYearsList(worksheet2);
 
       // let provisionalDates = worksheet1['B1'].v || worksheet2['B1'].v;
-
       let  provDtRef = parseDate(getProvDate.trim());
       console.log(provDtRef,"provisional date")
 
@@ -746,7 +745,7 @@ export class FCFEAndFCFFService {
         const profitLossSheetData = aggregatePayload.profitLossSheetData;
         const assessmentSheetData = aggregatePayload.assessmentSheetData;
         const sortedData = Object.keys(balanceSheetData[0]).sort((a, b) => (/\d{2}-\d{2}-\d{4}/.test(a) ? -1 : 1)).reduce((acc, key) => ({ ...acc, [key]: balanceSheetData[0][key] }), {});
-        const keysToProcess = Object.keys(sortedData).filter(key => key !== 'lineEntry');
+        const keysToProcess = Object.keys(sortedData).filter((key,index) => key !== 'lineEntry' && index !== 2);
         const profitLossComputed = await this.serializeArrayObject(profitLossSheetData);
         const balanceSheetComputed = await this.serializeArrayObject(balanceSheetData);
         const assessmentComputed = await this.serializeArrayObject(assessmentSheetData);

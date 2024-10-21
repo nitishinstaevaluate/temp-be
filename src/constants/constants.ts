@@ -3088,7 +3088,7 @@ export const V2_PROFIT_LOSS = [
         rowNumber:51,
         romanIndex:'XII',
         dependent:[6037, 6038],
-        formula:"currentOne49+currentOne50"
+        formula:"currentOne49-currentOne50"
       }
   },
   {
@@ -3099,7 +3099,7 @@ export const V2_PROFIT_LOSS = [
         rowNumber:53,
         romanIndex:'XIII',
         dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028, 6030, 6033, 6034, 6037, 6038],
-        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44+currentOne49+currentOne50"
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44+currentOne49-currentOne50"
       }
   },
   {
@@ -3175,7 +3175,7 @@ export const V2_PROFIT_LOSS = [
         rowNumber:65,
         romanIndex:'XV',
         dependent:[6003, 6002, 6005, 6006, 6007, 6008, 6009, 6010, 6011, 6012, 6015, 6016, 6017, 6018, 6019, 6021, 6022, 6023, 6026, 6028, 6030, 6033, 6034, 6037, 6038, 6044, 6045, 6047, 6048],
-        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44+currentOne49+currentOne50+currentOne59+currentOne60+currentOne62+currentOne63"
+        formula:"currentOne3+currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14-currentOne18-currentOne19-currentOne20-currentOne21-currentOne22-currentOne25-currentOne26-currentOne27-currentOne32-currentOne35-currentOne38-currentOne43-currentOne44+currentOne49-currentOne50+currentOne59+currentOne60+currentOne62+currentOne63"
       }
   },
 ]
@@ -4281,7 +4281,7 @@ export const V2_ASSESSMENT_OF_WORKING_CAPITAL = [
   },  
 ]
 
-export async function cashFlowFormulas(profitLossData, balanceSheetData, key, subKey, cashFlowPayload, keysToProcess?){
+export async function cashFlowFormulas(profitLossData, balanceSheetData, key, subKey, cashFlowPayload, firstColumnKey, keysToProcess?){
   let prevKey,nextKey=0;
   if(keysToProcess?.length){
     prevKey = keysToProcess[keysToProcess.indexOf(subKey) - 1];
@@ -4289,44 +4289,44 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
   }
   switch(key){
     case 'Profit before Interest tax and exceptional items':
-      return profitLossData.get('Profit/(loss) before tax (V-VI)')[subKey];
+      return profitLossData.get('Profit/(loss) before tax (V-VI)')[cashFlowKeyMapper(subKey, firstColumnKey)];
 
     case 'Depreciation & Amortization':
-      return profitLossData.get('Less: Depreciation and amortization expense')[subKey];
+      return profitLossData.get('Less: Depreciation and amortization expense')[cashFlowKeyMapper(subKey, firstColumnKey)];
 
     case 'Investment income':
-      return profitLossData.get('Investment Income')[subKey];
+      return profitLossData.get('Investment Income')[cashFlowKeyMapper(subKey, firstColumnKey)];
 
     case 'Finance cost':
-      return profitLossData.get('Finance costs')[subKey];
+      return profitLossData.get('Finance costs')[cashFlowKeyMapper(subKey, firstColumnKey)];
 
     case 'Profit / (Loss) on the sale of property, plant & equipment':
       /**
        * FORMULA = 'P&L'!C10-'P&L'!C25
        */
-      return convertToNumberOrZero(profitLossData.get('Profit on sale of property, plant & equipment')[subKey]) - 
-      convertToNumberOrZero(profitLossData.get('Loss on sale of property, plant & equipment')[subKey]);
+      return convertToNumberOrZero(profitLossData.get('Profit on sale of property, plant & equipment')[cashFlowKeyMapper(subKey, firstColumnKey)]) - 
+      convertToNumberOrZero(profitLossData.get('Loss on sale of property, plant & equipment')[cashFlowKeyMapper(subKey, firstColumnKey)]);
 
     case 'Profit / (Loss) on the sale of intangible assets':
       /**
        * FORMULA = 'P&L'!C11-'P&L'!C26
        */
-      return convertToNumberOrZero(profitLossData.get('Profit on sale of Intangible asset')[subKey]) - 
-      convertToNumberOrZero(profitLossData.get('Loss on sale of Intangible asset')[subKey]);
+      return convertToNumberOrZero(profitLossData.get('Profit on sale of Intangible asset')[cashFlowKeyMapper(subKey, firstColumnKey)]) - 
+      convertToNumberOrZero(profitLossData.get('Loss on sale of Intangible asset')[cashFlowKeyMapper(subKey, firstColumnKey)]);
 
     case '(Increase) / Decrease in trade and other receivables':
       /**
        * FORMULA = -((BS!C30)-(BS!B30))
        */
       return -(convertToNumberOrZero(balanceSheetData.get('(ii) trade receivables')[subKey]) - 
-      convertToNumberOrZero(balanceSheetData.get('(ii) trade receivables')[prevKey]))
+      convertToNumberOrZero(balanceSheetData.get('(ii) trade receivables')[cashFlowKeyMapper(prevKey, firstColumnKey)]))
       
     case '(Increase) / Decrease in inventories':
       /**
        * FORMULA = -(BS!C27-BS!B27)
        */
       return -(convertToNumberOrZero(balanceSheetData.get('(a) inventories')[subKey]) - 
-      convertToNumberOrZero(balanceSheetData.get('(a) inventories')[prevKey]))
+      convertToNumberOrZero(balanceSheetData.get('(a) inventories')[cashFlowKeyMapper(prevKey, firstColumnKey)]))
       
     case '(Increase) / Decrease in Other Current Assets':
       /**
@@ -4338,9 +4338,9 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const crntTotal = convertToNumberOrZero(crntOtherCurrentAssets) + convertToNumberOrZero(crntOtherNonCurrentAssets) + convertToNumberOrZero(crntDefferedTaxAssets);
 
-      const prevTotal = convertToNumberOrZero(balanceSheetData.get('(c) other current assets')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(j) other non-current assets')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(iv) deferred tax assets(net)')[prevKey]);
+      const prevTotal = convertToNumberOrZero(balanceSheetData.get('(c) other current assets')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(j) other non-current assets')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(iv) deferred tax assets(net)')[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
       return -(convertToNumberOrZero(crntTotal - prevTotal));
       
@@ -4354,8 +4354,8 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const crntTAtotal = convertToNumberOrZero(crntLongTermAdvances) + convertToNumberOrZero(crntShortTermAdvances); 
 
-      const prevTAtotal = convertToNumberOrZero(balanceSheetData.get('(iii)long term loans and advances')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(v) short term loans & advances')[prevKey]);
+      const prevTAtotal = convertToNumberOrZero(balanceSheetData.get('(iii)long term loans and advances')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(v) short term loans & advances')[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
       return -(convertToNumberOrZero(crntTAtotal - prevTAtotal));
 
@@ -4366,7 +4366,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       
       const crntTaxAsstNet = balanceSheetData.get('(vii) current tax assets (net)')[subKey];
 
-      const prevTaxAsstNet = balanceSheetData.get('(vii) current tax assets (net)')[prevKey];
+      const prevTaxAsstNet = balanceSheetData.get('(vii) current tax assets (net)')[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return convertToNumberOrZero(crntTaxAsstNet) - convertToNumberOrZero(prevTaxAsstNet);
 
@@ -4377,7 +4377,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const crntCAtradePayable = balanceSheetData.get('(ii) trade payables')[subKey];
 
-      return convertToNumberOrZero(crntCAtradePayable) - convertToNumberOrZero(balanceSheetData.get('(ii) trade payables')[prevKey]);
+      return convertToNumberOrZero(crntCAtradePayable) - convertToNumberOrZero(balanceSheetData.get('(ii) trade payables')[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
     case 'Increase / (Decrease) in  other payables':
       /**
@@ -4389,8 +4389,8 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const crntOFLtotal = convertToNumberOrZero(crntOthrFncialLiabilitOTC) + convertToNumberOrZero(crntOthrFncialLiabilit);
 
-      const prevOFLtotal = convertToNumberOrZero(balanceSheetData.get('(iii) other financial liabilities(other than these specified in item (c))')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(ii) other financial liabilities')[prevKey]);
+      const prevOFLtotal = convertToNumberOrZero(balanceSheetData.get('(iii) other financial liabilities(other than these specified in item (c))')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(ii) other financial liabilities')[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
       return convertToNumberOrZero(crntOFLtotal - prevOFLtotal); 
 
@@ -4408,10 +4408,10 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       convertToNumberOrZero(crntBProvision) + 
       convertToNumberOrZero(crntDefrdTaxLiability);
 
-      const prevPandCLTotal = convertToNumberOrZero(balanceSheetData.get('(b) other current liabilities')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(c) provisions')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(b) provision')[prevKey]) + 
-      convertToNumberOrZero(balanceSheetData.get('(c)  deferred tax liabilities(net)')[prevKey]);
+      const prevPandCLTotal = convertToNumberOrZero(balanceSheetData.get('(b) other current liabilities')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(c) provisions')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(b) provision')[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(balanceSheetData.get('(c)  deferred tax liabilities(net)')[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
       return convertToNumberOrZero(crntPAndCLTotal) - convertToNumberOrZero(prevPandCLTotal);
 
@@ -4421,7 +4421,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
        */
       const crnOthrNonCrrntLiability = balanceSheetData.get('(d) other non current liabilities')[subKey];
 
-      const prevOthrNonCrrntLiability = balanceSheetData.get('(d) other non current liabilities')[prevKey];
+      const prevOthrNonCrrntLiability = balanceSheetData.get('(d) other non current liabilities')[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return crnOthrNonCrrntLiability - prevOthrNonCrrntLiability;
 
@@ -4431,15 +4431,15 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
        */
       const crntCTL = balanceSheetData.get('(d) current tax liabilities(net)')[subKey];
 
-      const prevCTL = balanceSheetData.get('(d) current tax liabilities(net)')[prevKey];
+      const prevCTL = balanceSheetData.get('(d) current tax liabilities(net)')[cashFlowKeyMapper(prevKey, firstColumnKey)];
       
       return convertToNumberOrZero(crntCTL) - convertToNumberOrZero(prevCTL);
       
     case 'Effect of foreign exchange':
-      return profitLossData.get('Foreign currency translation gains')[subKey];
+      return profitLossData.get('Foreign currency translation gains')[cashFlowKeyMapper(subKey, firstColumnKey)];
       
     case 'Income taxes paid':
-      return profitLossData.get('Total Tax Expense')[subKey];
+      return -profitLossData.get('Total Tax Expense')[cashFlowKeyMapper(subKey, firstColumnKey)];
 
     case 'Net cash from operating activities':
       /**
@@ -4495,30 +4495,36 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const crntPPEtotal = convertToNumberOrZero(crntmovableProp) + convertToNumberOrZero(crntimmovableProp) + convertToNumberOrZero(crntlndAndBuildingProp) + convertToNumberOrZero(crntplntAndMachnryProp) + convertToNumberOrZero(crntcapWrkInPrgressProp) + convertToNumberOrZero(crntothrIntangbleAsstProp) + convertToNumberOrZero(crntIntangbleAsstUDProp) + convertToNumberOrZero(crntbioAsstProp);
 
-      const prevPPEtotal = convertToNumberOrZero(movableObject[prevKey]) + 
-      convertToNumberOrZero(immovableObject[prevKey]) + 
-      convertToNumberOrZero(lndAndBuildingObject[prevKey]) + 
-      convertToNumberOrZero(plntAndMachnryObject[prevKey]) + 
-      convertToNumberOrZero(capWrkInPrgressObject[prevKey]) + 
-      convertToNumberOrZero(othrIntangbleAsstObject[prevKey]) + 
-      convertToNumberOrZero(intangbleAsstUDObject[prevKey]) + 
-      convertToNumberOrZero(bioAsstObject[prevKey]);
+      const prevPPEtotal = convertToNumberOrZero(movableObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(immovableObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(lndAndBuildingObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(plntAndMachnryObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(capWrkInPrgressObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(othrIntangbleAsstObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(intangbleAsstUDObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(bioAsstObject[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
       const crntlessDpntAndAmortsn = convertToNumberOrZero(profitLossData.get('Less: Depreciation and amortization expense')[subKey]);
 
       return -(convertToNumberOrZero(crntPPEtotal + crntlessDpntAndAmortsn - prevPPEtotal));
 
     case 'Proceeds from sale of equipment':
-      return convertToNumberOrZero(profitLossData.get('Profit on sale of equipment')[subKey]) - 
-      convertToNumberOrZero(profitLossData.get('Other Non Operating Expenses')[subKey]);
+      return convertToNumberOrZero(profitLossData.get('Profit on sale of equipment')[cashFlowKeyMapper(subKey, firstColumnKey)]) - 
+      convertToNumberOrZero(profitLossData.get('Other Non Operating Expenses')[cashFlowKeyMapper(subKey, firstColumnKey)]);
 
     case 'Proceeds from sale of intangibles':
-      return convertToNumberOrZero(profitLossData.get('Profit on sale of Intangible asset')[subKey]) - 
-      convertToNumberOrZero(profitLossData.get('Loss on sale of Intangible asset')[subKey]);
+      return convertToNumberOrZero(profitLossData.get('Profit on sale of Intangible asset')[cashFlowKeyMapper(subKey, firstColumnKey)]) - 
+      convertToNumberOrZero(profitLossData.get('Loss on sale of Intangible asset')[cashFlowKeyMapper(subKey, firstColumnKey)]);
 
     case 'Acquisition of investments':
       /**
-       * FORMULA = -((BS!C9 + BS!C16 + BS!C17 + BS!C29) - (BS!B9 + BS!B16 + BS!B17 + BS!B29)) OR -(BS!C9-BS!B9+BS!C16+BS!C17-BS!B16+BS!B17+BS!C29-BS!B29)
+       * ---EXEMPTED - NOT IN USE
+       * OLD FORMULA = -((BS!C9 + BS!C16 + BS!C17 + BS!C29) - (BS!B9 + BS!B16 + BS!B17 + BS!B29)) OR -(BS!C9-BS!B9+BS!C16+BS!C17-BS!B16+BS!B17+BS!C29-BS!B29)
+       * 
+       * ---IN USE
+       * NEW FORMULA AS PER ANIL 21-10-2024
+       * =-((BS!D11-BS!B11)+(BS!D18+BS!D19)-(BS!B18+BS!B19)+(BS!D31-BS!B31)) OR =-(BS!D11-BS!B11+BS!D18+BS!D19-BS!B18-BS!B19+BS!D31-BS!B31) OR 
+       * =-((BS!D11 + BS!D18 + BS!D19 + BS!D31) - (BS!B11 + BS!B18 + BS!B19 + BS!B31))
        */
       const invObj = balanceSheetData.get('(c) investment property');
       const invSbsdryJvAssociateObj = balanceSheetData.get('(i)Investments in Subsidiary/JV/Associate');
@@ -4530,12 +4536,12 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       convertToNumberOrZero(othrNCrntInvObj[subKey]) + 
       convertToNumberOrZero(crntInveObj[subKey]);
 
-      const prevAItotal = convertToNumberOrZero(invObj[prevKey]) + 
-      convertToNumberOrZero(invSbsdryJvAssociateObj[prevKey]) + 
-      convertToNumberOrZero(othrNCrntInvObj[prevKey]) + 
-      convertToNumberOrZero(crntInveObj[prevKey]);
+      const prevAItotal = convertToNumberOrZero(invObj[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(invSbsdryJvAssociateObj[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(othrNCrntInvObj[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(crntInveObj[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
-      return -(convertToNumberOrZero(crntAItotal + prevAItotal));
+      return -(convertToNumberOrZero(crntAItotal - prevAItotal));
 
     case 'Net cash used in investing activities':
       /**
@@ -4560,7 +4566,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const eqtyShareCapObj = balanceSheetData.get('(a) Equity share capital');
       const crntEqtyShareCap = eqtyShareCapObj[subKey];
 
-      const prevEqtyShareCap = eqtyShareCapObj[prevKey];
+      const prevEqtyShareCap = eqtyShareCapObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return convertToNumberOrZero(crntEqtyShareCap) - convertToNumberOrZero(prevEqtyShareCap);
 
@@ -4571,7 +4577,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const prefShareObj = balanceSheetData.get('(b) Preference share capital');
       const crntPrefShareCap = prefShareObj[subKey];
 
-      const prevPrefShareCap = prefShareObj[prevKey];
+      const prevPrefShareCap = prefShareObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return convertToNumberOrZero(crntPrefShareCap) - convertToNumberOrZero(prevPrefShareCap);
 
@@ -4582,7 +4588,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const borrowingObj = balanceSheetData.get('(i)borrowings');
       const crntBorrowing = borrowingObj[subKey];
 
-      const prevBorrowing = borrowingObj[prevKey];
+      const prevBorrowing = borrowingObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return convertToNumberOrZero(crntBorrowing) - convertToNumberOrZero(prevBorrowing);
 
@@ -4593,7 +4599,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const borrObj = balanceSheetData.get('(i) borrowings');
       const crntBorr = borrObj[subKey];
 
-      const prevBorr = borrObj[prevKey];
+      const prevBorr = borrObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return convertToNumberOrZero(crntBorr) - convertToNumberOrZero(prevBorr);
 
@@ -4604,7 +4610,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const leaseLiablityObj = balanceSheetData.get('(iii) lease liabilities');
       const crntLeaseLiability = leaseLiablityObj[subKey];
 
-      const prevLeaseLiability = leaseLiablityObj[prevKey];
+      const prevLeaseLiability = leaseLiablityObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       return convertToNumberOrZero(crntLeaseLiability) - convertToNumberOrZero(prevLeaseLiability);
 
@@ -4615,7 +4621,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       /**
        * FORMULA = BS!C46-BS!B46
        */
-      const prvShreApplctnMonyPnding = balanceSheetData.get(V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.shareApplicationMoneyPendingAlltmntRow.particulars)[prevKey];
+      const prvShreApplctnMonyPnding = balanceSheetData.get(V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.shareApplicationMoneyPendingAlltmntRow.particulars)[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
       const crntShreApplctnMonyPnding = balanceSheetData.get(V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.equityRow.innerEquityRow.shareApplicationMoneyPendingAlltmntRow.particulars)[subKey];
 
@@ -4663,7 +4669,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       // We want to replace 2nd column with previous key,
       // hence we start by comparing index equal to 1
       if(keysToProcess.indexOf(subKey) === 1){
-        return cashEqvObj[prevKey]
+        return cashEqvObj[cashFlowKeyMapper(prevKey, firstColumnKey)]
       }
 
       // We want the main addition to start from 3 column,
@@ -4685,7 +4691,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const cashEqObj = balanceSheetData.get('(iii) cash and cash equivalents');
 
       if(keysToProcess.indexOf(subKey) === 0){
-        return cashEqObj[subKey]
+        return cashEqObj[cashFlowKeyMapper(subKey, firstColumnKey)]
       }
 
       // We want the main addition to start from 3 column,
@@ -5368,3 +5374,45 @@ export const NAV_FIELD_MAPPER = {
     mainSubHead:true
   },
 }
+
+/**
+ * Update this every year
+ * Currently as per 2024
+ */
+export const CURRENT_YEAR_CYCLE = '2023-2024';
+
+
+export const CASHFLOW_VALUE_UPDATION_LIST = [
+  '(Increase) / Decrease in trade and other receivables',
+  '(Increase) / Decrease in inventories',
+  '(Increase) / Decrease in Other Current Assets',
+  '(Increase) / Decrease in Loans & Advances',
+  '(Increase) / Decrease in Tax Assets',
+  'Increase / (Decrease) in trade payables',
+  'Increase / (Decrease) in  other payables',
+  'Increase / (Decrease) in provisions and other current Liabilities',
+  'Increase / (Decrease) in Non-Current Liabilities',
+  'Increase / (Decrease) in Tax Liabilities',
+  'Purchase/Sale  of property, plant and equipment',
+  'Acquisition of investments',
+  'Proceed from issue of share capital',
+  'Proceed from issue of preference share capital',
+  'Proceeds/Repayment from long-term borrowings',
+  'Proceeds/Repayment Short-term borrowings',
+  'Proceeds / (repayment) of lease liability, net',
+  'Share Application money pending'
+]
+
+function cashFlowKeyMapper(key, firstColumnKey){
+  /**
+   * In cashFlow generation/updation
+   * Check if provisional date key is mentioned,
+   * If yes, update that key with CURRENT_CYCLE_YEAR key,
+   * else keep it as it is
+   */
+
+  const [columnKey] = firstColumnKey;
+  return GET_DATE_MONTH_YEAR_FORMAT.test(key) ? (columnKey || key) : key;
+} 
+
+export const XL_SHEET_ENUM = [ 'dcfApproach', 'ruleElevenUaApproach', 'marketPriceApproach', 'navApproach', 'slumpSaleApproach' ];

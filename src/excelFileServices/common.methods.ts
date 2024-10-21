@@ -419,10 +419,15 @@ export function extractYearsFromKeys(obj) {
   const yearPattern = /\b\d{4}\b/g;
   const years = new Set();
 
-  Object.keys(obj).forEach(key => {
-    const matches = key.match(yearPattern);
-    if (matches) {
-      matches.forEach(year => years.add(year.slice(-2)));
+  Object.keys(obj).forEach((key,index) => {
+    /**
+     * Ignoring the first column (Just before the provisional date, [previous provisions column]) 
+     */
+    if(index !== 1){
+      const matches = key.match(yearPattern);
+      if (matches) {
+        matches.forEach(year => years.add(year.slice(-2)));
+      }
     }
   });
 
