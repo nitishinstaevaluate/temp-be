@@ -31,7 +31,7 @@ import  {
 import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, calculateDateDifference, convertToNumberOrZero, getRequestAuth, extractYearsFromKeys, getDateKey } from '../excelFileServices/common.methods';
 import { sheet1_PLObj, sheet2_BSObj ,columnsList} from '../excelFileServices/excelSheetConfig';
 import { CustomLogger } from 'src/loggerService/logger.service';
-import { BALANCE_SHEET, GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS, MODEL } from 'src/constants/constants';
+import { BALANCE_SHEET, EXCEL_CONVENTION, GET_DATE_MONTH_YEAR_FORMAT, GET_MULTIPLIER_UNITS, MODEL } from 'src/constants/constants';
 import { any } from 'joi';
 import { async } from 'rxjs';
 import { transformData } from 'src/report/report-common-functions';
@@ -1492,9 +1492,12 @@ export class FCFEAndFCFFService {
   //     msg: 'discountingFactor get Successfully.',
   //   };
   // }
-  async getSheetData(processId){
+  async getSheetData(processId, specificSheetData?){
     try{
       const loadExcelArchive:any = await this.excelArchiveService.fetchExcelByProcessStateId(processId);
+      if(specificSheetData){
+        return {[EXCEL_CONVENTION[specificSheetData].EAkey]: loadExcelArchive[EXCEL_CONVENTION[specificSheetData].EAkey]}
+      }
       if(loadExcelArchive?.balanceSheetRowCount && loadExcelArchive?.profitLossSheetRowCount){
         const balanceSheetData = loadExcelArchive.balanceSheetdata;
         const profitLossSheetData = loadExcelArchive.profitLossSheetdata;

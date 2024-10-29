@@ -489,7 +489,7 @@ export async function fcfeTerminalValue(fcfe: number, terminalRate: number, adjC
 
 export async function fcffTerminalValue(fcff: number, terminalRate: number, wacc: number) {
   // =F13*(1+Sheet2!C9)/(Sheet2!C34-Sheet2!C9)
-  const fcffAtTerminalRate = fcff * (1 + terminalRate / 100) / (wacc - terminalRate / 100)
+  const fcffAtTerminalRate = fcff * (1 + terminalRate / 100) / ((wacc - terminalRate) / 100)
   // console.log('calc term ', fcff, ' ', terminalRate, ' ', wacc);
   // console.log('FCFF TER ', fcffAtTerminalRate);
   return fcffAtTerminalRate;

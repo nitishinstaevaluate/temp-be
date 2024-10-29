@@ -896,12 +896,17 @@ export class ExcelSheetService {
           let getCapitalStructure;
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
             const taxRate = valuationResult.inputData[0].taxRate.includes('%') ? parseFloat(valuationResult.inputData[0].taxRate.replace("%", "")) : valuationResult.inputData[0].taxRate;
-             getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(
-              +valuationResult.inputData[0].adjustedCostOfEquity,
-              valuationResult.inputData[0].excelSheetId,+valuationResult.inputData[0].costOfDebt,
-              +valuationResult.inputData[0].copShareCapital,+valuationResult.inputData[0].capitalStructure.deRatio,
-              valuationResult.inputData[0].capitalStructureType,taxRate,valuationResult.inputData[0].capitalStructure
-              );
+            const waccPayload = {
+              adjCoe:+valuationResult.inputData[0].adjustedCostOfEquity,
+              costOfDebt:+valuationResult.inputData[0].costOfDebt,
+              copShareCapital:+valuationResult.inputData[0].copShareCapital,
+              deRatio:+valuationResult.inputData[0].capitalStructure.deRatio,
+              type:valuationResult.inputData[0].capitalStructureType,
+              taxRate:taxRate,
+              capitalStructure:valuationResult.inputData[0].capitalStructure,
+              processStateId:valuationResult.processStateId
+            }
+             getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(waccPayload);
           }
           this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure, modelWeightageData);
         
