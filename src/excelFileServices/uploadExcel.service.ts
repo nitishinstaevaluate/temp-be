@@ -4224,6 +4224,10 @@ async uploadExcelProcess(formData, processId, modelName, request){
       await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processStateId);
       await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processStateId).toPromise();
     }
+    if(modelName === XL_SHEET_ENUM[2]){
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
+      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
+    }
     return {excelSheetId:uploadedFileData.excelSheetId, processId: processStateId};
 
   }
@@ -4434,7 +4438,7 @@ captureHeaders(worksheet){
   for (let i = 1; i <= columnCount; i++) {
     headerColumns.push(worksheet.getCell(1, i).value); 
   }
-  return headerColumns;
+  return headerColumns.filter(item=>{return item});
 };
 
 sanitiseCells(workbook,sheetName, headers, approach){
