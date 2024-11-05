@@ -1035,10 +1035,10 @@ export async function getShareholderFunds(i: number, worksheet2: any) {
     `${columnsList[i] + sheet2_BSObj.preferenceShareCapitalRow}`,
   );
 
-  const otherEquity = await getCellValue(
-    worksheet2,
-    `${columnsList[i] + sheet2_BSObj.otherEquityRow}`,
-  );
+  // const otherEquity = await getCellValue(
+  //   worksheet2,
+  //   `${columnsList[i] + sheet2_BSObj.otherEquityRow}`,
+  // );
 
   const sharePremium = await getCellValue(
     worksheet2,
@@ -1100,7 +1100,7 @@ export async function getShareholderFunds(i: number, worksheet2: any) {
     `${columnsList[i] + sheet2_BSObj.shareApplicationRow}`,
   );
 
-  const shareHolderFunds = equityShareCapital + preferenceShareCapital + otherEquity + sharePremium + reserveAndSurplus +
+  const shareHolderFunds = equityShareCapital + preferenceShareCapital +  sharePremium + reserveAndSurplus +
     revaluationReserve + capitalReserve + capitalRedemptionReserve + debentureRedemptionReserve + shareBasedPaymentReserve +
     definedBenefitObligationReserve +
     otherComprehensiveIncome + shareWarrants + nonControllingInterest +
