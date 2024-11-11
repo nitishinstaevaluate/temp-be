@@ -377,11 +377,12 @@ export class NetAssetValueService {
       }
     }
 
+    const bankBalances = await this.fetchNavLineItems(sheet2_BSObj.bankBalancesRow, worksheet2);
     // Modifying Other current liabilities payload 
     const totalNonCurrentAssets = fixedAssetVal + /* longTermLoansAdvancesVal */ + nonCurrentInvestmentVal + deferredTaxAssetVal + otherNonCurrentAssetsAtMarket;
     const totalNonCurrentAssetsAtBook = fixedAssetValAtBook + /* longTermLoansAdvancesValAtBook */ + nonCurrentInvestmentValAtBook + deferredTaxAssetValAtBook + otherNonCurrentAssetsAtBook;
 
-    const netCurrentAsset = inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + shortTermInvestmentValAtMarket + otherCurrentAssetsVal -
+    const netCurrentAsset = bankBalances + inventoriesVal + shortTermLoanAdvancesVal + tradeReceivablesVal + cashVal + shortTermInvestmentValAtMarket + otherCurrentAssetsVal -
       shortTermProvisionsVal - shortTermBorrowingsVal - tradePayablesVal - otherCurrentLiabilitiesVal;
 
     const netCurrentAssetAtBook = inventoriesValAtBook + shortTermLoanAdvancesValAtBook + tradeReceivablesValAtBook + cashValAtBook + shortTermInvestmentValAtBook + otherCurrentAssetsValAtBook -
@@ -486,4 +487,10 @@ export class NetAssetValueService {
   }
   }
 
+  async fetchNavLineItems(lineItem, worksheet2){
+    return await getCellValue(
+      worksheet2,
+      `${columnsList[0] + lineItem}`,
+    )
+  }
 }
