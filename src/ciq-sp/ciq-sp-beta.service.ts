@@ -178,7 +178,9 @@ export class ciqSpBetaService {
   
           for (let i = 0; i < maxLength; i++){
             adjustedBetaArray.push(
-              0.371 + 0.635 * result[MNEMONIC_ENUMS.IQ_BETA][i] //Using only unadjusted beta ( last 5 yrs data )
+              result[MNEMONIC_ENUMS.IQ_BETA][i] ? 
+              (0.371 + 0.635 * result[MNEMONIC_ENUMS.IQ_BETA][i]) //Using only unadjusted beta ( last 5 yrs data ) 
+              : 0
             )
           }
           return adjustedBetaArray;
