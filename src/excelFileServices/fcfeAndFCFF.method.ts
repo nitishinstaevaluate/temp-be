@@ -319,17 +319,22 @@ export async function v2DeferredTaxAssets(subkey, balanceSheetData, keysToProces
    * 2 (v) deferred tax assets(net)
    */
 
+  /**
+   * As per discussion with Sonal, deferred tax formula should be difference of 
+   * Deferred tax asset - deferred tax liability
+   * Finally subtract currentDeferredTax - nextDeferredTax
+   */
   const nextKey = keysToProcess[keysToProcess.indexOf(subkey) + 1];
   const crntDeferredTaxLiability = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars][subkey];
   const crntDeferredTaxAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars][subkey];
   
-  const crntTotalDeffTA =  convertToNumberOrZero(crntDeferredTaxLiability) + convertToNumberOrZero(crntDeferredTaxAsset);
+  const crntTotalDeffTA =  convertToNumberOrZero(crntDeferredTaxAsset) - convertToNumberOrZero(crntDeferredTaxLiability);
 
   const nextDeferredTaxLiability = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars][nextKey];
   const nextDeferredTaxAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars][nextKey];
   
-  const nextTotalDeffTA = convertToNumberOrZero(nextDeferredTaxLiability) + convertToNumberOrZero(nextDeferredTaxAsset);
-  return nextTotalDeffTA - crntTotalDeffTA;
+  const nextTotalDeffTA = convertToNumberOrZero(nextDeferredTaxAsset) - convertToNumberOrZero(nextDeferredTaxLiability);
+  return crntTotalDeffTA - nextTotalDeffTA;
 }
 
 // Old change in fixed asset
