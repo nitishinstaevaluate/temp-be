@@ -277,5 +277,10 @@ export class NetAssetValueService {
       default: 
         return null
     }
+
+  }
+  catch(error){
+    console.log("Net Asset Error:",error);
+    throw error;
   }
 }
