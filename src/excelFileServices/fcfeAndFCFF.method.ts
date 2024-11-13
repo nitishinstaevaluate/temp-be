@@ -325,13 +325,13 @@ export async function v2DeferredTaxAssets(subkey, balanceSheetData, keysToProces
    * Finally subtract currentDeferredTax - nextDeferredTax
    */
   const nextKey = keysToProcess[keysToProcess.indexOf(subkey) + 1];
-  const crntDeferredTaxLiability = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars][subkey];
-  const crntDeferredTaxAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars][subkey];
+  const crntDeferredTaxAsset  = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars][subkey];
+  const crntDeferredTaxLiability = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars][subkey];
   
   const crntTotalDeffTA =  convertToNumberOrZero(crntDeferredTaxAsset) - convertToNumberOrZero(crntDeferredTaxLiability);
 
-  const nextDeferredTaxLiability = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars][nextKey];
-  const nextDeferredTaxAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars][nextKey];
+  const nextDeferredTaxAsset = balanceSheetData[V2_BS_RAW_LINE_ITEMS.assetsRow.innerAsset.nonCurrentAssetsRow.innerNonCurrentAssetRow.deferredTaxAssetRow.particulars][nextKey];
+  const nextDeferredTaxLiability = balanceSheetData[V2_BS_RAW_LINE_ITEMS.equityAndLiabilitiesRow.innerEquityAndLiabilities.liabilitiesRow.innerLiabilities.nonCrrntLiabilitiesRow.innerNonCurrentLiabilitiesRow.deffrdTaxLiabilitiesNetRow.particulars][nextKey];
   
   const nextTotalDeffTA = convertToNumberOrZero(nextDeferredTaxAsset) - convertToNumberOrZero(nextDeferredTaxLiability);
   return crntTotalDeffTA - nextTotalDeffTA;
