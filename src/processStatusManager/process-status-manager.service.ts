@@ -46,6 +46,7 @@ export class ProcessStatusManagerService {
             step: parseInt(step) + 1,
             processIdentifierId: maxProcessIdentifierId + 1,
             userId: authoriseUser.userId,
+            isLegacyTemplate:false,
             uniqueLinkId
           }).save();
 
@@ -223,7 +224,8 @@ export class ProcessStatusManagerService {
             ...rest,
             step: parseInt(step) + 1,
             processIdentifierId: maxProcessIdentifierId + 1,
-            userId: authoriseUser.userId
+            userId: authoriseUser.userId,
+            isLegacyTemplate:false,
           }).save();
 
         return {
