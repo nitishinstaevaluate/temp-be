@@ -2942,14 +2942,14 @@ export class ReportService {
                   }
                   
                   if(valuationDetails.particular === 'peRatio' && (!multiples ? true : multiples?.peSelection)){
-                    const pbSelectionVal = ccmMetricType === 'average' ? valuationDetails.peMarketPriceAvg : valuationDetails.peMarketPriceMed;
+                    const peSelectionVal = ccmMetricType === 'average' ? valuationDetails.peMarketPriceAvg : valuationDetails.peMarketPriceMed;
                     priceToEarnings = {
                       particular:'Value as per P/E',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(pbSelectionVal), //only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(peSelectionVal), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (pbSelectionVal))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (peSelectionVal))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (pbSelectionVal))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (peSelectionVal))/100;
                     totalWeightedAvgValuePrShare.push(priceToEarnings);
                   }
                   if(valuationDetails.particular === 'result'){
