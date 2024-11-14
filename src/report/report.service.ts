@@ -1041,7 +1041,7 @@ export class ReportService {
 
       hbs.registerHelper('companyInfo',()=>{
         if(reportDetails.companyInfo){
-          return reportDetails.companyInfo;
+          return `The CIN of ${valuationResult.inputData[0].company} is ${reportDetails.cinNumber}. It is incorporated on ${this.formatDate(new Date(reportDetails.dateOfIncorporation))}. `.concat(reportDetails.companyInfo);
         }
         return '';
       })
