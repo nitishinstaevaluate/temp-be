@@ -27,6 +27,7 @@ import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensi
 import { SensitivityAnalysisModule } from 'src/sensitivity-analysis/sensitivity-analysis.module';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
@@ -61,7 +62,8 @@ import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schem
     ProcessStatusManagerService,
     MarketPriceService,
     SensitivityAnalysisService,
-    ExcelArchiveService
+    ExcelArchiveService,
+    thirdpartyApiAggregateService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService, terminalValueWorkingService],
 })

@@ -31,6 +31,7 @@ import { FCFEAndFCFFService } from './fcfeAndFCFF.service';
 import { RelativeValuationService } from './relativeValuation.service';
 import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
+import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -42,7 +43,8 @@ export class ValuationProcessController {
     private customLogger: CustomLogger,
     private authService:AuthenticationService,
     private sensitivityAnalysisService: SensitivityAnalysisService,
-    private authenticationTokenService: authenticationTokenService
+    private authenticationTokenService: authenticationTokenService,
+    private thirdPartyService: thirdpartyApiAggregateService
   ) {}
 
   @Post()
@@ -181,8 +183,8 @@ let workbook=null;
       const valuationResponse =
         await this.valuationMethodsService.Relative_Valuation_Method(
           inputs,
-          worksheet1,
-          worksheet2,
+          // worksheet1,
+          // worksheet2,
         );
       if (valuationResponse.result === null) return valuationResponse.msg;
 
@@ -233,10 +235,13 @@ let workbook=null;
     try {
       workbook = XLSX.readFile(`./uploads/${valuationFileToProcess}`);
     } catch (error) {
-      this.customLogger.log({
-        message: `excelSheetId: ${valuationFileToProcess} not available`,
-        userId: inputs.userId,
-      });
+      await this.thirdPartyService.fetchFinancialSheetFromS3(valuationFileToProcess);
+      workbook = XLSX.readFile(`./uploads/${valuationFileToProcess}`);
+      // this.customLogger.log({
+      //   message: `excelSheetId: ${valuationFileToProcess} not available`,
+      //   userId: inputs.userId,
+      // });
+      if(!workbook)
       return {
         result: null,
         msg: `excelSheetId: ${valuationFileToProcess} not available`,
@@ -300,7 +305,7 @@ let workbook=null;
                     
               case MODEL[2]:
                 const relativeValuationResponse = await this.valuationMethodsService
-                .Relative_Valuation_Method(inputs, worksheet1, worksheet2)
+                .Relative_Valuation_Method(inputs)
                 valResult.push({
                   model: MODEL[2],
                   valuationData: relativeValuationResponse.result,
@@ -336,7 +341,7 @@ let workbook=null;
           break; 
             case MODEL[4]: 
             const comparableIndustries = await this.valuationMethodsService
-                .Relative_Valuation_Method(inputs, worksheet1, worksheet2)
+                .Relative_Valuation_Method(inputs)
                 valResult.push({
                   model: MODEL[4],
                   valuationData: comparableIndustries.result,

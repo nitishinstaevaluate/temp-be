@@ -3435,7 +3435,7 @@
         </p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <ul>
-            <li>
+            <!-- <li>
                 <p
                     style="padding-left: 20pt;line-height: 190%;text-align: left;">
                 1. Enterprise Value</p>
@@ -3459,7 +3459,7 @@
                 <p
                     style="padding-left: 20pt;line-height: 190%;text-align: left;">
                 5. Earnings per Share (EPS)</p>
-            </li>
+            </li> -->
             <!-- <li>
                 <p
                     style="padding-left: 20pt;line-height: 190%;text-align: left;">
@@ -3758,8 +3758,7 @@
                             Consequently, we arrived at the equity value of the Company as of
                         </span><span >{{strdate}}</span><span
                             class="p">. The resultant value
-                            indicates the fair value of </span><span class="s4"
-                            style="text-transform: capitalize;">Company's</span><span class="p"> operations as
+                            indicates the fair value of </span><span class="p">Company's operations as
                             of </span><span>{{strdate}}</span><span class="p">.</span>
                     </p>
                     <p style="text-indent: 0pt;text-align: left;"><br /></p>
@@ -3772,16 +3771,19 @@
                                 </p>
                             </td>
                             {{#if (checkPreferenceRatio)}}
+                            {{#if (ccmVPSMetricCheck 'average')}}
                                 <td style="background-color: #001F5F !important;">
                                     <p class="s15"
                                         style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
                                         Average</p>
                                 </td>
+                                {{else}}
                                 <td style="background-color: #001F5F !important;">
                                     <p class="s15"
                                         style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
                                         Median</p>
                                 </td>
+                                {{/if}}
                             {{else}}
                                 <td style="background-color: #001F5F !important;">
                                     <p class="s15"
@@ -3801,19 +3803,21 @@
                                                 {{particular}}</p>
                                         </td>
 
+                                        {{#if (ccmVPSMetricCheck 'average')}}
                                         <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
                                                 {{avg}}
                                             </p>
                                         </td>
-                                    
-                                    {{#if (checkPreferenceRatio)}}
-                                        <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
-                                                {{med}}
-                                            </p>
-                                        </td>
-                                    {{/if}}
+                                        {{else}}
+                                            {{#if (checkPreferenceRatio)}}
+                                                <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                                    <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                                        {{med}}
+                                                    </p>
+                                                </td>
+                                            {{/if}}
+                                        {{/if}}
                                     </tr>
                             {{else}}
                                 <tr>
@@ -3824,18 +3828,20 @@
                                             {{particular}}</p>
                                     </td>
 
+                                {{#if (ccmVPSMetricCheck 'average')}}
                                     <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                         <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
                                             {{avg}}
                                         </p>
                                     </td>
-                                
-                                {{#if (checkPreferenceRatio)}}
-                                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
-                                            {{med}}
-                                        </p>
-                                    </td>
+                                {{else}}
+                                    {{#if (checkPreferenceRatio)}}
+                                        <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                                {{med}}
+                                            </p>
+                                        </td>
+                                    {{/if}}
                                 {{/if}}
                                 </tr>
                             {{/if}}
@@ -3868,16 +3874,19 @@
                                 </p>
                             </td>
                             {{#if (checkPreferenceRatio)}}
-                                <td style="background-color: #001F5F !important;">
-                                    <p class="s15"
-                                        style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
-                                        Average</p>
-                                </td>
-                                <td style="background-color: #001F5F !important;">
-                                    <p class="s15"
-                                        style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
-                                        Median</p>
-                                </td>
+                                {{#if (ccmVPSMetricCheck 'average')}}
+                                    <td style="background-color: #001F5F !important;">
+                                        <p class="s15"
+                                            style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
+                                            Average</p>
+                                    </td>
+                                {{else}}
+                                    <td style="background-color: #001F5F !important;">
+                                        <p class="s15"
+                                            style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
+                                            Median</p>
+                                    </td>
+                                {{/if}}
                             {{else}}
                                 <td style="background-color: #001F5F !important;">
                                     <p class="s15"
@@ -3896,19 +3905,20 @@
                                         style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">
                                         {{particular}}</p>
                                 </td>
-
+                            {{#if (ccmVPSMetricCheck 'average')}}
                                 <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                     <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
                                         {{avg}}
                                     </p>
                                  </td>
-                            
-                            {{#if (checkPreferenceRatio)}}
-                                <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                    <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
-                                        {{med}}
-                                    </p>
-                                </td>
+                            {{else}}
+                                {{#if (checkPreferenceRatio)}}
+                                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                            {{med}}
+                                        </p>
+                                    </td>
+                                {{/if}}
                             {{/if}}
                             </tr>
                         {{else}}
@@ -3919,19 +3929,20 @@
                                         style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
                                         {{particular}}</p>
                                 </td>
-
+                            {{#if (ccmVPSMetricCheck 'average')}}
                                 <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                     <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
                                         {{avg}}
                                     </p>
                                 </td>
-                            
-                            {{#if (checkPreferenceRatio)}}
-                                <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                    <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
-                                        {{med}}
-                                    </p>
-                                </td>
+                            {{else}}
+                                {{#if (checkPreferenceRatio)}}
+                                    <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                            {{med}}
+                                        </p>
+                                    </td>
+                                {{/if}}
                             {{/if}}
                             </tr>
                         {{/if}}
@@ -3953,8 +3964,7 @@
             <p style="padding-left: 15pt;text-indent: 0pt;text-align: left;line-height: 150%;"><span class="p">We
                     applied the average P/BV multiples to the Company’s existing Book
                     Value for the period ending </span><span>{{strdate}}</span><span class="p">. The
-                    resultant value indicates the fair value of </span><span class="s4"
-                    style="text-transform: capitalize;">company's</span><span class="p"> as of
+                    resultant value indicates the fair value of </span><span class="p">company's as of
                 </span><span>{{strdate}}</span><span
                     class="p">.</span></p>
             <p style="text-indent: 0pt;text-align: left;padding-top: 1%;"><br /></p>
@@ -3966,16 +3976,19 @@
                             Particulars</p>
                     </td>
                     {{#if (checkPreferenceRatio)}}
+                    {{#if (ccmVPSMetricCheck 'average')}}
                     <td style="background-color: #001F5F !important;">
                         <p class="s15"
                             style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
                             Average</p>
                     </td>
+                    {{else}}
                     <td style="background-color: #001F5F !important;">
                         <p class="s15"
                             style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
                             Median</p>
                     </td>
+                    {{/if}}
                     {{else}}
                         <td style="background-color: #001F5F !important;">
                             <p class="s15" style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
@@ -3993,16 +4006,18 @@
                                 style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important;font-weight: bold;">
                                 {{particular}}</p>
                         </td>
-                        <td
-                            style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16"
-                                style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
-                                {{avg}}</p>
-                        </td>
-                        {{#if (checkPreferenceRatio)}}
-                        <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;"> {{med}}</p>
-                        </td>
+                        {{#if (ccmVPSMetricCheck 'average')}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">
+                                    {{avg}}</p>
+                            </td>
+                        {{else}}
+                            {{#if (checkPreferenceRatio)}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;"> {{med}}</p>
+                            </td>
+                            {{/if}}
                         {{/if}}
                     </tr>
                 {{else}}
@@ -4013,16 +4028,18 @@
                                 style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;font-size: 13px !important">
                                 {{particular}}</p>
                         </td>
-                        <td
-                            style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16"
-                                style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
-                                {{avg}}</p>
-                        </td>
-                        {{#if (checkPreferenceRatio)}}
-                        <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important"> {{med}}</p>
-                        </td>
+                        {{#if (ccmVPSMetricCheck 'average')}}
+                            <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                <p class="s16"
+                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">
+                                    {{avg}}</p>
+                            </td>
+                        {{else}}
+                            {{#if (checkPreferenceRatio)}}
+                                <td style="width:10% !important;padding-top:1%;padding-bottom:1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important"> {{med}}</p>
+                                </td>
+                            {{/if}}
                         {{/if}}
                     </tr>
                 {{/if}}
@@ -4038,7 +4055,7 @@
                 <p style="text-indent: 0pt;text-align: left;"><br /></p>
                 <p style="padding-left: 16pt;text-indent: 0pt;text-align: left;line-height: 150%;">We applied the average P/E
                     multiples to the Company’s existing Earnings per share for the period ending {{strdate}}. The
-                    resultant value indicates the fair value of <span style="text-transform: capitalize;">company</span> as of {{strdate}}.</p>
+                    resultant value indicates the fair value of company as of {{strdate}}.</p>
                     <p style="padding-top: 2%;"><br></p>
                 <table style="border-collapse:collapse;margin-left:auto;margin-right: auto;width: 70%;margin-top: 2%;" cellspacing="0">
                     <tr>
@@ -4048,16 +4065,19 @@
                                 Particulars</p>
                         </td>
                         {{#if (checkPreferenceRatio)}}
-                            <td style="background-color: #001F5F !important;">
-                                <p class="s15"
-                                    style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
-                                    Average</p>
-                            </td>
-                            <td style="background-color: #001F5F !important;">
-                                <p class="s15"
-                                    style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
-                                    Median</p>
-                            </td>
+                            {{#if (ccmVPSMetricCheck 'average')}}
+                                <td style="background-color: #001F5F !important;">
+                                    <p class="s15"
+                                        style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
+                                        Average</p>
+                                </td>
+                            {{else}}
+                                <td style="background-color: #001F5F !important;">
+                                    <p class="s15"
+                                        style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
+                                        Median</p>
+                                </td>
+                            {{/if}}
                         {{else}}
                             <td style="background-color: #001F5F !important;">
                                 <p class="s15" style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
@@ -4074,18 +4094,21 @@
                                     {{particular}}
                                 </p>
                             </td>
+                        {{#if (ccmVPSMetricCheck 'average')}}
                             <td
                             style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                             <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">{{avg}}
                             </p>
                         </td>
-                        {{#if (checkPreferenceRatio)}}
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">{{med}}
-                                </p>
-                            </td>
+                        {{else}}
+                            {{#if (checkPreferenceRatio)}}
+                                <td
+                                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16"
+                                        style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important;font-weight: bold;">{{med}}
+                                    </p>
+                                </td>
+                            {{/if}}
                         {{/if}}
                         </tr>
                     {{else}}
@@ -4096,18 +4119,19 @@
                                     {{particular}}
                                 </p>
                             </td>
-                            <td
-                            style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                            <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{avg}}
-                            </p>
-                        </td>
-                        {{#if (checkPreferenceRatio)}}
-                            <td
-                                style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                                <p class="s16"
-                                    style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{med}}
-                                </p>
-                            </td>
+                        {{#if (ccmVPSMetricCheck 'average')}}
+                                <td style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16" style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{avg}}</p>
+                                </td>
+                        {{else}}
+                            {{#if (checkPreferenceRatio)}}
+                                <td
+                                    style="width:auto !important;padding-top: 1%;padding-bottom: 1%;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                    <p class="s16"
+                                        style="padding-right: 4pt;text-indent: 0pt;line-height: 11pt;text-align: right;font-size: 13px !important">{{med}}
+                                    </p>
+                                </td>
+                            {{/if}}
                         {{/if}}
                     </tr>
                     {{/if}}
@@ -4284,19 +4308,19 @@
             <table style="border-collapse:collapse;margin-left:auto;margin-right: auto;margin-top: 4%;width: 70%;" cellspacing="0">
                 <tr>
                     <td style="width:20% !important;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt;border-top: 1px solid #3d3d3d;border-left: 1px solid #3d3d3d;border-right: 1px solid #3d3d3d;"
-                        bgcolor="#000000">
+                        bgcolor="#001F5F">
                         <p class="s15"
                             style="padding-left: 5pt;;text-align: left;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
                             Particulars</p>
                     </td>
                     <td style="width:10% !important;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt;border-right: 1px solid #3d3d3d;border-top: 1px solid #3d3d3d;"
-                        bgcolor="#000000">
+                        bgcolor="#001F5F">
                         <p class="s15"
                             style="text-align: center;color: #ffffff;padding-top: 2%;padding-bottom: 2%;padding-left: 2%;padding-right: 2%;font-size: 13px !important">
                             Weights</p>
                     </td>
                     <td style="width:10% !important;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt;border-top: 1px solid #3d3d3d;border-right: 1px solid #3d3d3d"
-                        bgcolor="#000000">
+                        bgcolor="#001F5F">
                         <p class="s15"
                             style="padding-right: 3pt;text-align: right;color: #ffffff;padding-top: 2%;padding-bottom: 2%;font-size: 13px !important">
                             Weighted Value</p>

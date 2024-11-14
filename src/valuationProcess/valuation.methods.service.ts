@@ -77,13 +77,13 @@ export class ValuationMethodsService {
 
   async Relative_Valuation_Method(
     inputs: any,
-    worksheet1: any,
-    worksheet2: any,
+    // worksheet1: any,
+    // worksheet2: any,
   ): Promise<any> {
     return await this.relativeValuationService.Relative_Valuation(
-      inputs,
-      worksheet1,
-      worksheet2,
+      inputs
+      // worksheet1,
+      // worksheet2,
     );
   }
 

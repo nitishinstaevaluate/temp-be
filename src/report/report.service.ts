@@ -1047,6 +1047,7 @@ export class ReportService {
       })
 
       hbs.registerHelper('modelValuePerShare',(modelName)=>{
+        const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
         const modelArray = valuationResult.inputData[0]?.model || [];
         if(modelArray?.length > 1){
           if(reportDetails?.modelWeightageValue){
@@ -1071,7 +1072,7 @@ export class ReportService {
               let marketApproachValuePerShare = 0;
               response?.valuationData.valuation.map((marketApproachValuation)=>{
                 if(marketApproachValuation.particular === 'result'){
-                  marketApproachValuePerShare = marketApproachValuation.fairValuePerShareAvg;
+                  marketApproachValuePerShare = ccmMetricType === 'average' ?  marketApproachValuation.fairValuePerShareAvg : marketApproachValuation.fairValuePerShareMed;
                 }
               })
               valuePerShare =  this.formatPositiveAndNegativeValues(marketApproachValuePerShare);
@@ -1105,6 +1106,8 @@ export class ReportService {
       })
 
       hbs.registerHelper('combinedValuePerShare',(bool)=>{
+        const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+
         if(valuationResult.inputData[0].model.length === 1){
           let formattedValues;
           formattedValues = valuationResult.inputData[0].model.flatMap((models) => {
@@ -1116,7 +1119,7 @@ export class ReportService {
                 const innerFormatted = response?.valuationData.valuation
                   .filter((innerValuationData) => innerValuationData.particular === 'result')
                   .map((innerValuationData) => {
-                    const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                    const formattedNumber = ccmMetricType === 'average' ?  innerValuationData.fairValuePerShareAvg : innerValuationData.fairValuePerShareMed;
                     return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
                   });
                 return innerFormatted || [];
@@ -1165,6 +1168,7 @@ export class ReportService {
       })
 
       hbs.registerHelper('ccmValuePerShare',()=>{
+        const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
         let ccmValuePerShare = '';
          valuationResult.modelResults.map((response) => {
          
@@ -1172,7 +1176,7 @@ export class ReportService {
             ccmValuePerShare = response?.valuationData.valuation
                   .filter((innerValuationData) => innerValuationData.particular === 'result')
                   .map((innerValuationData) => {
-                    const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                    const formattedNumber = ccmMetricType === 'average' ?  innerValuationData.fairValuePerShareAvg : innerValuationData.fairValuePerShareMed;
                     return `${formatPositiveAndNegativeValues(customRound(formattedNumber))}/-`;
                   });
           }
@@ -1211,6 +1215,7 @@ export class ReportService {
         })
 
       hbs.registerHelper('modelValuePerShareNumbersToWords',(modelName)=>{
+        const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
         modelName = modelName.split(',');
         if(modelName.length <= 2 ){
           let formattedValues;
@@ -1223,7 +1228,8 @@ export class ReportService {
                   const innerFormatted = response?.valuationData.valuation
                     .filter((innerValuationData) => innerValuationData.particular === 'result')
                     .map((innerValuationData) => {
-                      const formattedNumber = Math.floor(innerValuationData.fairValuePerShareAvg).toLocaleString('en-IN');
+                      const ccmValuePerShare = ccmMetricType === 'average' ?  innerValuationData.fairValuePerShareAvg : innerValuationData.fairValuePerShareMed;
+                      const formattedNumber = Math.floor(ccmValuePerShare).toLocaleString('en-IN');
                       return `Rupees${converter.toWords(formattedNumber)} Only`;
                     });
                   return innerFormatted || [];
@@ -1259,6 +1265,8 @@ export class ReportService {
         return '';
       })
       hbs.registerHelper('equityPerShare',()=>{
+        const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+
         let equityPerShare = [];
         let checkiIfStub = false;
         if(reportDetails?.modelWeightageValue && valuationResult?.modelResults?.length > 1){
@@ -1285,7 +1293,7 @@ export class ReportService {
             if(response.model === MODEL[2]){
               response?.valuationData.valuation.map((marketApproachValuation)=>{
                 if(marketApproachValuation.particular === 'result'){
-                  marketApproachValuePerShare = marketApproachValuation.fairValuePerShareAvg;
+                  marketApproachValuePerShare = ccmMetricType === 'average' ?  marketApproachValuation.fairValuePerShareAvg : marketApproachValuation.fairValuePerShareMed;
                 }
               })
             }
@@ -2772,7 +2780,7 @@ export class ReportService {
         })
 
         hbs.registerHelper('loadMultipleLabel',(value)=>{
-          let strtIndex = 0, multiples, selectedMultiples = [];
+          let multiples, selectedMultiples = [], associatedMuliplesArray = [];
           valuationResult.modelResults.map((data)=>{
             if(data.model === MODEL[2] || data.model === MODEL[4]){
               multiples = data.valuationData?.multiples;
@@ -2785,6 +2793,7 @@ export class ReportService {
               MULTIPLES_TYPE.map((multipleStruc)=>{
                 if(multipleStruc.key === indMulitple){
                   selectedMultiples.push(multipleStruc.label);
+                    associatedMuliplesArray.push(...multipleStruc.associatedLabel);
                 }
               })
             })
@@ -2792,17 +2801,38 @@ export class ReportService {
           else{
             // If multiples does not exist, take all the default multiples from array
             MULTIPLES_TYPE.map((multipleStru)=>{
-               selectedMultiples.push(multipleStru.label)
+               selectedMultiples.push(multipleStru.label);
+                associatedMuliplesArray.push(...multipleStru.associatedLabel);
              }
             );
           }
+
+          /** 
+           * Two point approach to remove duplicacy
+          */
+          if(associatedMuliplesArray.length > 1){
+            let sanitisedArray = [];
+            let leftPointer = 0;
+            let rightPointer = associatedMuliplesArray.length - 1;
+
+            while (leftPointer <= rightPointer) {
+              const element = associatedMuliplesArray[leftPointer];
+              if (!sanitisedArray.includes(element)) {
+                  sanitisedArray.push(element);
+              }
+              leftPointer++;
+            }
+            associatedMuliplesArray = sanitisedArray;
+          }
+
+          selectedMultiples = associatedMuliplesArray.concat(selectedMultiples)
           let str = ``;
-          for (let i = strtIndex; i < selectedMultiples.length; i ++){
+          for (let i = 0; i < selectedMultiples.length; i ++){
             // In this add 6 because we want to start indexing after 6th
             str +=`<li>
             <p
                 style="padding-left: 20pt;line-height: ${value === 'addLh' ? '190%' : '15pt'};text-align: left;">
-               ${i + 6}. ${selectedMultiples[i]}
+               ${i + 1}. ${selectedMultiples[i]}
                </p>
             </li>
           `
@@ -2863,6 +2893,7 @@ export class ReportService {
         });
       
         hbs.registerHelper('weightedAvgValuePrShare',()=>{
+          const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
           let evSales:any=[],evEbitda:any=[],priceToBookValue:any=[],priceToEarnings:any=[],avgValuePerShare:any=[],totalWeightedAvgValuePrShare:any=[],outstandingShares:any=[], total:any=[],sumOfWeightedValue=0;
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
@@ -2875,54 +2906,59 @@ export class ReportService {
                 }
                 data.valuationData.valuation.map((valuationDetails)=>{
                   if(valuationDetails.particular === 'sales' && (!multiples ? true : multiples?.psSelection)){
+                    const salesEquity = ccmMetricType === 'average' ? valuationDetails.salesEquityAvg : valuationDetails.salesEquityMed;
                     evSales = {
                       particular:'Value as per P/Sales',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.salesEquityAvg), // only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(salesEquity), // only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.salesEquityAvg))/100),  //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (salesEquity))/100),  //only for calculating average
                     }
-                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.salesEquityAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (salesEquity))/100;
                     totalWeightedAvgValuePrShare.push(evSales);
                   }
                   if(valuationDetails.particular === 'ebitda' && (!multiples ? true : multiples?.evEbitdaSelection)){
+                    const evEbitdaVal = ccmMetricType === 'average' ? valuationDetails.ebitdaEquityAvg : valuationDetails.ebitdaEquityMed;
                     evEbitda = {
                       particular:'Value as per EV/EBITDA',
-                      fairValOfEquity: this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityAvg), //only for calculating average
+                      fairValOfEquity: this.formatPositiveAndNegativeValues(evEbitdaVal), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.ebitdaEquityAvg))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (evEbitdaVal))/100) //only for calculating average
                     }
                     
-                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.ebitdaEquityAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (evEbitdaVal))/100;
                     totalWeightedAvgValuePrShare.push(evEbitda);
                   }
                   
                   if(valuationDetails.particular === 'pbRatio' && (!multiples ? true : multiples?.pbSelection)){
+                    const pbRatioVal = ccmMetricType === 'average' ? valuationDetails.pbMarketPriceAvg : valuationDetails.pbMarketPriceMed;
                     priceToBookValue = {
                       particular:'Value as per P/BV',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceAvg), //only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(pbRatioVal), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.pbMarketPriceAvg))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (pbRatioVal))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.pbMarketPriceAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (pbRatioVal))/100;
                     totalWeightedAvgValuePrShare.push(priceToBookValue);
                   }
                   
                   if(valuationDetails.particular === 'peRatio' && (!multiples ? true : multiples?.peSelection)){
+                    const pbSelectionVal = ccmMetricType === 'average' ? valuationDetails.peMarketPriceAvg : valuationDetails.peMarketPriceMed;
                     priceToEarnings = {
                       particular:'Value as per P/E',
-                      fairValOfEquity:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceAvg), //only for calculating average
+                      fairValOfEquity:this.formatPositiveAndNegativeValues(pbSelectionVal), //only for calculating average
                       weights:`${totalAverage ? totalAverage : 25}%`,
-                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (valuationDetails.peMarketPriceAvg))/100) //only for calculating average
+                      weightedVal:this.formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (pbSelectionVal))/100) //only for calculating average
                     }
-                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (valuationDetails.peMarketPriceAvg))/100;
+                    sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (pbSelectionVal))/100;
                     totalWeightedAvgValuePrShare.push(priceToEarnings);
                   }
                   if(valuationDetails.particular === 'result'){
+                    const equityVal = ccmMetricType === 'average' ? valuationDetails.fairValuePerShareAvg : valuationDetails.fairValuePerShareMed;
                     avgValuePerShare = {
                       particular:`Value per Share (${valuationResult.inputData[0].currencyUnit})`,
                       fairValOfEquity:'', //selected fair value of equity for average calculation
                       weights:'',
-                      weightedVal: this.formatPositiveAndNegativeValues(valuationDetails.fairValuePerShareAvg) //selected fair value of equity for average calculation
+                      weightedVal: this.formatPositiveAndNegativeValues(equityVal) //selected fair value of equity for average calculation
                     }
                    
                     outstandingShares = {
@@ -2951,6 +2987,15 @@ export class ReportService {
           if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
             return true;
           return false;
+        })
+
+        hbs.registerHelper('ccmVPSMetricCheck', (requestedType)=>{
+          const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+            if(ccmMetricType){
+              if(ccmMetricType === requestedType) return true;
+              return false;
+            }
+            return false;
         })
 
         hbs.registerHelper('navCurrencyAndReportingUnit',()=>{

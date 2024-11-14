@@ -908,7 +908,7 @@ export class ExcelSheetService {
             }
              getCapitalStructure = await this.calculationService.getWaccExcptTargetCapStrc(waccPayload);
           }
-          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure, modelWeightageData);
+          this.loadHelpers(transposedData, valuationResult, terminalValueType, roles, getCapitalStructure, modelWeightageData, payload?.ccmVPStype);
         
           if (valuationResult.modelResults.length > 0) {
             const htmlContent = fs.readFileSync(htmlFilePath, 'utf8');
@@ -1164,7 +1164,7 @@ export class ExcelSheetService {
       
       }
 
-      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure, modelWeightageData){
+      async loadHelpers(transposedData,valuationResult, terminalType, roles, getCapitalStructure, modelWeightageData, ccmSubType){
         hbs.registerHelper('ifMB01',()=>{
           if(roles?.length)
               return roles.some(indRole => indRole?.name === userRoles.merchantBanker);
@@ -2319,6 +2319,15 @@ export class ExcelSheetService {
         hbs.registerHelper('checkPreferenceRatio',()=>{
           if( valuationResult.inputData[0].preferenceRatioSelect === RELATIVE_PREFERENCE_RATIO[1])
             return true;
+          return false;
+        })
+        
+        hbs.registerHelper('ccmVPSMetricCheck', (requestedType) => {
+          const ccmMetricType = ccmSubType || 'average';
+          if(ccmMetricType){
+            if(ccmMetricType === requestedType) return true;
+            return false;
+          }
           return false;
         })
 

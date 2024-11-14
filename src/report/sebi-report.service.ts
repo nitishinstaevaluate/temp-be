@@ -2122,6 +2122,8 @@ export class sebiReportService {
           })
 
           hbs.registerHelper('weightedAvgValuePrShare',()=>{
+            const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+
             let evSales:any=[],evEbitda:any=[],priceToBookValue:any=[],priceToEarnings:any=[],avgValuePerShare:any=[],totalWeightedAvgValuePrShare:any=[],outstandingShares:any=[], total:any=[],sumOfWeightedValue=0;
             if(valuationResult?.modelResults){
               valuationResult.modelResults.map((data)=>{
@@ -2134,54 +2136,59 @@ export class sebiReportService {
                   }
                   data.valuationData.valuation.map((valuationDetails)=>{
                     if(valuationDetails.particular === 'sales' && (!multiples ? true : multiples?.psSelection)){
+                      const salesEquity = ccmMetricType === 'average' ? valuationDetails.salesEquityAvg : valuationDetails.salesEquityMed;
                       evSales = {
                         particular:'Value as per P/Sales',
-                        fairValOfEquity:formatPositiveAndNegativeValues(valuationDetails.salesEquityAvg), // only for calculating average
+                        fairValOfEquity:formatPositiveAndNegativeValues(salesEquity), // only for calculating average
                         weights:`${totalAverage ? totalAverage : 25}%`,
-                        weightedVal:formatPositiveAndNegativeValues((25 * (valuationDetails.salesEquityAvg))/100),  //only for calculating average
+                        weightedVal:formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (salesEquity))/100),  //only for calculating average
                       }
-                      sumOfWeightedValue += (25 * (valuationDetails.salesEquityAvg))/100;
+                      sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (salesEquity))/100;
                       totalWeightedAvgValuePrShare.push(evSales);
                     }
                     if(valuationDetails.particular === 'ebitda' && (!multiples ? true : multiples?.evEbitdaSelection)){
+                      const evEbitdaVal = ccmMetricType === 'average' ? valuationDetails.ebitdaEquityAvg : valuationDetails.ebitdaEquityMed;
                       evEbitda = {
                         particular:'Value as per EV/EBITDA',
-                        fairValOfEquity: formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityAvg), //only for calculating average
+                        fairValOfEquity: formatPositiveAndNegativeValues(evEbitdaVal), //only for calculating average
                         weights:`${totalAverage ? totalAverage : 25}%`,
-                        weightedVal:formatPositiveAndNegativeValues((25 * (valuationDetails.ebitdaEquityAvg))/100) //only for calculating average
+                        weightedVal:formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (evEbitdaVal))/100) //only for calculating average
                       }
                       
-                      sumOfWeightedValue += (25 * (valuationDetails.ebitdaEquityAvg))/100;
+                      sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (evEbitdaVal))/100;
                       totalWeightedAvgValuePrShare.push(evEbitda);
                     }
                     
                     if(valuationDetails.particular === 'pbRatio' && (!multiples ? true : multiples?.pbSelection)){
+                      const pbRatioVal = ccmMetricType === 'average' ? valuationDetails.pbMarketPriceAvg : valuationDetails.pbMarketPriceMed;
                       priceToBookValue = {
                         particular:'Value as per P/BV',
-                        fairValOfEquity:formatPositiveAndNegativeValues(valuationDetails.pbMarketPriceAvg), //only for calculating average
+                        fairValOfEquity:formatPositiveAndNegativeValues(pbRatioVal), //only for calculating average
                         weights:`${totalAverage ? totalAverage : 25}%`,
-                        weightedVal:formatPositiveAndNegativeValues((25 * (valuationDetails.pbMarketPriceAvg))/100) //only for calculating average
+                        weightedVal:formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (pbRatioVal))/100) //only for calculating average
                       }
-                      sumOfWeightedValue += (25 * (valuationDetails.pbMarketPriceAvg))/100;
+                      sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (pbRatioVal))/100;
                       totalWeightedAvgValuePrShare.push(priceToBookValue);
                     }
                     
                     if(valuationDetails.particular === 'peRatio' && (!multiples ? true : multiples?.peSelection)){
+                      const peSelectionVal = ccmMetricType === 'average' ? valuationDetails.peMarketPriceAvg : valuationDetails.peMarketPriceMed;
                       priceToEarnings = {
                         particular:'Value as per P/E',
-                        fairValOfEquity:formatPositiveAndNegativeValues(valuationDetails.peMarketPriceAvg), //only for calculating average
+                        fairValOfEquity:formatPositiveAndNegativeValues(peSelectionVal), //only for calculating average
                         weights:`${totalAverage ? totalAverage : 25}%`,
-                        weightedVal:formatPositiveAndNegativeValues((25 * (valuationDetails.peMarketPriceAvg))/100) //only for calculating average
+                        weightedVal:formatPositiveAndNegativeValues(((totalAverage ? totalAverage : 25) * (peSelectionVal))/100) //only for calculating average
                       }
-                      sumOfWeightedValue += (25 * (valuationDetails.peMarketPriceAvg))/100;
+                      sumOfWeightedValue += ((totalAverage ? totalAverage : 25) * (peSelectionVal))/100;
                       totalWeightedAvgValuePrShare.push(priceToEarnings);
                     }
                     if(valuationDetails.particular === 'result'){
+                      const equityVal = ccmMetricType === 'average' ? valuationDetails.fairValuePerShareAvg : valuationDetails.fairValuePerShareMed;
                       avgValuePerShare = {
                         particular:`Value per Share (${valuationResult.inputData[0].currencyUnit})`,
                         fairValOfEquity:'', //selected fair value of equity for average calculation
                         weights:'',
-                        weightedVal: formatPositiveAndNegativeValues(valuationDetails.fairValuePerShareAvg) //selected fair value of equity for average calculation
+                        weightedVal: formatPositiveAndNegativeValues(equityVal) //selected fair value of equity for average calculation
                       }
                      
                       outstandingShares = {
@@ -2222,6 +2229,8 @@ export class sebiReportService {
           })
 
           hbs.registerHelper('getParticularValuePerShare',(model)=>{
+            const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+
             if(valuationResult.inputData[0].model.length){
               let formattedValues;
               formattedValues = valuationResult.inputData[0].model.flatMap((models) => {
@@ -2234,7 +2243,7 @@ export class sebiReportService {
                     const innerFormatted = response?.valuationData.valuation
                       .filter((innerValuationData) => innerValuationData.particular === 'result')
                       .map((innerValuationData) => {
-                        const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                        const formattedNumber = ccmMetricType === 'average' ? innerValuationData.fairValuePerShareAvg : innerValuationData.fairValuePerShareMed;
                         return `${formatPositiveAndNegativeValues(formattedNumber)}/-`;
                       });
                     return innerFormatted || [];
@@ -2384,6 +2393,8 @@ export class sebiReportService {
           // })
 
           hbs.registerHelper('weightedAverageWorking', () => {
+            const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+
             if (!valuationResult?.inputData[0]?.model.length) return [];
           
             const computedArray = [];
@@ -2438,7 +2449,7 @@ export class sebiReportService {
               // Market Approach Calculation
               if ((model === MODEL[2] || model === MODEL[4]) && this.checkModelExist(MODEL[2], modelArray)) {
                 const marketApproachValuation = response?.valuationData?.valuation?.find(val => val.particular === 'result');
-                const marketApproachValuePerShare = marketApproachValuation?.fairValuePerShareAvg || 0;
+                const marketApproachValuePerShare = ccmMetricType === 'average' ? (marketApproachValuation?.fairValuePerShareAvg || 0) : (marketApproachValuation?.fairValuePerShareMed || 0) ;
                 addWeightedValue('Market Approach', model, marketApproachValuePerShare, marketApproachWeight);
               }
           
@@ -2469,6 +2480,8 @@ export class sebiReportService {
           
 
           hbs.registerHelper('combinedValuePerShare',(bool)=>{
+            const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+
             if(valuationResult.inputData[0].model.length === 1){
               let formattedValues;
               formattedValues = valuationResult.inputData[0].model.flatMap((models) => {
@@ -2480,7 +2493,7 @@ export class sebiReportService {
                     const innerFormatted = response?.valuationData.valuation
                       .filter((innerValuationData) => innerValuationData.particular === 'result')
                       .map((innerValuationData) => {
-                        const formattedNumber = innerValuationData.fairValuePerShareAvg;
+                        const formattedNumber = ccmMetricType === 'average' ? innerValuationData.fairValuePerShareAvg : innerValuationData.fairValuePerShareMed;
                         return `${formatPositiveAndNegativeValues(bool === 'true' ? customRound(formattedNumber) : formattedNumber)}/-`;
                       });
                     return innerFormatted || [];

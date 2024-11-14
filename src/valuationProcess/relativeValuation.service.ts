@@ -41,8 +41,6 @@ export class RelativeValuationService {
   ) {}
   async Relative_Valuation(
     inputs: any,
-    worksheet1: any,
-    worksheet2: any,
     multiples?:any
     // companiesInfo: any,
   ): Promise<any> {
@@ -276,7 +274,7 @@ export class RelativeValuationService {
     });
     return {
       result: finalResult,
-      valuation: { finalPriceAvg: fairValuePerShareAvg, finalPriceMed: fairValuePerShareAvg },
+      valuation: { finalPriceAvg: fairValuePerShareAvg, finalPriceMed: fairValuePerShareMed },
       msg: 'Executed Successfully',
     };
  }
@@ -399,8 +397,8 @@ export class RelativeValuationService {
       const inputPayload = valuationBody.inputData[0];
       inputPayload.companies = newCompanyList;
       // console.log(inputPayload,"input payload found")
-      const { worksheet1, worksheet2 } = await this.fetchWorksheet(inputPayload);
-      const recomputationData = await this.Relative_Valuation(inputPayload, worksheet1, worksheet2, body.multiples);
+      // const { worksheet1, worksheet2 } = await this.fetchWorksheet(inputPayload);
+      const recomputationData = await this.Relative_Valuation(inputPayload, body.multiples);
 
       // Forcefully patching the multiples selection-deselection object in the valuationData
         recomputationData.result['multiples'] = body.multiples;

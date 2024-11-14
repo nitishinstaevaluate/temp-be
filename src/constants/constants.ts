@@ -2652,7 +2652,8 @@ export const MULTIPLES_TYPE = [
       med: 'pbMarketPriceMed'
     },
     particular:'pbRatio',
-    label:'P/BV'
+    label:'P/BV',
+    associatedLabel:['Book Value', 'Market price Per Share (MPS)']
   },
   {
     key:'peSelection',
@@ -2661,7 +2662,8 @@ export const MULTIPLES_TYPE = [
       med: 'peMarketPriceMed'
     },
     particular:'peRatio',
-    label:'P/E'
+    label:'P/E',
+    associatedLabel:['Market price Per Share (MPS)', 'Earnings Per Share (EPS)']
   },
   {
     key:'evEbitdaSelection',
@@ -2670,7 +2672,8 @@ export const MULTIPLES_TYPE = [
       med: 'ebitdaEquityMed'
     },
     particular:'ebitda',
-    label:'EV/EBITDA'
+    label:'EV/EBITDA',
+    associatedLabel:['Enterprise Value', 'EBITDA']
   },
   {
     key:'psSelection',
@@ -2679,7 +2682,8 @@ export const MULTIPLES_TYPE = [
       med: 'salesEquityMed'
     },
     particular:'sales',
-    label:'EV/S'
+    label:'EV/S',
+    associatedLabel:['Enterprise Value', 'Revenue']
   }
 ]
 
