@@ -2839,6 +2839,37 @@ export class ReportService {
           }
           return str;
         })
+
+        hbs.registerHelper('moreThanOneMultiple', () => {
+          let multiples = [], selectedMultiples = [];
+          valuationResult.modelResults.map((data)=>{
+            if(data.model === MODEL[2] || data.model === MODEL[4]){
+              multiples = data.valuationData?.multiples;
+            }
+          })
+
+          if(multiples){
+            // if multiples exist then take those multiples which are selected by user   
+            let multiplesArray = Object.keys(multiples).filter(key => multiples[key]);
+            multiplesArray.map((indMulitple)=>{
+              MULTIPLES_TYPE.map((multipleStruc)=>{
+                if(multipleStruc.key === indMulitple){
+                  selectedMultiples.push(multipleStruc.label);
+                }
+              })
+            })
+          }
+          else{
+            // If multiples does not exist, take all the default multiples from array
+            MULTIPLES_TYPE.map((multipleStru)=>{
+               selectedMultiples.push(multipleStru.label);
+             }
+            );
+          }
+
+          console.log(selectedMultiples,"all multiples found");
+          return selectedMultiples.length > 1;
+        })
         
         hbs.registerHelper('selectedMultipleLabel',()=>{
           let  multiples, selectedMultiples = [], finalMultiplesArray = [];

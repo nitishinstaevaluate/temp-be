@@ -1065,7 +1065,7 @@
                 <th  colspan="2" style="border-right: none;text-align: center;">
                   Valuation of <span style="font-size: 13px;font-weight: 600;text-transform: uppercase;">{{companyName}}</span> 
                 </th>
-                {{#if (checkPreferenceRatio)}}
+                {{#if (ccmVPSMetricCheck 'average')}}
                 <th colspan="2" style="border-left: none;text-align: right !important;">
                   Amount in INR {{reportingUnit}}
                 </th>
@@ -1078,8 +1078,9 @@
             <tr style="font-size: 13px;">
                 <th style="">Sr.No</th>
                 <th style="">Particulars</th>
+                {{#if (ccmVPSMetricCheck 'average')}}
                 <th style="">As on {{strdate}}</th>
-                {{#if (checkPreferenceRatio)}}
+                {{else}}
                 <th style="">As on {{strdate}}</th>
                 {{/if}}
             </tr>
@@ -1087,8 +1088,11 @@
             <tr style="font-size: 13px;">
                 <td></td>
                 <td></td>
-                <td>Average</td>
-                <td>Median</td>
+                {{#if (ccmVPSMetricCheck 'average')}}
+                    <td>Average</td>
+                {{else}}
+                    <td>Median</td>
+                {{/if}}
             </tr>
             {{/if}}
             {{#each (relativeVal data)}}
@@ -1096,9 +1100,12 @@
                 <tr style="font-weight: bold !important;font-size: 13px;">
                     <td>{{srNo}}</td>
                     <td>{{particular}}</td>
-                    <td>{{avg}}</td>
-                    {{#if (checkPreferenceRatio)}}
-                    <td>{{med}}</td>
+                    {{#if (ccmVPSMetricCheck 'average')}}
+                        <td>{{avg}}</td>
+                    {{else}}
+                        {{#if (checkPreferenceRatio)}}
+                        <td>{{med}}</td>
+                        {{/if}}
                     {{/if}}
                 </tr>
             {{else}}
@@ -1106,9 +1113,12 @@
                     <tr style="font-weight: bold !important;font-size: 13px;">
                         <td>{{srNo}}</td>
                         <td>{{particular}}</td>
-                        <td>{{avg}}</td>
-                        {{#if (checkPreferenceRatio)}}
-                        <td>{{med}}</td>
+                        {{#if (ccmVPSMetricCheck 'average')}}
+                            <td>{{avg}}</td>
+                        {{else}}
+                            {{#if (checkPreferenceRatio)}}
+                                <td>{{med}}</td>
+                            {{/if}}
                         {{/if}}
                     </tr>
                 {{else}}
@@ -1117,18 +1127,24 @@
                         <tr style="height: 25px;font-size: 13px;">
                             <td>{{srNo}}</td>
                             <td>{{particular}}</td>
-                            <td>{{avg}}</td>
-                            {{#if (checkPreferenceRatio)}}
-                            <td>{{med}}</td>
+                            {{#if (ccmVPSMetricCheck 'average')}}
+                                <td>{{avg}}</td>
+                            {{else}}
+                                {{#if (checkPreferenceRatio)}}
+                                <td>{{med}}</td>
+                                {{/if}}
                             {{/if}}
                         </tr>
                     {{else}}
                         <tr style="font-size: 13px;">
                             <td>{{srNo}}</td>
                             <td>{{particular}}</td>
-                            <td>{{avg}}</td>
-                            {{#if (checkPreferenceRatio)}}
-                            <td>{{med}}</td>
+                            {{#if (ccmVPSMetricCheck 'average')}}
+                                <td>{{avg}}</td>
+                            {{else}}
+                                {{#if (checkPreferenceRatio)}}
+                                    <td>{{med}}</td>
+                                {{/if}}
                             {{/if}}
                         </tr>
                     {{/if}}
