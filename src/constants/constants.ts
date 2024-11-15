@@ -4372,7 +4372,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
 
       const prevTaxAsstNet = balanceSheetData.get('(vii) current tax assets (net)')[cashFlowKeyMapper(prevKey, firstColumnKey)];
 
-      return convertToNumberOrZero(crntTaxAsstNet) - convertToNumberOrZero(prevTaxAsstNet);
+      return -(convertToNumberOrZero(crntTaxAsstNet) - convertToNumberOrZero(prevTaxAsstNet));
 
     case 'Increase / (Decrease) in trade payables':
       /**
