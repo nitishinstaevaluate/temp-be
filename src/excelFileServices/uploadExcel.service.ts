@@ -356,19 +356,31 @@ export class ExcelSheetService {
         const A_CHAR_CODE = 65;
         
         for await (const indBSdata of balanceSheetData) {
-          const sortedData = Object.keys(indBSdata).sort((a, b) => (/\d{2}-\d{2}-\d{4}/.test(a) ? -1 : 1)).reduce((acc, key) => ({ ...acc, [key]: indBSdata[key] }), {});
+          const sortedKeys = Object.keys(indBSdata)
+                .filter(key => /\d{2}-\d{2}-\d{4}/.test(key))    
+                .sort((a, b) => {
+                  const dateA = new Date(a.split('-').reverse().join('-')).getTime();
+                  const dateB = new Date(b.split('-').reverse().join('-')).getTime();
+                  return dateA - dateB; // Now TypeScript knows these are numbers
+                })
+                .concat(
+                  Object.keys(indBSdata)
+                    .filter(key => !/\d{2}-\d{2}-\d{4}/.test(key))
+                    .sort()
+                );
+
+              const sortedData = sortedKeys.reduce((acc, key) => ({ ...acc, [key]: indBSdata[key] }), {});
           /**
            * Line Item : (iii) cash and cash equivalents
           */
          if (indBSdata.lineEntry.sysCode === 8029) {
-              const keysToProcess = Object.keys(sortedData).filter((key,index) => key !== 'lineEntry' && index !== 2);
+              const keysToProcess = Object.keys(sortedData).filter((key,index) => key !== 'lineEntry' && index !== 1);
                 for await (const key of keysToProcess) {
                     const nextKeyIndex = keysToProcess.indexOf(key) + 1;
                     if (keysToProcess[nextKeyIndex]) {
                         const cellAddressColumn = String.fromCharCode(A_CHAR_CODE + nextKeyIndex + 2);
                         const cellAddress = `${cellAddressColumn}${indBSdata.lineEntry.rowNumber}`;
                         const newValue = cashEquivalentFromCashFlow[0]?.[keysToProcess[nextKeyIndex]] ?? 0;
-        
                         const bsExcelSheetLogger = {
                             excelSheet: EXCEL_CONVENTION.BS.key,
                             excelSheetId: fileName,
@@ -4509,5 +4521,30 @@ fetchSheetName(workbook){
     sheetNames.push(worksheet.name);
   });
   return sheetNames;
+}
+
+async downloadTemplate(templateData, response){
+  let excelBuffer;
+
+  const fileName = templateData?.fileName || '';
+  const excelSheetId = templateData?.excelSheetId || '';
+  if(!excelSheetId) return 'Filename not found';
+
+  const uploadDir = path.join(process.cwd(),'uploads');
+  const filePath = path.join(uploadDir, excelSheetId);
+
+  const excelBufferResponse = () => {
+    response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    response.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    response.send(excelBuffer);
+  }
+  if (!fs.existsSync(filePath)) {
+    await this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(excelSheetId);
+    excelBuffer = fs.readFileSync(filePath);  
+    return excelBufferResponse();      
+  }
+
+  excelBuffer = fs.readFileSync(filePath);
+  return excelBufferResponse();
 }
 }

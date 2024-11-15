@@ -112,4 +112,13 @@ export class UploadController {
   async modifyExcel(@Body() excelData, @Req() request){
     return await this.excelSheetService.modifyExcelSheet(excelData, request);
   }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Post('download-excel-template')
+  async fetchExcelTemplate(
+    @Body() templateData:any,
+    @Res() response
+  ){
+    return await this.excelSheetService.downloadTemplate(templateData, response)
+  }
 }
