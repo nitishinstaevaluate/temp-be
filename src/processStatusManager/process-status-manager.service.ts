@@ -343,7 +343,8 @@ export class ProcessStatusManagerService {
       const processStage = await this.processModel.findById({ _id : processStateId}).select(`processIdentifierId firstStageInput`).exec();
       return {
         isExcelModifiedStatus:processStage.firstStageInput?.isExcelModified,
-        excelSheetId:processStage.firstStageInput?.modifiedExcelSheetId || processStage.firstStageInput?.excelSheetId,
+        excelSheetId:processStage.firstStageInput?.isExcelModified ? processStage.firstStageInput?.modifiedExcelSheetId : processStage.firstStageInput?.excelSheetId,
+        exportExcelId:processStage.firstStageInput?.exportExcelId || '',
         status:true,
         processIdentifierId:processStage.processIdentifierId,
         msg:'excel status retrieve success'

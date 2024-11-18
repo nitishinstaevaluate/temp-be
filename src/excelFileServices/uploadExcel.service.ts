@@ -4188,14 +4188,14 @@ async updateFinancialSheet(filepath){
   }
 }
 
-async pushInitialFinancialSheet(formData){
+async pushInitialFinancialSheet(formData, fileName?){
   try{
     // const uploadDir = path.join(__dirname, '../../uploads');
     const uploadDir = path.join(process.cwd(),'uploads');
     const filePath = path.join(uploadDir, formData.filename);
 
     let file = fs.readFileSync(filePath).toString('base64');
-    return await this.thirdpartyApiAggregateService.upsertExcelInS3(file,formData.filename)
+    return await this.thirdpartyApiAggregateService.upsertExcelInS3(file, fileName || formData.filename)
   }
   catch(error){
     return {
@@ -4223,16 +4223,24 @@ async uploadExcelProcess(formData, processId, modelName, request){
     if(processStateId && processStateId !== "null") await this.excelArchiveService.removeExcelByProcessId(processStateId);
 
     const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
-    if(!processStateId || processStateId === "null"){
-      const processStateModel ={
-        firstStageInput:{
-          excelSheetId:uploadedFileData.excelSheetId
-        },
-        step:0
-      }
-     const processState = await this.processStateManagerService.upsertProcess(request, processStateModel, null);
-     processStateId = processState.processId;
+
+    const boolProcessIdInvalid = !processStateId || processStateId === "null";
+    
+    const exportedExcelResponse:any =  await this.uploadExportableExcelInS3(formData);
+
+    if(!exportedExcelResponse?.excelSheetId) throw new Error(exportedExcelResponse).message;
+
+    const processStateModel ={
+      firstStageInput:{
+        excelSheetId:uploadedFileData.excelSheetId,
+        exportExcelId:exportedExcelResponse.excelSheetId,
+        isExcelModified:false
+      },
+      step:0
     }
+    const processState = await this.processStateManagerService.upsertProcess(request, processStateModel,boolProcessIdInvalid ? null : processId);
+    processStateId = processState.processId;
+    
     /**
      * When user uploads excel,
      * 1. Create copy of the excel     
@@ -4524,27 +4532,49 @@ fetchSheetName(workbook){
 }
 
 async downloadTemplate(templateData, response){
-  let excelBuffer;
+  try{
+    let excelBuffer;
 
-  const fileName = templateData?.fileName || '';
-  const excelSheetId = templateData?.excelSheetId || '';
-  if(!excelSheetId) return 'Filename not found';
+    const fileName = templateData?.fileName || '';
+    const processId = templateData?.processStateId || '';
+    if(!processId) throw new NotFoundException('Filename not found').getResponse();
 
-  const uploadDir = path.join(process.cwd(),'uploads');
-  const filePath = path.join(uploadDir, excelSheetId);
+    const excelDetails: any = await this.processStateManagerService.getExcelStatus(processId);
 
-  const excelBufferResponse = () => {
-    response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    response.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-    response.send(excelBuffer);
+    if(!excelDetails.exportExcelId) throw new NotFoundException(`Please Upload Excel Again`).getResponse();
+
+    const uploadDir = path.join(process.cwd(),'uploads');
+    const filePath = path.join(uploadDir, excelDetails.exportExcelId);
+
+    const excelBufferResponse = () => {
+      response.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      response.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+      response.send(excelBuffer);
+    }
+
+    if (!fs.existsSync(filePath)) {
+      await this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(excelDetails.exportExcelId);
+      excelBuffer = fs.readFileSync(filePath);  
+      return excelBufferResponse();      
+    }
+    excelBuffer = fs.readFileSync(filePath);
+
+    return excelBufferResponse();
+  }catch(error){
+    throw error
   }
-  if (!fs.existsSync(filePath)) {
-    await this.thirdpartyApiAggregateService.fetchFinancialSheetFromS3(excelSheetId);
-    excelBuffer = fs.readFileSync(filePath);  
-    return excelBufferResponse();      
-  }
+}
 
-  excelBuffer = fs.readFileSync(filePath);
-  return excelBufferResponse();
+async uploadExportableExcelInS3(formData){
+   try{
+     /*
+    * Execute downloadable excel file function
+    */
+   const exportableFileName = `export-${formData.filename}`
+   return await this.pushInitialFinancialSheet(formData, exportableFileName);
+   }
+   catch(error){
+    throw error;
+   }
 }
 }

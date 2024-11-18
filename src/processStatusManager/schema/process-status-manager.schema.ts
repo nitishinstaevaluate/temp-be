@@ -27,6 +27,9 @@ export class firstStageInput{
     excelSheetId:String
 
     @Prop({ required: false,type:String,default:'' })
+    exportExcelId:String
+
+    @Prop({ required: false,type:String,default:'' })
     type:String
 
     @Prop({ required: false,type:String,default:'' })
