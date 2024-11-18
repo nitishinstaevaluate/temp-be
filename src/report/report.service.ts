@@ -123,7 +123,7 @@ export class ReportService {
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
             // this.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
-            this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
+            this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult, allProcessStageDetails);
           }
 
           if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -238,7 +238,7 @@ export class ReportService {
     if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
       const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, req);
       // this.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
-      this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
+      this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult, allProcessStageDetails);
     }
 
     if(valuationResult.inputData[0].model.includes(MODEL[1])){
@@ -2771,6 +2771,22 @@ export class ReportService {
               if(data.model === MODEL[2]){
                 const multiples = data.valuationData?.multiples;
                 if(multiples && (!multiples.psSelection && !multiples.evEbitdaSelection)){
+                  selection = true;
+                }
+              }
+            })
+          }
+          return selection;
+        })
+
+        hbs.registerHelper('containsOnlyOneMultipleExceptForPsAndEbitdaSelection',()=>{
+          let selection = false;
+          if(valuationResult?.modelResults){
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2]){
+                const multiples = data.valuationData?.multiples;
+                const muliplesArray = Object.values(multiples).filter((x=> x));
+                if(multiples && (multiples.psSelection || !multiples.evEbitdaSelection || muliplesArray.length > 1)){
                   selection = true;
                 }
               }

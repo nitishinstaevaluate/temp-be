@@ -3635,7 +3635,13 @@
                             {{/each}}
                             <tr style="padding-top: 1%;padding-bottom: 1%;">
                                 <td colspan="7" style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;border-left-style: solid;border-left-width: 1pt;padding-top: 1%;padding-bottom: 1%;">
-                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">MEAN</p>
+                                    <p style="text-indent: 0pt;text-align: center;color: black;font-size: 11px !important;font-weight: bold;">
+                                        {{#if (ccmVPSMetricCheck 'average')}}
+                                            MEAN
+                                        {{else}}
+                                            MEDIAN
+                                        {{/if}}
+                                    </p>
                                 </td>
                                 
                                 <!-- <td style="width:auto !important;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt;padding-top: 1%;padding-bottom: 1%;">
@@ -3952,6 +3958,7 @@
                 </div>
                 {{/if}}
                 
+                {{#if (containsOnlyOneMultipleExceptForPsAndEbitdaSelection)}}
                 <div style="page-break-before: always;padding-top: 6%;padding-left: 6%;padding-right: 6%;">
                 {{#if (notContainsPsAndEbitdaSelection)}}
                 <h1 style="padding-top: 3pt;padding-left: 3%;text-align: left;">3. Fair
@@ -4254,6 +4261,7 @@
                 </div>
                 {{/if}}
                 </div>
+                {{/if}}
     
     <!-- End -->
     {{/modelIncludes}}

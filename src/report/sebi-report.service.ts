@@ -51,7 +51,7 @@ export class sebiReportService {
     
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, request);
-            this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
+            this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult, allProcessStageDetails);
           }
 
           let getCapitalStructure;
@@ -114,7 +114,7 @@ export class sebiReportService {
          
           if(isNotRuleElevenUaAndNav(valuationResult.inputData[0].model)){
             const financialSegmentDetails = await this.getFinancialSegment(reportDetails, valuationResult, request);
-            this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult);
+            this.financialHelperService.loadFinancialTableHelper(financialSegmentDetails, valuationResult, allProcessStageDetails);
           }
       
           let getCapitalStructure;
