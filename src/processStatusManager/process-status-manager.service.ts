@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadGatewayException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ProcessManagerDocument } from './schema/process-status-manager.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
@@ -493,6 +493,27 @@ export class ProcessStatusManagerService {
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+
+  async createClone(payload){
+    try{
+      const id = payload._id;
+
+      const leadClone = await this.processModel.findById(id).exec();
+      if (!leadClone) throw new NotFoundException('Item not found').getResponse();
+
+      const { _id, createdOn, ...rest  } = leadClone.toObject();
+
+      const obId = await this.utilsService.getMaxObId();
+
+      await new this.processModel({ ...rest, processIdentifierId:obId + 1}).save();
+
+      return { status:true };
+    }
+    catch(error){
+      throw error;
     }
   }
 }

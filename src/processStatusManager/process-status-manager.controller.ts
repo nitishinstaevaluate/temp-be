@@ -7,7 +7,8 @@ import {
       Put,
       UseGuards,
       Request,
-      ParseIntPipe
+      ParseIntPipe,
+      Post
     } from '@nestjs/common';
 import { ProcessStatusManagerService } from './process-status-manager.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -97,5 +98,11 @@ export class ProcessStatusManagerController {
     @Get('fetch-process-identifier-id/:obId')
     async fetchProcessIdentifierId(@Param() obId: any){
       return await this.processStatusManagerService.getProcessIdentifierId(obId);
+    }
+
+    @UseGuards(KeyCloakAuthGuard)
+    @Post('clone-lead')
+    async cloneLead(@Body() payload: any){
+      return await this.processStatusManagerService.createClone(payload);
     }
 }
