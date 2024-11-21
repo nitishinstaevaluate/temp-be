@@ -439,6 +439,9 @@ export class ProcessManager {
 
     @Prop({ default: () => new Date(), required: false })
     modifiedOn: Date;
+
+    @Prop({ type:Boolean, default: false, required: false })
+    isDeleted: boolean;
 }
 
 export type ProcessManagerDocument = ProcessManager & Document;
