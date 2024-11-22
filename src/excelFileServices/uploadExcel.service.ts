@@ -4241,22 +4241,7 @@ async uploadExcelProcess(formData, processId, modelName, request){
     const processState = await this.processStateManagerService.upsertProcess(request, processStateModel,boolProcessIdInvalid ? null : processId);
     processStateId = processState.processId;
     
-    /**
-     * When user uploads excel,
-     * 1. Create copy of the excel     
-     * 2. Adjust retainers and cash & cash equivalent line items in Balance Sheet 
-     */
-    if(modelName === XL_SHEET_ENUM[0]){
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Cash Flow'].key, request, processStateId).toPromise();
-      await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processStateId);
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processStateId).toPromise();
-    }
-    if(modelName === XL_SHEET_ENUM[2]){
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
-      await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
-    }
+    await this.loadExcelJSONintoDB(modelName, uploadedFileData, request, processStateId);
     return {excelSheetId:uploadedFileData.excelSheetId, processId: processStateId};
 
   }
@@ -4576,5 +4561,26 @@ async uploadExportableExcelInS3(formData){
    catch(error){
     throw error;
    }
+}
+
+async loadExcelJSONintoDB(modelName, uploadedFileData, request, processStateId){
+  /**
+   * When user uploads excel,
+   * 1. Create copy of the excel     
+   * 2. Adjust retainers and cash & cash equivalent line items in Balance Sheet 
+   */
+  if(modelName === XL_SHEET_ENUM[0]){
+    console.log(modelName, uploadedFileData, processStateId,"all three parameters")
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Cash Flow'].key, request, processStateId).toPromise();
+    await this.updateBalanceSheetRetainersAndCashEquivalent(uploadedFileData.excelSheetId, request, processStateId);
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Assessment of Working Capital'].key, request, processStateId).toPromise();
+  }
+  if(modelName === XL_SHEET_ENUM[2]){
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
+  }
+  return true;
 }
 }

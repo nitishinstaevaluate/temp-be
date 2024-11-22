@@ -1,4 +1,4 @@
-import { BadGatewayException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadGatewayException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { ProcessManagerDocument } from './schema/process-status-manager.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
@@ -7,6 +7,9 @@ import { CustomLogger } from 'src/loggerService/logger.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { utilsService } from 'src/utils/utils.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
+import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
+import { CONVERT_EXCEL_TO_JSON } from 'src/library/interfaces/api-endpoints.local';
+import { MODEL, XL_SHEET_ENUM } from 'src/constants/constants';
 
 @Injectable()
 export class ProcessStatusManagerService {
@@ -14,7 +17,8 @@ export class ProcessStatusManagerService {
   private readonly processModel: Model<ProcessManagerDocument>,
     private logger: CustomLogger,
     private readonly authenticationService: AuthenticationService,
-    private readonly utilsService: utilsService) { }
+    private readonly utilsService: utilsService
+  ) { }
 
   async upsertProcess(req, process, processId) {
     try {
@@ -497,18 +501,45 @@ export class ProcessStatusManagerService {
   }
 
 
-  async createClone(payload){
+  async createClone(payload, request){
     try{
       const id = payload._id;
 
       const leadClone = await this.processModel.findById(id).exec();
       if (!leadClone) throw new NotFoundException('Item not found').getResponse();
 
-      const { _id, createdOn, ...rest  } = leadClone.toObject();
+      const { _id, createdOn, modifiedOn, ...rest  } = leadClone.toObject();
 
       const obId = await this.utilsService.getMaxObId();
 
-      await new this.processModel({ ...rest, processIdentifierId:obId + 1}).save();
+      const updatedProcess = await new this.processModel({ ...rest, processIdentifierId:obId + 1}).save();
+
+      const modelArray = payload.firstStageInput.model;
+      const isDCF = modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1]) || modelArray.includes(MODEL[3]);
+      const isMarketApproach = modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4]);
+      
+      if(isDCF || isMarketApproach){
+        const excelSheetId = payload.firstStageInput.isExcelModified ? payload.firstStageInput.modifiedExcelSheetId : payload.firstStageInput.excelSheetId;
+        const templatePayload = {
+          modelName: isDCF ? XL_SHEET_ENUM[0] : XL_SHEET_ENUM[2],
+          uploadedFileData: {
+            excelSheetId
+          },
+          processStateId:updatedProcess._id
+        }
+        const bearerToken = await this.authenticationService.extractBearer(request);
+
+        if(!bearerToken.status)
+          return bearerToken;
+
+        const headers = { 
+          'Authorization':`${bearerToken.token}`,
+          'Content-Type': 'application/json'
+        }
+        if(!headers.Authorization) throw new ForbiddenException('Token not found').getResponse();
+        
+        await axiosInstance.post(CONVERT_EXCEL_TO_JSON, templatePayload, { httpsAgent: axiosRejectUnauthorisedAgent, headers })
+      }
 
       return { status:true };
     }

@@ -8,7 +8,8 @@ import {
       UseGuards,
       Request,
       ParseIntPipe,
-      Post
+      Post,
+      Req
     } from '@nestjs/common';
 import { ProcessStatusManagerService } from './process-status-manager.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -102,7 +103,7 @@ export class ProcessStatusManagerController {
 
     @UseGuards(KeyCloakAuthGuard)
     @Post('clone-lead')
-    async cloneLead(@Body() payload: any){
-      return await this.processStatusManagerService.createClone(payload);
+    async cloneLead(@Body() payload: any, @Req() request:any){
+      return await this.processStatusManagerService.createClone(payload, request);
     }
 }

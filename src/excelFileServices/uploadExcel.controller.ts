@@ -121,4 +121,14 @@ export class UploadController {
   ){
     return await this.excelSheetService.downloadTemplate(templateData, response)
   }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Post('convert-excel-to-json')
+  async insertExcelJSON(
+    @Body() templateData:any,
+    @Req() request
+  ){
+    const { modelName, uploadedFileData, processStateId} = templateData;
+    return await this.excelSheetService.loadExcelJSONintoDB(modelName, uploadedFileData, request, processStateId);
+  }
 }

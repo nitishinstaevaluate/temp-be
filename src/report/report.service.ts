@@ -2784,7 +2784,7 @@ export class ReportService {
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2]){
-                const multiples = data.valuationData?.multiples;
+                const multiples = data.valuationData?.multiples || [];
                 const muliplesArray = Object.values(multiples).filter((x=> x));
                 if(multiples && (multiples.psSelection || !multiples.evEbitdaSelection || muliplesArray.length > 1)){
                   selection = true;

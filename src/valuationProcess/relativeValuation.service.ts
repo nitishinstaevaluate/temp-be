@@ -80,10 +80,8 @@ export class RelativeValuationService {
       })
 
     // re-valuate company average and median
-    let selectedMultiples = [];
-    if(multiples){
-      selectedMultiples = Object.keys(multiples).filter(key => multiples[key]);
-    }
+    if(!Object.entries(multiples || []).length) multiples = this.constructStaticMultiple();
+    let selectedMultiples:any[] = Object.keys(multiples).filter(key => multiples[key]);
 
     let netWorth = await versionTwoNetWorthOfCompany(balanceSheetComputed,provisionalDate);
 
@@ -265,6 +263,7 @@ export class RelativeValuationService {
           // tentativeIssuePrice: tentativeIssuePrice,
         },
       ],
+      multiples
     };
     
     finalResult = await this.factoriseResult(finalResult, selectedMultiples);
@@ -401,7 +400,7 @@ export class RelativeValuationService {
       const recomputationData = await this.Relative_Valuation(inputPayload, body.multiples);
 
       // Forcefully patching the multiples selection-deselection object in the valuationData
-        recomputationData.result['multiples'] = body.multiples;
+        // recomputationData.result['multiples'] = body.multiples;
 
       // Replacing CCM valuation with the new one
       for await (const individualValuation of valuationBody?.modelResults){
@@ -501,5 +500,13 @@ export class RelativeValuationService {
       excelArchive[indArchive.lineEntry.particulars] = rest;
     }
     return excelArchive;
+  }
+
+  constructStaticMultiple(){
+    const multiplesObj = {};
+    MULTIPLES_TYPE.forEach((item)=>{
+       multiplesObj[item.key] = true;
+    })
+    return multiplesObj;
   }
 }
