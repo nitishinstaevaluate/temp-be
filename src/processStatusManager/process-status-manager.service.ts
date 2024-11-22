@@ -8,8 +8,8 @@ import { AuthenticationService } from 'src/authentication/authentication.service
 import { utilsService } from 'src/utils/utils.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
-import { CONVERT_EXCEL_TO_JSON } from 'src/library/interfaces/api-endpoints.local';
-import { MODEL, XL_SHEET_ENUM } from 'src/constants/constants';
+import { CLONE_BETA_WORKING, CONVERT_EXCEL_TO_JSON, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
+import { BETA_TYPE, MODEL, XL_SHEET_ENUM } from 'src/constants/constants';
 
 @Injectable()
 export class ProcessStatusManagerService {
@@ -501,47 +501,88 @@ export class ProcessStatusManagerService {
   }
 
 
-  async createClone(payload, request){
-    try{
-      const id = payload._id;
-
-      const leadClone = await this.processModel.findById(id).exec();
-      if (!leadClone) throw new NotFoundException('Item not found').getResponse();
-
-      const { _id, createdOn, modifiedOn, ...rest  } = leadClone.toObject();
-
+  async createClone(payload, request) {
+    try {
+      const leadClone = await this.fetchAndValidateProcess(payload._id);
+      const { _id, createdOn, modifiedOn, ...rest } = leadClone.toObject();
+  
       const obId = await this.utilsService.getMaxObId();
+      const updatedProcess = await new this.processModel({ ...rest, processIdentifierId: obId + 1 }).save();
 
-      const updatedProcess = await new this.processModel({ ...rest, processIdentifierId:obId + 1}).save();
+      const processDetails = await this.getProcessIdentifierId({obId:_id});
+      
+      await this.upsertBetaWorking(request, this.constructBetaPayload(processDetails?.processIdentifierId, updatedProcess?.processIdentifierId));
 
       const modelArray = payload.firstStageInput.model;
-      const isDCF = modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1]) || modelArray.includes(MODEL[3]);
+      const isDCF = modelArray.includes(MODEL[0]) || modelArray.includes(MODEL[1]) || modelArray.includes(MODEL[3]);;
       const isMarketApproach = modelArray.includes(MODEL[2]) || modelArray.includes(MODEL[4]);
-      
-      if(isDCF || isMarketApproach){
-        const excelSheetId = payload.firstStageInput.isExcelModified ? payload.firstStageInput.modifiedExcelSheetId : payload.firstStageInput.excelSheetId;
-        const templatePayload = {
-          modelName: isDCF ? XL_SHEET_ENUM[0] : XL_SHEET_ENUM[2],
-          uploadedFileData: {
-            excelSheetId
-          },
-          processStateId:updatedProcess._id
-        }
-        const bearerToken = await this.authenticationService.extractBearer(request);
+  
+      if (isDCF || isMarketApproach) {
+        await this.handleExcelConversion(payload, updatedProcess._id, request, isDCF);
+      }
+  
+      return { status: true };
+    } catch (error) {
+      throw error;
+    }
+  }
 
-        if(!bearerToken.status)
-          return bearerToken;
+  constructBetaPayload(oldPID, newPID){
+    return { oldPID, newPID };
+  }
 
-        const headers = { 
-          'Authorization':`${bearerToken.token}`,
-          'Content-Type': 'application/json'
-        }
-        if(!headers.Authorization) throw new ForbiddenException('Token not found').getResponse();
-        
-        await axiosInstance.post(CONVERT_EXCEL_TO_JSON, templatePayload, { httpsAgent: axiosRejectUnauthorisedAgent, headers })
+  async fetchAndValidateProcess(id) {
+    const leadClone = await this.processModel.findById(id).exec();
+    if (!leadClone) throw new NotFoundException('Item not found').getResponse();
+    return leadClone;
+  }
+
+  async handleExcelConversion(payload, processStateId, request, isDCF) {
+    const excelSheetId = payload.firstStageInput.isExcelModified 
+      ? payload.firstStageInput.modifiedExcelSheetId 
+      : payload.firstStageInput.excelSheetId;
+  
+    const templatePayload = {
+      modelName: isDCF ? XL_SHEET_ENUM[0] : XL_SHEET_ENUM[2],
+      uploadedFileData: { excelSheetId },
+      processStateId,
+    };
+  
+    const headers:any = await this.getAuthHeaders(request);
+    if (!headers.Authorization) throw new ForbiddenException('Token not found').getResponse();
+  
+    await axiosInstance.post(CONVERT_EXCEL_TO_JSON, templatePayload, {
+      httpsAgent: axiosRejectUnauthorisedAgent,
+      headers,
+    });
+  }
+
+  async getAuthHeaders(request) {
+    const bearerToken = await this.authenticationService.extractBearer(request);
+    if (!bearerToken.status) return bearerToken;
+  
+    return {
+      Authorization: `${bearerToken.token}`,
+      'Content-Type': 'application/json',
+    };
+  }
+
+  async upsertBetaWorking(request, payload){
+    try{
+      if(payload.betaType === BETA_TYPE[2]){
+        return;
+      }
+      const bearerToken = await this.authenticationService.extractBearer(request);
+
+      if(!bearerToken.status)
+        return bearerToken;
+
+      const headers = { 
+        'Authorization':`${bearerToken.token}`,
+        'Content-Type': 'application/json'
       }
 
-      return { status:true };
+      return await axiosInstance.post(`${CLONE_BETA_WORKING}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
     }
     catch(error){
       throw error;

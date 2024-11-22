@@ -751,4 +751,20 @@ export class CiqSpService {
         );
       }
     }
+
+    async cloneBetaWorking(payload){
+      try{
+        return await this.ciqSpBetaService.cloneBetaWorkingAggregate(payload);
+      }
+      catch(error){
+        throw new HttpException(
+          {
+            error: error,
+            status: false,
+            msg: 'beta working clone failed',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
 }

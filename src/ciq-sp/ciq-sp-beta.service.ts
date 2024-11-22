@@ -452,4 +452,21 @@ export class ciqSpBetaService {
         }
       }
       //#endregion Beta working ends
+
+      async cloneBetaWorkingAggregate(payload){
+        try{
+          const oldPID = payload.oldPID;
+          const newPID = payload.newPID;
+
+          const oldProcess:any = await this.getBetaWorkingAggregate(oldPID);
+          if(!oldProcess) return;
+
+          const { _id, createdAt, updatedAt, processIdentifierId, ...rest } = oldProcess.data.toObject();
+      
+          return await new this.betaWorkingModel({ ...rest, processIdentifierId: newPID }).save()
+        }
+        catch(error){
+          throw error;
+        }
+      }
 }
