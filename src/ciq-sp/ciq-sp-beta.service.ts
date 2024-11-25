@@ -459,7 +459,7 @@ export class ciqSpBetaService {
           const newPID = payload.newPID;
 
           const oldProcess:any = await this.getBetaWorkingAggregate(oldPID);
-          if(!oldProcess) return;
+          if(!oldProcess?.data) return;
 
           const { _id, createdAt, updatedAt, processIdentifierId, ...rest } = oldProcess.data.toObject();
       
