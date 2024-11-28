@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, model } from 'mongoose';
 import { ReportDocument } from './schema/report.schema';
-import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MB01_PURPOSE_OF_REPORT_AND_SECTION, MB01_REPORT_PURPOSE, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
+import { ALPHA, AWS_STAGING, BETA_FROM, BETA_SUB_TYPE, BETA_TYPE, CAPITAL_STRUCTURE_TYPE, COST_OF_EQUITY_METHOD, DOCUMENT_UPLOAD_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, FINANCIAL_BASIS_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MB01_PURPOSE_OF_REPORT_AND_SECTION, MB01_REPORT_PURPOSE, METHODS_AND_APPROACHES, MODEL, MULTIPLES_ORDER_CCM_REPORT, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NAVIGANT_LOGO, NET_ASSET_VALUE_APPROACH, PURPOSE_OF_REPORT_AND_SECTION, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from 'src/constants/constants';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import { CalculationService } from 'src/calculation/calculation.service';
 const FormData = require('form-data');
@@ -997,19 +997,32 @@ export class ReportService {
             return valuationResult.inputData[0]?.riskPremium;
         return '';
       })
-      hbs.registerHelper('costOfEquity',()=>{
+      hbs.registerHelper('industryRiskPremium',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0].costOfEquity?.toFixed(2);
+            return valuationResult.inputData[0]?.industryRiskPremium;
+        return '';
+      })
+
+      hbs.registerHelper('sizePremium',()=>{
+        if(valuationResult.inputData[0]) 
+            return valuationResult.inputData[0]?.sizePremium;
+        return '';
+      })
+      
+      hbs.registerHelper('costOfEquity',()=>{
+        if(valuationResult.inputData[0]) {
+            return formatPositiveAndNegativeValues(valuationResult.inputData[0].costOfEquity);
+        }
         return '';
       })
       hbs.registerHelper('adjustedCostOfEquity',()=>{
         if(valuationResult.inputData[0]) 
-            return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(2);
+            return formatPositiveAndNegativeValues(valuationResult.inputData[0]?.adjustedCostOfEquity);
         return '';
       })
       hbs.registerHelper('wacc',()=>{
         if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-            return valuationResult.inputData[0]?.wacc?.toFixed(2);
+            return formatPositiveAndNegativeValues(valuationResult.inputData[0]?.wacc);
         return '0';
       })
       hbs.registerHelper('costOfDebt',()=>{
@@ -1417,7 +1430,7 @@ export class ReportService {
             letterIndex++;
           }
         }
-        return `<p style="text-align:center;padding-top:1%;">${Object.keys(outputObject)}</p>`;
+        return `<p style="text-align:left;padding-top:1%;padding-left:22%;">${Object.keys(outputObject)}</p>`;
       })
 
       hbs.registerHelper('betaName',()=>{
@@ -2453,14 +2466,34 @@ export class ReportService {
               })
               overallSectionsWithPurposes[0] = `in accordance with provisions of section ${overallSectionsWithPurposes[0]}`
               return overallSectionsWithPurposes.join(' and ');
-      });
+        });
 
-      hbs.registerHelper('isInternalAssessment',()=>{
-        if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
-          return true;
-        }
-        return false;
-      })
+        hbs.registerHelper('isInternalAssessment',()=>{
+          if(reportDetails.reportPurpose.includes('internalAssessment') && reportDetails.reportPurpose?.length === 1){
+            return true;
+          }
+          return false;
+        })
+
+        hbs.registerHelper('isCapm', ()=>{
+          return valuationResult.inputData[0].coeMethod === COST_OF_EQUITY_METHOD.capm.key;
+        })
+
+        hbs.registerHelper('costOfEquityMethodStrings',(parameter)=>{
+          const capmMethod = valuationResult.inputData[0].coeMethod === COST_OF_EQUITY_METHOD.capm.key;
+          switch(parameter){            
+            case 'coeBase1':
+              return capmMethod ? 'Capital Asset Pricing Model (CAP-M)' : 'Build-up Method';
+            case 'coeBase2':
+              return capmMethod ? 'CAP-M model' : 'Build-up Method';
+            case 'coeBase3':
+              return capmMethod ? 'Rf + β (Rmp) + α' : 'Rf + Rmp + γirp + δsp + α';
+          }
+        })
+
+        hbs.registerHelper('operatorAND', (conditionOne, conditionTwo) => {
+          return conditionOne && conditionTwo;
+        })
 
         hbs.registerHelper('scopeOfWorksectionAndPurposeOfReport', ()=>{
           let storePurposeWiseSections = {}, overallSectionsWithPurposes = [];

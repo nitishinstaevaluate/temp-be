@@ -33,15 +33,10 @@ export class WaccController {
   constructor(private calculationService: CalculationService) { }
 
   @UseGuards(KeyCloakAuthGuard)
-  @Get('/adjcoe')
-  async find(
-    @Query('riskFreeRate') riskFreeRate: string,
-    @Query('expMarketReturn') expMarketReturn: string,
-    @Query('beta') beta: string,
-    @Query('riskPremium') riskPremium: string,
-    @Query('coeMethod') coeMethod: string,
+  @Post('/adjcoe')
+  async calculateAdjCoe(@Body() payload:any
   ): Promise<any> {
-    return this.calculationService.adjCOE(parseFloat(riskFreeRate), parseFloat(expMarketReturn), parseFloat(beta), parseFloat(riskPremium),coeMethod);
+    return this.calculationService.adjCOE(payload);
   }
 
   @UseGuards(KeyCloakAuthGuard)

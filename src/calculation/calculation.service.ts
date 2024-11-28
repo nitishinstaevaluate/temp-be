@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { date } from 'joi';
 import { Model } from 'mongoose';
 import { formatDateToMMDDYYYY } from 'src/ciq-sp/ciq-common-functions';
-import { EXCEL_CONVENTION } from 'src/constants/constants';
+import { COST_OF_EQUITY_METHOD, EXCEL_CONVENTION } from 'src/constants/constants';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { convertToNumberOrZero, getDateKey } from 'src/excelFileServices/common.methods';
 import { CapitalStruc, capitalStructureComputation, getShareholderFunds } from 'src/excelFileServices/fcfeAndFCFF.method';
@@ -30,17 +30,47 @@ export class CalculationService {
     private fcfeService: FCFEAndFCFFService
   ) { }
 
-  async adjCOE(riskFreeRate, expMarketReturn, beta, riskPremium, coeMethod): Promise<any> {
+  async adjCOE(payload): Promise<any> {
+    let adjustedCostOfEquity = 0, costOfEquity = 0;   
 
-    //Cost of Equity Calculation based on CAPM Method
-    const COECalculation =
-      riskFreeRate + (expMarketReturn - riskFreeRate) * beta;
+    const { riskFreeRate, expMarketReturn, beta, riskPremium, coeMethod, industryRiskPremium, sizePremium } = payload;
 
-    const adjustedCostOfEquity = COECalculation + riskPremium;
+    const fieldNotFound = (field) =>{
+       return {
+        result: {
+          coe: 0,
+          adjCOE: 0,
+          method: coeMethod
+        },
+        message: `${field} not found`,
+        status: false
+      }
+    }
+    if(coeMethod === COST_OF_EQUITY_METHOD.capm.key){
+      if(!beta) return fieldNotFound('beta');
+      if(!expMarketReturn) return fieldNotFound('expMarketReturn');
+      if(!riskFreeRate) return fieldNotFound('riskFreeRate');
 
+      costOfEquity = convertToNumberOrZero(riskFreeRate) + (convertToNumberOrZero(expMarketReturn) - convertToNumberOrZero(riskFreeRate)) * convertToNumberOrZero(beta);
+      adjustedCostOfEquity = costOfEquity + convertToNumberOrZero(riskPremium);
+    }
+    else if(coeMethod === COST_OF_EQUITY_METHOD.buildUpCapm.key){
+      if(!sizePremium) return fieldNotFound('sizePremium');
+      if(!industryRiskPremium) return fieldNotFound('industryRiskPremium');
+      if(!expMarketReturn) return fieldNotFound('expMarketReturn');
+      if(!riskFreeRate) return fieldNotFound('riskFreeRate');
+
+      costOfEquity = convertToNumberOrZero(riskFreeRate) + 
+      (
+        convertToNumberOrZero(expMarketReturn) - convertToNumberOrZero(riskFreeRate)
+      ) + 
+      convertToNumberOrZero(industryRiskPremium) + convertToNumberOrZero(sizePremium);
+
+      adjustedCostOfEquity = costOfEquity + convertToNumberOrZero(riskPremium);
+    }
     return {
       result: {
-        coe: COECalculation ,
+        coe: costOfEquity ,
         adjCOE: adjustedCostOfEquity ,
         method: coeMethod
       },

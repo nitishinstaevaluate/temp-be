@@ -5420,3 +5420,15 @@ function cashFlowKeyMapper(key, firstColumnKey){
 } 
 
 export const XL_SHEET_ENUM = [ 'dcfApproach', 'ruleElevenUaApproach', 'marketPriceApproach', 'navApproach', 'slumpSaleApproach' ];
+
+export const COST_OF_EQUITY_METHOD = {
+  capm:{
+    key: 'capm'
+  },
+  buildUpCapm:{
+    key:'buildUpCapm'
+  },
+  bondYieldRiskPremium:{
+    key:'bondYieldRiskPremium'
+  }
+}
