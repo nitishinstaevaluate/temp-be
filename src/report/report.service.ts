@@ -1008,7 +1008,7 @@ export class ReportService {
             return valuationResult.inputData[0]?.sizePremium;
         return '';
       })
-      
+
       hbs.registerHelper('costOfEquity',()=>{
         if(valuationResult.inputData[0]) {
             return formatPositiveAndNegativeValues(valuationResult.inputData[0].costOfEquity);
@@ -2916,7 +2916,6 @@ export class ReportService {
             );
           }
 
-          console.log(selectedMultiples,"all multiples found");
           return selectedMultiples.length > 1;
         })
         

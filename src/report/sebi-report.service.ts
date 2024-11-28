@@ -7,7 +7,7 @@ import * as puppeteer from 'puppeteer';
 import hbs = require('handlebars');
 import { AuthenticationService } from "src/authentication/authentication.service";
 import { convertEpochToPlusOneDate, convertToRomanNumeral, customRound, formatDate, formatPositiveAndNegativeValues } from "./report-common-functions";
-import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, MODEL_ASC_ORDER, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
+import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, COST_OF_EQUITY_METHOD, EXPECTED_MARKET_RETURN_HISTORICAL_TYPE, EXPECTED_MARKET_RETURN_TYPE, GET_MULTIPLIER_UNITS, INCOME_APPROACH, MARKET_PRICE_APPROACH, MODEL, MODEL_ASC_ORDER, MULTIPLES_TYPE, NATURE_OF_INSTRUMENT, NET_ASSET_VALUE_APPROACH, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, REPORT_BETA_TYPES, REPORT_LINE_ITEM, REPORT_PURPOSE } from "src/constants/constants";
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { ReportService } from "./report.service";
 import { terminalValueWorkingService } from "src/valuationProcess/terminal-value-working.service";
@@ -344,26 +344,39 @@ export class sebiReportService {
                 return valuationResult.inputData[0]?.riskPremium;
             return '';
           })
+
+          hbs.registerHelper('industryRiskPremium',()=>{
+            if(valuationResult.inputData[0]) 
+                return valuationResult.inputData[0]?.industryRiskPremium;
+            return '';
+          })
+    
+          hbs.registerHelper('sizePremium',()=>{
+            if(valuationResult.inputData[0]) 
+                return valuationResult.inputData[0]?.sizePremium;
+            return '';
+          })
+
           hbs.registerHelper('costOfEquity',()=>{
             if(valuationResult.inputData[0]) 
-                return valuationResult.inputData[0].costOfEquity?.toFixed(2);
+                return formatPositiveAndNegativeValues(valuationResult.inputData[0].costOfEquity);
             return '';
           })
           hbs.registerHelper('adjustedCostOfEquity',()=>{
             if(valuationResult.inputData[0]) 
-                return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(2);
+                return formatPositiveAndNegativeValues(valuationResult.inputData[0]?.adjustedCostOfEquity);
             return '';
           })
           hbs.registerHelper('wacc',()=>{
             if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-                return valuationResult.inputData[0]?.wacc?.toFixed(2);
+                return formatPositiveAndNegativeValues(valuationResult.inputData[0]?.wacc);
             return '0';
           })
-          hbs.registerHelper('deRatio',()=>{
-            if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-                return valuationResult.inputData[0]?.wacc?.toFixed(2);
-            return '0';
-          })
+          // hbs.registerHelper('deRatio',()=>{
+          //   if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
+          //       return valuationResult.inputData[0]?.wacc?.toFixed(2);
+          //   return '0';
+          // })
 
           hbs.registerHelper('equityOrDebt', (proportion)=>{
            return this.computeProportions(valuationResult, proportion, getCapitalStructure);
@@ -372,7 +385,7 @@ export class sebiReportService {
           hbs.registerHelper('calculateWeightedProportion', (basis)=>{
             const proportion = this.computeProportions(valuationResult, basis, getCapitalStructure);
             if(basis === 'equity'){
-              const adjCoe = valuationResult.inputData[0].adjustedCostOfEquity?.toFixed(2) || 0;
+              const adjCoe = convertToNumberOrZero(valuationResult.inputData[0].adjustedCostOfEquity) || 0;
               return (convertToNumberOrZero(adjCoe) * convertToNumberOrZero(proportion)/100).toFixed(2);
             }
             else{
@@ -2552,6 +2565,61 @@ export class sebiReportService {
               return false;
             }
             return false;
+          })
+
+          hbs.registerHelper('isCapm', ()=>{
+            return valuationResult.inputData[0].coeMethod === COST_OF_EQUITY_METHOD.capm.key;
+          })
+  
+          hbs.registerHelper('costOfEquityMethodStrings',(parameter)=>{
+            const capmMethod = valuationResult.inputData[0].coeMethod === COST_OF_EQUITY_METHOD.capm.key;
+            switch(parameter){            
+              case 'coeBase1':
+                return capmMethod ? 'Capital Asset Pricing Model (CAP-M)' : 'Build-up Method';
+              case 'coeBase2':
+                return capmMethod ? 'CAP-M model' : 'Build-up Method';
+              case 'coeBase3':
+                return capmMethod ? 'Rf + β (Rmp) + α' : 'Rf + Rmp + γirp + δsp + α';
+            }
+          })
+
+          hbs.registerHelper('ccmVPSMetricCheck', (requestedType)=>{
+            const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
+              if(ccmMetricType){
+                if(ccmMetricType === requestedType) return true;
+                return false;
+              }
+              return false;
+          })
+
+          hbs.registerHelper('moreThanOneMultiple', () => {
+            let multiples = [], selectedMultiples = [];
+            valuationResult.modelResults.map((data)=>{
+              if(data.model === MODEL[2] || data.model === MODEL[4]){
+                multiples = data.valuationData?.multiples;
+              }
+            })
+  
+            if(multiples){
+              // if multiples exist then take those multiples which are selected by user   
+              let multiplesArray = Object.keys(multiples).filter(key => multiples[key]);
+              multiplesArray.map((indMulitple)=>{
+                MULTIPLES_TYPE.map((multipleStruc)=>{
+                  if(multipleStruc.key === indMulitple){
+                    selectedMultiples.push(multipleStruc.label);
+                  }
+                })
+              })
+            }
+            else{
+              // If multiples does not exist, take all the default multiples from array
+              MULTIPLES_TYPE.map((multipleStru)=>{
+                 selectedMultiples.push(multipleStru.label);
+               }
+              );
+            }
+  
+            return selectedMultiples.length > 1;
           })
         }
         catch(error){
