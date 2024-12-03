@@ -10,6 +10,7 @@ import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
 import { CLONE_BETA_WORKING, CONVERT_EXCEL_TO_JSON, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
 import { BETA_TYPE, MODEL, XL_SHEET_ENUM } from 'src/constants/constants';
+import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 
 @Injectable()
 export class ProcessStatusManagerService {
@@ -17,7 +18,8 @@ export class ProcessStatusManagerService {
   private readonly processModel: Model<ProcessManagerDocument>,
     private logger: CustomLogger,
     private readonly authenticationService: AuthenticationService,
-    private readonly utilsService: utilsService
+    private readonly utilsService: utilsService,
+    private readonly valuationService: ValuationsService
   ) { }
 
   async upsertProcess(req, process, processId) {
@@ -583,6 +585,18 @@ export class ProcessStatusManagerService {
       }
 
       return await axiosInstance.post(`${CLONE_BETA_WORKING}`, payload, { httpsAgent: axiosRejectUnauthorisedAgent, headers });
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
+  async fetchValuationUsingPID(id){
+    try{
+      const fourthStateDetails:any = await this.processModel.findOne({_id: id}).select('fourthStageInput').exec();
+      const valuationId = fourthStateDetails.fourthStageInput?.appData?.reportId;
+      if(!valuationId) throw new NotFoundException('Valuation Id not found').getResponse();
+      return this.valuationService.getValuationById(valuationId);
     }
     catch(error){
       throw error;

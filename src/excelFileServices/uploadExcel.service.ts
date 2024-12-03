@@ -13,7 +13,7 @@ import { ValuationsService } from 'src/valuationProcess/valuationProcess.service
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
 import hbs = require('handlebars');
 import { isNotEmpty } from 'class-validator';
-import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero, formatDateHyphenToDDMMYYYY, extractYearsFromKeys, getDateKey } from '../excelFileServices/common.methods';
+import { getYearsList, calculateDaysFromDate,getCellValue,getDiscountingPeriod,searchDate, parseDate, getFormattedProvisionalDate, convertToNumberOrZero, formatDateHyphenToDDMMYYYY, extractYearsFromKeys, getDateKey, formatDateToShortForm } from '../excelFileServices/common.methods';
 import { columnsList, sheet2_BSObj } from './excelSheetConfig';
 import { ChangeInNCA } from './fcfeAndFCFF.method';
 import { IFIN_FINANCIAL_SHEETS } from 'src/library/interfaces/api-endpoints.prod';
@@ -1212,17 +1212,17 @@ export class ExcelSheetService {
         })
         hbs.registerHelper('costOfEquity',()=>{
           if(valuationResult.inputData[0]) 
-              return valuationResult.inputData[0].costOfEquity?.toFixed(2);
+              return formatPositiveAndNegativeValues(valuationResult.inputData[0].costOfEquity);
           return '';
         })
         hbs.registerHelper('adjustedCostOfEquity',()=>{
           if(valuationResult.inputData[0]) 
-              return valuationResult.inputData[0]?.adjustedCostOfEquity?.toFixed(2);
+              return formatPositiveAndNegativeValues(valuationResult.inputData[0]?.adjustedCostOfEquity);
           return '';
         })
         hbs.registerHelper('wacc',()=>{
           if(valuationResult.inputData[0] && valuationResult.inputData[0].model.includes(MODEL[1])) 
-              return valuationResult.inputData[0]?.wacc?.toFixed(2);
+              return formatPositiveAndNegativeValues(valuationResult.inputData[0]?.wacc);
           return '0';
         })
         hbs.registerHelper('costOfDebt',()=>{
@@ -1264,7 +1264,7 @@ export class ExcelSheetService {
            hbs.registerHelper('calculateWeightedProportion', (basis)=>{
              const proportion = this.computeProportions(valuationResult, basis, getCapitalStructure);
              if(basis === 'equity'){
-               const adjCoe = valuationResult.inputData[0].adjustedCostOfEquity?.toFixed(2) || 0;
+               const adjCoe = convertToNumberOrZero(valuationResult.inputData[0].adjustedCostOfEquity) || 0;
                return (convertToNumberOrZero(adjCoe) * convertToNumberOrZero(proportion)/100).toFixed(2);
              }
              else{
@@ -2685,7 +2685,7 @@ export class ExcelSheetService {
         })
 
         hbs.registerHelper('updateDateFormat',(val)=>{
-          return formatDateHyphenToDDMMYYYY(val);
+          return formatDateToShortForm(val);
         })
 
         hbs.registerHelper('sharePriceDataF40', ()=>{

@@ -12,10 +12,11 @@ import { utilsService } from 'src/utils/utils.service';
 import { ValuationSchema } from 'src/valuationProcess/schema/valuation.schema';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
+import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 require('dotenv').config();
 
 @Module({
-  providers: [ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService],
+  providers: [ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, ValuationsService],
   controllers: [ProcessStatusManagerController],
   imports:[
     MongooseModule.forFeature([{ name: 'processManager', schema: ProcessManagerSchema }]),

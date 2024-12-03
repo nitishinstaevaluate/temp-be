@@ -5432,3 +5432,12 @@ export const COST_OF_EQUITY_METHOD = {
     key:'bondYieldRiskPremium'
   }
 }
+
+export const MARKET_PRICE_ENUMS = {
+  VWAPBSE:{
+    key: 'VWAPBSE',
+  },
+  VWAPNSE:{
+    key: 'VWAPNSE'
+  }
+}

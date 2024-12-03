@@ -384,6 +384,25 @@ export function formatDateHyphenToDDMMYYYY(inputDate: string): string {
     return `${day}-${month}-${year}`;
 }
 
+export function formatDateToShortForm(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+
+  const ordinalSuffix = (n: number): string => {
+    if (n > 3 && n < 21) return "th";
+    switch (n % 10) {
+      case 1: return "st";
+      case 2: return "nd";
+      case 3: return "rd";
+      default: return "th";
+    }
+  }
+  return `${day}${ordinalSuffix(day)} ${month}, ${year}`;
+}
+
 export function convertUnixTimestampToQuarterAndYear(timestamp: any) {
   const date = new Date(timestamp);
   const unixTimestamp = Math.floor(date.getTime() / 1000);

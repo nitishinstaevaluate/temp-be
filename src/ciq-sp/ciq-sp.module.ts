@@ -21,9 +21,10 @@ import { HistoricalBSE500ReturnsSchema, HistoricalBankNiftyReturnsSchema, Histor
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
+import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 
 @Module({
-  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService, HistoricalReturnsService],
+  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService, HistoricalReturnsService, ValuationsService],
   controllers: [CiqSpController],
   imports:[MongooseModule.forFeature([
     {name: 'ciqsimpleindustry', schema : ciqsimpleindustrySchema},

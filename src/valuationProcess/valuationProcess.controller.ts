@@ -32,6 +32,7 @@ import { RelativeValuationService } from './relativeValuation.service';
 import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
+import { MarketPriceService } from './market-price.service';
 
 @UseGuards(KeyCloakAuthGuard)
 @Controller('valuationProcess')
@@ -458,7 +459,8 @@ export class ValuationsController {
     private readonly utilsService: utilsService,
     private terminalWorkingService: terminalValueWorkingService,
     private readonly fcfeService: FCFEAndFCFFService,
-  private relativeValuationService: RelativeValuationService) {}
+    private relativeValuationService: RelativeValuationService,
+    private readonly marketPriceService: MarketPriceService) {}
 
   @UseGuards(KeyCloakAuthGuard)
   @Get('calculate-terminal-value')
@@ -487,6 +489,12 @@ export class ValuationsController {
   async recalculateCcmValuation(@Body() inputPayload:any,
   @Headers() headers: Headers){
     return await this.relativeValuationService.recalculateCcmValuation(inputPayload, headers);
+  }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Post('market-price-re-valuation')
+  async recalculateMarketPriceValuation(@Body() inputPayload:any, @Headers() headers: Headers){
+    return await this.marketPriceService.revaluationMarketPrice(headers, inputPayload);
   }
 
   @UseGuards(KeyCloakAuthGuard)
