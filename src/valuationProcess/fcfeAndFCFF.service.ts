@@ -982,8 +982,15 @@ export class FCFEAndFCFFService {
                 delete terminalValueWorking.changeInBorrowing;
               }
             }
-            
-            discountingPeriodValue = discountingPeriodValue + 1;
+            if(counter === 0 && !discountingPeriodObj.isFullPrd){
+              /**
+               * Applicable only for Mid period
+               */
+              discountingPeriodValue = discountingPeriodValue * 2 + 0.5;
+            }
+            else{
+              discountingPeriodValue = discountingPeriodValue + 1;
+            }
             
             secondLastFcfe = fcff; 
             if(result){

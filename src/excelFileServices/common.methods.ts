@@ -307,10 +307,12 @@ export function calculateDateDifference(dateOne:any, dateTwo:any){
 }
 export function getDiscountingPeriod(discountingPeriod: string) {
   let discountingPeriodValue = 0;
-  if (discountingPeriod === 'Full_Period' || discountingPeriod === 'Full Period') discountingPeriodValue = 1;
-  else if (discountingPeriod === 'Mid_Period' || discountingPeriod === 'Mid Period') discountingPeriodValue = 0.5;
+  const isFullPrd = discountingPeriod === 'Full_Period' || discountingPeriod === 'Full Period';
+  if (isFullPrd) discountingPeriodValue = 1;
+  else discountingPeriodValue = 0.5;
   return {
     result: discountingPeriodValue,
+    isFullPrd,
     msg: 'Discounting period get Successfully.',
   };
 }
