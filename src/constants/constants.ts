@@ -4487,6 +4487,7 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const othrIntangbleAsstObject = balanceSheetData.get('(e) other intangible assets');
       const intangbleAsstUDObject = balanceSheetData.get('(f) intangible assets under development');
       const bioAsstObject = balanceSheetData.get('(g) biological assets other than bearer plants');
+      const rghtUseOfAsstObject = balanceSheetData.get('(h) right of use of assets');
 
       const crntmovableProp = movableObject[subKey];
       const crntimmovableProp = immovableObject[subKey];
@@ -4496,8 +4497,9 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       const crntothrIntangbleAsstProp = othrIntangbleAsstObject[subKey];
       const crntIntangbleAsstUDProp = intangbleAsstUDObject[subKey];
       const crntbioAsstProp = bioAsstObject[subKey];
+      const crntRghtUseOfAsstProp = rghtUseOfAsstObject[subKey];
 
-      const crntPPEtotal = convertToNumberOrZero(crntmovableProp) + convertToNumberOrZero(crntimmovableProp) + convertToNumberOrZero(crntlndAndBuildingProp) + convertToNumberOrZero(crntplntAndMachnryProp) + convertToNumberOrZero(crntcapWrkInPrgressProp) + convertToNumberOrZero(crntothrIntangbleAsstProp) + convertToNumberOrZero(crntIntangbleAsstUDProp) + convertToNumberOrZero(crntbioAsstProp);
+      const crntPPEtotal = convertToNumberOrZero(crntmovableProp) + convertToNumberOrZero(crntimmovableProp) + convertToNumberOrZero(crntlndAndBuildingProp) + convertToNumberOrZero(crntplntAndMachnryProp) + convertToNumberOrZero(crntcapWrkInPrgressProp) + convertToNumberOrZero(crntothrIntangbleAsstProp) + convertToNumberOrZero(crntIntangbleAsstUDProp) + convertToNumberOrZero(crntbioAsstProp) + convertToNumberOrZero(crntRghtUseOfAsstProp);
 
       const prevPPEtotal = convertToNumberOrZero(movableObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
       convertToNumberOrZero(immovableObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
@@ -4506,7 +4508,8 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
       convertToNumberOrZero(capWrkInPrgressObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
       convertToNumberOrZero(othrIntangbleAsstObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
       convertToNumberOrZero(intangbleAsstUDObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
-      convertToNumberOrZero(bioAsstObject[cashFlowKeyMapper(prevKey, firstColumnKey)]);
+      convertToNumberOrZero(bioAsstObject[cashFlowKeyMapper(prevKey, firstColumnKey)]) + 
+      convertToNumberOrZero(rghtUseOfAsstObject[cashFlowKeyMapper(prevKey, firstColumnKey)]);
 
       const crntlessDpntAndAmortsn = convertToNumberOrZero(profitLossData.get('Less: Depreciation and amortization expense')[subKey]);
 
@@ -4568,11 +4571,20 @@ export async function cashFlowFormulas(profitLossData, balanceSheetData, key, su
        * FORMULA = BS!C43-BS!B43
        */
       const eqtyShareCapObj = balanceSheetData.get('(a) Equity share capital');
-      const crntEqtyShareCap = eqtyShareCapObj[subKey];
+      const eqtyInfsionObj = balanceSheetData.get('(c) Equity Infusion');
+      const scrtiesPrmiumObj = balanceSheetData.get('(i) Securities Premium');
+      const revlutnSrplsObj = balanceSheetData.get('(ii) revaluation Reserve');
+      const gnrlRsrveObj = balanceSheetData.get('(iii) General Reserves');
 
-      const prevEqtyShareCap = eqtyShareCapObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
+      const crntIssTotal = eqtyShareCapObj[subKey] + eqtyInfsionObj[subKey] + scrtiesPrmiumObj[subKey] + revlutnSrplsObj[subKey] + gnrlRsrveObj[subKey];
 
-      return convertToNumberOrZero(crntEqtyShareCap) - convertToNumberOrZero(prevEqtyShareCap);
+      const prevIssTotal = eqtyShareCapObj[cashFlowKeyMapper(prevKey, firstColumnKey)] + 
+      eqtyInfsionObj[cashFlowKeyMapper(prevKey, firstColumnKey)] + 
+      scrtiesPrmiumObj[cashFlowKeyMapper(prevKey, firstColumnKey)] + 
+      revlutnSrplsObj[cashFlowKeyMapper(prevKey, firstColumnKey)] + 
+      gnrlRsrveObj[cashFlowKeyMapper(prevKey, firstColumnKey)];
+
+      return convertToNumberOrZero(crntIssTotal) - convertToNumberOrZero(prevIssTotal);
 
     case 'Proceed from issue of preference share capital':
       /**
