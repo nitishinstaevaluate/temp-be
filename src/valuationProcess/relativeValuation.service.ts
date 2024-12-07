@@ -63,23 +63,25 @@ export class RelativeValuationService {
     const provisionalDate  = getDateKey(balanceSheetData[0]);
 
     if(!isRevaluationFlag){
-      const valuationDetails = await this.processStateManagerService.fetchValuationUsingPID(pid);
-      const relativeValuationDetails:any = valuationDetails.modelResults.find((ele)=>{ return (ele.model === MODEL[2] || ele.model === MODEL[4]) ? ele : null });
-      
-      if(relativeValuationDetails) ccmMuliple = relativeValuationDetails?.valuationData?.multiples;
-      
-      const oldCompanyList = relativeValuationDetails?.valuationData?.companies || [];
-      if(oldCompanyList.length){
-        let newPointer = 0, oldPointer = 0;
-        while(newPointer < companies.length){
-          if(oldPointer === oldCompanyList.length){
-            oldPointer = 0;
-            newPointer++;
+      const valuationDetails:any = await this.processStateManagerService.fetchValuationUsingPID(pid);
+      if(valuationDetails){
+        const relativeValuationDetails:any = valuationDetails.modelResults.find((ele)=>{ return (ele.model === MODEL[2] || ele.model === MODEL[4]) ? ele : null });
+        
+        if(relativeValuationDetails) ccmMuliple = relativeValuationDetails?.valuationData?.multiples;
+        
+        const oldCompanyList = relativeValuationDetails?.valuationData?.companies || [];
+        if(oldCompanyList.length){
+          let newPointer = 0, oldPointer = 0;
+          while(newPointer < companies.length){
+            if(oldPointer === oldCompanyList.length){
+              oldPointer = 0;
+              newPointer++;
+            }
+            if(companies[newPointer]?.['companyId'] === oldCompanyList[oldPointer]?.['companyId']){
+              companies[newPointer]['isSelected'] = !!oldCompanyList[oldPointer]['isSelected'];
+            }
+            oldPointer++;
           }
-          if(companies[newPointer]?.['companyId'] === oldCompanyList[oldPointer]?.['companyId']){
-            companies[newPointer]['isSelected'] = !!oldCompanyList[oldPointer]['isSelected'];
-          }
-          oldPointer++;
         }
       }
     }

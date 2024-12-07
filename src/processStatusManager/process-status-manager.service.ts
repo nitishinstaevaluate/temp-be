@@ -595,7 +595,7 @@ export class ProcessStatusManagerService {
     try{
       const fourthStateDetails:any = await this.processModel.findOne({_id: id}).select('fourthStageInput').exec();
       const valuationId = fourthStateDetails.fourthStageInput?.appData?.reportId;
-      if(!valuationId) throw new NotFoundException('Valuation Id not found').getResponse();
+      if(!valuationId) return false;
       return this.valuationService.getValuationById(valuationId);
     }
     catch(error){
