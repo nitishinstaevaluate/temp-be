@@ -41,8 +41,9 @@ export class RelativeValuationService {
   ) {}
   async Relative_Valuation(
     inputs: any,
-    multiples?:any
+    multiples?:any,
     // companiesInfo: any,
+    isRevaluationFlag?
   ): Promise<any> {
  try{
      this.customLogger.log({
@@ -50,20 +51,41 @@ export class RelativeValuationService {
       userId: inputs.userId,
     });
     const multiplier = GET_MULTIPLIER_UNITS[`${inputs.reportingUnit}`];
-    const companies = inputs.companies;
     const ratiotypebased = inputs.type;
+    const pid = inputs.processStateId;
+    let companies = inputs.companies, ccmMuliple = multiples;
 
     const { outstandingShares, discountRateValue, processStateId} = inputs;
 
     const { balanceSheetData, profitLossSheetData } = await this.getSheetData(processStateId);
     const balanceSheetComputed = await this.serializeArrayObject(balanceSheetData);
     const profitLossSheetComputed = await this.serializeArrayObject(profitLossSheetData);
-
     const provisionalDate  = getDateKey(balanceSheetData[0]);
+
+    if(!isRevaluationFlag){
+      const valuationDetails = await this.processStateManagerService.fetchValuationUsingPID(pid);
+      const relativeValuationDetails:any = valuationDetails.modelResults.find((ele)=>{ return (ele.model === MODEL[2] || ele.model === MODEL[4]) ? ele : null });
+      
+      if(relativeValuationDetails) ccmMuliple = relativeValuationDetails?.valuationData?.multiples;
+      
+      const oldCompanyList = relativeValuationDetails?.valuationData?.companies || [];
+      if(oldCompanyList.length){
+        let newPointer = 0, oldPointer = 0;
+        while(newPointer < companies.length){
+          if(oldPointer === oldCompanyList.length){
+            oldPointer = 0;
+            newPointer++;
+          }
+          if(companies[newPointer]?.['companyId'] === oldCompanyList[oldPointer]?.['companyId']){
+            companies[newPointer]['isSelected'] = !!oldCompanyList[oldPointer]['isSelected'];
+          }
+          oldPointer++;
+        }
+      }
+    }
 
     let newPeRatioAvg,newPeRatioMed, newPbRatioAvg, newPbRatioMed, newEbitdaAvg, newEbitdaMed, newSalesAvg, newSalesMed;
     
-
       companies.map((indCompanies)=>{
         if(indCompanies.company === 'Average'){
           newPeRatioAvg = indCompanies?.peRatio ? indCompanies.peRatio.toFixed(2) * (1-discountRateValue/100) : 0;
@@ -80,8 +102,8 @@ export class RelativeValuationService {
       })
 
     // re-valuate company average and median
-    if(!Object.entries(multiples || []).length) multiples = this.constructStaticMultiple();
-    let selectedMultiples:any[] = Object.keys(multiples).filter(key => multiples[key]);
+    if(!Object.entries(ccmMuliple || []).length) ccmMuliple = this.constructStaticMultiple();
+    let selectedMultiples:any[] = Object.keys(ccmMuliple).filter(key => ccmMuliple[key]);
 
     let netWorth = await versionTwoNetWorthOfCompany(balanceSheetComputed,provisionalDate);
 
@@ -263,7 +285,7 @@ export class RelativeValuationService {
           // tentativeIssuePrice: tentativeIssuePrice,
         },
       ],
-      multiples
+      multiples: ccmMuliple
     };
     
     finalResult = await this.factoriseResult(finalResult, selectedMultiples);
@@ -397,7 +419,7 @@ export class RelativeValuationService {
       inputPayload.companies = newCompanyList;
       // console.log(inputPayload,"input payload found")
       // const { worksheet1, worksheet2 } = await this.fetchWorksheet(inputPayload);
-      const recomputationData = await this.Relative_Valuation(inputPayload, body.multiples);
+      const recomputationData = await this.Relative_Valuation(inputPayload, body.multiples, true);
 
       // Forcefully patching the multiples selection-deselection object in the valuationData
         // recomputationData.result['multiples'] = body.multiples;

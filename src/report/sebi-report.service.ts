@@ -1982,13 +1982,13 @@ export class sebiReportService {
           })
 
           hbs.registerHelper('priceToSalesRatioCalculation',()=>{
-            let sales:any=[],psRatio:any=[],equityVal:any=[],totalPriceToSalesRatio:any=[];
+            let sales, psRatio, equityVal, outstandingShares, valPerShare, totalPriceToSalesRatio:any=[];
             if(valuationResult?.modelResults){
               valuationResult.modelResults.map((data)=>{
                 if(data.model === MODEL[2] || data.model === MODEL[4]){
                   data.valuationData.valuation.map((valuationDetails)=>{
-  
-                    
+                    const multiples = data.valuationData?.multiples;
+                    const muliplesArray = Object.values(multiples).filter((x=> x));
                     if(valuationDetails.particular === 'sales'){
                       sales = {
                         particular:'Sales of company',
@@ -2009,6 +2009,19 @@ export class sebiReportService {
                       }
   
                       totalPriceToSalesRatio.push(sales,psRatio,equityVal);
+                      if(muliplesArray?.length === 1){
+                        outstandingShares = {
+                          particular:'Outstanding Shares',
+                          avg:formatPositiveAndNegativeValues(valuationDetails.salesSharesAvg),
+                          med:formatPositiveAndNegativeValues(valuationDetails.salesSharesAvg)
+                        }
+                        valPerShare = {
+                          particular:'Value Per Share',
+                          avg:formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                          med:formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                        }
+                        totalPriceToSalesRatio.push(outstandingShares, valPerShare);
+                      }
                     }
                   })
                 }
@@ -2018,11 +2031,13 @@ export class sebiReportService {
           })
 
           hbs.registerHelper('peRatioCalculation',()=>{
-            let pat:any = [],eps:any=[],marketPrice:any=[],totalPeRatio:any=[];
+            let pat, eps, marketPrice,  outstandingShares, valPerShare, totalPeRatio:any = [];
             if(valuationResult?.modelResults){
               valuationResult.modelResults.map((data)=>{
                 if(data.model === MODEL[2] || data.model === MODEL[4]){
                 data.valuationData.valuation.map((valuationDetails)=>{
+                  const multiples = data.valuationData?.multiples;
+                  const muliplesArray = Object.values(multiples).filter((x=> x));
                     if(valuationDetails.particular === 'peRatio'){
                       pat = {
                         particular:'Profit after Taxes',
@@ -2042,8 +2057,20 @@ export class sebiReportService {
                         med:formatPositiveAndNegativeValues(valuationDetails.peMarketPriceMed)
                       }
   
-                      totalPeRatio.push(pat,eps,marketPrice)
-  
+                      totalPeRatio.push(pat,eps,marketPrice);
+                      if(muliplesArray?.length === 1){
+                        outstandingShares = {
+                          particular:'Outstanding Shares',
+                          avg:formatPositiveAndNegativeValues(valuationResult.inputData[0]?.outstandingShares),
+                          med:formatPositiveAndNegativeValues(valuationResult.inputData[0]?.outstandingShares)
+                        }
+                        valPerShare = {
+                          particular:'Value Per Share',
+                          avg:formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                          med:formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                        }
+                        totalPeRatio.push(outstandingShares, valPerShare);
+                      }
                     }
                   })
                 }
@@ -2053,11 +2080,13 @@ export class sebiReportService {
           })
   
           hbs.registerHelper('pbRatioCalculation',()=>{
-            let networth:any = [],pbShares:any=[],equityVal:any=[],totalPbRatio:any=[];
+            let networth, pbShares, equityVal, outstandingShares, valPerShare, totalPbRatio:any = [];
             if(valuationResult?.modelResults){
               valuationResult.modelResults.map((data)=>{
                 if(data.model === MODEL[2] || data.model === MODEL[4]){
                   data.valuationData.valuation.map((valuationDetails)=>{
+                    const multiples = data.valuationData?.multiples;
+                    const muliplesArray = Object.values(multiples).filter((x=> x));  
                     if(valuationDetails.particular === 'pbRatio'){
                       networth = {
                         particular:'Net Worth of Company',
@@ -2077,6 +2106,19 @@ export class sebiReportService {
                       }
   
                       totalPbRatio.push(networth,pbShares,equityVal);
+                      if(muliplesArray?.length === 1){
+                        outstandingShares = {
+                          particular:'Outstanding Shares',
+                          avg:formatPositiveAndNegativeValues(valuationDetails.pbSharesAvg),
+                          med:formatPositiveAndNegativeValues(valuationDetails.pbSharesAvg)
+                        }
+                        valPerShare = {
+                          particular:'Value Per Share',
+                          avg:formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                          med:formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                        }
+                        totalPbRatio.push(outstandingShares, valPerShare);
+                      }
                     }
                   })
                 }
@@ -2086,11 +2128,13 @@ export class sebiReportService {
           })
           
           hbs.registerHelper('evEbitaRatioCalculation',()=>{
-            let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[],cashEquivalent:any=[];
+            let ebitda, evEbitda, enterpriseVal, debtVal, equityVal, outstandingShares, valPerShare, totalEvEbitdaRatio:any = [], cashEquivalent;
             if(valuationResult?.modelResults){
               valuationResult.modelResults.map((data)=>{
                 if(data.model === MODEL[2] || data.model === MODEL[4]){
                   data.valuationData.valuation.map((valuationDetails)=>{
+                    const multiples = data.valuationData?.multiples;
+                    const muliplesArray = Object.values(multiples).filter((x=> x));  
                     if(valuationDetails.particular === 'ebitda'){
                       ebitda = {
                         particular:'EBITDA',
@@ -2126,6 +2170,19 @@ export class sebiReportService {
                         med:formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityMed)
                       }
                       totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,cashEquivalent,equityVal);
+                      if(muliplesArray?.length === 1){
+                        outstandingShares = {
+                          particular:'Outstanding Shares',
+                          avg:formatPositiveAndNegativeValues(valuationDetails.ebitdaSharesAvg),
+                          med:formatPositiveAndNegativeValues(valuationDetails.ebitdaSharesAvg)
+                        }
+                        valPerShare = {
+                          particular:'Value Per Share',
+                          avg:formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                          med:formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                        }
+                        totalEvEbitdaRatio.push(outstandingShares, valPerShare);
+                      }
                     }
                   })
                 }

@@ -111,17 +111,11 @@ export class ValuationMethodsService {
 
   async Market_Price_method(
     header, 
-    companyId, 
-    valuationDate, 
-    outstandingShares, 
-    reportingUnit
+    payload
   ): Promise<any> {
     return await this.marketPriceService.fetchPriceEquityShare(
       header, 
-      companyId, 
-      valuationDate, 
-      outstandingShares, 
-      reportingUnit
+      payload
     );
   }
 }

@@ -384,8 +384,19 @@ let workbook=null;
               const valuationDate = inputs?.valuationDate;
               const outstandingShares = inputs?.outstandingShares;
               const reportingUnit = inputs?.reportingUnit;
-              const marketPriceResponse = await this.valuationMethodsService.Market_Price_method(headers, companyId, valuationDate, outstandingShares, reportingUnit);
+              const processStateId = inputs?.processStateId;
+              const payload = {
+                companyId, 
+                valuationDateTimestamp:valuationDate, 
+                outstandingShares, 
+                reportingUnit,
+                isCmpnyNmeOrVltionDteReset:inputs?.validateFieldOptions?.isCmpnyNmeOrVltionDteReset,
+                processStateId
+              }
+              const marketPriceResponse = await this.valuationMethodsService.Market_Price_method(headers, payload);
 
+              inputs.isCmpnyNmeOrVltionDteReset = false;
+              
               valResult.push({
                 model: MODEL[7],
                 valuationData: { 

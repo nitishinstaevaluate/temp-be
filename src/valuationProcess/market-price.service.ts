@@ -14,8 +14,25 @@ export class MarketPriceService {
         private readonly processStatusManagerService: ProcessStatusManagerService,
         private readonly valuationService: ValuationsService
     ){}
-    async fetchPriceEquityShare(header, companyId, valuationDateTimestamp, outstandingShares, reportingUnit){
+    async fetchPriceEquityShare(header, marketPriceInputpayload){
         try{
+            const {companyId, valuationDateTimestamp, outstandingShares, reportingUnit, isCmpnyNmeOrVltionDteReset, processStateId} = marketPriceInputpayload;
+
+            if(!isCmpnyNmeOrVltionDteReset && processStateId){
+                const fourthStageDetails:any =  await this.processStatusManagerService.fetchStageWiseDetails(processStateId, 'fourthStageInput');
+                const valuationResult = fourthStageDetails.data.fourthStageInput.appData.valuationResult.find((_e) => { return _e.model === MODEL[7] ? _e : null;});
+                if(valuationResult) {
+                    return {
+                        sharePriceLastTenDays: valuationResult.valuationData.sharePriceLastTenDays,
+                        sharePriceLastNinetyDays: valuationResult.valuationData.sharePriceLastNinetyDays,
+                        vwapLastTenDays: valuationResult.valuationData.vwapLastTenDays,
+                        vwapLastNinetyDays: valuationResult.valuationData.vwapLastNinetyDays,
+                        valuePerShare:valuationResult.valuation,
+                        equityValue: valuationResult.equityValue
+                    };
+                }
+                else await this.fetchPriceEquityShare(header, {...marketPriceInputpayload, isCmpnyNmeOrVltionDteReset:true}); 
+            }
             const oneDayInMillis = 24 * 60 * 60 * 1000;
             const valuationDate = new Date(valuationDateTimestamp);
             const valuationDatePlusOneDay = new Date(valuationDate.getTime() + oneDayInMillis);
@@ -66,6 +83,16 @@ export class MarketPriceService {
             const computations = await this.computeValuePerShare(data);
             const equityValueNse = convertToNumberOrZero(computations.valuePerShareNse) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
             const equityValueBse = convertToNumberOrZero(computations.valuePerShareBse) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
+
+            const processStateModel = {
+                firstStageInput:{
+                    validateFieldOption:{
+                        isCmpnyNmeOrVltionDteReset:false
+                    },
+                },
+                step:5
+            }
+            await this.processStatusManagerService.upsertProcess(getRequestAuth(header), processStateModel, processStateId);
             
             return {
                 sharePriceLastTenDays: sharePrice10Days,

@@ -2570,11 +2570,13 @@ export class ReportService {
         })
 
         hbs.registerHelper('peRatioCalculation',()=>{
-          let pat:any = [],eps:any=[],marketPrice:any=[],totalPeRatio:any=[];
+          let pat, eps, marketPrice,  outstandingShares, valPerShare, totalPeRatio:any = [];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
               data.valuationData.valuation.map((valuationDetails)=>{
+                  const multiples = data.valuationData?.multiples;
+                  const muliplesArray = Object.values(multiples).filter((x=> x));
                   if(valuationDetails.particular === 'peRatio'){
                     pat = {
                       particular:'Profit after Taxes',
@@ -2594,7 +2596,21 @@ export class ReportService {
                       med:this.formatPositiveAndNegativeValues(valuationDetails.peMarketPriceMed)
                     }
 
-                    totalPeRatio.push(pat,eps,marketPrice)
+                    totalPeRatio.push(pat,eps,marketPrice);
+
+                    if(muliplesArray?.length === 1){
+                      outstandingShares = {
+                        particular:'Outstanding Shares',
+                        avg:this.formatPositiveAndNegativeValues(valuationResult.inputData[0]?.outstandingShares),
+                        med:this.formatPositiveAndNegativeValues(valuationResult.inputData[0]?.outstandingShares)
+                      }
+                      valPerShare = {
+                        particular:'Value Per Share',
+                        avg:this.formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                        med:this.formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                      }
+                      totalPeRatio.push(outstandingShares, valPerShare);
+                    }
 
                   }
                 })
@@ -2605,11 +2621,13 @@ export class ReportService {
         })
 
         hbs.registerHelper('pbRatioCalculation',()=>{
-          let networth:any = [],pbShares:any=[],equityVal:any=[],totalPbRatio:any=[];
+          let networth, pbShares, equityVal, outstandingShares, valPerShare, totalPbRatio:any = [];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
                 data.valuationData.valuation.map((valuationDetails)=>{
+                  const multiples = data.valuationData?.multiples;
+                  const muliplesArray = Object.values(multiples).filter((x=> x));
                   if(valuationDetails.particular === 'pbRatio'){
                     networth = {
                       particular:'Net Worth of Company',
@@ -2629,6 +2647,20 @@ export class ReportService {
                     }
 
                     totalPbRatio.push(networth,pbShares,equityVal);
+
+                    if(muliplesArray?.length === 1){
+                      outstandingShares = {
+                        particular:'Outstanding Shares',
+                        avg:this.formatPositiveAndNegativeValues(valuationDetails.pbSharesAvg),
+                        med:this.formatPositiveAndNegativeValues(valuationDetails.pbSharesAvg)
+                      }
+                      valPerShare = {
+                        particular:'Value Per Share',
+                        avg:this.formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                        med:this.formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                      }
+                      totalPbRatio.push(outstandingShares, valPerShare);
+                    }
                   }
                 })
               }
@@ -2638,11 +2670,13 @@ export class ReportService {
         })
         
         hbs.registerHelper('evEbitaRatioCalculation',()=>{
-          let ebitda:any=[],evEbitda:any=[],enterpriseVal:any=[],debtVal:any=[],equityVal:any=[],totalEvEbitdaRatio:any=[],cashEquivalent:any=[];
+          let ebitda, evEbitda, enterpriseVal, debtVal, equityVal, outstandingShares, valPerShare, totalEvEbitdaRatio:any = [], cashEquivalent;
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
                 data.valuationData.valuation.map((valuationDetails)=>{
+                  const multiples = data.valuationData?.multiples;
+                  const muliplesArray = Object.values(multiples).filter((x=> x));
                   if(valuationDetails.particular === 'ebitda'){
                     ebitda = {
                       particular:'EBITDA',
@@ -2678,6 +2712,20 @@ export class ReportService {
                       med:this.formatPositiveAndNegativeValues(valuationDetails.ebitdaEquityMed)
                     }
                     totalEvEbitdaRatio.push(ebitda,evEbitda,enterpriseVal,debtVal,cashEquivalent,equityVal);
+
+                    if(muliplesArray?.length === 1){
+                      outstandingShares = {
+                        particular:'Outstanding Shares',
+                        avg:this.formatPositiveAndNegativeValues(valuationDetails.ebitdaSharesAvg),
+                        med:this.formatPositiveAndNegativeValues(valuationDetails.ebitdaSharesAvg)
+                      }
+                      valPerShare = {
+                        particular:'Value Per Share',
+                        avg:this.formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                        med:this.formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                      }
+                      totalEvEbitdaRatio.push(outstandingShares, valPerShare);
+                    }
                   }
                 })
               }
@@ -2687,13 +2735,13 @@ export class ReportService {
         })
 
         hbs.registerHelper('priceToSalesRatioCalculation',()=>{
-          let sales:any=[],psRatio:any=[],equityVal:any=[],totalPriceToSalesRatio:any=[];
+          let sales, psRatio, equityVal, outstandingShares, valPerShare, totalPriceToSalesRatio:any = [];
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2] || data.model === MODEL[4]){
+                const multiples = data.valuationData?.multiples;
+                const muliplesArray = Object.values(multiples).filter((x=> x));
                 data.valuationData.valuation.map((valuationDetails)=>{
-
-                  
                   if(valuationDetails.particular === 'sales'){
                     sales = {
                       particular:'Sales of company',
@@ -2714,6 +2762,20 @@ export class ReportService {
                     }
 
                     totalPriceToSalesRatio.push(sales,psRatio,equityVal);
+                    
+                    if(muliplesArray?.length === 1){
+                      outstandingShares = {
+                        particular:'Outstanding Shares',
+                        avg:this.formatPositiveAndNegativeValues(valuationDetails.salesSharesAvg),
+                        med:this.formatPositiveAndNegativeValues(valuationDetails.salesSharesAvg)
+                      }
+                      valPerShare = {
+                        particular:'Value Per Share',
+                        avg:this.formatPositiveAndNegativeValues(data.valuation.finalPriceAvg),
+                        med:this.formatPositiveAndNegativeValues(data.valuation.finalPriceMed)
+                      }
+                      totalPriceToSalesRatio.push(outstandingShares, valPerShare);
+                    }
                   }
                 })
               }
@@ -2812,14 +2874,14 @@ export class ReportService {
           return selection;
         })
 
-        hbs.registerHelper('containsOnlyOneMultipleExceptForPsAndEbitdaSelection',()=>{
+        hbs.registerHelper('containsPbAndPeSelection',()=>{
           let selection = false;
           if(valuationResult?.modelResults){
             valuationResult.modelResults.map((data)=>{
               if(data.model === MODEL[2]){
                 const multiples = data.valuationData?.multiples || [];
                 const muliplesArray = Object.values(multiples).filter((x=> x));
-                if(multiples && (multiples.psSelection || !multiples.evEbitdaSelection || muliplesArray.length > 1)){
+                if(!multiples || (multiples?.pbSelection || multiples?.peSelection)){
                   selection = true;
                 }
               }
@@ -3297,7 +3359,7 @@ export class ReportService {
     })
 
     hbs.registerHelper('marketApproachHeaderCheck',(value)=>{
-      if(value === 'Value of Equity' || value === 'Enterprise Value' || value === 'Fair Value of Equity'){
+      if(value === 'Value of Equity' || value === 'Enterprise Value' || value === 'Fair Value of Equity' || value === 'Value Per Share'){
         return true;
       }
       return false;
