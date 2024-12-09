@@ -86,7 +86,7 @@ export class MarketPriceService {
 
             const processStateModel = {
                 firstStageInput:{
-                    validateFieldOption:{
+                    validateFieldOptions:{
                         isCmpnyNmeOrVltionDteReset:false
                     },
                 },
