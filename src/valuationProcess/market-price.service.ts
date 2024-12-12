@@ -1,16 +1,38 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { NOTFOUND } from "dns";
 import { AuthenticationService } from "src/authentication/authentication.service";
-import { GET_MULTIPLIER_UNITS } from "src/constants/constants";
+import { GET_MULTIPLIER_UNITS, MARKET_PRICE_ENUMS, MODEL } from "src/constants/constants";
 import { convertToNumberOrZero, convertUnixTimestampToQuarterAndYear, getRequestAuth } from "src/excelFileServices/common.methods";
 import { CIQ_ELASTIC_SEARCH_PRICE_EQUITY } from "src/library/interfaces/api-endpoints.local";
 import { axiosInstance, axiosRejectUnauthorisedAgent } from "src/middleware/axiosConfig";
+import { ProcessStatusManagerService } from "src/processStatusManager/service/process-status-manager.service";
+import { ValuationsService } from "./valuationProcess.service";
 
 @Injectable()
 export class MarketPriceService {
-    constructor(private authenticationService: AuthenticationService){}
-    async fetchPriceEquityShare(header, companyId, valuationDateTimestamp, outstandingShares, reportingUnit){
+    constructor(private authenticationService: AuthenticationService, 
+        private readonly processStatusManagerService: ProcessStatusManagerService,
+        private readonly valuationService: ValuationsService
+    ){}
+    async fetchPriceEquityShare(header, marketPriceInputpayload){
         try{
+            const {companyId, valuationDateTimestamp, outstandingShares, reportingUnit, isCmpnyNmeOrVltionDteReset, processStateId} = marketPriceInputpayload;
+
+            if(!isCmpnyNmeOrVltionDteReset && processStateId){
+                const fourthStageDetails:any =  await this.processStatusManagerService.fetchStageWiseDetails(processStateId, 'fourthStageInput');
+                const valuationResult = fourthStageDetails.data.fourthStageInput.appData.valuationResult.find((_e) => { return _e.model === MODEL[7] ? _e : null;});
+                if(valuationResult) {
+                    return {
+                        sharePriceLastTenDays: valuationResult.valuationData.sharePriceLastTenDays,
+                        sharePriceLastNinetyDays: valuationResult.valuationData.sharePriceLastNinetyDays,
+                        vwapLastTenDays: valuationResult.valuationData.vwapLastTenDays,
+                        vwapLastNinetyDays: valuationResult.valuationData.vwapLastNinetyDays,
+                        valuePerShare:valuationResult.valuation,
+                        equityValue: valuationResult.equityValue
+                    };
+                }
+                else await this.fetchPriceEquityShare(header, {...marketPriceInputpayload, isCmpnyNmeOrVltionDteReset:true}); 
+            }
             const oneDayInMillis = 24 * 60 * 60 * 1000;
             const valuationDate = new Date(valuationDateTimestamp);
             const valuationDatePlusOneDay = new Date(valuationDate.getTime() + oneDayInMillis);
@@ -61,6 +83,16 @@ export class MarketPriceService {
             const computations = await this.computeValuePerShare(data);
             const equityValueNse = convertToNumberOrZero(computations.valuePerShareNse) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
             const equityValueBse = convertToNumberOrZero(computations.valuePerShareBse) * convertToNumberOrZero(outstandingShares)/ GET_MULTIPLIER_UNITS[`${reportingUnit}`];
+
+            const processStateModel = {
+                firstStageInput:{
+                    validateFieldOptions:{
+                        isCmpnyNmeOrVltionDteReset:false
+                    },
+                },
+                step:5
+            }
+            await this.processStatusManagerService.upsertProcess(getRequestAuth(header), processStateModel, processStateId);
             
             return {
                 sharePriceLastTenDays: sharePrice10Days,
@@ -104,6 +136,10 @@ export class MarketPriceService {
             VOLUMEBSE: VOLUMEBSE || null,
             VWAPBSE: VWAPBSE || null,
             VWAPNSE: VWAPNSE || null,
+            ISVWAPBSENULL: VWAPBSE ? false : true,
+            ISVWAPNSENULL: VWAPNSE ? false : true,
+            TOTALREVENUENSE: convertToNumberOrZero(VOLUMENSE) * convertToNumberOrZero(VWAPNSE),
+            TOTALREVENUEBSE: convertToNumberOrZero(VOLUMEBSE) * convertToNumberOrZero(VWAPBSE),
             ...restNse,
             ...restBse,
           };
@@ -121,7 +157,6 @@ export class MarketPriceService {
 
         const valuePerShareNse = convertToNumberOrZero(vwap90Days.VWAPNSE) > convertToNumberOrZero(vwap10Days.VWAPNSE) ? convertToNumberOrZero(vwap90Days.VWAPNSE) : convertToNumberOrZero(vwap10Days.VWAPNSE);
         const valuePerShareBse = convertToNumberOrZero(vwap90Days.VWAPBSE) > convertToNumberOrZero(vwap10Days.VWAPBSE) ? convertToNumberOrZero(vwap90Days.VWAPBSE) : convertToNumberOrZero(vwap10Days.VWAPBSE);
-        console.log(valuePerShareBse,valuePerShareNse,vwap90Days.VWAPBSE, vwap10Days.VWAPBSE)
         return { vwap10Days, vwap90Days, valuePerShareNse, valuePerShareBse }
     }
       
@@ -138,17 +173,102 @@ export class MarketPriceService {
             if(indSharePrice.VOLUMEBSE){
                 volumeSummationBse += convertToNumberOrZero(indSharePrice.VOLUMEBSE);
             }
-            if(indSharePrice.VWAPNSE && indSharePrice.VOLUMENSE){
-                totalRevenueSummationNse += (convertToNumberOrZero(indSharePrice.VOLUMENSE) * convertToNumberOrZero(indSharePrice.VWAPNSE));
+            if(indSharePrice.TOTALREVENUENSE){
+                totalRevenueSummationNse += convertToNumberOrZero(indSharePrice.TOTALREVENUENSE);
             }
-            if(indSharePrice.VWAPBSE && indSharePrice.VOLUMEBSE){
-                totalRevenueSummationBse += (convertToNumberOrZero(indSharePrice.VOLUMEBSE) * convertToNumberOrZero(indSharePrice.VWAPBSE));
+            if(indSharePrice.TOTALREVENUEBSE){
+                totalRevenueSummationBse += convertToNumberOrZero(indSharePrice.TOTALREVENUEBSE);
             }
         })
-        
         return {
             VWAPNSE: convertToNumberOrZero(totalRevenueSummationNse/volumeSummationNse).toFixed(2),
             VWAPBSE: convertToNumberOrZero(totalRevenueSummationBse/volumeSummationBse).toFixed(2),
         };
+      }
+
+
+      async revaluationMarketPrice(header, input){
+        try{
+            let marketPriceValuationObj:any = {}
+            const pid = input.processId;
+
+            if(!pid) throw new NotFoundException('Process Id not found').getResponse();
+
+            const valuationDetails:any = await this.processStatusManagerService.fetchValuationUsingPID(pid);
+            const outstandingShares = valuationDetails.inputData[0].outstandingShares;
+            const reportingUnit = valuationDetails.inputData[0].reportingUnit;
+
+            for await( let indValuations of valuationDetails.modelResults){
+                if (indValuations.model === MODEL[7]) {
+                    const { valuationData } = indValuations;
+                    const sharePriceLastTenDays = valuationData?.sharePriceLastTenDays || [];
+                    const sharePriceLastNinetyDays = valuationData?.sharePriceLastNinetyDays || [];
+            
+                    const updateVWAP = async (elements: any[], date: string, type: string, value: any) => {
+                        for await(const element of elements){
+                            if (element.PRICINGDATE === date) {
+                                if (type === MARKET_PRICE_ENUMS.VWAPNSE.key) element.TOTALREVENUENSE = convertToNumberOrZero(value);
+                                if (type === MARKET_PRICE_ENUMS.VWAPBSE.key) element.TOTALREVENUEBSE = convertToNumberOrZero(value);
+                            }
+                        }
+                    };
+            
+                    await updateVWAP(sharePriceLastTenDays, input.date, input.type, input.newValue);
+                    await updateVWAP(sharePriceLastNinetyDays, input.date, input.type, input.newValue);
+            
+                    const computations:any = await this.computeValuePerShare(sharePriceLastNinetyDays);
+                    const { valuePerShareNse, valuePerShareBse } = computations;
+            
+                    const multiplier = GET_MULTIPLIER_UNITS[`${reportingUnit}`];
+                    const equityValueNse = convertToNumberOrZero(valuePerShareNse) * convertToNumberOrZero(outstandingShares) / multiplier;
+                    const equityValueBse = convertToNumberOrZero(valuePerShareBse) * convertToNumberOrZero(outstandingShares) / multiplier;
+            
+                    valuationData.vwapLastTenDays = computations.vwap10Days;
+                    valuationData.vwapLastNinetyDays = computations.vwap90Days;
+                    indValuations.valuation = {
+                        valuePerShareNse,
+                        valuePerShareBse,
+                    };
+                    indValuations.equityValue = {
+                        equityValueNse,
+                        equityValueBse,
+                    };
+
+                    marketPriceValuationObj = indValuations;
+                }
+            }
+
+            const fourthStageDetails:any = await this.processStatusManagerService.fetchStageWiseDetails(pid, 'fourthStageInput');
+
+            const valuationResult = fourthStageDetails.data.fourthStageInput.appData.valuationResult;
+            for await(const data of valuationResult){
+                if (data.model === MODEL[7]) {
+                    data.valuationData = marketPriceValuationObj?.valuationData;
+                    data.equityValue = marketPriceValuationObj?.equityValue;
+                    data.valuation = marketPriceValuationObj?.valuation;
+                }
+            }
+
+            const valuationWithoutInternalProps = valuationDetails.toObject({ getters: true, virtuals: true });
+
+            const { _id, ...rest } = valuationWithoutInternalProps;
+
+            await this.valuationService.createValuation(rest, _id);
+
+            const processStateModel ={
+                fourthStageInput: fourthStageDetails.data.fourthStageInput,
+                step: 4
+            }
+            await this.processStatusManagerService.upsertProcess(getRequestAuth(header), processStateModel, pid);
+            
+            return  {
+                data: fourthStageDetails.data.fourthStageInput,
+                message:'Request Successful',
+                status:true
+              }
+        }
+        catch(error){
+            throw error;
+        }
       }
 }

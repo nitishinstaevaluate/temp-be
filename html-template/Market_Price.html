@@ -205,16 +205,16 @@
             <tr style="height:15pt">
                 <td style="width:317pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
                     colspan="2">
-                    <p class="s7" style="padding-left: 74pt;text-indent: 0pt;line-height: 14pt;text-align: left;">Floor
+                    <p class="s7" style="padding-left: 74pt;text-indent: 0pt;line-height: 14pt;text-align: left;font-weight: bold;">Floor
                         Price (Higher of A or B)</p>
                 </td>
                 <td
                     style="width:77pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;"><span class="s9">{{floorPriceVwapNSE}}</span></p>
+                    <p style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;font-weight: bold;"><span class="s9">{{floorPriceVwapNSE}}</span></p>
                 </td>
                 <td
                     style="width:77pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;"><span class="s9">{{floorPriceVwapBSE}}</span></p>
+                    <p style="padding-right: 4pt;text-indent: 0pt;line-height: 14pt;text-align: right;font-weight: bold;"><span class="s9">{{floorPriceVwapBSE}}</span></p>
                 </td>
             </tr>
             <tr style="height:42pt">
@@ -237,7 +237,7 @@
              <thead>
                  <tr style="height:50pt">
                      <td style="width:451pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                         colspan="10">
+                         colspan="6">
                          <p style="padding-top: 5pt;padding-left: 5pt;padding-right: 4pt;text-indent: 0pt;text-align: justify;">
                              <span class="s7">Volume weighted average price (VWAP) of the equity shares of </span>
                              <span class="s9" style="text-transform: capitalize;">{{companyName}}</span>
@@ -265,8 +265,8 @@
                     <td style="width: 25%;">{{updateDateFormat PRICINGDATE}}</td>
                     <td>{{formatValue VOLUMENSE}}</td>
                     <td>{{formatValue VOLUMEBSE}}</td>
-                    <td>{{totalRevenue VWAPNSE VOLUMENSE}}</td>
-                    <td>{{totalRevenue VWAPBSE VOLUMEBSE}}</td>
+                    <td>{{formatValue TOTALREVENUENSE}}</td>
+                    <td>{{formatValue TOTALREVENUEBSE}}</td>
                 </tr>
             </tbody>
              {{/each}}
@@ -276,7 +276,7 @@
 
     {{#if (sharePriceDataN30Length)}}
     <!-- Second 30 elements starts -->
-    <div class="container" style="page-break-before: always;padding-top: 5%;">
+    <div class="container" style="page-break-before: always;padding-top: 4%;">
         <table style="border-collapse:collapse;margin:auto;width:100%;" cellspacing="0">
             <thead>
                 <tr>
@@ -295,8 +295,8 @@
                         <td style="width: 25%;">{{updateDateFormat PRICINGDATE}}</td>
                         <td>{{formatValue VOLUMENSE}}</td>
                         <td>{{formatValue VOLUMEBSE}}</td>
-                        <td>{{totalRevenue VWAPNSE VOLUMENSE}}</td>
-                        <td>{{totalRevenue VWAPBSE VOLUMEBSE}}</td>
+                        <td>{{formatValue TOTALREVENUENSE}}</td>
+                        <td>{{formatValue TOTALREVENUEBSE}}</td>
                     </tr>
                 </tbody>
             {{/each}}
@@ -326,8 +326,8 @@
                         <td style="width: 25%;">{{updateDateFormat PRICINGDATE}}</td>
                         <td>{{formatValue VOLUMENSE}}</td>
                         <td>{{formatValue VOLUMEBSE}}</td>
-                        <td>{{totalRevenue VWAPNSE VOLUMENSE}}</td>
-                        <td>{{totalRevenue VWAPBSE VOLUMEBSE}}</td>
+                        <td>{{formatValue TOTALREVENUENSE}}</td>
+                        <td>{{formatValue TOTALREVENUEBSE}}</td>
                     </tr>
                 </tbody>
             {{/each}}
@@ -344,7 +344,6 @@
                     <p class="s36" style="text-align: center;font-size: 14px;font-weight: bold;color: #494949;">{{vwap90DaysBSE}}
                     </p>
                 </td>
-                
             </tr>
         </table>
     </div>
@@ -380,8 +379,8 @@
                         <td style="width: 25%;">{{updateDateFormat PRICINGDATE}}</td>
                         <td>{{formatValue VOLUMENSE}}</td>
                         <td>{{formatValue VOLUMEBSE}}</td>
-                        <td>{{totalRevenue VWAPNSE VOLUMENSE}}</td>
-                        <td>{{totalRevenue VWAPBSE VOLUMEBSE}}</td>
+                        <td>{{formatValue TOTALREVENUENSE}}</td>
+                        <td>{{formatValue TOTALREVENUEBSE}}</td>
                     </tr>
                 </tbody>
             {{/each}}

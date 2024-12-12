@@ -8,7 +8,7 @@ import * as converter from 'number-to-words';
 @Injectable()
 export class financialHelperService{
 
-    loadFinancialTableHelper(financialData, valuationDetails){
+    loadFinancialTableHelper(financialData, valuationDetails, allProcessStageDetails){
         hbs.registerHelper('financialSegment',()=>{
           let financiallyFilteredCompany = [], companySelectedArray = [], isSelectedExists = false;
           if(financialData){
@@ -81,6 +81,7 @@ export class financialHelperService{
         })
     
         hbs.registerHelper('priceToSalesMean',()=>{
+          const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
           let mean = 0;
           if(financialData){
             valuationDetails.modelResults.map((data)=>{
@@ -89,8 +90,11 @@ export class financialHelperService{
                 if(!companies?.length)
                     return mean = 0;
                 companies.map((indCompany)=>{
-                  if(indCompany.company === 'Average'){
-                    mean = indCompany.sales
+                  if(ccmMetricType === 'average'){
+                    if(indCompany.company === 'Average') mean = indCompany.sales;
+                  }
+                  else{
+                    if(indCompany.company === 'Median') mean = indCompany.sales;
                   }
                 })
               }
@@ -104,6 +108,7 @@ export class financialHelperService{
           return 0;
         })
         hbs.registerHelper('priceToBookMean',()=>{
+          const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
           let mean = 0;
           if(financialData){
             valuationDetails.modelResults.map((data)=>{
@@ -112,8 +117,11 @@ export class financialHelperService{
                 if(!companies?.length)
                   return mean = 0;
                 companies.map((indCompany)=>{
-                  if(indCompany.company === 'Average'){
-                    mean = indCompany.pbRatio;
+                  if(ccmMetricType === 'average'){
+                    if(indCompany.company === 'Average') mean = indCompany.pbRatio;
+                  }
+                  else{
+                    if(indCompany.company === 'Median') mean = indCompany.pbRatio;
                   }
                 })
               }
@@ -128,6 +136,7 @@ export class financialHelperService{
         })
     
         hbs.registerHelper('priceToEquityMean',()=>{
+          const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
           let mean = 0;
           if(financialData){
             valuationDetails.modelResults.map((data)=>{
@@ -136,8 +145,11 @@ export class financialHelperService{
                 if(!companies?.length)
                   return mean = 0;
                 companies.map((indCompany)=>{
-                  if(indCompany.company === 'Average'){
-                    mean = indCompany.peRatio;
+                  if(ccmMetricType === 'average'){
+                    if(indCompany.company === 'Average') mean = indCompany.peRatio;
+                  }
+                  else{
+                    if(indCompany.company === 'Median') mean = indCompany.peRatio;
                   }
                 })
               }
@@ -151,6 +163,7 @@ export class financialHelperService{
           return 0;
         })
         hbs.registerHelper('evByEbitdaMean',()=>{
+          const ccmMetricType = allProcessStageDetails.stateInfo?.fifthStageInput?.ccmVPStype || 'average';
           let mean = 0;
           if(financialData){
             valuationDetails.modelResults.map((data)=>{
@@ -159,8 +172,11 @@ export class financialHelperService{
                 if(!companies?.length)
                   return mean = 0;
                 companies.map((indCompany)=>{
-                  if(indCompany.company === 'Average'){
-                    mean = indCompany.ebitda;
+                  if(ccmMetricType === 'average'){
+                    if(indCompany.company === 'Average') mean = indCompany.ebitda;
+                  }
+                  else{
+                    if(indCompany.company === 'Median') mean = indCompany.ebitda;
                   }
                 })
               }

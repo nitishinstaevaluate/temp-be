@@ -190,30 +190,36 @@
                 <th  colspan="2" style="border-right: none;text-align: center;">
                   Valuation of <span style="font-size: 13px;font-weight: 600;text-transform: uppercase;">{{companyName}}</span> 
                 </th>
-                {{#if (checkPreferenceRatio)}}
-                <th colspan="2" style="border-left: none;text-align: right !important;">
-                  Amount in INR {{reportingUnit}}
-                </th>
+                {{#if (ccmVPSMetricCheck 'average')}}
+                    <th colspan="2" style="border-left: none;text-align: right !important;">
+                        Amount in INR {{reportingUnit}}
+                    </th>
                 {{else}}
-                <th colspan="1" style="border-left: none;text-align: right !important;">
-                    Amount in INR {{reportingUnit}}
-                  </th>
+                    <th colspan="1" style="border-left: none;text-align: right !important;">
+                        Amount in INR {{reportingUnit}}
+                    </th>
                 {{/if}}
               </tr>
             <tr style="font-size: 13px;">
                 <th style="">Sr.No</th>
                 <th style="">Particulars</th>
-                <th style="">As on {{strdate}}</th>
-                {{#if (checkPreferenceRatio)}}
-                <th style="">As on {{strdate}}</th>
+                {{#if (ccmVPSMetricCheck 'average')}}
+                    <th style="">As on {{strdate}}</th>
+                {{else}}
+                    {{#if (checkPreferenceRatio)}}
+                    <th style="">As on {{strdate}}</th>
+                    {{/if}}
                 {{/if}}
             </tr>
             {{#if (checkPreferenceRatio)}}
             <tr style="font-size: 13px;">
                 <td></td>
                 <td></td>
+                {{#if (ccmVPSMetricCheck 'average')}}
                 <td>Average</td>
+                {{else}}
                 <td>Median</td>
+                {{/if}}
             </tr>
             {{/if}}
             {{#each (relativeVal data)}}
@@ -221,9 +227,12 @@
                 <tr style="font-weight: bold !important;font-size: 13px;">
                     <td>{{srNo}}</td>
                     <td>{{particular}}</td>
-                    <td>{{avg}}</td>
-                    {{#if (checkPreferenceRatio)}}
-                    <td>{{med}}</td>
+                    {{#if (ccmVPSMetricCheck 'average')}}
+                        <td>{{avg}}</td>
+                    {{else}}
+                        {{#if (checkPreferenceRatio)}}
+                        <td>{{med}}</td>
+                        {{/if}}
                     {{/if}}
                 </tr>
             {{else}}
@@ -231,9 +240,12 @@
                     <tr style="font-weight: bold !important;font-size: 13px;">
                         <td>{{srNo}}</td>
                         <td>{{particular}}</td>
-                        <td>{{avg}}</td>
-                        {{#if (checkPreferenceRatio)}}
-                        <td>{{med}}</td>
+                        {{#if (ccmVPSMetricCheck 'average')}}
+                            <td>{{avg}}</td>
+                        {{else}}
+                            {{#if (checkPreferenceRatio)}}
+                            <td>{{med}}</td>
+                            {{/if}}
                         {{/if}}
                     </tr>
                 {{else}}
@@ -242,18 +254,24 @@
                         <tr style="height: 25px;font-size: 13px;">
                             <td>{{srNo}}</td>
                             <td>{{particular}}</td>
-                            <td>{{avg}}</td>
-                            {{#if (checkPreferenceRatio)}}
-                            <td>{{med}}</td>
+                            {{#if (ccmVPSMetricCheck 'average')}}
+                                <td>{{avg}}</td>
+                            {{else}}
+                                {{#if (checkPreferenceRatio)}}
+                                <td>{{med}}</td>
+                                {{/if}}
                             {{/if}}
                         </tr>
                     {{else}}
                         <tr style="font-size: 13px;">
                             <td>{{srNo}}</td>
                             <td>{{particular}}</td>
-                            <td>{{avg}}</td>
-                            {{#if (checkPreferenceRatio)}}
-                            <td>{{med}}</td>
+                            {{#if (ccmVPSMetricCheck 'average')}}
+                                <td>{{avg}}</td>
+                            {{else}}
+                                {{#if (checkPreferenceRatio)}}
+                                <td>{{med}}</td>
+                                {{/if}}
                             {{/if}}
                         </tr>
                     {{/if}}

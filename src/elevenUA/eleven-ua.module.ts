@@ -26,6 +26,8 @@ import { ReportModule } from 'src/report/report.module';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
 import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
 import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
+import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
+import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 import { CalculationModule } from 'src/calculation/calculation.module';
 
 @Module({
@@ -41,6 +43,7 @@ import { CalculationModule } from 'src/calculation/calculation.module';
     thirdpartyApiAggregateService, 
     authenticationTokenService, 
     SensitivityAnalysisService,
+    ExcelArchiveService
   ],
   controllers: [ElevenUaController],
   imports:[MongooseModule.forFeature([
@@ -50,6 +53,7 @@ import { CalculationModule } from 'src/calculation/calculation.module';
     { name: 'dataChecklist', schema: DataCheckListSchema },
     { name: 'mandate', schema: MandateSchema },
     { name: 'token', schema: authenticationTokenSchema },
+    { name: 'excelArchive', schema: ExcelArchiveSchema },
     { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema }
   ]),
   UsersModule,

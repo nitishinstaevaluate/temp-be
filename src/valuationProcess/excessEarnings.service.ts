@@ -4,7 +4,7 @@ import { IndustryService } from 'src/industry/industry.service';
 import {
   getShareholderFunds,
   GetPAT,
-  CapitalStruc,
+  // CapitalStruc,
   // differenceAssetsLiabilities
 } from 'src/excelFileServices/fcfeAndFCFF.method';
 import {

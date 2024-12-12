@@ -114,28 +114,11 @@
             </div>
             <!-- <p><strong>Valuation of a firm based on Profit loss and balance sheet statements.</strong></p> -->
 
-    <table>
-        <thead>
-          <tr>
-            <th style="font-size: 13px;padding: 1%;">Particulars</th>
-            <th style="font-size: 13px;padding: 1%;">Book Value</th>
-            <th style="font-size: 13px;padding: 1%;">Market Value</th>
-          </tr>
-        </thead>
-        {{#each (netAssetValue data)}}
-          <tbody>
-            <tr style="height: 23px;">
-                {{#if (checkHead fieldName "")}}
-                <td style="font-weight: 700;">{{fieldName}}</td>
-                {{else}}
-                <td>{{fieldName}}</td>
-                {{/if}}
-                <td>{{bookValue}}</td>
-                <td>{{fairValue}}</td>
-            </tr>
-        </tbody>
-        {{/each}}
-      </table>
+            <div style="padding-right: 2.5%;">
+                <!-- NAV Table Starts -->
+                {{{iterateNAVData}}}    
+                <!-- NAV Table ends -->
+            </div>
     </div>
 </body>
 
