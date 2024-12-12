@@ -7,7 +7,7 @@ import hbs = require('handlebars');
 import * as converter from 'number-to-words'
 import { MODEL, NATURE_OF_INSTRUMENT, PURPOSE_OF_REPORT_AND_SECTION, REPORT_PURPOSE } from "src/constants/constants";
 import { computedTotalYears, formatDate, formatPositiveAndNegativeValues, transformData } from "./report-common-functions";
-import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
+import { ProcessStatusManagerService } from "src/processStatusManager/service/process-status-manager.service";
 import * as xlsx from 'xlsx';
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { convertToNumberOrZero, getRequestAuth } from "src/excelFileServices/common.methods";

@@ -28,7 +28,7 @@ import { CIQ_COMPANY_MULTIPLES_MEAN_MEDIAN, CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT
 import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axiosConfig';
 import { ciqGetCompanyMeanMedianDto } from 'src/ciq-sp/dto/ciq-sp.dto';
 import { authenticationTokenService } from 'src/authentication/authentication-token.service';
-import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/service/process-status-manager.service';
 import { ValuationsService } from './valuationProcess.service';
 import { PostMainValuationDto, ValuationDto } from './dto/valuations.dto';
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';

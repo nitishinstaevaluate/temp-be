@@ -4,7 +4,7 @@ import { CiqSpController } from './ciq-sp.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SnowflakeClientServiceService } from 'src/snowflake/snowflake-client-service.service';
 import { ciqsimpleindustrySchema, ciqindustryhierarchySchema, ciqcompanystatustypeSchema, ciqcompanytypeSchema, BetaWorkingSchema } from './schema/ciq-sp.chema';
-import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/service/process-status-manager.service';
 import { ProcessStatusManagerModule } from 'src/processStatusManager/process-status-manager.module';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { CustomLogger } from 'src/loggerService/logger.service';
@@ -22,9 +22,11 @@ import { HistoricalReturnsService } from 'src/data-references/data-references.se
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
+import { FieldValidationSchema } from 'src/processStatusManager/schema/field-validation.shema';
+import { FieldValidationService } from 'src/processStatusManager/service/field-validation.service';
 
 @Module({
-  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService, HistoricalReturnsService, ValuationsService],
+  providers: [CiqSpService,SnowflakeClientServiceService,ProcessStatusManagerService,CustomLogger,AuthenticationService,utilsService, CiqSpFinancialService, ciqSpBetaService, ciqSpCompanyMeanMedianService, HistoricalReturnsService, ValuationsService, FieldValidationService],
   controllers: [CiqSpController],
   imports:[MongooseModule.forFeature([
     {name: 'ciqsimpleindustry', schema : ciqsimpleindustrySchema},
@@ -41,6 +43,7 @@ import { ValuationsService } from 'src/valuationProcess/valuationProcess.service
     { name: 'dataChecklist', schema: DataCheckListSchema },
     { name: 'mandate', schema: MandateSchema },
     { name: 'betaWorking', schema: BetaWorkingSchema },
+    { name: 'fieldValidation', schema: FieldValidationSchema },
   ]),
   ProcessStatusManagerModule,
   AuthenticationModule,

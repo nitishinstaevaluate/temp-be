@@ -19,7 +19,7 @@ import * as converter from 'number-to-words'
 import { ElevenUaService } from 'src/elevenUA/eleven-ua.service';
 import { CIQ_ELASTIC_SEARCH_FINANCIAL_SEGMENT, CIQ_FINANCIAL_SEGMENT, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
 import { convertToNumberOrZero, getRequestAuth } from 'src/excelFileServices/common.methods';
-import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/service/process-status-manager.service';
 import { AuthenticationService } from 'src/authentication/authentication.service';
 import { HistoricalReturnsService } from 'src/data-references/data-references.service';
 import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from 'src/ciq-sp/ciq-common-functions';

@@ -30,7 +30,7 @@ import { authenticationTokenService } from 'src/authentication/authentication-to
 import { userRoles } from 'src/library/enums/user-roles.enum';
 import BTree from 'sorted-btree';
 import { CalculationService } from 'src/calculation/calculation.service';
-import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/service/process-status-manager.service';
 require('dotenv').config();
 
 @Injectable()

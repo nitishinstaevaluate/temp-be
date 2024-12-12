@@ -5,7 +5,7 @@ import { GET_MULTIPLIER_UNITS, MARKET_PRICE_ENUMS, MODEL } from "src/constants/c
 import { convertToNumberOrZero, convertUnixTimestampToQuarterAndYear, getRequestAuth } from "src/excelFileServices/common.methods";
 import { CIQ_ELASTIC_SEARCH_PRICE_EQUITY } from "src/library/interfaces/api-endpoints.local";
 import { axiosInstance, axiosRejectUnauthorisedAgent } from "src/middleware/axiosConfig";
-import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
+import { ProcessStatusManagerService } from "src/processStatusManager/service/process-status-manager.service";
 import { ValuationsService } from "./valuationProcess.service";
 
 @Injectable()

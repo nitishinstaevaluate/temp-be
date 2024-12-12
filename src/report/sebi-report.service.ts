@@ -11,7 +11,7 @@ import { ALL_MODELS, BETA_FROM, CAPITAL_STRUCTURE_TYPE, COST_OF_EQUITY_METHOD, E
 import { thirdpartyApiAggregateService } from "src/library/thirdparty-api/thirdparty-api-aggregate.service";
 import { ReportService } from "./report.service";
 import { terminalValueWorkingService } from "src/valuationProcess/terminal-value-working.service";
-import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
+import { ProcessStatusManagerService } from "src/processStatusManager/service/process-status-manager.service";
 import { formatDateToMMDDYYYY, isNotRuleElevenUaAndNav } from "src/ciq-sp/ciq-common-functions";
 import { ciqGetFinancialDto } from "src/ciq-sp/dto/ciq-sp.dto";
 import { HistoricalReturnsService } from "src/data-references/data-references.service";
