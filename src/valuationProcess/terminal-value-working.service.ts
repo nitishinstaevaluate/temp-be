@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { ValuationsService } from "./valuationProcess.service";
-import { ProcessStatusManagerService } from "src/processStatusManager/process-status-manager.service";
+import { ProcessStatusManagerService } from "src/processStatusManager/service/process-status-manager.service";
 import { MODEL } from "src/constants/constants";
 import { TerminalValueWorkingDto } from "./dto/valuations.dto";
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods";

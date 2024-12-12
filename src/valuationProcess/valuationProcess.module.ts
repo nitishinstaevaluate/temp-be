@@ -20,7 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { DataCheckListSchema } from 'src/utils/schema/dataCheckList.schema';
 import { MandateSchema } from 'src/utils/schema/mandate.schema';
 import { terminalValueWorkingService } from './terminal-value-working.service';
-import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/service/process-status-manager.service';
 import { MarketPriceService } from './market-price.service';
 import { SensitivityAnalysisService } from 'src/sensitivity-analysis/service/sensitivity-analysis.service';
 import { sensitivityAnalysisSchema } from 'src/sensitivity-analysis/schema/sensitivity-analysis.schema';
@@ -28,6 +28,8 @@ import { SensitivityAnalysisModule } from 'src/sensitivity-analysis/sensitivity-
 import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.service';
 import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdparty-api-aggregate.service';
+import { FieldValidationSchema } from 'src/processStatusManager/schema/field-validation.shema';
+import { FieldValidationService } from 'src/processStatusManager/service/field-validation.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'valuation', schema: ValuationSchema }]),
@@ -37,6 +39,7 @@ import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdp
       { name: 'mandate', schema: MandateSchema },
       { name: 'sensitivityanalysis', schema: sensitivityAnalysisSchema },
       { name: 'excelArchive', schema: ExcelArchiveSchema },
+      { name: 'fieldValidation', schema: FieldValidationSchema },
     ]),
     IndustryModule,
     MastersModule,
@@ -63,7 +66,8 @@ import { thirdpartyApiAggregateService } from 'src/library/thirdparty-api/thirdp
     MarketPriceService,
     SensitivityAnalysisService,
     ExcelArchiveService,
-    thirdpartyApiAggregateService
+    thirdpartyApiAggregateService,
+    FieldValidationService
   ], //ImportService
   exports: [ValuationsService, ValuationMethodsService,FCFEAndFCFFService, terminalValueWorkingService],
 })

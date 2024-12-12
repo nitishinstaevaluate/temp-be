@@ -36,7 +36,7 @@ import { any } from 'joi';
 import { async } from 'rxjs';
 import { transformData } from 'src/report/report-common-functions';
 import { terminalValueWorkingService } from './terminal-value-working.service';
-import { ProcessStatusManagerService } from 'src/processStatusManager/process-status-manager.service';
+import { ProcessStatusManagerService } from 'src/processStatusManager/service/process-status-manager.service';
 import { ValuationsService } from './valuationProcess.service';
 import * as XLSX from 'xlsx';
 import e from 'express';

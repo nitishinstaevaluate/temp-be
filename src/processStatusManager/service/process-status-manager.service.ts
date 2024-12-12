@@ -1,5 +1,5 @@
 import { BadGatewayException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { ProcessManagerDocument } from './schema/process-status-manager.schema';
+import { ProcessManagerDocument } from '../schema/process-status-manager.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
 import { isNotEmpty } from 'class-validator';
@@ -11,6 +11,7 @@ import { axiosInstance, axiosRejectUnauthorisedAgent } from 'src/middleware/axio
 import { CLONE_BETA_WORKING, CONVERT_EXCEL_TO_JSON, FETCH_BETA_WORKING } from 'src/library/interfaces/api-endpoints.local';
 import { BETA_TYPE, MODEL, XL_SHEET_ENUM } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
+import { FieldValidationService } from './field-validation.service';
 
 @Injectable()
 export class ProcessStatusManagerService {
@@ -19,7 +20,8 @@ export class ProcessStatusManagerService {
     private logger: CustomLogger,
     private readonly authenticationService: AuthenticationService,
     private readonly utilsService: utilsService,
-    private readonly valuationService: ValuationsService
+    private readonly valuationService: ValuationsService,
+    private readonly fieldValidationService: FieldValidationService
   ) { }
 
   async upsertProcess(req, process, processId) {
@@ -27,16 +29,17 @@ export class ProcessStatusManagerService {
       let existingRecord, alreadyExistingRecord;
 
       const { step, uniqueLinkId, ...rest  } = process;
-
       if(uniqueLinkId){
       const record = await this.processModel.findOne({ uniqueLinkId: uniqueLinkId });
 
-      if(record)
-        return {
-          processId:record._id,
-          status:true,
-          msg:"record already exist"
-        }
+      if(record){
+      return {
+        processId:record._id,
+        data: record,
+        status:true,
+        msg:"record already exist"
+      }
+      }
         const maxProcessIdentifierId = await this.utilsService.getMaxObId();
 
         const KCGuard:any = new KeyCloakAuthGuard();
@@ -58,6 +61,7 @@ export class ProcessStatusManagerService {
 
         return {
           processId: newRecord.id,
+          data: newRecord,
           status: true,
           msg: 'process state created',
         }
@@ -169,6 +173,7 @@ export class ProcessStatusManagerService {
 
           return {
             processId: existingRecord.id,
+            data: existingRecord,
             status: true,
             msg: 'Process state updated',
           };
@@ -192,6 +197,7 @@ export class ProcessStatusManagerService {
           
           return {
               processId: existingRecord.id,
+              data: existingRecord,
               status: true,
               msg: 'process state updated',
           };
@@ -211,6 +217,7 @@ export class ProcessStatusManagerService {
 
           return {
             processId: existingRecord.id,
+            data: existingRecord,
             status: true,
             msg: 'process state updated',
           };
@@ -236,6 +243,7 @@ export class ProcessStatusManagerService {
 
         return {
           processId: newRecord.id,
+          data: newRecord,
           status: true,
           msg: 'process state created',
         }
