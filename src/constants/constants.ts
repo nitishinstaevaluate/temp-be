@@ -3704,7 +3704,7 @@ export const V2_BALANCE_SHEET = [
         sysCode:8023,
         header:true,
         rowNumber:26,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022],
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8014, 8015, 8016, 8017, 8018, 8020, 8021, 8022],
         formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24"
       }
   },
@@ -3810,7 +3810,7 @@ export const V2_BALANCE_SHEET = [
         sysCode:8035,
         header:true,
         rowNumber:40,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033],
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8014, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033],
         formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24+currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37"
       }
   },
@@ -4102,7 +4102,7 @@ export const V2_BALANCE_SHEET = [
         sysCode:8069,
         header:true,
         rowNumber:80,
-        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046, 8051, 8052, 8053, 8054, 8055, 8056, 8057, 8061, 8062, 8063, 8064, 8065, 8066],
+        dependent:[8004, 8005, 8006, 8007, 8008, 8009, 8010, 8011, 8012, 8014, 8015, 8016, 8017, 8018, 8020, 8021, 8022, 8025, 8027, 8028, 8029, 8030, 8031, 8032, 8033, 8038, 8039, 8040, 8041, 8042, 8043, 8044, 8045, 8046, 8051, 8052, 8053, 8054, 8055, 8056, 8057, 8061, 8062, 8063, 8064, 8065, 8066],
         formula:"currentOne6+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne12+currentOne13+currentOne14+currentOne15+currentOne16+currentOne18+currentOne19+currentOne20+currentOne21+currentOne22+currentOne23+currentOne24+currentOne29+currentOne31+currentOne32+currentOne33+currentOne34+currentOne35+currentOne36+currentOne37-currentOne45-currentOne46-currentOne47-currentOne48-currentOne49-currentOne50-currentOne51-currentOne52-currentOne53-currentOne59-currentOne60-currentOne61-currentOne62-currentOne63-currentOne64-currentOne65-currentOne70-currentOne71-currentOne72-currentOne73-currentOne74-currentOne75"
       }
   }, 
@@ -5451,5 +5451,287 @@ export const MARKET_PRICE_ENUMS = {
   },
   VWAPNSE:{
     key: 'VWAPNSE'
+  }
+}
+
+export const BERKUS_VALUATION_MAPPER = {
+  soundIdea: {
+    dbKey:'soundIdeaValuation',
+    defaultWeightage: 100/5,
+    config:[
+      {
+        label:"Questions",
+        doa:"Degree of Achievement",
+        weightAssign: "Weight Assign",
+        weightedValue: "Weighted Value",
+        header:true
+      },
+      {
+        label:"Proprietary Nature",
+        controlDoa: 'proprietaryNatureDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Well-Defined Future Plan",
+        controlDoa:'futurePlanDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Scalability",
+        controlDoa:'scalabilityDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Socio-Political Relevance",
+        controlDoa:'socioPolticalRelevanceDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Validation of Idea",
+        controlDoa:'validationOfIdeaDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Total",
+        header:true,
+        total:0
+      }
+    ]
+  },
+  prototype: {
+    dbKey:'prototypeValuation',
+    defaultWeightage: 100/6,
+    config:[
+      {
+        label:"Questions",
+        doa:"Degree of Achievement",
+        weightAssign: "Weight Assign",
+        weightedValue: "Weighted Value",
+        header:true
+      },
+      {
+        label:"Functionality",
+        controlDoa: 'functionalityDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Viability",
+        controlDoa:'viabilityDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"User Experience (UX)",
+        controlDoa:'userExprnceDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Innovation",
+        controlDoa:'innovationDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Cost Efficiency",
+        controlDoa:'costEffeciencyDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Time Efficiency",
+        controlDoa:'timeEffeciencyDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Total",
+        header:true,
+        total:0
+      }
+    ]
+  },
+  management: {
+    dbKey:'managementValuation',
+    defaultWeightage: 100/6,
+    config:[
+      {
+        label:"Questions",
+        doa:"Degree of Achievement",
+        weightAssign: "Weight Assign",
+        weightedValue: "Weighted Value",
+        header:true
+      },
+      {
+        label:"Experience and Expertise",
+        controlDoa: 'experienceAndExpertiseDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Vision and Strategy",
+        controlDoa:'visionAndStrategyDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Execution Skills",
+        controlDoa:'executionSkillsDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Network and Relationships",
+        controlDoa:'networkAndRelationshipsDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Leadership and Team Dynamics",
+        controlDoa:'leadershipAndTeamDynamicDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Industry Knowledge and Insights",
+        controlDoa:'industryKnowledgeAndInsightsDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Total",
+        header:true,
+        total:0
+      }
+    ]
+  },
+  strategicRelationship: {
+    dbKey:'strategicRelationshipValuation',
+    defaultWeightage: 100/5,
+    config:[
+      {
+        label:"Questions",
+        doa:"Degree of Achievement",
+        weightAssign: "Weight Assign",
+        weightedValue: "Weighted Value",
+        header:true
+      },
+      {
+        label:"Partnerships",
+        controlDoa: 'partnershipDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Customer Relationships",
+        controlDoa:'customerRelationshipDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Supplier Relationships",
+        controlDoa:'supplierRelationshipDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Distribution Channels",
+        controlDoa:'distributionChannelDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Intellectual Property (IP) Relationships",
+        controlDoa:'intellectualPropertyRelationshipDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Total",
+        header:true,
+        total:0
+      }
+    ]
+  },
+  productRollOut: {
+    dbKey:'productRollOutValuation',
+    defaultWeightage: 100/5,
+    config:[
+      {
+        label:"Questions",
+        doa:"Degree of Achievement",
+        weightAssign: "Weight Assign",
+        weightedValue: "Weighted Value",
+        header:true
+      },
+      {
+        label:"Market Potential",
+        controlDoa: 'marketPotentialDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Customer Acquisition Plan",
+        controlDoa:'customerAcquisitionPlanDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Product Differentiation",
+        controlDoa:'productDifferentiationDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Execution Risk",
+        controlDoa:'executionRiskDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Feedback and Iteration Process",
+        controlDoa:'feedbackAndIterationProcessDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Total",
+        header:true,
+        total:0
+      }
+    ]
   }
 }

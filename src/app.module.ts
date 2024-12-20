@@ -31,6 +31,7 @@ import { thirdpartyApiAggregateService } from './library/thirdparty-api/thirdpar
 import { KeyCloakAuthGuard } from './middleware/key-cloak-auth-guard';
 import { ExcelArchiveModule } from './excel-archive/excel-archive.module';
 import { SensitivityAnalysisModule } from './sensitivity-analysis/sensitivity-analysis.module';
+import { StartUpValuationModule } from './startup-valuations/start-up-valuation.module';
 require('dotenv').config();
 
 @Module({
@@ -55,6 +56,7 @@ require('dotenv').config();
     EmailModule,
     ExcelArchiveModule,
     SensitivityAnalysisModule,
+    StartUpValuationModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DBCONN),
   ],
