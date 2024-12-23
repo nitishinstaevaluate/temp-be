@@ -195,6 +195,80 @@ export class SoundIdeaSchema {
     productRollOut: ProductRollOutSchema;
 }
 
+  export class riskFactorSchema {
+    @Prop({ type: String, required: false })
+    managementRisk: string;
+
+    @Prop({ type: Number, required: false })
+    managementRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    stateOfBusiness: string;
+
+    @Prop({ type: Number, required: false })
+    stateOfBusinessRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    politicalRisk: string;
+
+    @Prop({ type: Number, required: false })
+    politicalRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    supplyChainOrManufacturingRisk: string;
+
+    @Prop({ type: Number, required: false })
+    supplyChainOrManufacturingRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    salesAndMarketingRisk: string;
+
+    @Prop({ type: Number, required: false })
+    salesAndMarketingRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    capitalRaisingRisk: string;
+
+    @Prop({ type: Number, required: false })
+    capitalRaisingRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    competitionRisk: string;
+
+    @Prop({ type: Number, required: false })
+    competitionRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    riskOfTechnology: string;
+
+    @Prop({ type: Number, required: false })
+    riskOfTechnologyRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    riskOfLitigation: string;
+
+    @Prop({ type: Number, required: false })
+    riskOfLitigationRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    internationalRisk: string;
+
+    @Prop({ type: Number, required: false })
+    internationalRiskRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    riskOfReputation: string;
+
+    @Prop({ type: Number, required: false })
+    riskOfReputationRFCoeff: number;
+
+    @Prop({ type: String, required: false })
+    exitValueRisk: string;
+
+    @Prop({ type: Number, required: false })
+    exitValueRiskRFCoeff: number;
+}
+
 export class BerkusValuationSchema {
     @Prop({ type: [{ type: Object }], required: false })
     soundIdeaValuation: object[];
@@ -222,8 +296,15 @@ export class StartupValuation {
     berkus: berkusSchema;
 
     @Prop({ type: Object, required: false })
+    @Type(() => riskFactorSchema)
+    riskFactor: riskFactorSchema;
+
+    @Prop({ type: Object, required: false })
     @Type(() => BerkusValuationSchema)
     berkusValuation: BerkusValuationSchema;
+
+    @Prop({ type: [{ type: Object }], required: false })
+    riskFactorValuation: object[];
     
     @Prop({ default: () => new Date(), required: false, })
     modifiedOn: Date;

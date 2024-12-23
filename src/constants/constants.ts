@@ -1,7 +1,7 @@
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 import { V2_BS_RAW_LINE_ITEMS } from "src/excelFileServices/excelSheetConfig";
 
-export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale'];
+export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale', 'berkus', 'riskFactor'];
 
 export const INCOME_APPROACH = ['FCFE','FCFF'];
 export const NET_ASSET_VALUE_APPROACH = ['NAV'];
@@ -2718,6 +2718,8 @@ export const ALL_MODELS = {
   Market_Price:'Market Price',
   Excess_Earnings:"Excess Earning",
   ruleElevenUa:"Rule Eleven UA",
+  berkus:"Berkus",
+  riskFactor:"Risk Factor"
 }
 
 export const EXPECTED_MARKET_RETURN_HISTORICAL_TYPE = {
@@ -5726,6 +5728,95 @@ export const BERKUS_VALUATION_MAPPER = {
         doa:0,
         weightAssign: 0,
         weightedValue: 0
+      },
+      {
+        label:"Total",
+        header:true,
+        total:0
+      }
+    ]
+  }
+}
+export const RISK_FACTOR_VALUATION_MAPPER = {
+  riskFactor: {
+    dbKey:'riskFactorValuation',
+    config:[
+      {
+        label:"Risk Factors",
+        riskFactorCoeff: "Risk Factor Coeffecient",
+        header:true
+      },
+      {
+        index:1,
+        label:"Management Risk",
+        controlRFCoeff: 'managementRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:2,
+        label:"Stage of the Business",
+        controlRFCoeff:'stateOfBusinessRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:3,
+        label:"Political Risk",
+        controlRFCoeff:'politicalRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:4,
+        label:"Supply Chain or Manufacturing Risk",
+        controlRFCoeff:'supplyChainOrManufacturingRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:5,
+        label:"Sales and Marketing Risk",
+        controlRFCoeff:'salesAndMarketingRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:6,
+        label:"Capital Raising Risk",
+        controlRFCoeff:'capitalRaisingRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:7,
+        label:"Competition Risk",
+        controlRFCoeff:'competitionRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:8,
+        label:"Risk of Technology",
+        controlRFCoeff:'riskOfTechnologyRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:9,
+        label:"Risk of Litigation",
+        controlRFCoeff:'riskOfLitigationRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:10,
+        label:"International Risk",
+        controlRFCoeff:'internationalRiskRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:11,
+        label:"Risk of Reputation",
+        controlRFCoeff:'riskOfReputationRFCoeff',
+        riskFactorCoeff: 0
+      },
+      {
+        index:12,
+        label:"Exit Value Risk",
+        controlRFCoeff:'exitValueRiskRFCoeff',
+        riskFactorCoeff: 0
       },
       {
         label:"Total",

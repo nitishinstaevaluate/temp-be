@@ -4,13 +4,16 @@ import { BerkusService } from './berkus.service';
 import { StartupValuationDocument } from '../schema/startup-valuation.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MODEL } from 'src/constants/constants';
+import { RiskFactorService } from './risk-factor.service';
 
 @Injectable()
 export class StartUpValuationService {
 
     constructor(@InjectModel('startupValuation')
     private readonly startupValuationModel: Model<StartupValuationDocument>,
-    private berkusService: BerkusService){}
+    private berkusService: BerkusService,
+    private riskFactorService: RiskFactorService,){}
 
     async upsertValuation(payload){
         try{
@@ -20,8 +23,10 @@ export class StartUpValuationService {
             if(!pid) throw new NotFoundException('PID not found').getResponse();
 
             switch(true){
-                case payload.hasOwnProperty('berkus'):
+                case payload.hasOwnProperty(MODEL[9]):
                     return await this.berkusService.upsert(payload);
+                case payload.hasOwnProperty(MODEL[10]):
+                    return await this.riskFactorService.upsert(payload);
                 default:
                     return await this.startupValuationModel.findOne({ processStateId: pid }).lean();
             }

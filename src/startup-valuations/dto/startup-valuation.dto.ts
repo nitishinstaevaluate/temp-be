@@ -9,31 +9,31 @@ export class soundIdeaDto {
     @IsOptional()
     @IsNumber({}, { message: 'proprietaryNatureDoa is required' })
     proprietaryNatureDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'futurePlan is required' })
     futurePlan: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'futurePlanDoa is required' })
     futurePlanDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'scalability is required' })
     scalability: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'scalabilityDoa is required' })
     scalabilityDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'socioPolticalRelevance is required' })
     socioPolticalRelevance: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'socioPolticalRelevanceDoa is required' })
     socioPolticalRelevanceDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'validationOfIdea is required' })
     validationOfIdea: string;
@@ -51,31 +51,31 @@ export class prototypeDto {
     @IsOptional()
     @IsNumber({}, { message: 'functionalityDoa is required' })
     functionalityDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'viability is required' })
     viability: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'viabilityDoa is required' })
     viabilityDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'userExprnce is required' })
     userExprnce: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'userExprnceDoa is required' })
     userExprnceDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'innovation is required' })
     innovation: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'innovationDoa is required' })
     innovationDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'costEffeciency is required' })
     costEffeciency: string;
@@ -101,31 +101,31 @@ export class managementDto {
     @IsOptional()
     @IsNumber({}, { message: 'experienceAndExpertiseDoa is required' })
     experienceAndExpertiseDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'visionAndStrategy is required' })
     visionAndStrategy: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'visionAndStrategyDoa is required' })
     visionAndStrategyDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'executionSkills is required' })
     executionSkills: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'executionSkillsDoa is required' })
     executionSkillsDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'networkAndRelationships is required' })
     networkAndRelationships: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'networkAndRelationshipsDoa is required' })
     networkAndRelationshipsDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'leadershipAndTeamDynamic is required' })
     leadershipAndTeamDynamic: string;
@@ -151,31 +151,31 @@ export class strategicRelationshipDto {
     @IsOptional()
     @IsNumber({}, { message: 'partnershipDoa is required' })
     partnershipDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'customerRelationship is required' })
     customerRelationship: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'customerRelationshipDoa is required' })
     customerRelationshipDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'supplierRelationship is required' })
     supplierRelationship: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'supplierRelationshipDoa is required' })
     supplierRelationshipDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'distributionChannel is required' })
     distributionChannel: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'distributionChannelDoa is required' })
     distributionChannelDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'intellectualPropertyRelationship is required' })
     intellectualPropertyRelationship: string;
@@ -193,31 +193,31 @@ export class productRollOutDto {
     @IsOptional()
     @IsNumber({}, { message: 'marketPotentialDoa is required' })
     marketPotentialDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'customerAcquisitionPlan is required' })
     customerAcquisitionPlan: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'customerAcquisitionPlanDoa is required' })
     customerAcquisitionPlanDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'productDifferentiation is required' })
     productDifferentiation: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'productDifferentiationDoa is required' })
     productDifferentiationDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'executionRisk is required' })
     executionRisk: string;
-    
+
     @IsOptional()
     @IsNumber({}, { message: 'executionRiskDoa is required' })
     executionRiskDoa: number;
-    
+
     @IsOptional()
     @IsString({ message: 'feedbackAndIterationProcess is required' })
     feedbackAndIterationProcess: string;
@@ -249,6 +249,104 @@ export class berkusDto {
     productRollOut: productRollOutDto
 }
 
+export class riskFactorDto {
+    @IsOptional()
+    @IsString({ message: 'managementRisk is required' })
+    managementRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'managementRiskRFCoeff is required' })
+    managementRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'stateOfBusiness is required' })
+    stateOfBusiness: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'stateOfBusinessRFCoeff is required' })
+    stateOfBusinessRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'politicalRisk is required' })
+    politicalRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'politicalRiskRFCoeff is required' })
+    politicalRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'supplyChainOrManufacturingRisk is required' })
+    supplyChainOrManufacturingRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'supplyChainOrManufacturingRiskRFCoeff is required' })
+    supplyChainOrManufacturingRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'salesAndMarketingRisk is required' })
+    salesAndMarketingRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'salesAndMarketingRiskRFCoeff is required' })
+    salesAndMarketingRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'capitalRaisingRisk is required' })
+    capitalRaisingRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'capitalRaisingRiskRFCoeff is required' })
+    capitalRaisingRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'competitionRisk is required' })
+    competitionRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'competitionRiskRFCoeff is required' })
+    competitionRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'riskOfTechnology is required' })
+    riskOfTechnology: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'riskOfTechnologyRFCoeff is required' })
+    riskOfTechnologyRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'riskOfLitigation is required' })
+    riskOfLitigation: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'riskOfLitigationRFCoeff is required' })
+    riskOfLitigationRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'internationalRisk is required' })
+    internationalRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'internationalRiskRFCoeff is required' })
+    internationalRiskRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'riskOfReputation is required' })
+    riskOfReputation: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'riskOfReputationRFCoeff is required' })
+    riskOfReputationRFCoeff: number;
+
+    @IsOptional()
+    @IsString({ message: 'exitValueRisk is required' })
+    exitValueRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'exitValueRiskRFCoeff is required' })
+    exitValueRiskRFCoeff: number;
+}
+
 export class berkusValuationDto {
     @IsArray()
     @IsObject({ each: true })
@@ -267,7 +365,7 @@ export class berkusValuationDto {
     strategicRelationshipValuation: object[]
 
     @IsArray()
-    @IsObject({ each: true })    
+    @IsObject({ each: true })
     productRollOutValuation: object[]
 }
 
@@ -275,7 +373,7 @@ export class StartupValuationDto {
     @IsOptional()
     @IsString({ message: 'processStateId is required' })
     processStateId: string;
-    
+
     @IsOptional()
     @ValidateNested()
     @Type(() => berkusDto)
@@ -283,6 +381,16 @@ export class StartupValuationDto {
 
     @IsOptional()
     @ValidateNested()
+    @Type(() => riskFactorDto)
+    riskFactor: riskFactorDto;
+
+    @IsOptional()
+    @ValidateNested()
     @Type(() => berkusValuationDto)
     berkusValuation: berkusValuationDto;
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @IsObject({ each: true })
+    riskFactorValuation: Record<string, any>[];
 }
