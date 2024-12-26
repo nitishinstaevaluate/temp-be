@@ -1,7 +1,7 @@
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 import { V2_BS_RAW_LINE_ITEMS } from "src/excelFileServices/excelSheetConfig";
 
-export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale', 'berkus', 'riskFactor'];
+export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale', 'berkus', 'riskFactor', 'scoreCard'];
 
 export const INCOME_APPROACH = ['FCFE','FCFF'];
 export const NET_ASSET_VALUE_APPROACH = ['NAV'];
@@ -5821,6 +5821,177 @@ export const RISK_FACTOR_VALUATION_MAPPER = {
       {
         label:"Total",
         header:true,
+        total:0
+      }
+    ]
+  }
+}
+
+export const SCORE_CARD_VALUATION_MAPPER = {
+  scoreCard: {
+    dbKey:'scoreCardValuation',
+    defaultWeightage: 100/15,
+    config:[
+      {
+        label:"Questions",
+        doa:"Degree of Achievement",
+        weightAssign: "Weight Assigned",
+        weightedValue: "Weighted Value",
+        tableHeader:true
+      },
+      {
+        label:"Management Team",
+        serialNo:'A',
+        controlDoa: '',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0,
+        header:true
+      },
+      {
+        label:"Experience",
+        controlDoa:'experienceDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Adaptability",
+        controlDoa:'adaptabilityDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Team Completeness",
+        controlDoa:'teamCompletenessDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Size of the opportunity",
+        serialNo:'B',
+        controlDoa: '',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0,
+        header:true
+      },
+      {
+        label:"Market Size",
+        controlDoa:'marketSizeDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Revenue Potential",
+        controlDoa:'revenuePotentialDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Stage",
+        controlDoa:'stageDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Product/Technology",
+        serialNo:'C',
+        controlDoa: '',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0,
+        header:true
+      },
+      {
+        label:"Compelling",
+        controlDoa:'compellingDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Uniqueness",
+        controlDoa:'uniquenessDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Execution Risk",
+        controlDoa:'executionRiskDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Competitive Environment",
+        serialNo:'D',
+        controlDoa: '',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0,
+        header:true
+      },
+      {
+        label:"Competition",
+        controlDoa:'competitionDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Strength Of Competitive Products",
+        controlDoa:'strengthofCompetitiveProductDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Barriers To Entry",
+        controlDoa:'barrierToEntryDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Sales & Marketing",
+        serialNo:'E',
+        controlDoa: '',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0,
+        header:true
+      },
+      {
+        label:"Sales Channel",
+        controlDoa:'salesChannelDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Sales Partners",
+        controlDoa:'salesPartnerDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Customer Acquisition",
+        controlDoa:'customerAcquisitionDoa',
+        doa:0,
+        weightAssign: 0,
+        weightedValue: 0
+      },
+      {
+        label:"Total",
+        tableFooter:true,
         total:0
       }
     ]

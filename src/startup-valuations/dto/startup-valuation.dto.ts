@@ -346,6 +346,138 @@ export class riskFactorDto {
     @IsNumber({}, { message: 'exitValueRiskRFCoeff is required' })
     exitValueRiskRFCoeff: number;
 }
+export class scoreCardDto {
+    @IsOptional()
+    @IsString({ message: 'experience is required' })
+    experience: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'experienceDoa is required' })
+    experienceDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'adaptability is required' })
+    adaptability: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'adaptabilityDoa is required' })
+    adaptabilityDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'teamCompleteness is required' })
+    teamCompleteness: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'teamCompletenessDoa is required' })
+    teamCompletenessDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'marketSize is required' })
+    marketSize: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'marketSizeDoa is required' })
+    marketSizeDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'revenuePotential is required' })
+    revenuePotential: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'revenuePotentialDoa is required' })
+    revenuePotentialDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'stage is required' })
+    stage: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'stageDoa is required' })
+    stageDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'compelling is required' })
+    compelling: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'compellingDoa is required' })
+    compellingDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'uniqueness is required' })
+    uniqueness: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'uniquenessDoa is required' })
+    uniquenessDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'executionRisk is required' })
+    executionRisk: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'executionRiskDoa is required' })
+    executionRiskDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'competition is required' })
+    competition: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'competitionDoa is required' })
+    competitionDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'strengthofCompetitiveProduct is required' })
+    strengthofCompetitiveProduct: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'strengthofCompetitiveProductDoa is required' })
+    strengthofCompetitiveProductDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'barrierToEntry is required' })
+    barrierToEntry: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'barrierToEntryDoa is required' })
+    barrierToEntryDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'salesChannel is required' })
+    salesChannel: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'salesChannelDoa is required' })
+    salesChannelDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'salesPartner is required' })
+    salesPartner: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'salesPartnerDoa is required' })
+    salesPartnerDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'customerAcquisition is required' })
+    customerAcquisition: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'customerAcquisitionDoa is required' })
+    customerAcquisitionDoa: number;
+
+    @IsOptional()
+    @IsString({ message: 'funding is required' })
+    funding: string;
+
+    /**
+     * Exposed on front end, pending on backend
+     * @IsOptional()
+     * @IsNumber({}, { message: 'fundingDoa is required' })
+     * fundingDoa: number;
+     */
+}
 
 export class berkusValuationDto {
     @IsArray()
@@ -386,6 +518,11 @@ export class StartupValuationDto {
 
     @IsOptional()
     @ValidateNested()
+    @Type(() => scoreCardDto)
+    scoreCard: scoreCardDto;
+
+    @IsOptional()
+    @ValidateNested()
     @Type(() => berkusValuationDto)
     berkusValuation: berkusValuationDto;
 
@@ -393,4 +530,9 @@ export class StartupValuationDto {
     @ValidateNested({ each: true })
     @IsObject({ each: true })
     riskFactorValuation: Record<string, any>[];
+
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @IsObject({ each: true })
+    scoreCardValuation: Record<string, any>[];
 }

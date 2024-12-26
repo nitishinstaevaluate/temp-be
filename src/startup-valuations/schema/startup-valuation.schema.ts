@@ -269,6 +269,107 @@ export class SoundIdeaSchema {
     exitValueRiskRFCoeff: number;
 }
 
+export class scoreCardSchema {
+    @Prop({ type: String, required: false })
+    experience: string;
+
+    @Prop({ type: Number, required: false })
+    experienceDoa: number;
+
+    @Prop({ type: String, required: false })
+    adaptability: string;
+
+    @Prop({ type: Number, required: false })
+    adaptabilityDoa: number;
+
+    @Prop({ type: String, required: false })
+    teamCompleteness: string;
+
+    @Prop({ type: Number, required: false })
+    teamCompletenessDoa: number;
+
+    @Prop({ type: String, required: false })
+    marketSize: string;
+
+    @Prop({ type: Number, required: false })
+    marketSizeDoa: number;
+
+    @Prop({ type: String, required: false })
+    revenuePotential: string;
+
+    @Prop({ type: Number, required: false })
+    revenuePotentialDoa: number;
+
+    @Prop({ type: String, required: false })
+    stage: string;
+
+    @Prop({ type: Number, required: false })
+    stageDoa: number;
+
+    @Prop({ type: String, required: false })
+    compelling: string;
+
+    @Prop({ type: Number, required: false })
+    compellingDoa: number;
+
+    @Prop({ type: String, required: false })
+    uniqueness: string;
+
+    @Prop({ type: Number, required: false })
+    uniquenessDoa: number;
+
+    @Prop({ type: String, required: false })
+    executionRisk: string;
+
+    @Prop({ type: Number, required: false })
+    executionRiskDoa: number;
+
+    @Prop({ type: String, required: false })
+    competition: string;
+
+    @Prop({ type: Number, required: false })
+    competitionDoa: number;
+
+    @Prop({ type: String, required: false })
+    strengthofCompetitiveProduct: string;
+
+    @Prop({ type: Number, required: false })
+    strengthofCompetitiveProductDoa: number;
+
+    @Prop({ type: String, required: false })
+    barrierToEntry: string;
+
+    @Prop({ type: Number, required: false })
+    barrierToEntryDoa: number;
+
+    @Prop({ type: String, required: false })
+    salesChannel: string;
+
+    @Prop({ type: Number, required: false })
+    salesChannelDoa: number;
+
+    @Prop({ type: String, required: false })
+    salesPartner: string;
+
+    @Prop({ type: Number, required: false })
+    salesPartnerDoa: number;
+
+    @Prop({ type: String, required: false })
+    customerAcquisition: string;
+
+    @Prop({ type: Number, required: false })
+    customerAcquisitionDoa: number;
+
+    @Prop({ type: String, required: false })
+    funding: string;
+
+    /**
+     * Exposed on front end, pending on backend
+     * @Prop({ type: String, required: false })
+     * fundingDoa: string;
+     */
+}
+
 export class BerkusValuationSchema {
     @Prop({ type: [{ type: Object }], required: false })
     soundIdeaValuation: object[];
@@ -300,11 +401,18 @@ export class StartupValuation {
     riskFactor: riskFactorSchema;
 
     @Prop({ type: Object, required: false })
+    @Type(() => scoreCardSchema)
+    scoreCard: scoreCardSchema;
+
+    @Prop({ type: Object, required: false })
     @Type(() => BerkusValuationSchema)
     berkusValuation: BerkusValuationSchema;
 
     @Prop({ type: [{ type: Object }], required: false })
     riskFactorValuation: object[];
+
+    @Prop({ type: [{ type: Object }], required: false })
+    scoreCardValuation: object[];
     
     @Prop({ default: () => new Date(), required: false, })
     modifiedOn: Date;
