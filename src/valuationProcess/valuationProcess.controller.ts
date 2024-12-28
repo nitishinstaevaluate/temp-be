@@ -395,7 +395,8 @@ let workbook=null;
               }
               const marketPriceResponse = await this.valuationMethodsService.Market_Price_method(headers, payload);
 
-              inputs.validateFieldOptions.isCmpnyNmeOrVltionDteReset = false;
+              inputs['validateFieldOptions'] = inputs['validateFieldOptions'] || {};
+              inputs['validateFieldOptions']['isCmpnyNmeOrVltionDteReset'] = false;
               
               valResult.push({
                 model: MODEL[7],
