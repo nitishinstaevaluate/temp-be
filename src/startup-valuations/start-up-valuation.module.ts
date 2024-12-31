@@ -6,9 +6,10 @@ import { StartupValuationSchema } from './schema/startup-valuation.schema';
 import { BerkusService } from './service/berkus.service';
 import { RiskFactorService } from './service/risk-factor.service';
 import { ScoreCardService } from './service/score-card.service';
+import { VentureCapitalService } from './service/venture-capital.service';
 
 @Module({
-  providers:[StartUpValuationService, BerkusService, RiskFactorService, ScoreCardService],
+  providers:[StartUpValuationService, BerkusService, RiskFactorService, ScoreCardService, VentureCapitalService],
   imports:[
     MongooseModule.forFeature([
       { name: 'startupValuation', schema: StartupValuationSchema}

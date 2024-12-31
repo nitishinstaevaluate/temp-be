@@ -387,6 +387,41 @@ export class BerkusValuationSchema {
     productRollOutValuation: object[];
 }
 
+export class ventureCapitalSchema {
+    @Prop({ type: String, required: false })
+    startupName: string;
+
+    @Prop({ type: String, required: false })
+    industryType: string;
+
+    @Prop({ type: Number, required: false })
+    investmentAmount: number;
+
+    @Prop({ type: String, required: false })
+    financialPerformanceMetrics: string;
+
+    @Prop({ type: String, required: false })
+    financialPerformanceMetricsSubType: string;
+
+    @Prop({ type: String, required: false })
+    targetMarginAndBenchmarking: string;
+
+    @Prop({ type: Number, required: false })
+    exitYear: number;
+    
+    @Prop({ type: String, required: false })
+    exitMultipleExpected: string;
+    
+    @Prop({ type: Number, required: false })
+    exitInvestorMultipleAndBenchmarking: number;
+    
+    @Prop({ type: Number, required: false })
+    probabilityOfFailure: number;
+    
+    @Prop({ type: Number, required: false })
+    requiredReturn: number;
+}
+
 @Schema({ versionKey: false })
 export class StartupValuation {
     @Prop({ type: String, required: false })
@@ -405,6 +440,10 @@ export class StartupValuation {
     scoreCard: scoreCardSchema;
 
     @Prop({ type: Object, required: false })
+    @Type(() => ventureCapitalSchema)
+    ventureCapital: ventureCapitalSchema;
+
+    @Prop({ type: Object, required: false })
     @Type(() => BerkusValuationSchema)
     berkusValuation: BerkusValuationSchema;
 
@@ -413,6 +452,9 @@ export class StartupValuation {
 
     @Prop({ type: [{ type: Object }], required: false })
     scoreCardValuation: object[];
+
+    @Prop({ type: Object, required: false })
+    ventureCapitalValuation: object;
     
     @Prop({ default: () => new Date(), required: false, })
     modifiedOn: Date;

@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsOptional, IsString, IsBoolean, ValidateNested, IsNumber, IsObject, IsArray } from "class-validator";
+import { IsOptional, IsString, IsBoolean, ValidateNested, IsNumber, IsObject, IsArray, ValidateIf } from "class-validator";
 
 export class soundIdeaDto {
     @IsOptional()
@@ -479,6 +479,55 @@ export class scoreCardDto {
      */
 }
 
+export class ventureCapitalDto {
+    @IsOptional()
+    @IsString({ message: 'startupName is required' })
+    startupName: string;
+
+    @IsOptional()
+    @IsString({ message: 'industryType is required' })
+    industryType: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'investmentAmount is required' })
+    investmentAmount: number;
+
+    @IsOptional()
+    @IsString({ message: 'financialPerformanceMetrics is required' })
+    financialPerformanceMetrics: string;
+
+    @IsOptional()
+    @ValidateIf((o) => typeof o.financialPerformanceMetricsSubType === 'string')
+    @IsString({ message: 'financialPerformanceMetricsSubType must be a string' })
+    @ValidateIf((o) => typeof o.financialPerformanceMetricsSubType === 'number')
+    @IsNumber({}, { message: 'financialPerformanceMetricsSubType must be a number' })
+    financialPerformanceMetricsSubType: string | number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'targetMarginAndBenchmarking is required' })
+    targetMarginAndBenchmarking: number;
+    
+    @IsOptional()
+    @IsNumber({}, { message: 'exitYear is required' })
+    exitYear: number;
+
+    @IsOptional()
+    @IsString({ message: 'exitMultipleExpected is required' })
+    exitMultipleExpected: string;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'exitInvestorMultipleAndBenchmarking is required' })
+    exitInvestorMultipleAndBenchmarking: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'probabilityOfFailure is required' })
+    probabilityOfFailure: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'requiredReturn is required' })
+    requiredReturn: number;
+}
+
 export class berkusValuationDto {
     @IsArray()
     @IsObject({ each: true })
@@ -523,6 +572,11 @@ export class StartupValuationDto {
 
     @IsOptional()
     @ValidateNested()
+    @Type(() => ventureCapitalDto)
+    ventureCapital: ventureCapitalDto;
+
+    @IsOptional()
+    @ValidateNested()
     @Type(() => berkusValuationDto)
     berkusValuation: berkusValuationDto;
 
@@ -535,4 +589,8 @@ export class StartupValuationDto {
     @ValidateNested({ each: true })
     @IsObject({ each: true })
     scoreCardValuation: Record<string, any>[];
+
+    @IsOptional()
+    @IsObject({ each: true })
+    ventureCapitalValuation: object;
 }

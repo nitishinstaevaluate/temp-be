@@ -1,7 +1,7 @@
 import { convertToNumberOrZero } from "src/excelFileServices/common.methods";
 import { V2_BS_RAW_LINE_ITEMS } from "src/excelFileServices/excelSheetConfig";
 
-export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale', 'berkus', 'riskFactor', 'scoreCard'];
+export const MODEL = ['FCFE', 'FCFF', 'Relative_Valuation', 'Excess_Earnings', 'CTM', 'NAV','ruleElevenUa','Market_Price', 'slumpSale', 'berkus', 'riskFactor', 'scoreCard', 'ventureCapital'];
 
 export const INCOME_APPROACH = ['FCFE','FCFF'];
 export const NET_ASSET_VALUE_APPROACH = ['NAV'];
@@ -5995,5 +5995,43 @@ export const SCORE_CARD_VALUATION_MAPPER = {
         total:0
       }
     ]
+  }
+}
+
+export const VENTURE_CAPITAL_VALUATION_MAPPER = {
+  ventureCapital: {
+    dbKey:'ventureCapitalValuation',
+    config:{
+      estimatedExitValue:{
+        key:"estimatedExitValue",
+        label:"Estimated Exit Value",
+        value:0
+      },
+      returnOnInvestment:{
+        key:"returnOnInvestment",
+        label:"Return On Investment",
+        value:0
+      },
+      presentPostMoneyValue:{
+        key:"presentPostMoneyValue",
+        label:"Present Value/Post Money Value Calculations",
+        type:"header"
+      },
+      presentValue:{
+        key:"presentValue",
+        label:"Present Value",
+        value:0
+      },
+      preMoneyValue:{
+        key:"preMoneyValue",
+        label:"Pre-Money Value",
+        value:0
+      },
+      vcOwnership:{
+        key:"vcOwnership",
+        label:"VC Ownership",
+        value:0
+      }
+    }
   }
 }
