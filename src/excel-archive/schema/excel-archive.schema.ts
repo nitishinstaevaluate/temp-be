@@ -27,6 +27,9 @@ export class ExcelArchive {
     @Prop({ type: Number })
     assessmentSheetRowCount: number;
 
+    @Prop({ type: Number })
+    costToDuplicateSheetRowCount: number;
+
     @Prop({ type: String })
     fileSize: string;
 
@@ -53,6 +56,9 @@ export class ExcelArchive {
 
     @Prop({ type: Array<Object>, required:false })
     assessmentSheetData: Array<object>;
+
+    @Prop({ type: Array<Object>, required:false })
+    costToDuplicateSheetData: Array<object>;
 
     @Prop({ default: () => new Date(), required: false })
     createdOn: Date;

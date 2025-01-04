@@ -31,6 +31,10 @@ export class ExcelArchiveDto {
     @IsOptional()
     @IsNumber({}, { message: 'assessmentSheetRowCount should be a number' })
     assessmentSheetRowCount: number;
+
+    @IsOptional()
+    @IsNumber({}, { message: 'costToDuplicateSheetRowCount should be a number' })
+    costToDuplicateSheetRowCount: number;
     
     @IsNotEmpty({ message: 'fileSize cannot be empty' })
     @IsString({ message: 'fileSize should be string' })
@@ -72,4 +76,9 @@ export class ExcelArchiveDto {
     @IsArray({ message: 'rule11UaSheetdata must be an array' })
     @ValidateNested({ each: true })
     rule11UaSheetdata: [];
+
+    @IsOptional()
+    @IsArray({ message: 'costToDuplicateSheetData must be an array' })
+    @ValidateNested({ each: true })
+    costToDuplicateSheetData: [];
   }

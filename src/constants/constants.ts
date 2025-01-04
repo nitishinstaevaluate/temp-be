@@ -2405,7 +2405,283 @@ export const ASSESSMENT_DATA = [
       }
     }
   ]
-  
+  export const COST_TO_DUPLICATE = [
+    {
+      "lineEntry": {
+          particulars : "Assets",
+          sysCode:10001,
+          editable:false,
+          header:true,
+          rowNumber:2
+      }
+    },
+    {
+      "lineEntry": {
+          particulars : "Tangible Assets",
+          sysCode:10002,
+          editable:false,
+          rowNumber:3,
+          subHeader:true,
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "- Other Tangible Assets",
+        sysCode:10003,
+        editable:true,
+        rowNumber:4
+      },
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Tangible Assets",
+        sysCode:10004,
+        editable:false,
+        rowNumber:5,
+        subHeader:true,
+        dependent:[10003],
+        formula:'currentOne4'
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Development Cost",
+        sysCode:10005,
+        editable:false,
+        rowNumber:6,
+        subHeader:true,
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Compile R&D Cost",
+        sysCode:10006,
+        editable:true,
+        rowNumber:7
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Salaries",
+        sysCode:10007,
+        editable:true,
+        rowNumber:8
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Prototypes",
+        sysCode:10008,
+        editable:true,
+        rowNumber:9
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Software Development",
+        sysCode:10009,
+        editable:true,
+        rowNumber:10
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Technology acquisition",
+        sysCode:10010,
+        editable:true,
+        rowNumber:11
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Development Cost",
+        sysCode:10011,
+        editable:false,
+        rowNumber:12,
+        subHeader:true,
+        dependent:[10006, 10007, 10008, 10009, 10010],
+        formula:'currentOne7+currentOne8+currentOne9+currentOne10+currentOne11'
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Operational Exp",
+        sysCode:10012,
+        editable:false,
+        rowNumber:13,
+        subHeader:true,
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Salary",
+        sysCode:10013,
+        editable:false,
+        rowNumber:14
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Wages",
+        sysCode:10014,
+        editable:true,
+        rowNumber:15
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Rent",
+        sysCode:10015,
+        editable:true,
+        rowNumber:16
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Utilities",
+        sysCode:10016,
+        editable:true,
+        rowNumber:17
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other Office exp",
+        sysCode:10017,
+        editable:true,
+        rowNumber:18
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Operational Exp.",
+        sysCode:10018,
+        editable:false,
+        subHeader:true,
+        rowNumber:19,
+        dependent:[10013, 10014, 10015, 10016, 10017],
+        formula:'currentOne14+currentOne15+currentOne16+currentOne17+currentOne18'
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Legal Cost",
+        sysCode:10019,
+        editable:false,
+        subHeader:true,
+        rowNumber:20
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Registration Fees",
+        sysCode:10020,
+        editable:true,
+        rowNumber:21
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Legal Fees",
+        sysCode:10021,
+        editable:true,
+        rowNumber:22
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Administrative Cost",
+        sysCode:10022,
+        editable:true,
+        rowNumber:23
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Exp for Patent and Trademarks",
+        sysCode:10023,
+        editable:true,
+        rowNumber:24
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Legal Cost",
+        sysCode:10024,
+        editable:false,
+        subHeader:true,
+        rowNumber:25,
+        dependent:[10020, 10021, 10022, 10023],
+        formula:'currentOne21+currentOne22+currentOne23+currentOne24'
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Other Cost",
+        sysCode:10025,
+        editable:false,
+        subHeader:true,
+        rowNumber:26
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Marketing Cost/Promotion exp",
+        sysCode:10026,
+        editable:true,
+        rowNumber:27
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Marketing Research Activities",
+        sysCode:10027,
+        editable:true,
+        rowNumber:28
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Loan (Principal + Interest)",
+        sysCode:10028,
+        editable:true,
+        rowNumber:29
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Other Cost",
+        sysCode:10029,
+        editable:false,
+        subHeader:true,
+        rowNumber:30,
+        dependent:[10026, 10027, 10028],
+        formula:'currentOne27+currentOne28+currentOne29'
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Cost",
+        sysCode:10030,
+        editable:false,
+        rowNumber:31,
+        subHeader:true,
+        dependent:[10006, 10007, 10008, 10009, 10010, 10013, 10014, 10015, 10016, 10017, 10020, 10021, 10022, 10023, 10026, 10027, 10028],
+        formula:'currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne21+currentOne22+currentOne23+currentOne24+currentOne27+currentOne28+currentOne29',
+      }
+    },
+    {
+      "lineEntry": {
+        particulars : "Total Cost of Duplicate Value",
+        sysCode:10031,
+        editable:false,
+        rowNumber:32,
+        header:true,
+        dependent:[10003, 10006, 10007, 10008, 10009, 10010, 10013, 10014, 10015, 10016, 10017, 10020, 10021, 10022, 10023, 10026, 10027, 10028],
+        formula:'currentOne4+currentOne7+currentOne8+currentOne9+currentOne10+currentOne11+currentOne14+currentOne15+currentOne16+currentOne17+currentOne18+currentOne21+currentOne22+currentOne23+currentOne24+currentOne27+currentOne28+currentOne29'
+      }
+    }
+  ]
 
 //   export const ASSESSMENT_SHEET_DATA=[ // keep this for reference,once assessment table is implemented remove
 //     {
@@ -4957,6 +5233,11 @@ export const EXCEL_CONVENTION = {
     key: 'Assessment of Working Capital',
     EAkey:'assessmentSheetData',
     EAcountCheck:'assessmentSheetRowCount'
+  },
+  'Cost To Duplicate': {
+    key: 'Cost To Duplicate',
+    EAkey:'costToDuplicateSheetData',
+    EAcountCheck:'costToDuplicateRowCount'
   }
 }
 
@@ -5433,7 +5714,7 @@ function cashFlowKeyMapper(key, firstColumnKey){
   return GET_DATE_MONTH_YEAR_FORMAT.test(key) ? (columnKey || key) : key;
 } 
 
-export const XL_SHEET_ENUM = [ 'dcfApproach', 'ruleElevenUaApproach', 'marketPriceApproach', 'navApproach', 'slumpSaleApproach' ];
+export const XL_SHEET_ENUM = [ 'dcfApproach', 'ruleElevenUaApproach', 'marketPriceApproach', 'navApproach', 'slumpSaleApproach' , 'startUpApproach'];
 
 export const COST_OF_EQUITY_METHOD = {
   capm:{

@@ -47,6 +47,19 @@ export class ExportTemplateController {
       res.send(buffer);
     return;
     }
+    if(modelType === XL_SHEET_ENUM[5]){
+      const filePath = `template/costToDuplicate.xlsx`;
+      const buffer = fs.readFileSync(filePath);
+
+      res.setHeader('Content-Type', 'application/vnd.ms-excel');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename= Template-${new Date().getTime()}.xlsx`,
+      );
+    
+      res.send(buffer);
+    return;
+    }
 
     let PLheaderRow = ['A1']; // Starting of PL header row
     let BSheaderRow = ['A1']; // Starting of BS header row

@@ -7,7 +7,7 @@ import * as dateAndTime from 'date-and-time';
 import { Observable, throwError, of, from } from 'rxjs';
 import { catchError, findIndex, last, switchMap } from 'rxjs/operators';
 import * as puppeteer from 'puppeteer';
-import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects, ALL_MODELS, GET_DATE_MONTH_YEAR_FORMAT, CURRENT_YEAR_CYCLE, XL_SHEET_ENUM } from 'src/constants/constants';
+import { ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, CASHFLOW_HEADER_LINE_ITEM, CASHFLOW_LINE_ITEMS_SKIP, CASH_FLOW, DATE_REGEX, DOCUMENT_UPLOAD_TYPE, EXCEL_CONVENTION, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, SLUMP_SALE, V2_ASSESSMENT_OF_WORKING_CAPITAL, V2_BALANCE_SHEET, V2_PROFIT_LOSS, YEAR_REGEX, assessmentOfWCformulas, cashFlowFormulas, mainLogo, sortArrayOfObjects, ALL_MODELS, GET_DATE_MONTH_YEAR_FORMAT, CURRENT_YEAR_CYCLE, XL_SHEET_ENUM, COST_TO_DUPLICATE } from 'src/constants/constants';
 // import { ALL_MODELS, ASSESSMENT_DATA, AWS_STAGING, BALANCE_SHEET, BETA_FROM, CAPITAL_STRUCTURE_TYPE, DOCUMENT_UPLOAD_TYPE, MARKET_APPROACH_REPORT_LINE_ITEM, MODEL, PROFIT_LOSS, RELATIVE_PREFERENCE_RATIO, REPORTING_UNIT, RULE_ELEVEN_UA, mainLogo } from 'src/constants/constants';
 import { ValuationsService } from 'src/valuationProcess/valuationProcess.service';
 import { FCFEAndFCFFService } from 'src/valuationProcess/fcfeAndFCFF.service';
@@ -261,6 +261,47 @@ export class ExcelSheetService {
                                   })
                                  )
           
+                              break;   
+                              
+                              case EXCEL_CONVENTION['Cost To Duplicate'].key:
+                                if (!workbook.SheetNames.includes(sheetName)) {
+                                  return throwError( {
+                                    message: `${sheetName} Sheet not found`,
+                                    status: false
+                                  });
+                                }
+                                const costToDuplicateSheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                                 return from(this.transformData(costToDuplicateSheetData)).pipe(
+                                  switchMap((excelData)=>{
+                                    return from(this.createStructure(excelData,sheetName)).pipe(
+                                      switchMap((structure)=>{
+                                        const costToDuplicatePayload = {
+                                          fileName,
+                                          filePath,
+                                          fileSize,
+                                          sheetName,
+                                          processStateId,
+                                          structure
+                                        }
+                                        return from(this.updateCostToDuplicateArchive(costToDuplicatePayload,request)).pipe(
+                                          switchMap((archiveResponse)=>{
+                                            return of({
+                                              data:archiveResponse.data,
+                                              msg:`Excel Sheet Fetched`,
+                                              status:true
+                                            });
+                                          }),catchError((error)=>{
+                                            return throwError(error);
+                                          })
+                                        )
+                                        
+                                      })
+                                    )
+                                  }),
+                                  catchError((error)=>{
+                                    return throwError(error)
+                                  })
+                                 )
                               break;   
                             }
                           }),
@@ -820,6 +861,35 @@ export class ExcelSheetService {
             switchMap((excelArchiveResponse)=>{
               return of({
                 data:excelArchive.rule11UaSheetdata,
+                msg:`Excel Sheet Fetched`,
+                status:true
+              });
+            }),
+            catchError((error)=>{
+              return throwError(error)
+            })
+           )
+        })
+      )
+    }
+    updateCostToDuplicateArchive(payload, request){
+      let excelArchive = new ExcelArchiveDto();
+      excelArchive.fileName = payload.fileName;
+      excelArchive.fileSize = payload.fileSize;
+      excelArchive.fileType = payload.fileType;
+      excelArchive.processStateId = payload.processStateId;
+      excelArchive.sheetUploaded = EXCEL_CONVENTION['Cost To Duplicate'].key;
+      excelArchive.status = 'complete';
+      excelArchive.costToDuplicateSheetData = payload?.structure?.costToDuplicateStructure;
+      excelArchive.costToDuplicateSheetRowCount = payload?.structure?.rows;
+
+      return from(this.fetchUserInfo(request)).pipe(
+        switchMap((authUser)=>{
+          excelArchive.importedBy = authUser?.userInfo?.userId;
+           return from(this.excelArchiveService.upsertExcel(excelArchive)).pipe(
+            switchMap((excelArchiveResponse)=>{
+              return of({
+                data:excelArchive.costToDuplicateSheetData,
                 msg:`Excel Sheet Fetched`,
                 status:true
               });
@@ -4111,10 +4181,7 @@ async cashFlowCalculations(payload, processStateId, provDate){
 async createStructure(data,sheetName){
   data.splice(0,1) // removing first element from array, since its consist only column headers
   
-  let balanceSheetStructure = [];
-  let profitAndLossSheetStructure = [];
-  let ruleElevenUaStructure = [];
-  let slumpSaleStructure = [];
+  let balanceSheetStructure = [], profitAndLossSheetStructure = [], ruleElevenUaStructure = [], slumpSaleStructure = [], costToDuplicateStructure = [];
   if(sheetName === 'BS'){
     let rows = 0;
 
@@ -4168,6 +4235,19 @@ async createStructure(data,sheetName){
     })
     return {slumpSaleStructure,rows};
   }
+  else if(sheetName === EXCEL_CONVENTION['Cost To Duplicate'].key){
+    let rows = 0
+    data.map((element)=>{
+      const {Particulars,...rest} = element; 
+      for (const lineItems of COST_TO_DUPLICATE){
+        if(element.Particulars === lineItems.lineEntry.particulars){
+          costToDuplicateStructure.push({lineEntry:lineItems.lineEntry,...rest})
+          rows ++;
+        }
+      }
+    })
+    return {costToDuplicateStructure,rows};
+  }
 }
 
 async updateFinancialSheet(filepath){
@@ -4220,12 +4300,11 @@ async uploadExcelProcess(formData, processId, modelName, request){
     const {validationStat, errorStack} = await this.validateExcelTemplate(formData, modelName);
     if(validationStat) throw new NotFoundException(errorStack.join('\n')).getResponse();
 
-    if(processStateId && processStateId !== "null") await this.excelArchiveService.removeExcelByProcessId(processStateId);
+    const boolProcessIdInvalid = !processStateId || processStateId === "null";
+    if(!boolProcessIdInvalid) await this.excelArchiveService.removeExcelByProcessId(processStateId);
 
     const uploadedFileData: any =  await this.pushInitialFinancialSheet(formData);
 
-    const boolProcessIdInvalid = !processStateId || processStateId === "null";
-    
     const exportedExcelResponse:any =  await this.uploadExportableExcelInS3(formData);
 
     if(!exportedExcelResponse?.excelSheetId) throw new Error(exportedExcelResponse).message;
@@ -4316,7 +4395,7 @@ computeProportions(valuationResult, proportion, getCapitalStructure){
 }
 
 async validateExcelTemplate(formData, modelType){
-  if(modelType === XL_SHEET_ENUM[1]) return {validationStat: false};
+  if(modelType === XL_SHEET_ENUM[1] || modelType === XL_SHEET_ENUM[5]) return {validationStat: false};
   const errorSet = [];
 
   let workbook = xlsx.readFile(path.join(process.cwd(), 'uploads', formData.filename));
@@ -4580,6 +4659,9 @@ async loadExcelJSONintoDB(modelName, uploadedFileData, request, processStateId){
   if(modelName === XL_SHEET_ENUM[2]){
     await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['P&L'].key, request, processStateId).toPromise();
     await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['BS'].key, request, processStateId).toPromise();
+  }
+  if(modelName === XL_SHEET_ENUM[5]){
+    await this.getSheetData(uploadedFileData.excelSheetId, EXCEL_CONVENTION['Cost To Duplicate'].key, request, processStateId).toPromise();
   }
   return true;
 }
