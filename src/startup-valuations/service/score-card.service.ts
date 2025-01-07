@@ -48,7 +48,7 @@ export class ScoreCardService{
             let pointer = 0, total = 0;
             while(pointer < config.length){
                 const doaValue = data[config[pointer]?.controlDoa];
-                if(doaValue){
+                if(doaValue !== null || doaValue !== undefined){
                     config[pointer].doa = doaValue;
                     config[pointer].weightAssign = defaultWeightage;
                     config[pointer].weightedValue = convertToNumberOrZero(doaValue) * convertToNumberOrZero(defaultWeightage)/100;
