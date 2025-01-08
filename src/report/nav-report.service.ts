@@ -247,6 +247,24 @@ export class navReportService {
             return '';
             })
 
+            hbs.registerHelper('isValuePerLessThanFairValue',(modelName)=>{
+            modelName = modelName.split(',');
+            let lessThanFairValue = false;
+                 modelName.flatMap((models) => {
+                    valuationResult.modelResults.flatMap((response) => {
+                    if (response.model === models && models === 'NAV') {
+                        const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
+                        const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                        if(fairValue < faceValue){
+                            lessThanFairValue = true;
+                        }
+                    }
+                    });
+                });
+                return lessThanFairValue;
+             
+            })
+
             hbs.registerHelper('isValuePerShareNegative',(modelName)=>{
             modelName = modelName.split(',');
             let isNegativeValuePerShare = false;
@@ -254,8 +272,7 @@ export class navReportService {
                     valuationResult.modelResults.flatMap((response) => {
                     if (response.model === models && models === 'NAV') {
                         const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
-                        const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                        if(fairValue < faceValue){
+                        if(fairValue < 0){
                             isNegativeValuePerShare = true;
                         }
                     }
@@ -687,6 +704,8 @@ export class navReportService {
         if(parameters.header) {fontWeightStndrd = '600';}
         if(parameters.subHeader) {paddingLeftStndrd = '9pt';}
         if(parameters.nestedSubHeader) paddingLeftStndrd = '15pt';
+
+        if(parameters.fieldName.toLowerCase() === 'value per share') parameters.fieldName === 'Value Per Share'
 
         
         let emptyRow = 

@@ -591,7 +591,7 @@
             Valuer with IBBI Registration No. </span><span class="s3">{{registeredValuerIbbiId}}</span><span class="p"> (‘</span><span class="s3">{{registeredValuerName}}</span><span class="p">’ or ‘Independent Valuer’) has been
             appointed to determine fair value of equity shares of </span>
             <span class="s3">{{companyName}}</span>
-            for compliance with for compliance with as per Section 
+            for compliance with Section 
             62(1)(c) of the Companies Act, 2013 (as amended) read with Rule 13 of the Companies 
             (Share Capital and Debenture) Rules, 2014, and Regulation 160 of the Securities and 
             Exchange Board of India (Issue of Capital and Disclosure Requirements) Regulations, 2018, 
@@ -1849,12 +1849,20 @@
         {{{iterateNAVData}}}
         <!-- NAV table ends -->
 
+        {{#if (isValuePerLessThanFairValue 'NAV')}}
         {{#if (isValuePerShareNegative 'NAV')}}
         <p style="line-height: 150%;text-align: justify;margin-left:8pt;padding-top: 2%;" >
             *Since the fair value of the company comes out to be negative and as per the provisions of Companies Act, 
             2013 a company cannot issue shares at a discount, 
             the face value per share of the company is considered as Fair Value per share i.e INR {{faceValue}} ({{faceValueToWords}}).
         </p>
+        {{else}}
+        <p style="line-height: 150%;text-align: justify;margin-left:8pt;padding-top: 2%;" >
+            *Since the fair value of the company is less than the face value and as per the provisions of Companies Act, 
+            2013 a company cannot issue shares at a discount, 
+            the face value per share of the company is considered as Fair Value per share i.e INR {{faceValue}} ({{faceValueToWords}}).
+        </p>
+        {{/if}}
         {{/if}}
     </div>
 {{/modelIncludes}}

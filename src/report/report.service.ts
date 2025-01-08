@@ -1205,7 +1205,7 @@ export class ReportService {
                 if (response.model === models && models === 'NAV') {
                     const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
                     const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                    if(fairValue < faceValue){
+                    if(fairValue < 0){
                         isNegativeValuePerShare = true
                     }
                 }
@@ -1213,6 +1213,24 @@ export class ReportService {
             });
             return isNegativeValuePerShare;
         })
+
+        hbs.registerHelper('isValuePerLessThanFairValue',(modelName)=>{
+          modelName = modelName.split(',');
+          let lessThanFairValue = false;
+               modelName.flatMap((models) => {
+                  valuationResult.modelResults.flatMap((response) => {
+                  if (response.model === models && models === 'NAV') {
+                      const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
+                      const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                      if(fairValue < faceValue){
+                          lessThanFairValue = true;
+                      }
+                  }
+                  });
+              });
+              return lessThanFairValue;
+           
+          })
 
         hbs.registerHelper('faceValue',()=>{
           if(valuationResult?.inputData[0]?.faceValue){

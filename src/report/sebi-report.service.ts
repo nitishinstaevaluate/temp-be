@@ -981,7 +981,7 @@ export class sebiReportService {
                   if (response.model === models && models === 'NAV') {
                       const bookValue = response?.valuationData?.valuePerShare?.bookValue || 0;
                       const faceValue = valuationResult.inputData[0]?.faceValue || 0;
-                      if(bookValue < faceValue){
+                      if(bookValue < 0){
                           isNegativeValuePerShare = true
                       }
                   }
@@ -989,6 +989,24 @@ export class sebiReportService {
               });
               return isNegativeValuePerShare;
           })
+
+          hbs.registerHelper('isValuePerLessThanFairValue',(modelName)=>{
+            modelName = modelName.split(',');
+            let lessThanFairValue = false;
+                 modelName.flatMap((models) => {
+                    valuationResult.modelResults.flatMap((response) => {
+                    if (response.model === models && models === 'NAV') {
+                        const fairValue = response?.valuationData?.valuePerShare?.fairValue || 0;
+                        const faceValue = valuationResult.inputData[0]?.faceValue || 0;
+                        if(fairValue < faceValue){
+                            lessThanFairValue = true;
+                        }
+                    }
+                    });
+                });
+                return lessThanFairValue;
+             
+            })
 
           hbs.registerHelper('checkIfFcff',()=>{
             let isFcff = false;
