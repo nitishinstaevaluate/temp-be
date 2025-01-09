@@ -705,7 +705,7 @@ export class navReportService {
         if(parameters.subHeader) {paddingLeftStndrd = '9pt';}
         if(parameters.nestedSubHeader) paddingLeftStndrd = '15pt';
 
-        if(parameters.fieldName.toLowerCase() === 'value per share') parameters.fieldName === 'Value Per Share (INR)'
+        if(parameters?.fieldName && parameters?.fieldName?.trim().toLowerCase() === 'value per share') parameters.fieldName = 'Value Per Share (INR)';
 
         
         let emptyRow = 
