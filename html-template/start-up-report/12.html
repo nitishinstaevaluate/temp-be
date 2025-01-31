@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+	font-family:'Lora', serif;
+	margin: 0;
+	padding: 0;
+	}
+
+	.box-12 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left-12, .right-12 {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.footer-12 {
+		text-align: center;
+	}
+
+	.footer-line-12 {
+		border-top: 2px solid #000;
+		padding: 6px 0;
+	}
+
+	.footer-text-12 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential-12 {
+		font-size:14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-number-12 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+	.split-section-12 {
+		display: flex;
+		padding-top: 1%;
+		padding-bottom: 1%;
+	}
+
+	.split-section-12 .left {
+		margin-left: auto;
+		margin-right: auto;
+		width: 50%;
+		padding-right: 7px;
+	}
+
+	.split-section-12 .right {
+		margin-left: auto;
+		margin-right: auto;
+		width:42%;
+		padding-left: 7px;
+	}
+
+
+	.sub-header-12 {
+		text-align: left;
+		margin-top: 0px;
+		margin-bottom: 0px;
+		color: #da6d24;
+	}
+
+	.sub-header-12 h2 {
+		font-size: 13px;
+		text-align: justify;
+		/* width: 90%; */
+	}
+
+	.page-12-main-content{
+		padding-top: 0px;
+	}
+	.page-12-main-content p {
+		font-size: 10px;
+		padding-top:4px;
+		padding-bottom:4px;
+		margin-bottom:0px;
+		margin-top:0px;
+		text-align: justify;
+	}
+	.table-12 {
+      width: 100%;
+      border-collapse: collapse;
+	  margin: auto;
+	  /* padding-top: 1%; */
+    }
+    .table-12 th,.table-12 td {
+      padding: 0px;
+      border: 1px solid #ddd;
+      text-align: center;
+	  font-size: 6px;
+    }
+    .table-12 th {
+      /* background-color: #f2f2f2; */
+	  background-color: #5393cc;
+	  color: white;
+    }
+	.table-12 tr:nth-child(even) {
+		background-color: #cedef3;
+	}
+
+	.table-12 tr:nth-child(odd) {
+		background-color: #ffffff;
+	}
+
+	@page rotate {
+		size: landscape;
+	}
+
+	.rotated_class_12 {
+		page: rotate;
+	}
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;margin: 0;width: 100%;">
+		<div  class="rotated_class_12" style="padding: 1%;">
+			<div style="border: 2px solid #3f8771;padding: 15px;padding-top: 1px; padding-bottom: 1px;">
+				<div class="box-12">
+				  <div class="left-12">
+					<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;">Historical Financials</p>
+				  </div>
+				  <div class="right-12">
+					<p class="draft">Draft for discussion purpose only</p>
+				  </div>
+				</div>
+				<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Historical Financials - Balance Sheet</h2>
+			</div>
+			
+		
+			<div class="split-section-12">
+				<div class="left">
+					<table class="table-12">
+						<thead>
+						  <tr>
+							<th>Description</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+							<th>2023-24</th>
+						  </tr>
+						</thead>
+						<tbody>
+						  <tr>
+							<td>Row 1 Description</td>
+							<td>1</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						  <tr>
+							<td>Row 2 Description</td>
+							<td>2</td>
+							<td>3</td>
+							<td>4</td>
+							<td>5</td>
+							<td>6</td>
+							<td>7</td>
+							<td>8</td>
+							<td>9</td>
+							<td>10</td>
+							<td>11</td>
+							<td>12</td>
+						  </tr>
+						</tbody>
+					  </table>
+				</div>
+				<div class="right">
+					<div class="sub-header-12">
+						<h2 style="font-size: 13px;">Key Points:
+						</h2>
+					</div>
+	
+					<div class="page-12-main-content">
+						<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Tangible assets as at the Valuation Date comprises________________.</p>
+						<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Non-current assets as at the Valuation Date includes long term loans & advances  of INR XXXX million, other non-current assets of INR XX million, deferred tax  asset of INR XX million.</p>
+						<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Revenue from operations constituted ~XX per cent of total revenue for  FYXX amounting to INR XXXX million and other income constituted XX  per cent of total revenue for FYXX amounting to INR XXXX million.</p>
+						<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Equity Share Capital of the company as of XX.XX.XXX comprises XXXXX  shares of face value INR 10.0 each.</p>
+						<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Non-current liabilities as at the Valuation Date comprises long term borrowings of  INR XX million, deferred tax liability of INR XX million, other long-term liabilities  of INR XX million and long-term provisions of INR XX million.</p>
+						<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Current liabilities as at the Valuation Date comprises short term borrowings of  INR XX million, trade payables of INR XX million, other current liabilities of  INR XX million and short-term provision of INR XX million.</p>
+					</div>
+				</div>
+			</div>
+	
+				<div class="footer-12">
+					<div class="footer-line-12"></div>
+					<div class="footer-text-12">
+					  <span class="confidential-12">Strictly private and confidential</span>
+					  <span class="page-number-12">Page 11</span>
+					</div>
+				  </div>
+		</div>
+	</div>
+</body>
+</html>
+

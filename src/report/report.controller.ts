@@ -152,4 +152,14 @@ export class ReportController {
   @Headers() headers: Headers) {
     return await this.reportService.elevenUaMrlReport(processStateId, res, formatType, headers );
   }
+
+  @UseGuards(KeyCloakAuthGuard)
+  @Get('start-up-valuation-report/:processStateId/:type')
+  async generateStartUpValuationReport(
+  @Param('processStateId') processStateId : string,
+  @Param('type') formatType: string,
+  @Res() res,
+  @Headers() headers: Headers) {
+    return await this.reportService.generateStartUpValuationReport(res, processStateId, formatType);
+  }
 }

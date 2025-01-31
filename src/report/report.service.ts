@@ -35,6 +35,7 @@ import { financialHelperService } from './helpers/financial-helpers.service';
 import { KeyCloakAuthGuard } from 'src/middleware/key-cloak-auth-guard';
 import { userRoles } from 'src/library/enums/user-roles.enum';
 import { reportClaims } from 'src/library/enums/report-claim-mapping-enum';
+import { StartUpReportService } from './start-up-report.serivice';
 
 @Injectable()
 export class ReportService {
@@ -59,7 +60,8 @@ export class ReportService {
     private thirdpartyApiAggregateService: thirdpartyApiAggregateService,
     private navReportService: navReportService,
     private terminalValueWorkingService: terminalValueWorkingService,
-    private financialHelperService: financialHelperService
+    private financialHelperService: financialHelperService,
+    private startUpReportService: StartUpReportService
     ){}
 
     async getReport(id,res, req,approach, formatType){
@@ -3889,6 +3891,11 @@ export class ReportService {
           return  reportDetails.registeredValuerDetails[0].registeredValuerIbbiId; 
       return '';
     })
+    hbs.registerHelper('registeredValuerCopNo',()=>{
+      if(reportDetails.registeredValuerDetails[0]) 
+          return  reportDetails.registeredValuerDetails[0].copNo; 
+      return '';
+    })
     hbs.registerHelper('registeredValuerQualifications',()=>{
       if(reportDetails.registeredValuerDetails[0]) 
           return  reportDetails.registeredValuerDetails[0].registeredValuerQualifications; 
@@ -4240,5 +4247,9 @@ async validateReportClaims(roles, purposeOfReport){
 
 navHTMLBinding(navData, splittingIndex?){
   return this.navReportService.navTableStructure(navData, splittingIndex);
+}
+
+async generateStartUpValuationReport(response, processId, formatType){
+  return await this.startUpReportService.generatePDF(response)
 }
 }

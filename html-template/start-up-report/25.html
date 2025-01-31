@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+		font-family:'Lora', serif;
+		margin: 0;
+		padding: 0;
+	}
+
+	.box-25 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left-25, .right-25 {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.footer-25 {
+		padding-top: 58%;
+		text-align: center;
+	}
+	.footer-25-b {
+		padding-top: 22%;
+		text-align: center;
+	}
+
+	.footer-line-25 {
+		border-top: 2px solid #000;
+		padding: 6px 0;
+	}
+
+	.footer-text-25 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential-25 {
+		font-size:14px;
+		font-weight: bold;
+		color: #3f8771 !important;
+	}
+
+	.page-number-25 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-25-main-content{
+		/* padding: 3%; */
+		/* padding-top: 0px; */
+		padding: 2%;
+	}
+	.page-25-main-content p {
+		font-size: 10px;
+		padding-top:4px ;
+		padding-bottom:4px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		text-indent: -10px;
+		padding-left: 1%;
+	}
+	.table-25 {
+      width: 100%;
+      border-collapse: collapse;
+	  margin: auto;
+	  padding-top: 1%;
+    }
+    .table-25 th, .table-25 td {
+      padding: 0px;
+      border: 1px solid #3f8771;
+      text-align: center;
+	  font-size: 13px;
+	  padding: 1px;
+    }
+    .table-25 th {
+	  background-color: #3f8771;
+	  color: white;
+    }
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;margin: 0;width: 100%;"></div>
+		<div style="padding: 4%;">
+			<div style="border: 2px solid #3f8771;padding: 15px;padding-top: 1px; padding-bottom: 1px;">
+				<div class="box-25">
+				  <div class="left-25">
+					<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;font-size: 16px;">Valuation Approaches And Methodologies</p>
+				  </div>
+				  <div class="right-25">
+					<p class="draft">Draft for discussion purpose only</p>
+				  </div>
+				</div>
+				<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Selection of applicable methodologies</h2>
+			</div>
+			<p style="padding-top: 3%;"></p>
+		
+			<table class="table-25">
+				<thead>
+				  <tr>
+					<th>Approach</th>
+					<th>Valuation Methodologies</th>
+				  </tr>
+				</thead>
+				<tbody>
+				  <tr>
+					<td style="width: 20%;">
+						<div class="page-25-main-content" >
+						<p style="text-indent: 0px; padding-left: 2px;">Income Approach</p>
+						<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Discounted Cash Flow ("DCF")</p>
+					</div>
+					</td>
+					<td>
+						<div class="page-25-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Under a DCF approach, forecast cash flows are discounted back to the present date, generating a net present value for the  cash flow stream of the business. A terminal value at the end of the explicit forecast period is then determined and that value  is also discounted back to the valuation date to give an overall value for the business.</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>A Discounted cash flow methodology typically requires the forecast period to be of such a length to enable the business to  achieve a stabilized level of earnings, or to be reflective of an entire operation cycle for more cyclical industries.</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>The rate at which the future cash flows are discounted ("the discount rate") should reflect not only the time value of money,  but also the risk associated with the business' future operations. The discount rate most generally employed is Weighted  Average Cost of Capital ("WACC") or Cost of Equity ("Ke"), reflecting an optimal as opposed to actual financing structure. In  order to compute the discount rate we use the WACC methodology as explained below:</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span> 
+								<span style="font-weight: bold;color: #df6a1c;font-size: 13px;">
+									WACC = Ke * (E/(D+E)) + Kd * (1-t) * (D/(D+E))	<br>
+								</span>
+
+								<span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Ke is derived using Capital Asset Pricing Model explained as below:  Where	Ke = Rf + Beta * (Rm – Rf) + Alpha<br>
+								
+								<span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Ke = Cost of Equity	Where<br>
+								
+								<span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>E = Market value of Equity	Rf = Risk free rate<br>
+								
+								<span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Kd = Cost of Debt	Rm = Expected average return of the Market<br>
+								
+								<span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>D = Market value of Debt	Rp = (Rm – Rf) = Market Risk Premium  </p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>In calculating the terminal value, regard must be given to the business' potential for further growth beyond the explicit  forecast period. The H-Model is a two-stage model in that it calculates the present value of future cash flows in two key  phases. The H-Model accounts for the gradual change in dividend rates over time.</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>The rate at which future cash flows are discounted should reflect not only the time value of the cash flows but also the risk  associated with the business' future operations. This means that in order for a DCF to produce a sensible valuation figure,  the importance of the quality of the underlying cash flow forecasts is fundamental.</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>We have used DCF as the primary method of valuation of the Company based on the Management Business Plan provided  by the Client.</p>
+						</div>
+					</td>
+				  </tr>
+				  
+				  
+				</tbody>
+			  </table>
+	
+				<div class="footer-25">
+					<div class="footer-line-25"></div>
+					<div class="footer-text-25">
+					  <span class="confidential-25">Strictly private and confidential</span>
+					  <span class="page-number-25">Page 24</span>
+					</div>
+				  </div>
+		</div>
+
+
+
+	<div style="page-break-before: always;margin: 0;width: 100%;"></div>
+		<div style="padding: 4%;">
+			<div style="border: 2px solid #3f8771;padding: 15px;padding-top: 1px; padding-bottom: 1px;">
+				<div class="box-25">
+				  <div class="left-25">
+					<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;font-size: 16px;">Valuation Approaches And Methodologies</p>
+				  </div>
+				  <div class="right-25">
+					<p class="draft">Draft for discussion purpose only</p>
+				  </div>
+				</div>
+				<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Selection of applicable methodologies</h2>
+			</div>
+			<p style="padding-top: 3%;"></p>
+		
+			<table class="table-25">
+				<thead>
+				  <tr>
+					<th>Approach</th>
+					<th>Valuation Methodologies</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Market Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Comparable Companies("CoCo")</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Under Comparable Companies Method, the value of shares / business of a company is determined based on market multiples  of publicly traded comparable companies. Although no two companies are entirely alike, the companies selected as  comparable companies should be engaged in the same or similar line of business as the subject companies. The appropriate  multiple is generally based on the performance of listed companies with similar business models and size.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Market Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Comparable Transactions("CoTrans")</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Under Comparable Transaction Method, the value of shares / business of a company is determined based on market multiples  of publicly disclosed transactions in the similar space as that of the subject company.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Due to different purposes of investments, transaction rationale and synergy benefits, different control premiums and minority  discounts are embedded in the transaction values. Multiples are generally based on data from recent transactions in a  comparable sector, but with appropriate adjustment after consideration has been given to the specific characteristics of the  business being valued. The multiples of comparable transactions include premiums and discounts for which information is not  available in the public domain. Due to lack of information on premium and discount of comparable transactions, the method has  not been considered for the valuation of the Company.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Market Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Market Price Method</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Under this approach, the value of the business is arrived at considering the market price of the company based on the last six-  month volume traded weighted average of closing price on the stock exchange where the company's shares are most  frequently traded. This method is applicable for valuation of listed companies.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Market Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Price of Recent Investment("PORI")</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Under Price Of Recent Investments Method, the value of shares/ business of a company is determined based on the implied  transaction multiple of the prior investment transactions in the subject company.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Transaction Multiples are normally adjusted for the timing of the transaction and the intermediate changes in the stage of  business, earning margin, growth rate, etc.</p>
+							</div>
+						</td>
+					  </tr>
+					<tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Cost Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Net Asset Value</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Under the net asset value approach, total value is based on the sum of net asset value as recorded on the balance sheet.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Cost Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Replacement Cost Method</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Replacement Cost approach involves valuing an asset based on the cost that a market participant shall have to incur to  recreate an asset with substantially the same utility (comparable utility) as that of the asset to be valued, adjusted for  obsolescence.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-25-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Cost Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Net Realizable Value(NRV)</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-25-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Net realizable value (NRV) is the value of an asset that can be realized upon the sale of the asset, less a reasonable estimate  of the costs associated with either the eventual sale or the disposal of the asset in question.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Net realizable value is most applicable for businesses where the value lies in the underlying assets and not the ongoing  operations of the business. This is mostly used in Liquidation scenarios.</p>
+							</div>
+						</td>
+					  </tr>
+				</tbody>
+			  </table>
+	
+				<div class="footer-25-b">
+					<div class="footer-line-25"></div>
+					<div class="footer-text-25">
+					  <span class="confidential-25">Strictly private and confidential</span>
+					  <span class="page-number-25">Page 25</span>
+					</div>
+				  </div>
+		</div>
+</body>
+</html>

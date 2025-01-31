@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+		font-family:'Lora', serif;
+		margin: 0;
+		padding: 0;
+	}
+
+	.box-27 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left-27, .right-27 {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.footer-27 {
+		padding-top: 37%;
+		text-align: center;
+	}
+	.footer-27-b {
+		padding-top: 40%;
+		text-align: center;
+	}
+
+	.footer-line-27 {
+		border-top: 2px solid #000;
+		padding: 6px 0;
+	}
+
+	.footer-text-27 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential-27 {
+		font-size:14px;
+		font-weight: bold;
+		color: #3f8771 !important;
+	}
+
+	.page-number-27 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-27-main-content{
+		/* padding: 3%; */
+		/* padding-top: 0px; */
+		padding: 2%;
+	}
+	.page-27-main-content p {
+		font-size: 10px;
+		padding-top:4px ;
+		padding-bottom:4px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		text-indent: -10px;
+		padding-left: 1%;
+	}
+	.table-27 {
+      width: 100%;
+      border-collapse: collapse;
+	  margin: auto;
+	  padding-top: 1%;
+    }
+    .table-27 th, .table-27 td {
+      padding: 0px;
+      border: 1px solid #3f8771;
+      text-align: center;
+	  font-size: 13px;
+	  padding: 1px;
+    }
+    .table-27 th {
+	  background-color: #3f8771;
+	  color: white;
+    }
+	.table-inner-27 td{
+		padding: 0px;
+		border: none;
+		text-align: center;
+		font-size: 10px;
+		padding: 1px;
+	}
+	.table-inner-27 .text-table-27{
+		width: 50%;
+		text-align: left;
+		padding-top:10px ;
+		padding-bottom:10px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		padding-left: 1%;
+		font-weight: bold;
+		color: #3f6461;
+	}
+	.table-inner-27 .last{
+		text-align: left;
+		padding-top:4px ;
+		padding-bottom:4px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		padding-left: 1%;
+		line-height: 175%;
+	}
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;margin: 0;width: 100%;"></div>
+		<div style="padding: 4%;">
+			<div style="border: 2px solid #3f8771;padding: 15px;padding-top: 1px; padding-bottom: 1px;">
+				<div class="box-27">
+				  <div class="left-27">
+					<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;font-size: 16px;">Valuation Approaches And Methodologies</p>
+				  </div>
+				  <div class="right-27">
+					<p class="draft">Draft for discussion purpose only</p>
+				  </div>
+				</div>
+				<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Selection of applicable methodologies</h2>
+			</div>
+			<p style="padding-top: 3%;"></p>
+		
+			<table class="table-27">
+				<thead>
+				  <tr>
+					<th>Approach</th>
+					<th>Valuation Methodologies</th>
+				  </tr>
+				</thead>
+				<tbody>
+				  <tr>
+					<td style="width: 20%;">
+						<div class="page-27-main-content" >
+						<p style="text-indent: 0px; padding-left: 2px;">Qualitative Approach</p>
+						<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Berkus Method</p>
+					</div>
+					</td>
+					<td>
+						<div class="page-27-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>The Berkus Method assesses the value of a startup based on qualitative factors critical to the business's early development and future success. These factors typically include the strength of the idea, prototype, management team, strategic relationships, and the ability to roll out the product or service. The process is designed to assign a pre-money valuation by determining the degree of achievement for each factor.</p>
+							
+							<p style="padding-top: 2%;padding-bottom: 1%;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><span style="font-weight: bold;">Key Milestones:</span></p>
+							<table style="width: 100%; border-collapse: collapse; font-size: 14px;" class="table-inner-27">
+								<tr>
+									<td style="color: #da6d24; padding-right: 1%; font-size: 10px; vertical-align: middle;">&#8212;</td>
+									<td class="text-table-27">Sound Idea</td>
+									<td class="last">The strength of the business idea, the core concept that drives the startup.</td>
+								</tr>
+								<tr style="border-top: 1px solid #e0e0e0;">
+									<td style="color: #da6d24; padding-right: 1%; font-size: 10px; vertical-align: middle;">&#8212;</td>
+									<td class="text-table-27">Prototype/Product Development</td>
+									<td class="last">The progress made in developing a working prototype or proof of concept.</td>
+								</tr>
+								<tr style="border-top: 1px solid #e0e0e0;">
+									<td style="color: #da6d24; padding-right: 1%; font-size: 10px; vertical-align: middle;">&#8212;</td>
+									<td class="text-table-27">Quality Management Team</td>
+									<td class="last">The capability and experience of the management team to execute the business plan.</td>
+								</tr>
+								<tr style="border-top: 1px solid #e0e0e0;">
+									<td style="color: #da6d24; padding-right: 1%; font-size: 10px; vertical-align: middle;">&#8212;</td>
+									<td class="text-table-27">Strategic Relationships</td>
+									<td class="last">Partnership with customers, suppliers, distributors, or intellectual property, relationships that increase the company’s chances of success.</td>
+								</tr>
+								<tr style="border-top: 1px solid #e0e0e0;">
+									<td style="color: #da6d24; padding-right: 1%; font-size: 10px; vertical-align: middle;">&#8212;</td>
+									<td class="text-table-27">Product Rollout/Sales</td>
+									<td class="last">The stage at which the product is ready for market or has already been launched, indicating traction.</td>
+								</tr>
+							</table>
+							
+							
+							<p style="padding-top: 3%;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><span style="font-weight: bold;">Valuation Process:</span></p>
+							<p><span style="color: #da6d24;padding-right: 0.5%;font-size: 10px;">1.</span>Assign maximum value to each milestone, ensuring the total pre-money valuation does not exceed $2.5 million when all milestones are fully achieved.</p>
+							<p><span style="color: #da6d24;padding-right: 0.5%;font-size: 10px;">2.</span>Determine the achievement percentage for each milestone based on the startup’s progress, ranging from 0% to 100%.</p>
+							<p><span style="color: #da6d24;padding-right: 0.5%;font-size: 10px;">3.</span>Multiply the maximum value of each milestone by its respective achievement percentage to calculate its contribution to the total pre-money valuation.</p>
+							<p><span style="color: #da6d24;padding-right: 0.5%;font-size: 10px;">4.</span>Sum the contributions of all milestones to arrive at the total pre-money valuation.</p>
+							<p><span style="color: #da6d24;padding-right: 0.5%;font-size: 10px;">5.</span>Add the investment amount to the pre-money valuation to calculate the post-money valuation.</p>
+							<p><span style="color: #da6d24;padding-right: 0.5%;font-size: 10px;">6.</span>Divide the investment amount by the post-money valuation and multiply by 100 to determine the investor's ownership percentage.</p>
+						</div>
+					</td>
+				  </tr>
+				  
+				  
+				</tbody>
+			  </table>
+	
+				<div class="footer-27">
+					<div class="footer-line-27"></div>
+					<div class="footer-text-27">
+					  <span class="confidential-27">Strictly private and confidential</span>
+					  <span class="page-number-27">Page 26</span>
+					</div>
+				  </div>
+		</div>
+
+
+
+	<div style="page-break-before: always;margin: 0;width: 100%;"></div>
+		<div style="padding: 4%;">
+			<div style="border: 2px solid #3f8771;padding: 15px;padding-top: 1px; padding-bottom: 1px;">
+				<div class="box-27">
+				  <div class="left-27">
+					<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;font-size: 16px;">Valuation Approaches And Methodologies</p>
+				  </div>
+				  <div class="right-27">
+					<p class="draft">Draft for discussion purpose only</p>
+				  </div>
+				</div>
+				<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Selection of applicable methodologies - Start Up Valuation</h2>
+			</div>
+			<p style="padding-top: 3%;"></p>
+		
+			<table class="table-27">
+				<thead>
+				  <tr>
+					<th>Approach</th>
+					<th>Valuation Methodologies</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width: 20%;">
+							<div class="page-27-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Qualitative Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Risk Factor Summation Method.</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-27-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>The Risk Factor Summation (RFS) method is one of several valuation methodologies used to determine the value of startups at the seed stage, particularly when financial projections are either unavailable or unreliable. The RFS method uses a set of risk factors to adjust the pre-money valuation based on qualitative assessments.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>The Risk Factor Summation (RFS) method assesses a startup's risk profile across 12 factors, such as management team quality, product development progress, and market risk, each scored from +2 to −2. Positive scores indicate lower risk, while negative scores reflect higher risk.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>The total score from the 12 risk factors is applied to adjust the startup's benchmark pre-money valuation, either increasing or decreasing it based on the overall risk profile.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-27-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Qualitative Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Scorecard Method</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-27-main-content">
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Scorecard method assign weights to seven key factors (e.g., Team, Opportunity, Product), ensuring the total is 100%, and adjust weights based on the importance of each factor.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Rate the target company against a benchmark (average company) for each factor as a percentage. Scores greater than 100% indicate outperformance, less than 100% indicate underperformance, and 100% means equal to the benchmark.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Multiply each factor's weight by its relative score (percentage) and sum the results. Apply this adjustment to the median pre-money valuation to estimate the company's valuation.</p>
+							</div>
+						</td>
+					  </tr>
+					  <tr>
+						<td style="width: 20%;">
+							<div class="page-27-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;">Market-Based Approach</p>
+							<p style="text-indent: -7px; padding-left: 10px;"><span style="color: #da6d24;padding-right: 1%;font-size: 10px;padding-right: 3px;">&#8226;</span>Venture Capital Method</p>
+						</div>
+						</td>
+						<td>
+							<div class="page-27-main-content">
+								<p style="padding-left: 0px;text-indent: 0px;">The Venture Capital (VC) method estimates the value of a startup based on its potential future exit value while accounting for investment risks and expected returns. Here's the process:</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><i style="font-weight: bold;">Estimate Future Exit Value:</i> Calculate the projected value of the company at exit (e.g., acquisition or IPO) using revenue or earnings multiples.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><i style="font-weight: bold;">Adjust for Probability of Failure:</i> Multiply the future exit value by the probability of success to account for startup risks.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><i style="font-weight: bold;">Calculate Required Ownership Stake:</i> Determine the percentage ownership investors need to achieve their required annual return over the investment horizon.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><i style="font-weight: bold;">Calculate Post-money Valuation:</i> Use the required ownership stake to back-calculate the company’s post-money valuation.</p>
+								<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span><i style="font-weight: bold;">Incorporate Dilution Effects:</i> Adjust ownership stake and valuation to account for dilution from future funding rounds and employee stock option grants.</p>
+							</div>
+						</td>
+					  </tr>
+				</tbody>
+			  </table>
+	
+				<div class="footer-27-b">
+					<div class="footer-line-27"></div>
+					<div class="footer-text-27">
+					  <span class="confidential-27">Strictly private and confidential</span>
+					  <span class="page-number-27">Page 27</span>
+					</div>
+				  </div>
+		</div>
+</body>
+</html>

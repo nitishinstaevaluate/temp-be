@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+	font-family:'Lora', serif;
+	margin: 0;
+	padding: 0;
+	}
+
+	.box-14 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left-14, .right-14 {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.footer14 {
+		padding-top: 8%;
+		text-align: center;
+	}
+
+	.footer-line-14 {
+		border-top: 2px solid #000;
+		margin: 10px 0;
+	}
+
+	.footer-text-14 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential-14 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-number-14 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-14-main-content{
+		padding: 3%;
+		padding-top: 0px;
+	}
+	.page-14-main-content p {
+		font-size: 12px;
+		padding-top:8px ;
+		padding-bottom:8px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+	}
+
+
+	.container-14 {
+		display: flex;
+		gap: 10px;
+		padding-left: 0px;
+		padding-right: 0px;
+		padding-top: 5px;
+		width: 80%;
+	}
+
+	.card-14 {
+		flex: 1;
+		border: 1px solid #ddd;
+		padding: 0;
+		position: relative;
+		min-width: 170px;
+	}
+
+	.header-14 {
+		/* padding: 15px; */
+		padding: 15px;
+		color: white;
+		position: relative;
+		margin-bottom: 20px;
+		font-size: 12px;
+		text-align: center;
+	}
+
+	.header-14::after {
+		content: '';
+		position: absolute;
+		bottom: -15px;
+		left: 0;
+		right: 0;
+		height: 30px;
+		background: inherit;
+		clip-path: polygon(0 0, 100% 0, 100% 50%, 50% 100%, 0 50%);
+	}
+
+	.revenue-14 .header-14 {
+		background: #2c3e50;
+	}
+
+	.cost-14 .header-14 {
+		background: #3498db;
+	}
+
+	.working-capital-14 .header-14 {
+		background: #e67e22;
+	}
+
+	.capex-14 .header-14 {
+		background: #95a5a6;
+	}
+
+	.content-14 {
+		padding: 20px;
+		font-size: 12px;
+		text-align: justify;
+	}
+
+	.ul-14 {
+		list-style-type: none;
+		padding-left: 0;
+		margin: 0;
+	}
+
+	.ul-14 li {
+		margin-bottom: 10px;
+		position: relative;
+		padding-left: 15px;
+		line-height: 160%;
+	}
+
+	.ul-14 li::before {
+		content: '•';
+		position: absolute;
+		left: 0;
+		color: #666;
+	}
+
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;"></div>
+	<div style="padding: 5%;">
+		<div style="border: 2px solid #3f8771;padding: 15px;margin: 5px;">
+			<div class="box-14">
+			  <div class="left-14">
+				<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;">Management Business Plan</p>
+			  </div>
+			  <div class="right-14">
+				<p class="draft">Draft for discussion purpose only</p>
+			  </div>
+			</div>
+			<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Management Business Plan Structure And Approach</h2>
+		</div>
+
+		<div class="page-14-main-content">
+			<p><span style="color: #da6d24;padding-right: 1%;font-size: 14px;">&#8226;</span>Management of the Company has projected the business plan (“Management Business Plan”) as at the Valuation Date for a period of five financial years  from XX.XX.XXXX to XX.XX.XXXX (“Forecast Period”).</p>
+			<p><span style="color: #da6d24;padding-right: 1%;font-size: 14px;">&#8226;</span>Historical numbers are based on audited financials for the years FYXX, FYXX, FYXX, FYXX and provisional and un-audited financials of ABC for  the interim period XX.XX.XXXX to XX.XX.XXXX (“Interim Period”). Period from XX.XX.XXXX to XX.XX.XXXX is hereinafter referred to as the “Historical  Period”. Figures are based on Management inputs and Valuer/Valuing Entitty have not independently carried out any audit or diligence of the information.  Management has provided the financials as of XX.XX.XXXX and confirmed and represented there are no significant differences in the financials provided to  us for the purposes of the Valuation and the Valuation Date.</p>
+			<p><span style="color: #da6d24;padding-right: 1%;font-size: 14px;">&#8226;</span>We understand that the Management has developed the business plan based on past performance of ABC, inputs from the internal business teams, current  level of business visibilities and duly capturing any identified measures/strategies for the respective businesses. Approach for the key assumptions  underlying the Management Business Plan is summarized below:</p>
+		</div>
+		<div class="container-14">
+			<div class="card-14 revenue-14">
+				<div class="header-14">Revenue</div>
+				<div class="content-14">
+					<ul class="ul-14">
+						<li>Management has projected the revenue in the Forecast Period based on market understanding of growth estimates for ABG and internal growth strategies.</li>
+					</ul>
+				</div>
+			</div>
+		
+			<div class="card-14 cost-14">
+				<div class="header-14">Cost</div>
+				<div class="content-14">
+					<ul class="ul-14">
+						<li>Cost of Sales comprises direct purchases relating to sale of products. This is based on FY'XX levels.</li>
+						<li>Employee expenses are on projected based Management's growth estimates until FY'XX and escalation rates thereafter.</li>
+						<li>Management estimates projected sales and marketing expenditure based on historical levels.</li>
+					</ul>
+				</div>
+			</div>
+		
+			<div class="card-14 working-capital-14">
+				<div class="header-14">Working Capital & Capex</div>
+				<div class="content-14">
+					<ul class="ul-14">
+						<li>Management has estimated the future working capital based on average of the Historical Period.</li>
+					</ul>
+				</div>
+			</div>
+		
+			<div class="card-14 capex-14">
+				<div class="header-14">Capital Expenditure</div>
+				<div class="content-14">
+					<ul class="ul-14">
+						<li>Management Business Plan assumes XX per cent is maintenance capex and XX per cent is incremental capex.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		
+
+		<div class="footer14">
+			<div class="footer-line-14"></div>
+			<div class="footer-text-14">
+			<span class="confidential-14">Strictly private and confidential</span>
+			<span class="page-number-14">Page 13</span>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
+

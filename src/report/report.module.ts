@@ -36,11 +36,12 @@ import { ExcelArchiveService } from 'src/excel-archive/service/excel-archive.ser
 import { ExcelArchiveSchema } from 'src/excel-archive/schema/excel-archive.schema';
 import { FieldValidationService } from 'src/processStatusManager/service/field-validation.service';
 import { FieldValidationSchema } from 'src/processStatusManager/schema/field-validation.shema';
+import { StartUpReportService } from './start-up-report.serivice';
 
 @Module({
   providers: [ReportService,CalculationService,CustomLogger,ElevenUaService,ExcelSheetService,sebiReportService, AuthenticationService, 
     ProcessStatusManagerService, utilsService,HistoricalReturnsService, mandateReportService, mrlReportService, thirdpartyApiAggregateService,
-     navReportService, financialHelperService, ExcelArchiveService, FieldValidationService],
+     navReportService, financialHelperService, ExcelArchiveService, FieldValidationService, StartUpReportService],
   controllers: [ReportController],
   imports:[ValuationProcessModule,LoggerModule,
     MongooseModule.forFeature(

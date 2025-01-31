@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+		font-family:'Lora', serif;
+		margin: 0;
+		padding: 0;
+	}
+
+	.box-34 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left-34, .right-34 {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.footer-34 {
+		padding-top: 4%;
+		text-align: center;
+	}
+	.footer-34-b {
+		padding-top: 40%;
+		text-align: center;
+	}
+
+	.footer-line-34 {
+		border-top: 2px solid #000;
+		padding: 6px 0;
+	}
+
+	.footer-text-34 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential-34 {
+		font-size:14px;
+		font-weight: bold;
+		color: #3f8771 !important;
+	}
+
+	.page-number-34 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-34-main-content{
+		/* padding: 3%; */
+		/* padding-top: 0px; */
+		padding: 1%;
+		padding-left: 2%;
+	}
+	.page-34-main-content p {
+		font-size: 10px;
+		padding-top:4px ;
+		padding-bottom:4px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		text-indent: -10px;
+		padding-left: 1%;
+	}
+	.table-34 {
+      width: 100%;
+      border-collapse: collapse;
+	  margin: auto;
+	  padding-top: 1%;
+    }
+    .table-34 th, .table-34 td {
+      padding: 0px;
+      border: 1px solid #3f8771;
+      text-align: center;
+	  font-size: 13px;
+	  padding: 1px;
+    }
+    .table-34 th {
+	  background-color: #3f8771;
+	  color: white;
+    }
+	.table-inner-34 td{
+		padding: 0px;
+		border: none;
+		text-align: center;
+		font-size: 10px;
+		padding: 1px;
+	}
+	.table-inner-34 .text-table-34{
+		width: 50%;
+		text-align: left;
+		padding-top:10px ;
+		padding-bottom:10px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		padding-left: 1%;
+		font-weight: bold;
+		color: #3f6461;
+	}
+	.table-inner-34 .last{
+		text-align: left;
+		padding-top:4px ;
+		padding-bottom:4px ;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		padding-left: 1%;
+		line-height: 175%;
+	}
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;margin: 0;width: 100%;"></div>
+		<div style="padding: 4%;">
+			<div style="border: 2px solid #3f8771;padding: 15px;padding-top: 1px; padding-bottom: 1px;">
+				<div class="box-34">
+				  <div class="left-34">
+					<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;font-size: 16px;">Valuation Analysis</p>
+				  </div>
+				  <div class="right-34">
+					<p class="draft">Draft for discussion purpose only</p>
+				  </div>
+				</div>
+				<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Discount Rate - Weighted Average Cost Of Capital</h2>
+			</div>
+			<p style="padding-top: 1%;"></p>
+		
+			<table class="table-34">
+				<!-- <thead>
+				  <tr>
+					<th>Approach</th>
+					<th>Valuation Methodologies</th>
+				  </tr>
+				</thead> -->
+				<tbody>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Risk Free Rate (Rf)</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Rf – Risk free rate of return refers to the current return on risk free assets.</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>We have considered 10-year bond yield of government bond rate as of the Valuation Date.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Market Risk Premium (Rm - Rf)</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Market risk premium refers to the average risk premium above the risk-free rate from a market portfolio of assets. We have  analyzed the trends in market returns over a period of 30 years including 10-year returns, 20-year returns (six monthly average  of 20-year moving average of market returns) and 30-years returns, and have estimated the representative long term Market  Return at XX per cent.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Relevered Beta</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Beta refers to the measure of the systematic risk of a particular asset relative to the portfolio of all risky assets. In the absence  of exact comparable companies’ beta is considered as Market Beta or Aswath Damodaran (Industry and Publication).</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Beta is computed based on the Comparable companies in the similar sector (Refer Appendix 4 for beta calculation).</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Size Premium</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Size premium is estimated at XX per cent in order to capture the additional risks associated with smaller size of the Company  as compared to the comparable companies. This is estimated based on inputs from the study published by Duff & Phelps  Valuation Handbook 2019 – Guide to Cost of Capital.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Alpha</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Alpha refers to the unsystematic risk relevant to the company. An additional risk premium of XX per cent is considered to  capture the risks associated challenges in the Management Business Plan as under:</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>COVID-19 situation;</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Revenue is projected to increase from INR XXXX million in the Partial Period (INR XXXX million full year FYXXX) to INR  XXXX million in FYXXXX;</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>EBITDA margin is projected to increase from XX per cent in the Partial Period to XX per cent in FYXXXX during the  Forecast Period;</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Working capital is projected around XX to XX days of revenue based on average levels in the Historical Period;</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Overall capex is projected in the range of XX per cent to XX per cent during the Forecast Period. Management has  estimated capital expenditure in the Forecast Period considering planned capacity expansion and estimated regular  maintenance capex on annual basis;</p>
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8212;</span>Free Cash Flows to the Firm is projected to increase from negative INR XXX million in Partial Period to INR XXX million  in FYXX during the Forecast Period.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Cost Of Equity (Ke)</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Based on the above factors, cost of equity is estimated at XX per cent.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Cost Of Debt (Ke)</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Cost of debt refers to long term sustainable pre-tax cost of debt. Based on discussions with the Management, pre-tax cost of  debt is considered at XX per cent.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Corporate Tax Rate (Ke)</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Tax rate is arrived at based on the prevailing corporate tax rates of India as of the Valuation Date and discussions with the  Management.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Post-Tax Cost of Debt</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Post-tax cost of debt is arrived at by multiplying pre-tax cost of debt by (1 – Corporate Tax Rate).</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Debt To Equity Ratio</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Debt-to-equity ratio refers to the long-term sustainable debt-equity mix, reflecting an optimal as opposed to actual financing  structure. We have considered the median debt to total capital ratio of XX per cent (debt to equity ratio of XX per cent) the  companies in the similar sector.</p>
+						</div>
+					</td>
+				  </tr>
+				  <tr>
+					<td style="width: 20%;background-color: #3f8771;border-top:1px solid #414141;border-bottom:1px solid #414141;border-left:1px solid #414141;">
+						<div class="page-34-main-content" >
+							<p style="text-indent: 0px; padding-left: 2px;text-align: center;color: #ffffff;font-weight: bold;">Wacc</p>
+						</div>
+					</td>
+					<td>
+						<div class="page-34-main-content">
+							<p><span style="color: #da6d24;padding-right: 1%;font-size: 10px;">&#8226;</span>Based on the cost of equity of XX per cent and post-tax cost of debt of XX per cent and a debt-to-equity ratio of XX per cent, the weighted average cost of capital is estimated at XX per cent.</p>
+						</div>
+					</td>
+				  </tr>
+				</tbody>
+			  </table>
+	
+				<div class="footer-34">
+					<div class="footer-line-34"></div>
+					<div class="footer-text-34">
+					  <span class="confidential-34">Strictly private and confidential</span>
+					  <span class="page-number-34">Page 34</span>
+					</div>
+				  </div>
+		</div>
+</body>
+</html>

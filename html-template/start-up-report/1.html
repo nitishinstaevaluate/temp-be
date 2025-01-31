@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Styled Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      /* font-family: 'Roboto', sans-serif; */
+      font-family:'Lora', serif;
+      position: relative;
+      height: 100vh; /* Ensures the body spans the full page height */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bar {
+      position: absolute;
+      width: 100%;
+      height: 80px; /* Increased height of the bars */
+      background-color: #3f8771; /* Dark blue color */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .top-bar {
+      top: 5%; /* Sticks to the top of the page */
+    }
+
+    .bottom-bar {
+      bottom: 5%;
+    }
+
+    .content {
+      margin: auto; 
+      text-align: center;
+      padding-top: 40%;
+      flex-grow: 1; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .content h1, .content p {
+      margin: 10px 0;
+      font-size: 18px;
+    }
+
+    .content h1 {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .content p {
+      font-size: 20px;
+    }
+
+	h1 {
+      font-size: 36px;
+      text-align: center;
+      color: #2a2a2a;
+      margin-bottom: 20px;
+    }
+
+    .company-name {
+      font-size: 48px;
+      font-weight: bold;
+      text-align: center;
+      color: #da6d24;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.5;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .address {
+      display: block;
+      padding-top: 5%;
+    }
+
+    .email {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+
+    .email span {
+      font-weight: bold;
+    }
+
+	.vertical-line {
+	  position: absolute;
+      width: 5px;
+      height: 85%;
+      background-color: #3f8771;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+	.left-vertical-line{
+		left: 5%;
+		top: 6%;
+		bottom: 0%;
+	}
+	.right-vertical-line{
+		right: 5%;
+		top: 6%;
+		bottom: 0%;
+	}
+  </style>
+</head>
+<body>
+	<div style="page-break-before: always;">
+  <div class="bar top-bar">
+    <span></span>
+  </div> 
+  <div class="vertical-line left-vertical-line"><span></span></div>
+  <div class="content">
+    <!-- <h1>XYZ PVT LTD.</h1> -->
+    <div class="company-name">XYZ PVT LTD.</div>
+    <p>Fair Value of Equity for Independent Assessment (Purpose)</p>
+    <p>Issue Date/Report Date: XX.XX.XXXX</p>
+    <p style="padding-top: 10%;">NAME OF THE VALUER/VALUER ENTITY</p>
+    <div class="company-name" style="font-size: 30px;">ABC Valuation Services</div>
+    <p class="address">Registered Office: __________________</p>
+    <div class="email">
+      <span>Email:</span> __________
+    </div>
+  </div>
+  <div class="vertical-line right-vertical-line"><span></span></div>
+  <div class="bar bottom-bar">
+    <span></span>
+  </div>
+</div>
+</body>
+</html>

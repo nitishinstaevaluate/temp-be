@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+		body {
+			font-family:'Lora', serif;
+			margin: 0;
+			padding: 0;
+		}
+        .container-24 {
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .top-row-24 {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .main-methods {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .method-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .box-24 {
+            padding: 10px 15px;
+            margin: 5px 0;
+            text-align: center;
+            border-radius: 4px;
+            color: white;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navy-box {
+            background-color: #1e3f7c;
+        }
+
+        .burgundy-box {
+            background-color: #993333;
+        }
+
+        .blue-box {
+            background-color: #4a89dc;
+        }
+
+        .green-box {
+            background-color: #009845;
+            margin-top: 20px;
+        }
+
+        .arrow-down {
+            width: 2px;
+            height: 20px;
+            background-color: #333;
+            position: relative;
+            margin: 5px auto;
+        }
+
+        .arrow-down::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -4px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #333;
+        }
+
+        .split-section {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .split-box {
+            flex: 1;
+        }
+
+        .connector {
+            width: 2px;
+            height: 20px;
+            background-color: #333;
+            margin: 0 auto;
+        }
+
+        .horizontal-line-24 {
+            height: 2px;
+            background-color: #333;
+            position: absolute;
+            top: 50px;
+        }
+
+        .line-left {
+            width: 33%;
+            left: 0;
+        }
+
+        .line-right {
+            width: 33%;
+            right: 0;
+        }
+
+        .small-text-24 {
+            font-size: 12px;
+        }
+
+        .medium-text {
+            font-size: 12px;
+        }
+        @page rotate {
+            size: landscape;
+        }
+
+        .rotated-class-24 {
+            page: rotate;
+        }
+
+    </style>
+</head>
+<body>
+    <div style="page-break-before: always;margin: 0;width: 100%;">
+		<div class="rotated-class-24" style="padding: 1%;">
+            <div class="container-24">
+                <div class="top-row-24">
+                    <div style="flex: 2;">
+                        <div class="box-24 navy-box">Qualitative Approach</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="box-24 navy-box">Market Based Approach</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="box-24 navy-box">Cost Based Approach</div>
+                    </div>
+                </div>
+                <div class="main-methods">
+                    <div class="method-column">
+                        <div class="box-24 burgundy-box">Berkus Method</div>
+                        <div class="split-section">
+                            <div class="split-box">
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Pre-money Valuation</div>
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Assessment of Intangible Factors</div>
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Risk Assessment</div>
+                            </div>
+                            <div class="split-box">
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Five Key Factors</div>
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Degree of achievement</div>
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Investor's Perspective</div>
+                            </div>
+                        </div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Assess Key Milestones</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Assign Values</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Berkus Method Valuation</div>
+                    </div>
+                    <div class="method-column">
+                        <div class="box-24 burgundy-box">Risk Factor Summation Method</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Risk Adjustments</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Identify Risk Factors</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Evaluate Risk Scores</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Calculate Adjustments</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Risk Factor Summation</div>
+                    </div>
+
+                    <div class="method-column">
+                        <div class="box-24 burgundy-box">Scorecard Method</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Determine Benchmark Group</div>
+                        <div class="split-section">
+                            <div class="split-box">
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Assign Weights to Each Factor</div>
+                            </div>
+                            <div class="split-box">
+                                <div class="arrow-down"></div>
+                                <div class="box-24 blue-box small-text-24">Assess Each Factor on a Scale</div>
+                            </div>
+                        </div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Multiply Factor Rating by Assigned Weight</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Scorecard Valuation</div>
+                    </div>
+
+                    <div class="method-column">
+                        <div class="box-24 burgundy-box">Venture Capital Method</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Estimated Exit Revenue</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Target Return or Discount Rate</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Ownership Dilution</div>
+                    </div>
+
+                    <div class="method-column">
+                        <div class="box-24 burgundy-box">Cost Based Method</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Tangible Assets</div>
+                        <div class="arrow-down"></div>
+                        <div class="box-24 blue-box small-text-24">Human Capital</div>
+                    </div>
+                </div>
+
+                <div class="box-24 green-box">Summary Startup Valuation Approaches</div>
+            </div>
+
+				<div class="footer-17">
+					<div class="footer-line-17"></div>
+					<div class="footer-text-17">
+					  <span class="confidential-17">Strictly private and confidential</span>
+					  <span class="page-number-17">Page 16</span>
+					</div>
+				  </div>
+		</div>
+	</div>
+</body>
+</html>

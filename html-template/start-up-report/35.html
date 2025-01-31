@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+	font-family:'Lora', serif;
+	margin: 0;
+	padding: 0;
+	}
+
+	.box-35 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left-35, .right-35 {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.sub-header-35 {
+		text-align: left;
+		margin-top: 0px;
+		margin-bottom: 0px;
+		color: #da6d24;
+	}
+
+	.sub-header-35 h2 {
+		font-size: 13px;
+		text-align: justify;
+		width: 90%;
+		margin-bottom: 0px;
+	}
+
+	.footer-35 {
+		padding-top: 48%;
+		text-align: center;
+	}
+
+	.footer-line-35 {
+		border-top: 2px solid #000;
+		margin: 10px 0;
+	}
+
+	.footer-text-35 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential-35 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-number-35 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.bullet-list-35 li, .bullet-list-35 li p {
+		font-size: 12px;
+		padding-top:8px;
+		padding-bottom:8px;
+		margin-bottom:0px ;
+		margin-top:0px ;
+		text-align: justify;
+		line-height: 180%;
+		text-indent: -18px;
+	}
+
+	.bullet-list-35 {
+		list-style-type: disc; /* Changes ordered list to bullets */
+		list-style-position: inside;
+		color: #283e39; /* Fallback for text color */
+		padding-left: 5%;
+		padding-right: 5%;
+	}
+	.bullet-list-35 {
+		margin-top: 0.2%;
+	}
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;"></div>
+	<div style="padding: 5%;">
+		<div style="border: 2px solid #3f8771;padding: 15px;margin: 5px;">
+			<div class="box-35">
+			  <div class="left-35">
+				<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;">Valuation Analysis</p>
+			  </div>
+			  <div class="right-35">
+				<p class="draft">Draft for discussion purpose only</p>
+			  </div>
+			</div>
+			<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Valuation Analysis - Comparable Companies Method</h2>
+		</div>
+		<div class="sub-header-35" style="padding-top: 5%;">
+			<h2 style="padding-left: 2%;">Comparable Companies Method</h2>
+		</div>
+			<ul class="bullet-list-35">
+				<li>
+					The Comparable Companies Method (“CCM”) of the Market Approach employs the use of ratios from publicly traded companies. These ratios were adjusted for the differences in size using a quantitative model, prior to comparing the multiples for growth and profitability for the Company. We utilized a guideline public company method as an indicator of fair market value of the business enterprise value of the company.			
+				</li>
+			</ul>
+			<div class="sub-header-35">
+				<h2 style="padding-left: 2%;"><i>Search Criteria</i></h2>
+			</div>
+			<ul class="bullet-list-35">
+				<li>
+					Information on potential publicly traded comparable companies was ascertained using Capital IQ. Our search for publicly listed companies included companies that were related to the span of services that the Company provides. The results of our findings were discussed with Management to finalize on the list of comparable public companies that would be selected for the purposes of our analysis.						
+				</li>
+				<li>
+					The following publicly traded companies were deemed the most comparable to the Company: <br>
+					
+					<span style="color: #da6d24;padding-right: 1%;font-size: 12px;">&#8212;</span>ABC Limited <br>
+					<span style="color: #da6d24;padding-right: 1%;font-size: 12px;">&#8212;</span>PQR Limited <br>
+					<span style="color: #da6d24;padding-right: 1%;font-size: 12px;">&#8212;</span>XYZ Limited
+				</li>
+			</ul>
+			<div class="sub-header-35">
+				<h2 style="padding-left: 2%;"><i>Indication Of Value</i></h2>
+			</div>
+			<ul class="bullet-list-35">
+				<li>
+					The selected CCM multiples were applied to Company’s Revenue, EBITDA, Earning and Book Value. The resulted fairt value of the Company using the Market Approach is INR XX lakh.			
+				</li>
+			</ul>
+			<div class="footer-35">
+				<div class="footer-line-35"></div>
+				<div class="footer-text-35">
+				  <span class="confidential-35">Strictly private and confidential</span>
+				  <span class="page-number-35">Page 36</span>
+				</div>
+			  </div>
+	</div>
+
+</body>
+</html>
+

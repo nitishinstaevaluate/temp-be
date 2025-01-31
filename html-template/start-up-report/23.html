@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+		body {
+			font-family:'Lora', serif;
+			margin: 0;
+			padding: 0;
+		}
+
+        .container-23 {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+
+        .column-23 {
+            flex: 1;
+            margin: 0;
+            position: relative;
+        }
+
+        .box-23 {
+            padding: 12px 8px;
+            margin: 5px 0;
+            text-align: center;
+            border-radius: 3px;
+            color: white;
+            font-size: 10px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navy-box {
+            background-color: #1e3f7c;
+        }
+
+        .orange-box {
+            background-color: #d86422;
+        }
+
+        .gray-box {
+            background-color: #4a4a4a;
+        }
+
+        .gold-box {
+            background-color: #c17f11;
+        }
+
+        .blue-box {
+            background-color: #2f75b5;
+        }
+        .dark-blue-box {
+            background-color: #14518b;
+        }
+
+        .green-box {
+            background-color: #009845;
+        }
+
+        .arrow-23 {
+			position: relative;
+			width: 10px;
+			height: 30px;
+			background-color: #2ca0a9; /* Change to a nice green color or any other color */
+			margin: 0 auto;
+			border-radius: 2px;
+		}
+
+		.arrow-23::after {
+			content: '';
+			position: absolute;
+			bottom: -11px;
+			left: -44%;
+			width: 0px;
+			height: 0;
+			border-left: 10px solid transparent;
+			border-right: 10px solid transparent;
+			border-top: 12px solid #2ca0a9; /* Match the arrow-23 color */
+		}
+
+        /* Updated circle positioning */
+        .circle {
+            width: 24px;
+            height: 24px;
+            background-color: #fff;
+            border: 2px solid #d86422;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d86422;
+            font-weight: bold;
+            position: absolute;
+            right: -12px;
+            top: 20px;
+            z-index: 2;
+        }
+
+        .flex-row-23 {
+            display: flex;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .flex-col-23 {
+            flex: 1;
+        }
+
+        .box-wrapper {
+            margin: 5px 0;
+        }
+
+        .summary-box {
+            margin: 0 20px;
+        }
+
+        /* New styles for circle positioning */
+        .circle-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .circle-1 {
+            left: -13px;
+        }
+
+        .circle-2 {
+            left: -12px;
+        }
+
+		.new-box-23 {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.left-23, .right-23 {
+			width: 48%;
+		}
+
+		.valuer {
+			font-size: 18px;
+			margin: 5px 0;
+		}
+
+		.draft {
+			font-size: 16px;
+			font-weight: bold;
+			color: #da6d24;
+			margin-top: 6px;
+			padding-top: 0px;
+		}
+
+		.footer-23 {
+			padding-top: 5%;
+			text-align: center;
+		}
+
+		.footer-line-23 {
+			border-top: 2px solid #000;
+			margin: 10px 0;
+		}
+
+		.footer-text-23 {
+			display: flex;
+			justify-content: space-between;
+			padding: 0 20px;
+		}
+
+		.confidential-23 {
+			font-size: 14px;
+			font-weight: bold;
+			color: #3f8771;
+		}
+
+		.page-number-23 {
+			font-size: 14px;
+			font-weight: bold;
+			color: #3f8771;
+		}
+    </style>
+</head>
+<body>
+	<div style="page-break-before: always;"></div>
+	<div style="padding: 3%;">
+		<div style="border: 2px solid #3f8771;padding: 15px;margin: 5px;">
+			<div class="new-box-23">
+			  <div class="left-23">
+				<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;font-size: 16px;">Valuation Approaches And Methodologies</p>
+			  </div>
+			  <div class="right-23">
+				<p class="draft">Draft for discussion purpose only</p>
+			  </div>
+			</div>
+			<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Basis Of Valuation - Standard Of Value</h2>
+		</div>
+
+		<div class="container-23">
+			<div class="column-23">
+				<div class="box-23 dark-blue-box">Income Approach - DCF</div>
+				<div class="flex-row-23">
+					<div class="flex-col-23">
+						<div class="box-23 navy-box">Historical Balance sheet</div>
+						<div class="arrow-23"></div>
+						<div class="box-23 navy-box">Capex Working capital Assumptions</div>
+						<div class="arrow-23"></div>
+						<div class="box-23 navy-box">Projected Balance sheet</div>
+					</div>
+					<div class="flex-col-23">
+						<div class="box-23 navy-box">Historical Income statement</div>
+						<div class="arrow-23"></div>
+						<div class="box-23 navy-box">Revenue and cost projections &nbsp;&nbsp;&nbsp;&nbsp;</div>
+						<div class="arrow-23"></div>
+						<div class="box-23 navy-box">Projected Income statement</div>
+					</div>
+				</div>
+				<div class="arrow-23"></div>
+				<div class="box-23 navy-box">Discount rate</div>
+				<div class="arrow-23"></div>
+				<div class="box-23 navy-box">DCF Valuation</div>
+				<div class="arrow-23"></div>
+				<div class="box-23 navy-box">DCF summary and sensitivities</div>
+			</div>
+			<div class="column-23">
+				<div class="box-23 dark-blue-box">Market Approach – Comparable companies</div>
+				<div class="circle-container">
+					<div class="circle circle-1" style="top: -84px;">1</div>
+				</div>
+				<div class="box-23 orange-box">CosCos Multiples Method</div>
+				<div class="flex-row-23">
+					<div class="box-23 gray-box">Consider Comparability to Business</div>
+					<div class="box-23 blue-box">EV Multiples</div>
+				</div>
+				<div class="box-23 gold-box" style="margin-bottom: 20px;">Summary Business Valuation Analysis</div>
+					<div class="column-23" style="padding-top: 20px;border-top: 2px dashed #a6a7a6;">
+						<div class="box-23 dark-blue-box">Market Approach – Market Price Method</div>
+						<div class="circle" style="left: -12px;top: 20px;">3</div>
+						<div class="box-23 orange-box" style="margin-top: 25px;">Share price of public listed companies</div>
+						<div class="box-23 gray-box" style="margin-top: 25px;">Quoted share prices on recognized stock exchanges &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					</div>
+			</div>
+			<div class="column-23">
+				<div class="box-23 dark-blue-box">Market Approach – Comparable Transaction</div>
+				<div class="circle-container">
+					<div class="circle circle-2" style="top: -84px;">2</div>
+				</div>
+				<div class="box-23 orange-box">CoTrans Multiples Method</div>
+				<div class="flex-row-23">
+					<div class="box-23 gray-box">Consider Comparability to Business</div>
+					<div class="box-23 blue-box">EV Multiples</div>
+				</div>
+				<div class="box-23 gold-box" style="margin-bottom: 20px;">Summary Business Valuation Analysis</div>
+
+				<div class="column-23" style="padding-top: 20px;border-top: 2px dashed #a6a7a6;">
+					<div class="box-23 dark-blue-box">Market Approach – Price of Recent Investment Method</div>
+					<div class="circle" style="left: -12px;top: 20px;">4</div>
+					<div class="box-23 orange-box" style="margin-top: 25px;">Recent investment in the company</div>
+					<div class="box-23 gray-box" style="margin-top: 25px;">Consider Valuation / multiples (if not pre-committed or forced investment)</div>
+				</div>
+			</div>
+	
+			<div class="column-23">
+				<div class="box-23 dark-blue-box">Cost Approach</div>
+				<div class="box-23 orange-box" style="margin-top: 12px;">NAV (as per books)</div>
+				<div class="box-23 orange-box" style="margin-top: 15px;">Replacement value</div>
+				<div class="box-23 orange-box" style="margin-top: 15px;">Realizable value</div>
+			</div>
+		</div>
+	
+		
+	
+		<div style="display: flex;justify-content: space-between;margin-bottom: 2%;">
+			<div class="arrow-23"></div>
+			<div class="arrow-23"></div>
+			<div class="arrow-23"></div>
+		</div>
+		<div class="box-23 green-box summary-box">Summary Business Valuation Analysis</div>
+		<div class="footer-23">
+			<div class="footer-line-23"></div>
+			<div class="footer-text-23">
+			  <span class="confidential-23">Strictly private and confidential</span>
+			  <span class="page-number-23">Page 22</span>
+			</div>
+		  </div>
+	</div>
+
+
+</body>
+</html>

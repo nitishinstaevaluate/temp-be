@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Layout</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+	body {
+	font-family:'Lora', serif;
+	margin: 0;
+	padding: 0;
+	}
+
+	.box8 {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.left, .right {
+	width: 48%;
+	}
+
+	.valuer {
+	font-size: 18px;
+	margin: 5px 0;
+	}
+
+	.draft {
+		font-size: 16px;
+		font-weight: bold;
+		color: #da6d24;
+		margin-top: 6px;
+		padding-top: 0px;
+	}
+
+	.footer8 {
+		padding-top: 29%;
+		text-align: center;
+	}
+
+	.footer-line8 {
+		border-top: 2px solid #000;
+		margin: 10px 0;
+	}
+
+	.footer-text8 {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 20px;
+	}
+
+	.confidential8 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.page-number8 {
+		font-size: 14px;
+		font-weight: bold;
+		color: #3f8771;
+	}
+
+	.bar-container-8 {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+		padding: 30px 3%;
+		background-color: #f9f9f9;
+		border: 2px solid #54a68d;
+		border-radius: 10px;
+		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+		width: 50%;
+		margin-left: auto;
+		margin-right: 3%;
+		margin-top: 27%;
+	}
+
+	.header-bar-8 {
+		width: 95%;
+		padding: 15px;
+		text-align: center;
+		background-color: #2f7059;
+		color: white;
+		font-weight: bold;
+		font-size: 1.2em;
+		border-radius: 5px 5px 0 0;
+		box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.bar-8 {
+		width: 95%;
+		padding: 10px;
+		text-align: left;
+		border-radius: 5px;
+		color: white;
+		font-weight: bold;
+		transition: transform 0.3s ease, background-color 0.3s ease;
+		box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+		cursor: pointer;
+	}
+
+	.bar-8:nth-child(3) {
+		background-color: #2f7059;
+	}
+
+	.bar-8:not(:nth-child(3)) {
+		background-color: #54a68d;
+	}
+
+  </style>
+</head>
+<body>
+
+	<div style="page-break-before: always;"></div>
+	<div style="padding: 5%;">
+		<div style="border: 2px solid #3f8771;padding: 15px;margin: 5px;">
+			<div class="box8">
+			  <div class="left">
+				<p class="valuer" style="font-weight: bold;color: #3f8771;font-family: 'Arial', serif;">Index</p>
+			  </div>
+			  <div class="right">
+				<p class="draft">Draft for discussion purpose only</p>
+			  </div>
+			</div>
+			<h2 style="color: #3f8771;margin-top: 0px;font-family: 'Arial', serif;margin-bottom: 0px;">Contents of the Report</h2>
+		</div>
+		
+	
+		<div class="bar-container-8">
+			<div class="header-bar-8">Section Overview</div>
+			<div class="bar-8">Company Background</div>
+			<div class="bar-8">Industry Overview</div>
+			<div class="bar-8">Historical Financials</div>
+			<div class="bar-8">Management Business Plan</div>
+			<div class="bar-8">Valuation Approaches And Methodologies</div>
+			<div class="bar-8">Valuation Analysis</div>
+			<div class="bar-8">Appendice</div>
+		</div>
+	
+	
+			<div class="footer8">
+				<div class="footer-line8"></div>
+				<div class="footer-text8">
+				  <span class="confidential8">Strictly private and confidential</span>
+				  <span class="page-number8">Page 7</span>
+				</div>
+			  </div>
+	</div>
+
+</body>
+</html>
+
