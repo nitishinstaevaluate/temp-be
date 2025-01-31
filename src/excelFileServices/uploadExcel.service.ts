@@ -84,26 +84,40 @@ export class ExcelSheetService {
                                   });
                                 }
                                 const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                                // sheetData.forEach((row:any) => {
+                                //   for (let columns in row) {
+                                //     if (typeof row[columns] === 'string') {
+                                //       row[columns] = row[columns].replace(/\r\n/g, '');
+                                //   }
+                                
+                                //     if (typeof row[columns] === 'number') {
+                                //       row[columns] = parseFloat(row[columns].toFixed(2));
+                                //     }
+                                //     if (typeof columns === 'string') {
+                                //       const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+                                //       // const cleanedColumn = columns.replace(/^\s+/g, '');
+                                //       // console.log(cleanedColumn)
+                                //       if (columns !== cleanedColumn) {
+                                //         row[cleanedColumn] = row[columns];
+                                //         //   console.log(row[cleanedColumn])
+                                //         delete row[columns];
+                                //       }
+                                //     }
+                                //   }
+                                // });
                                 sheetData.forEach((row:any) => {
-                                   for (let columns in row) {
-                                     if (typeof row[columns] === 'string') {
-                                       row[columns] = row[columns].replace(/\r\n/g, '');
-                                   }
-                                 
-                                     if (typeof row[columns] === 'number') {
-                                       row[columns] = parseFloat(row[columns].toFixed(2));
-                                     }
-                                     if (typeof columns === 'string') {
-                                       const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-                                       // const cleanedColumn = columns.replace(/^\s+/g, '');
-                                       // console.log(cleanedColumn)
-                                       if (columns !== cleanedColumn) {
-                                         row[cleanedColumn] = row[columns];
-                                         //   console.log(row[cleanedColumn])
-                                         delete row[columns];
-                                       }
-                                     }
-                                   }
+                                  const orderedEntries = Object.entries(row).map(([key, value]) => {
+                                    if (typeof value === 'string') {
+                                        value = value.replace(/\r\n/g, '');
+                                    }
+                                    if (typeof value === 'number') {
+                                        value = parseFloat(value.toFixed(2));
+                                    }
+                                    return [key.trim().replace(/^\s+/g, '').replace(/\r\n/g, ''), value];
+                                });
+                            
+                                // Rebuild object with preserved order
+                                row = Object.fromEntries(orderedEntries);
                                  });
                                  return from(this.transformData(sheetData)).pipe(
                                   switchMap((excelData)=>{
@@ -3557,23 +3571,34 @@ return {
     const sheetData = xlsx.utils.sheet_to_json(workBook.Sheets[sheetName]);
 
     if(sheetName === 'BS' || sheetName === 'P&L'){
+      
       sheetData.forEach((row:any) => {
-          for (let columns in row) {
-            if (typeof row[columns] === 'string') {
-              row[columns] = row[columns].replace(/\r\n/g, '');
-          }
+          // for (let columns in row) {
+          //   if (typeof row[columns] === 'string') {
+          //     row[columns] = row[columns].replace(/\r\n/g, '');
+          // }
         
-            if (typeof row[columns] === 'number') {
-              row[columns] = parseFloat(row[columns].toFixed(2));
-            }
-            if (typeof columns === 'string') {
-              const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-              if (columns !== cleanedColumn) {
-                row[cleanedColumn] = row[columns];
-                delete row[columns];
+          //   if (typeof row[columns] === 'number') {
+          //     row[columns] = parseFloat(row[columns].toFixed(2));
+          //   }
+          //   if (typeof columns === 'string') {
+          //     const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+          //     if (columns !== cleanedColumn) {
+          //       row[cleanedColumn] = row[columns];
+          //       delete row[columns];
+          //     }
+          //   }
+          // }
+            const orderedEntries = Object.entries(row).map(([key, value]) => {
+              if (typeof value === 'string') {
+                  value = value.replace(/\r\n/g, '');
               }
-            }
-          }
+              if (typeof value === 'number') {
+                  value = parseFloat(value.toFixed(2));
+              }
+              return [key.trim().replace(/^\s+/g, '').replace(/\r\n/g, ''), value];
+          });
+          row = Object.fromEntries(orderedEntries);
         });   
     }
         const modifiedData = await this.transformData(sheetData);
@@ -4458,25 +4483,44 @@ captureHeaders(worksheet){
 sanitiseCells(workbook,sheetName, headers, approach){
   let errorStack = '', sheetWiseCheck = {};
   const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-  sheetData.forEach((row:any) => {
-    for (let columns in row) {
-      if (typeof row[columns] === 'string') {
-        row[columns] = row[columns].replace(/\r\n/g, '');
-      }
+  // sheetData.forEach((row:any) => {
+  //   for (let columns in row) {
+  //     if (typeof row[columns] === 'string') {
+  //       row[columns] = row[columns].replace(/\r\n/g, '');
+  //     }
 
-      if (typeof row[columns] === 'number') {
-        row[columns] = parseFloat(row[columns].toFixed(2));
-      }
+  //     if (typeof row[columns] === 'number') {
+  //       row[columns] = parseFloat(row[columns].toFixed(2));
+  //     }
       
-      if (typeof columns === 'string') {
-        const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
-        if (columns !== cleanedColumn) {
-          row[cleanedColumn] = row[columns];
-          delete row[columns];
-        }
-      }
+  //     if (typeof columns === 'string') {
+  //       const cleanedColumn = columns.trim().replace(/^\s+/g, '').replace(/\r\n/g, '');
+  //       if (columns !== cleanedColumn) {
+  //         row[cleanedColumn] = row[columns];
+  //         delete row[columns];
+  //       }
+  //     }
 
-    }
+  //   }
+  //   for(const indYear of headers){
+  //     sheetWiseCheck[sheetName] = sheetWiseCheck[sheetName] || [];
+  //     if(Object.keys(row).includes(indYear)) { sheetWiseCheck[sheetName] = {value: true, sheetName}; continue };
+  //     sheetWiseCheck[sheetName] = {value:false, year: indYear, sheetName};
+  //   }
+  // });
+  sheetData.forEach((row:any) => {
+      const orderedEntries = Object.entries(row).map(([key, value]) => {
+        if (typeof value === 'string') {
+            value = value.replace(/\r\n/g, '');
+        }
+        if (typeof value === 'number') {
+            value = parseFloat(value.toFixed(2));
+        }
+        return [key.trim().replace(/^\s+/g, '').replace(/\r\n/g, ''), value];
+    });
+
+    // Rebuild object with preserved order
+    row = Object.fromEntries(orderedEntries);
     for(const indYear of headers){
       sheetWiseCheck[sheetName] = sheetWiseCheck[sheetName] || [];
       if(Object.keys(row).includes(indYear)) { sheetWiseCheck[sheetName] = {value: true, sheetName}; continue };
@@ -4484,7 +4528,6 @@ sanitiseCells(workbook,sheetName, headers, approach){
     }
   });
   const errorCheck:any = Object.values(sheetWiseCheck).filter((item:any) => !item.value);
-  console.log(errorCheck,"error check")
   if(errorCheck?.length){
     const year = errorCheck[0].year;
     if(year){
