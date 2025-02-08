@@ -256,6 +256,9 @@ export class mrlReportService {
           }
           return '';
         })
+        hbs.registerHelper("formatNumber", function(value) {
+          return !isNaN(value) && value !== null ? Number(value).toFixed(2) : value;
+      });
         }
         catch(error){
           console.log(error,"error")
