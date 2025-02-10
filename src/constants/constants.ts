@@ -5506,6 +5506,7 @@ export const BERKUS_VALUATION_MAPPER = {
       {
         label:"Total",
         header:true,
+        status:'',
         total:0
       }
     ]
@@ -5566,6 +5567,7 @@ export const BERKUS_VALUATION_MAPPER = {
       {
         label:"Total",
         header:true,
+        status:'',
         total:0
       }
     ]
@@ -5626,6 +5628,7 @@ export const BERKUS_VALUATION_MAPPER = {
       {
         label:"Total",
         header:true,
+        status:'',
         total:0
       }
     ]
@@ -5679,6 +5682,7 @@ export const BERKUS_VALUATION_MAPPER = {
       {
         label:"Total",
         header:true,
+        status:'',
         total:0
       }
     ]
@@ -5732,6 +5736,7 @@ export const BERKUS_VALUATION_MAPPER = {
       {
         label:"Total",
         header:true,
+        status:'',
         total:0
       }
     ]

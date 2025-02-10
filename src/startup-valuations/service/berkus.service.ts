@@ -48,6 +48,22 @@ export class BerkusService{
 
     async berkusValuation(data, key){
         try{
+            const interpreter = (value) => {
+                switch(true){
+                    case 0 < value && value <= 20:
+                        return 'Very Weak';
+                    case 20 < value && value <= 40:
+                        return 'Weak';
+                    case 40 < value && value <= 60:
+                        return 'Moderate';
+                    case 60 < value && value <= 80:
+                        return 'Strong';
+                    case 80 < value && value <= 100:
+                        return 'Very Strong';
+                    default:
+                        return '';
+                }
+            } 
             const staticSchema = BERKUS_VALUATION_MAPPER[key];
 
             const { defaultWeightage, dbKey, config} = staticSchema;
@@ -62,7 +78,10 @@ export class BerkusService{
                     total = total + config[pointer].weightedValue;
                 }
 
-                if(config[pointer]?.label === 'Total') config[pointer].total = total;
+                if(config[pointer]?.label === 'Total'){
+                    config[pointer].total = total
+                    config[pointer].status = interpreter(total)
+                }
                 pointer++; 
             }
             return { response: config, dbKey };
