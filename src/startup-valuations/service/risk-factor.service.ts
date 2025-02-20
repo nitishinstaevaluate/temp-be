@@ -41,6 +41,40 @@ export class RiskFactorService{
 
     async riskFactorValuation(data, key){
         try{
+            const interpreter = (value, key?) => {
+                if (key === 'Total') {
+                    switch (true) {
+                        case -24 <= value && value <= -16:
+                            return 'Very High Risk';
+                        case -15 <= value && value <= -1:
+                            return 'High Risk';
+                        case 0 <= value && value <= 7:
+                            return 'Medium to High Risk';
+                        case 8 <= value && value <= 15:
+                            return 'Moderate Risk';
+                        case 16 <= value && value <= 24:
+                            return 'Low Risk';
+                        default:
+                            return '';
+                    }
+                }
+            
+                switch (value) {
+                    case 2:
+                        return 'Extremely Positive';
+                    case 1:
+                        return 'Positive';
+                    case 0:
+                        return 'Neutral';
+                    case -1:
+                        return 'Negative';
+                    case -2:
+                        return 'Extremely Negative';
+                    default:
+                        return '';
+                }
+            }
+
             const staticSchema = RISK_FACTOR_VALUATION_MAPPER[key];
 
             const { dbKey, config} = staticSchema;
@@ -48,14 +82,17 @@ export class RiskFactorService{
             let pointer = 0, total = 0;
             while(pointer < config.length){
                 const coeffValue = data[config[pointer]?.controlRFCoeff];
-                if(coeffValue){
+                if(coeffValue !== undefined){
                     config[pointer].riskFactorCoeff = coeffValue;
+                    config[pointer].status = interpreter(coeffValue);
                     total = total + convertToNumberOrZero(coeffValue);
                 }
 
                 if(config[pointer]?.label === 'Total') config[pointer].total = total;
                 pointer++; 
             }
+            
+            config[config.length - 1].status = interpreter(config[config.length - 1].total, config[config.length - 1].label);
             return { response: config, dbKey };
         }
         catch(error){

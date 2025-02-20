@@ -5749,82 +5749,96 @@ export const RISK_FACTOR_VALUATION_MAPPER = {
       {
         label:"Risk Factors",
         riskFactorCoeff: "Risk Factor Coeffecient",
+        status:'',
         header:true
       },
       {
         index:1,
         label:"Management Risk",
         controlRFCoeff: 'managementRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:2,
         label:"Stage of the Business",
         controlRFCoeff:'stateOfBusinessRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:3,
         label:"Political Risk",
         controlRFCoeff:'politicalRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:4,
         label:"Supply Chain or Manufacturing Risk",
         controlRFCoeff:'supplyChainOrManufacturingRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:5,
         label:"Sales and Marketing Risk",
         controlRFCoeff:'salesAndMarketingRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:6,
         label:"Capital Raising Risk",
         controlRFCoeff:'capitalRaisingRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:7,
         label:"Competition Risk",
         controlRFCoeff:'competitionRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:8,
         label:"Risk of Technology",
         controlRFCoeff:'riskOfTechnologyRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:9,
         label:"Risk of Litigation",
         controlRFCoeff:'riskOfLitigationRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:10,
         label:"International Risk",
         controlRFCoeff:'internationalRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:11,
         label:"Risk of Reputation",
         controlRFCoeff:'riskOfReputationRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         index:12,
         label:"Exit Value Risk",
         controlRFCoeff:'exitValueRiskRFCoeff',
+        status:'',
         riskFactorCoeff: 0
       },
       {
         label:"Total",
+        status:'',
         header:true,
         total:0
       }
@@ -5847,15 +5861,18 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Management Team",
         serialNo:'A',
+        status:'',
         controlDoa: '',
         doa:0,
-        weightAssign: 0,
+        weightAssign: 30,
         weightedValue: 0,
-        header:true
+        header:true,
+        key:'managementTeam'
       },
       {
         label:"Experience",
         controlDoa:'experienceDoa',
+        parent:"managementTeam",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5863,6 +5880,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Adaptability",
         controlDoa:'adaptabilityDoa',
+        parent:"managementTeam",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5870,6 +5888,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Team Completeness",
         controlDoa:'teamCompletenessDoa',
+        parent:"managementTeam",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5877,15 +5896,18 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Size of the opportunity",
         serialNo:'B',
+        key:'sizeOfOpportunity',
+        status:'',
         controlDoa: '',
         doa:0,
-        weightAssign: 0,
+        weightAssign: 20,
         weightedValue: 0,
         header:true
       },
       {
         label:"Market Size",
         controlDoa:'marketSizeDoa',
+        parent:"sizeOfOpportunity",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5893,6 +5915,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Revenue Potential",
         controlDoa:'revenuePotentialDoa',
+        parent:"sizeOfOpportunity",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5900,6 +5923,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Stage",
         controlDoa:'stageDoa',
+        parent:"sizeOfOpportunity",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5907,15 +5931,18 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Product/Technology",
         serialNo:'C',
+        key:'productTech',
+        status:'',
         controlDoa: '',
         doa:0,
-        weightAssign: 0,
+        weightAssign: 15,
         weightedValue: 0,
         header:true
       },
       {
         label:"Compelling",
         controlDoa:'compellingDoa',
+        parent:"productTech",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5923,6 +5950,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Uniqueness",
         controlDoa:'uniquenessDoa',
+        parent:"productTech",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5930,6 +5958,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Execution Risk",
         controlDoa:'executionRiskDoa',
+        parent:"productTech",
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5937,15 +5966,18 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Competitive Environment",
         serialNo:'D',
+        key:'competitiveEnvironment',
+        status:'',
         controlDoa: '',
         doa:0,
-        weightAssign: 0,
+        weightAssign: 15,
         weightedValue: 0,
         header:true
       },
       {
         label:"Competition",
         controlDoa:'competitionDoa',
+        parent:'competitiveEnvironment',
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5953,6 +5985,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Strength Of Competitive Products",
         controlDoa:'strengthofCompetitiveProductDoa',
+        parent:'competitiveEnvironment',
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5960,22 +5993,26 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Barriers To Entry",
         controlDoa:'barrierToEntryDoa',
+        parent:'competitiveEnvironment',
         doa:0,
         weightAssign: 0,
         weightedValue: 0
       },
       {
         label:"Sales & Marketing",
+        key:'salesMarketing',
         serialNo:'E',
+        status:'',
         controlDoa: '',
         doa:0,
-        weightAssign: 0,
+        weightAssign: 10,
         weightedValue: 0,
         header:true
       },
       {
         label:"Sales Channel",
         controlDoa:'salesChannelDoa',
+        parent:'salesMarketing',
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5983,6 +6020,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Sales Partners",
         controlDoa:'salesPartnerDoa',
+        parent:'salesMarketing',
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5990,6 +6028,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Customer Acquisition",
         controlDoa:'customerAcquisitionDoa',
+        parent:'salesMarketing',
         doa:0,
         weightAssign: 0,
         weightedValue: 0
@@ -5997,6 +6036,7 @@ export const SCORE_CARD_VALUATION_MAPPER = {
       {
         label:"Total",
         tableFooter:true,
+        status:'',
         total:0
       }
     ]

@@ -42,23 +42,53 @@ export class ScoreCardService{
     async scoreCardValuation(data, key){
         try{
             const staticSchema = SCORE_CARD_VALUATION_MAPPER[key];
-
             const { defaultWeightage, dbKey, config} = staticSchema;
-            
-            let pointer = 0, total = 0;
-            while(pointer < config.length){
-                const doaValue = data[config[pointer]?.controlDoa];
-                if(doaValue !== null || doaValue !== undefined){
-                    config[pointer].doa = doaValue;
-                    config[pointer].weightAssign = defaultWeightage;
-                    config[pointer].weightedValue = convertToNumberOrZero(doaValue) * convertToNumberOrZero(defaultWeightage)/100;
-                    total += config[pointer].weightedValue;
-                }
+            const hashMapTwo = {};
 
-                if(config[pointer]?.label === 'Total') config[pointer].total = total;
-                pointer++; 
+            for(let i = 0; i < config.length; i++){
+                if(config[i]?.key){
+                    hashMapTwo[config[i]?.key] = config[i];
+                }
             }
-            return { response: config, dbKey };
+
+            const interpreter = (value) => {
+                switch (true) {
+                    case value >= 0 && value <= 20:
+                        return 'Very Weak';
+                    case value >= 21 && value <= 40:
+                        return 'Weak';
+                    case value >= 41 && value <= 60:
+                        return 'Moderate';
+                    case value >= 61 && value <= 80:
+                        return 'Strong';
+                    case value >= 81 && value <= 100:
+                        return 'Very Strong';
+                    default:
+                        return '';
+                }
+            }
+
+            const totalObj = config[config.length - 1];
+            let whole = 0;
+            for(const parent of Object.keys(hashMapTwo)){
+                let total = 0, totalSubQuestion = 0;
+                for(let i = 0; i < config.length; i++){
+                    if(hashMapTwo[parent]?.key && config[i]?.parent && config[i]?.parent === hashMapTwo[parent].key){
+                        const doaValue = data[config[i]?.controlDoa];
+                        if(doaValue !== undefined){
+                            total += doaValue;
+                            totalSubQuestion++;
+                        }
+                    }
+                }
+                hashMapTwo[parent].doa = (total/totalSubQuestion);
+                hashMapTwo[parent].weightedValue = convertToNumberOrZero((total/totalSubQuestion)) * convertToNumberOrZero(hashMapTwo[parent].weightAssign)/100;
+                hashMapTwo[parent].status = interpreter(convertToNumberOrZero((total/totalSubQuestion)) * convertToNumberOrZero(hashMapTwo[parent].weightAssign)/100);
+                whole += (convertToNumberOrZero((total/totalSubQuestion)) * convertToNumberOrZero(hashMapTwo[parent].weightAssign)/100);
+            }
+
+            [totalObj.total, totalObj.status] = [whole, interpreter(whole)];
+            return { response: [...Object.values(hashMapTwo), totalObj], dbKey};
         }
         catch(error){
             throw error;
